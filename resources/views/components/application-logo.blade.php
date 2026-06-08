@@ -1,0 +1,1 @@
+<img src="{{ asset('images/Banjarmasin_Logo.svg.png') }}" alt="Logo SiMagang" {{ $attributes->merge(['class' => 'h-12 w-auto']) }}>
