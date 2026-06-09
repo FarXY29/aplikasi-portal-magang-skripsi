@@ -30,6 +30,7 @@ class User extends Authenticatable
         'asal_instansi', 
         'major',
         'nama_pembimbing_sekolah',
+        'pembimbing_sekolah_id', // TAMBAHAN: Relasi langsung ke akun pembimbing
         'signature', // Kolom Tanda Tangan Pembimbing Lapangan
         'photo',
     ];
@@ -67,5 +68,15 @@ class User extends Authenticatable
 
     public function bimbingan() {
         return $this->hasMany(Application::class, 'pembimbing_lapangan_id');
+    }
+
+    // Relasi peserta ke pembimbing sekolahnya
+    public function pembimbing_sekolah() {
+        return $this->belongsTo(User::class, 'pembimbing_sekolah_id');
+    }
+
+    // Relasi pembimbing sekolah ke mahasiswanya
+    public function mahasiswa_bimbingan() {
+        return $this->hasMany(User::class, 'pembimbing_sekolah_id');
     }
 }

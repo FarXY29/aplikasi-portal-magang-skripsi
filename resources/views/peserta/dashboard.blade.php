@@ -88,11 +88,11 @@
                     <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-gradient-to-r from-teal-50/50 via-white to-teal-50/20">
                         
                         <div class="w-full md:w-auto text-center md:text-left">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->status == 'selesai' ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-teal-100 text-teal-800 border-teal-200' }} mb-2">
-                                <i class="fas fa-check-circle mr-1"></i> Status: {{ $activeApp->status == 'selesai' ? 'Telah Selesai' : 'Sedang Magang Aktif' }}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-100 text-blue-800 border-blue-200' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-teal-100 text-teal-800 border-teal-200') }} mb-2">
+                                <i class="fas fa-check-circle mr-1"></i> Status: {{ $activeApp->display_status == 'selesai' ? 'Telah Selesai' : ($activeApp->display_status == 'belum mulai' ? 'Belum Mulai' : 'Sedang Magang Aktif') }}
                             </span>
                             <h3 class="text-2xl font-extrabold text-gray-900 mb-1">Halo, {{ Auth::user()->name }}!</h3>
-                            <p class="text-sm text-gray-500 mb-4">{{ $activeApp->status == 'selesai' ? 'Program magang Anda telah berakhir.' : 'Pastikan untuk mengisi logbook dan melakukan absensi setiap hari kerja.' }}</p>
+                            <p class="text-sm text-gray-500 mb-4">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir.' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan untuk mengisi logbook dan melakukan absensi setiap hari kerja.') }}</p>
                             
                             <div class="inline-flex flex-col sm:flex-row gap-3 text-xs font-bold text-gray-600 bg-white p-3 rounded-xl shadow-sm border border-gray-150">
                                 <div class="flex items-center gap-2">
@@ -108,9 +108,13 @@
                         </div>
 
                         <div class="flex flex-wrap justify-center gap-3 w-full md:w-auto">
-                            @if($activeApp->status == 'selesai')
+                            @if($activeApp->display_status == 'selesai')
                                 <div class="px-6 py-3 bg-blue-50 text-blue-700 rounded-xl border border-blue-200 font-bold flex items-center gap-2 shadow-sm">
                                     <i class="fas fa-flag-checkered text-blue-500"></i> Magang Selesai
+                                </div>
+                            @elseif($activeApp->display_status == 'belum mulai')
+                                <div class="px-6 py-3 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-200 font-bold flex items-center gap-2 shadow-sm">
+                                    <i class="fas fa-hourglass-start text-indigo-500"></i> Magang Belum Dimulai
                                 </div>
                             @elseif(!$attendanceToday)
                                 <form action="{{ route('peserta.absen.masuk') }}" method="POST">
@@ -358,12 +362,13 @@
                                             'pending' => 'bg-yellow-100 text-yellow-800',
                                             'menunggu' => 'bg-orange-100 text-orange-800',
                                             'diterima' => 'bg-green-100 text-green-800',
+                                            'belum mulai' => 'bg-indigo-100 text-indigo-800',
                                             'selesai' => 'bg-blue-100 text-blue-800',
                                             'ditolak' => 'bg-red-100 text-red-800'
                                         ];
                                     @endphp
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase {{ $badges[$app->status] ?? 'bg-gray-100' }}">
-                                        {{ $app->status }}
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase {{ $badges[$app->display_status] ?? 'bg-gray-100' }}">
+                                        {{ $app->display_status }}
                                     </span>
                                     @if($app->is_automatic_placement)
                                         <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1">
@@ -394,7 +399,7 @@
                             </div>
 
                             <div class="flex flex-wrap gap-2 justify-end w-full md:w-auto" x-on:click.stop>
-                                @if($app->status == 'diterima')
+                                @if($app->display_status == 'diterima')
                                     <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
                                     </a>
@@ -408,7 +413,14 @@
                                     <a href="{{ route('peserta.logbook.print') }}" target="_blank" class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-bold hover:bg-gray-900 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-print"></i> Rekap
                                     </a>
-                                @elseif($app->status == 'selesai')
+                                @elseif($app->display_status == 'belum mulai')
+                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
+                                        <i class="fas fa-id-card"></i> ID Card
+                                    </a>
+                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                                        <i class="fas fa-file-contract"></i> Surat Balasan
+                                    </a>
+                                @elseif($app->display_status == 'selesai')
                                     <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
                                     </a>
@@ -426,6 +438,16 @@
                                         <i class="fas fa-print"></i> Rekap
                                     </a>
                                 @endif
+
+                                @if(in_array($app->status, ['pending', 'menunggu']) || ($app->status === 'diterima' && $app->display_status === 'belum mulai'))
+                                    <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.');">
+                                        @csrf
+                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-sm flex items-center gap-2">
+                                            <i class="fas fa-times-circle"></i> Batalkan Lamaran
+                                        </button>
+                                    </form>
+                                @endif
+
                                 <button type="button" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition shadow-sm flex items-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </button>
@@ -449,7 +471,7 @@
                                     <div class="grid grid-cols-2 gap-4 text-sm">
                                         <div>
                                             <p class="text-gray-500 mb-1 text-xs font-bold uppercase">Status Akhir</p>
-                                            <p><span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase {{ $badges[$app->status] ?? 'bg-gray-200' }}">{{ $app->status }}</span></p>
+                                            <p><span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase {{ $badges[$app->display_status] ?? 'bg-gray-200' }}">{{ $app->display_status }}</span></p>
                                         </div>
                                         <div>
                                             <p class="text-gray-500 mb-1 text-xs font-bold uppercase">Tanggal Daftar</p>

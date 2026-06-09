@@ -16,8 +16,18 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $pembimbings = [];
+
+        if ($user->role === 'peserta' && $user->asal_instansi) {
+            $pembimbings = \App\Models\User::where('role', 'pembimbing')
+                ->where('asal_instansi', $user->asal_instansi)
+                ->get();
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'pembimbings' => $pembimbings,
         ]);
     }
 

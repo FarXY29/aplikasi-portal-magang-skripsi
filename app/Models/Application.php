@@ -102,4 +102,15 @@ class Application extends Model
     public function pembimbing_lapangan() { return $this->belongsTo(User::class, 'pembimbing_lapangan_id'); }
     public function logs() { return $this->hasMany(DailyLog::class); }
     public function attendances() { return $this->hasMany(Attendance::class); }
+
+    // Accessor untuk status yang memperhitungkan tanggal mulai
+    public function getDisplayStatusAttribute()
+    {
+        if ($this->status === 'diterima') {
+            if (\Carbon\Carbon::now()->startOfDay()->lt(\Carbon\Carbon::parse($this->tanggal_mulai)->startOfDay())) {
+                return 'belum mulai';
+            }
+        }
+        return $this->status;
+    }
 }

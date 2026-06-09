@@ -38,19 +38,46 @@
             
             <div class="mb-8">
                 <h2 class="text-3xl font-extrabold text-gray-900">Buat Akun Baru</h2>
-                <p class="mt-2 text-sm text-gray-500">
-                    Lengkapi formulir di bawah untuk mendaftar sebagai peserta.
+                <p class="mt-2 text-sm text-gray-500" id="form-description">
+                    Silakan pilih peran Anda dan lengkapi formulir pendaftaran.
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-5">
+            <form method="POST" action="{{ route('register') }}" class="space-y-5" id="registerForm">
                 @csrf
+
+                <!-- Pilihan Role -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2 ml-1">Mendaftar Sebagai</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="role" value="peserta" class="peer sr-only" checked onchange="toggleRoleFields('peserta')">
+                            <div class="rounded-xl border-2 border-gray-200 px-4 py-3 hover:bg-gray-50 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 transition">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold">Peserta Magang</span>
+                                    <i class="fas fa-user-graduate text-teal-500 opacity-0 peer-checked:opacity-100"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="role" value="pembimbing" class="peer sr-only" onchange="toggleRoleFields('pembimbing')" {{ old('role') == 'pembimbing' ? 'checked' : '' }}>
+                            <div class="rounded-xl border-2 border-gray-200 px-4 py-3 hover:bg-gray-50 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 transition">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold">Pembimbing Sekolah</span>
+                                    <i class="fas fa-chalkboard-teacher text-teal-500 opacity-0 peer-checked:opacity-100"></i>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <x-input-error :messages="$errors->get('role')" class="mt-1" />
+                </div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-700 uppercase mb-1.5 ml-1">Nama Lengkap</label>
                     <input id="name" name="name" type="text" required autofocus
                         class="block w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition"
-                        placeholder="Sesuai KTP/KTM" :value="old('name')">
+                        placeholder="Sesuai KTP/KTM" value="{{ old('name') }}">
                     <x-input-error :messages="$errors->get('name')" class="mt-1" />
                 </div>
 
@@ -59,24 +86,34 @@
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1.5 ml-1">Username</label>
                         <input id="username" name="username" type="text" required
                             class="block w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition"
-                            placeholder="Username unik" :value="old('username')">
+                            placeholder="Username unik" value="{{ old('username') }}">
                         <x-input-error :messages="$errors->get('username')" class="mt-1" />
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-700 uppercase mb-1.5 ml-1">Email</label>
                         <input id="email" name="email" type="email" required
                             class="block w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition"
-                            placeholder="Email aktif" :value="old('email')">
+                            placeholder="Email aktif" value="{{ old('email') }}">
                         <x-input-error :messages="$errors->get('email')" class="mt-1" />
                     </div>
                 </div>
 
-                <div>
+                <!-- Field Khusus Peserta -->
+                <div id="field-peserta" class="{{ old('role') == 'pembimbing' ? 'hidden' : 'block' }}">
                     <label class="block text-xs font-bold text-gray-700 uppercase mb-1.5 ml-1">Jurusan / Program Studi</label>
-                    <input id="major" name="major" type="text" required
+                    <input id="major" name="major" type="text"
                         class="block w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition"
-                        placeholder="Contoh: Teknik Informatika" :value="old('major')">
+                        placeholder="Contoh: Teknik Informatika" value="{{ old('major') }}">
                     <x-input-error :messages="$errors->get('major')" class="mt-1" />
+                </div>
+
+                <!-- Field Khusus Pembimbing -->
+                <div id="field-pembimbing" class="{{ old('role') == 'pembimbing' ? 'block' : 'hidden' }}">
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1.5 ml-1">Asal Sekolah / Kampus</label>
+                    <input id="asal_instansi" name="asal_instansi" type="text"
+                        class="block w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition"
+                        placeholder="Contoh: Universitas Lambung Mangkurat" value="{{ old('asal_instansi') }}">
+                    <x-input-error :messages="$errors->get('asal_instansi')" class="mt-1" />
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -111,6 +148,36 @@
                     </p>
                 </div>
             </form>
+
+            <script>
+                function toggleRoleFields(role) {
+                    const fieldPeserta = document.getElementById('field-peserta');
+                    const fieldPembimbing = document.getElementById('field-pembimbing');
+                    const inputMajor = document.getElementById('major');
+                    const inputInstansi = document.getElementById('asal_instansi');
+                    const desc = document.getElementById('form-description');
+
+                    if (role === 'pembimbing') {
+                        fieldPeserta.classList.add('hidden');
+                        fieldPembimbing.classList.remove('hidden');
+                        inputInstansi.setAttribute('required', 'required');
+                        inputMajor.removeAttribute('required');
+                        desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai pembimbing sekolah/kampus.";
+                    } else {
+                        fieldPeserta.classList.remove('hidden');
+                        fieldPembimbing.classList.add('hidden');
+                        inputMajor.setAttribute('required', 'required');
+                        inputInstansi.removeAttribute('required');
+                        desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai peserta magang.";
+                    }
+                }
+                
+                // Initialize on load
+                document.addEventListener('DOMContentLoaded', () => {
+                    const selectedRole = document.querySelector('input[name="role"]:checked');
+                    if(selectedRole) toggleRoleFields(selectedRole.value);
+                });
+            </script>
 
 
         </div>

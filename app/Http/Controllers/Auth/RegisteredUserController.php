@@ -31,10 +31,12 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
+            'role' => ['required', 'in:peserta,pembimbing'],
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'major' => ['required', 'string', 'max:255'], // Validasi Jurusan
+            'major' => ['required_if:role,peserta', 'nullable', 'string', 'max:255'], // Validasi Jurusan
+            'asal_instansi' => ['required_if:role,pembimbing', 'nullable', 'string', 'max:255'], // Validasi Asal Instansi
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -42,9 +44,10 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'major' => $request->major, // Simpan Jurusan
+            'major' => $request->role === 'peserta' ? $request->major : null,
+            'asal_instansi' => $request->role === 'pembimbing' ? $request->asal_instansi : null,
             'password' => Hash::make($request->password),
-            'role' => 'peserta',
+            'role' => $request->role,
         ]);
 
         event(new Registered($user));

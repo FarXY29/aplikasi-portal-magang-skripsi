@@ -116,6 +116,21 @@
             </div>
             @endif
 
+            @if(Auth::user()->role == 'pembimbing')
+            <div x-data="{ open: {{ request()->routeIs('pembimbing.*') ? 'true' : 'false' }} }" class="space-y-1 pt-2">
+                <button @click="open = !open" class="flex items-center justify-between w-full px-4 py-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-teal-600 transition-colors focus:outline-none group">
+                    <span>Pembimbing Akademik</span>
+                    <i class="fas text-[9px] transition-transform duration-200" :class="open ? 'fa-chevron-down text-teal-500' : 'fa-chevron-right text-slate-300 group-hover:text-teal-500'"></i>
+                </button>
+                <div x-show="open" x-collapse x-cloak class="space-y-1 pl-3 relative">
+                     <div class="absolute left-0 top-2 bottom-2 w-[1px] bg-slate-200"></div>
+                    <a href="{{ route('pembimbing.dashboard') }}" class="flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl border border-transparent hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 transition-all {{ request()->routeIs('pembimbing.dashboard') ? 'text-teal-700 border-teal-200 bg-teal-50 shadow-sm' : 'text-slate-500' }}">
+                        <i class="fas fa-home w-5 text-center mr-2 {{ request()->routeIs('pembimbing.dashboard') ? 'text-teal-500' : 'text-slate-400' }}"></i> Beranda
+                    </a>
+                </div>
+            </div>
+            @endif
+
         </div>
 
         <div class="p-4 border-t border-slate-100 bg-slate-50/50">

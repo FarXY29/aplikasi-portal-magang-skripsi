@@ -273,6 +273,22 @@ class MagangController extends Controller
         return view('peserta.dashboard', compact('myApplications', 'activeApp', 'attendanceToday', 'jamKerja', 'stats', 'daysRemaining'));
     }
 
+    public function cancelApplication($id)
+    {
+        $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        // Bisa dibatalkan jika statusnya pending, menunggu, atau diterima TAPI belum mulai.
+        $canCancel = in_array($app->status, ['pending', 'menunggu']) || ($app->status === 'diterima' && $app->display_status === 'belum mulai');
+
+        if (!$canCancel) {
+            return back()->with('error', 'Lamaran ini tidak dapat dibatalkan karena magang sudah dimulai atau status sudah tidak relevan.');
+        }
+
+        $app->update(['status' => 'dibatalkan']);
+        
+        return back()->with('success', 'Lamaran magang berhasil dibatalkan.');
+    }
+
     // ... (Sisa method downloadCertificate dll sama seperti sebelumnya) ...
     public function downloadCertificate()
     {
@@ -332,6 +348,11 @@ class MagangController extends Controller
 
         if (empty($app->user->nik) || empty($app->user->asal_instansi)) {
             return redirect()->route('profile.edit')->with('error', 'Mohon lengkapi NIK dan Asal Instansi sebelum mencetak ID Card.');
+        }
+
+        // Pastikan token verifikasi ada (untuk QR Code)
+        if (empty($app->token_verifikasi)) {
+            $app->update(['token_verifikasi' => \Illuminate\Support\Str::random(32)]);
         }
 
         // 3. Generate PDF

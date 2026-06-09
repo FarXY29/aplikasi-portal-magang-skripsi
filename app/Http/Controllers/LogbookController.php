@@ -42,6 +42,10 @@ class LogbookController extends Controller
         
         if (!$app) return back()->with('error', 'Akses ditolak.');
 
+        if ($app->display_status === 'belum mulai') {
+            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') . '.');
+        }
+
         // 2. LOGIKA GEOTAGGING (Cek Jarak)
         $kantorLat = $app->position->instansi->latitude; // Pastikan tabel INSTANSI punya kolom latitude
         $kantorLng = $app->position->instansi->longitude;

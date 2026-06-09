@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Models\InternshipPosition;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\PembimbingSekolahController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,7 @@ Route::get('/dashboard', function () {
     if ($role == 'admin_instansi') return redirect()->route('dinas.dashboard');
     if ($role == 'pembimbing_lapangan') return redirect()->route('pembimbing_lapangan.dashboard');
     if ($role == 'peserta') return redirect()->route('peserta.dashboard');
+    if ($role == 'pembimbing') return redirect()->route('pembimbing.dashboard');
     if ($role == 'kepala_dinas') return redirect()->route('kepala_dinas.dashboard');
     
     return view('dashboard'); 
@@ -69,7 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/penempatan-otomatis', [MagangController::class, 'showAutomaticApplyForm'])->name('apply_automatic.form');
         Route::post('/penempatan-otomatis', [MagangController::class, 'storeAutomaticApplication'])->name('apply_automatic.store');
         Route::post('/saran/{id}', [MagangController::class, 'submitSaran'])->name('saran.store');
-
+        Route::post('/lamaran/{id}/batal', [MagangController::class, 'cancelApplication'])->name('lamaran.batal');
 
         // ROUTE ABSENSI 
         Route::post('/absen/masuk', [App\Http\Controllers\AttendanceController::class, 'store'])->name('absen.masuk');
@@ -115,6 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/peserta/{id}/logbook', [AdminInstansiController::class, 'showLogbooks'])->name('peserta.logbook');
         Route::get('/peserta/{id}/absensi', [AdminInstansiController::class, 'showAbsensi'])->name('peserta.absensi');
         Route::post('/peserta/{id}/selesai', [AdminInstansiController::class, 'finishIntern'])->name('peserta.selesai');
+        Route::post('/peserta/{id}/keluarkan', [AdminInstansiController::class, 'expelIntern'])->name('peserta.keluarkan');
         Route::post('/logbook/validasi/{id}', [AdminInstansiController::class, 'validateLogbook'])->name('logbook.validasi');
         
         // Pusat Laporan Hub
@@ -166,7 +169,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/absensi/{id}/validasi', [PembimbingLapanganController::class, 'validateAttendance'])->name('attendance.validate');
     });
 
-    // D. AREA PEMBIMBING AKADEMIK - Dinonaktifkan sementara
+    // D. AREA PEMBIMBING AKADEMIK
+    Route::middleware(['role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
+        Route::get('/dashboard', [PembimbingSekolahController::class, 'index'])->name('dashboard');
+        Route::get('/peserta/{id}/logbook', [PembimbingSekolahController::class, 'logbook'])->name('peserta.logbook');
+        Route::get('/peserta/{id}/absensi', [PembimbingSekolahController::class, 'absensi'])->name('peserta.absensi');
+    });
 
 
     // E. AREA ADMIN KOTA (SUPER ADMIN)
@@ -222,6 +230,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Route Publik untuk Verifikasi
+    Route::get('/scan-qr', [CertificateController::class, 'showScanner'])->name('qr.scanner');
     Route::get('/verify-certificate/{token}', [CertificateController::class, 'verify'])->name('certificate.verify');
     Route::post('/search-certificate', [CertificateController::class, 'search'])->name('certificate.search');
 

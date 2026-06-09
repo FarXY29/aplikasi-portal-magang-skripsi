@@ -30,6 +30,10 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda tidak memiliki status magang aktif untuk melakukan absensi.');
         }
 
+        if ($application->display_status === 'belum mulai') {
+            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . \Carbon\Carbon::parse($application->tanggal_mulai)->translatedFormat('d F Y') . '.');
+        }
+
         // 2. CEK JADWAL MASUK (DINAMIS DARI DB)
         // Ambil jam masuk dari INSTANSI, misal "08:00:00"
         $jamMasukINSTANSI = $application->position->instansi->jam_mulai_masuk ?? '07:30:00'; // Default jika null
@@ -81,6 +85,10 @@ class AttendanceController extends Controller
 
         if (!$application) {
             return back()->with('error', 'Status magang tidak aktif.');
+        }
+
+        if ($application->display_status === 'belum mulai') {
+            return back()->with('error', 'Masa magang Anda belum dimulai.');
         }
 
         // 2. CEK JADWAL PULANG (DINAMIS DARI DB)
@@ -136,6 +144,10 @@ class AttendanceController extends Controller
 
         if (!$application) {
             return back()->with('error', 'Status magang tidak aktif.');
+        }
+
+        if ($application->display_status === 'belum mulai') {
+            return back()->with('error', 'Masa magang Anda belum dimulai.');
         }
 
         // 2. Cek Duplikasi

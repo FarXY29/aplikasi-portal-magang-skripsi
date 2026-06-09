@@ -199,6 +199,12 @@
                                                     <i class="fas fa-check-double"></i>
                                                 </button>
                                             </form>
+                                            <form action="{{ route('dinas.peserta.keluarkan', $intern->id) }}" method="POST" onsubmit="return confirm('PERINGATAN!\n\nApakah Anda yakin ingin mengeluarkan peserta ini dari tempat magang? Tindakan ini tidak dapat dikembalikan.')">
+                                                @csrf
+                                                <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition shadow-sm font-bold border border-red-100" title="Keluarkan Peserta">
+                                                    <i class="fas fa-user-times"></i>
+                                                </button>
+                                            </form>
                                         @else
                                             <span class="text-[10px] text-gray-400 italic px-2">Menunggu Nilai</span>
                                         @endif

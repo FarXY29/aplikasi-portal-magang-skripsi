@@ -403,6 +403,23 @@ class AdminInstansiController extends Controller
         
         return back()->with('success', 'Peserta berhasil diluluskan! Sertifikat kini tersedia.');
     }
+
+    public function expelIntern($id)
+    {
+        $app = Application::where('id', $id)
+            ->whereHas('position.instansi', function($q) {
+                $q->where('instansi_id', Auth::user()->instansi_id);
+            })
+            ->firstOrFail();
+
+        if ($app->status !== 'diterima') {
+            return back()->with('error', 'Hanya peserta dengan status aktif yang dapat dikeluarkan.');
+        }
+
+        $app->update(['status' => 'dikeluarkan']);
+
+        return back()->with('success', 'Peserta berhasil dikeluarkan dari magang.');
+    }
     
     public function showLogbooks($applicationId)
     {
