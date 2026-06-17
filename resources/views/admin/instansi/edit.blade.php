@@ -76,26 +76,6 @@
 
                         <div class="space-y-6">
                             
-                            <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100">
-                                <label class="block text-sm font-bold text-gray-700 mb-3 flex justify-between">
-                                    <span>Koordinat Lokasi</span>
-                                    <span class="text-xs text-blue-600 font-normal"><i class="fas fa-satellite-dish mr-1"></i> Untuk Absensi</span>
-                                </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LAT</span>
-                                        <input type="text" name="latitude" value="{{ old('latitude', $instansi->latitude) }}"
-                                            class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
-                                    </div>
-                                    <div class="relative">
-                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LNG</span>
-                                        <input type="text" name="longitude" value="{{ old('longitude', $instansi->longitude) }}"
-                                            class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
-                                    </div>
-                                </div>
-                                @error('latitude') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                            </div>
-
                             <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Scan Tanda Tangan Kepala Dinas</label>
                                 <p class="text-xs text-gray-500 mb-3">Format: PNG Transparan (Disarankan). Maks 2MB.</p>
@@ -134,6 +114,41 @@
                         </div>
                     </div>
 
+                    <!-- Geotagging Map (Full Width) -->
+                    <div class="mt-8 bg-blue-50/50 p-5 rounded-xl border border-blue-100">
+                        <label class="block text-sm font-bold text-gray-700 mb-3 flex justify-between">
+                            <span>Titik Koordinat & Radius Absensi (Geotagging)</span>
+                            <span class="text-xs text-blue-600 font-normal"><i class="fas fa-mouse-pointer mr-1"></i> Klik map untuk ubah pin</span>
+                        </label>
+                        
+                        <div class="mb-4">
+                            <div id="map" class="border border-blue-200 shadow-inner" style="height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LAT</span>
+                                <input type="text" name="latitude" id="latitude" value="{{ old('latitude', $instansi->latitude) }}"
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LNG</span>
+                                <input type="text" name="longitude" id="longitude" value="{{ old('longitude', $instansi->longitude) }}"
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold"><i class="fas fa-circle-notch"></i></span>
+                                <input type="number" name="radius_absen" id="radius_absen" value="{{ old('radius_absen', $instansi->radius_absen ?? 50) }}"
+                                    class="w-full pl-10 pr-12 py-2 rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-200 text-sm" 
+                                    placeholder="50" min="10" required>
+                                <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 text-xs font-bold pointer-events-none">Meter</span>
+                            </div>
+                        </div>
+                        @error('latitude') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('radius_absen') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Area lingkaran pada peta menunjukkan batas peserta bisa melakukan absensi.</p>
+                    </div>
+
                     <div class="flex items-center justify-end space-x-3 mt-10 pt-6 border-t border-gray-100">
                         <a href="{{ route('admin.instansi.index') }}" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition shadow-sm">
                             Batal
@@ -147,4 +162,106 @@
             </div>
         </div>
     </div>
+
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<style>
+    /* Ensure the map container has a defined height */
+    #map { height: 350px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+    function initLeafletMap() {
+        if (typeof L === 'undefined') {
+            setTimeout(initLeafletMap, 100);
+            return;
+        }
+
+        var mapContainer = document.getElementById('map');
+        if(!mapContainer || mapContainer._leaflet_id) return; // Prevent double init
+
+        // Default koordinat (Banjarmasin)
+        var defaultLat = -3.316694;
+        var defaultLng = 114.590111;
+        
+        var latInput = document.querySelector('input[name="latitude"]');
+        var lngInput = document.querySelector('input[name="longitude"]');
+        var radiusInput = document.querySelector('input[name="radius_absen"]');
+        
+        var initLat = latInput.value ? parseFloat(latInput.value) : defaultLat;
+        var initLng = lngInput.value ? parseFloat(lngInput.value) : defaultLng;
+        var initRadius = radiusInput.value ? parseInt(radiusInput.value) : 50;
+
+        var map = L.map('map').setView([initLat, initLng], 15);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        var marker = L.marker([initLat, initLng], {draggable: true}).addTo(map);
+        var circle = L.circle([initLat, initLng], {
+            color: '#0d9488',
+            fillColor: '#14b8a6',
+            fillOpacity: 0.2,
+            radius: initRadius
+        }).addTo(map);
+
+        // Fix display issues inside containers
+        setTimeout(function(){
+            map.invalidateSize();
+        }, 500);
+
+        function updateInputs(lat, lng) {
+            latInput.value = lat.toFixed(6);
+            lngInput.value = lng.toFixed(6);
+        }
+
+        function updateMapElements(lat, lng) {
+            var latlng = new L.LatLng(lat, lng);
+            marker.setLatLng(latlng);
+            circle.setLatLng(latlng);
+            map.panTo(latlng);
+        }
+
+        // Event saat marker di-drag
+        marker.on('dragend', function (e) {
+            var latlng = marker.getLatLng();
+            updateInputs(latlng.lat, latlng.lng);
+            circle.setLatLng(latlng);
+        });
+
+        // Event saat peta di-klik
+        map.on('click', function(e) {
+            updateInputs(e.latlng.lat, e.latlng.lng);
+            updateMapElements(e.latlng.lat, e.latlng.lng);
+        });
+
+        // Event saat input manual berubah
+        latInput.addEventListener('input', function() {
+            if(this.value && lngInput.value) updateMapElements(this.value, lngInput.value);
+        });
+        lngInput.addEventListener('input', function() {
+            if(this.value && latInput.value) updateMapElements(latInput.value, this.value);
+        });
+
+        // Event saat radius berubah
+        radiusInput.addEventListener('input', function() {
+            var r = parseInt(this.value);
+            if(!isNaN(r) && r > 0) {
+                circle.setRadius(r);
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLeafletMap);
+    } else {
+        initLeafletMap();
+    }
+</script>
+@endpush
 </x-app-layout>

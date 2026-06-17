@@ -638,98 +638,6 @@ class AdminInstansiController extends Controller
         return $pdf->stream('Laporan_Rekap_Peserta.pdf');
     }
 
-    // --- LAPORAN GRADING ---
-
-    public function laporanGradingDinas()
-    {
-        $instansiId = Auth::user()->instansi_id;
-
-        $query = Application::with(['user', 'position'])
-                    ->whereHas('position', fn($q) => $q->where('instansi_id', $instansiId))
-                    ->whereNotNull('nilai_teknis')
-                    ->get();
-
-        $gradedData = $query->map(function($app) {
-            $t = (float) $app->nilai_teknis;
-            $d = (float) $app->nilai_disiplin;
-            $p = (float) $app->nilai_perilaku;
-            $avg = ($t + $d + $p) / 3;
-
-            return [
-                'nama' => $app->user->name,
-                'posisi' => $app->position->judul_posisi,
-                'teknis' => $t,
-                'disiplin' => $d,
-                'perilaku' => $p,
-                'rata_rata' => round($avg, 2),
-                'predikat' => $avg >= 86 ? 'Sangat Baik' : ($avg >= 71 ? 'Baik' : 'Cukup')
-            ];
-        });
-
-        $ranking = $gradedData->sortByDesc('rata_rata')->values();
-        
-        $distribusi = [
-            'Sangat Baik' => $gradedData->where('predikat', 'Sangat Baik')->count(),
-            'Baik' => $gradedData->where('predikat', 'Baik')->count(),
-            'Cukup' => $gradedData->where('predikat', 'Cukup')->count(),
-        ];
-
-        // PERBAIKAN: Menghitung statistik global khusus dinas ini
-        $statsGlobal = [
-            'avg_teknis' => $gradedData->count() > 0 ? round($gradedData->avg('teknis'), 1) : 0,
-            'avg_disiplin' => $gradedData->count() > 0 ? round($gradedData->avg('disiplin'), 1) : 0,
-            'avg_perilaku' => $gradedData->count() > 0 ? round($gradedData->avg('perilaku'), 1) : 0,
-        ];
-
-        // PERBAIKAN: Sertakan statsGlobal dalam compact()
-        return view('dinas.laporan.grading', compact('ranking', 'distribusi', 'statsGlobal'));
-    }
-
-    public function printGradingDinas()
-    {
-        $instansiId = Auth::user()->instansi_id;
-
-        $query = Application::with(['user', 'position'])
-                    ->whereHas('position', fn($q) => $q->where('instansi_id', $instansiId))
-                    ->whereNotNull('nilai_teknis')
-                    ->get();
-
-        $gradedData = $query->map(function($app) {
-            $t = (float) $app->nilai_teknis;
-            $d = (float) $app->nilai_disiplin;
-            $p = (float) $app->nilai_perilaku;
-            $avg = ($t + $d + $p) / 3;
-
-            return [
-                'nama' => $app->user->name,
-                'posisi' => $app->position->judul_posisi,
-                'teknis' => $t,
-                'disiplin' => $d,
-                'perilaku' => $p,
-                'rata_rata' => round($avg, 2),
-                'predikat' => $avg >= 86 ? 'Sangat Baik' : ($avg >= 71 ? 'Baik' : 'Cukup')
-            ];
-        });
-
-        $ranking = $gradedData->sortByDesc('rata_rata')->values();
-        
-        $distribusi = [
-            'Sangat Baik' => $gradedData->where('predikat', 'Sangat Baik')->count(),
-            'Baik' => $gradedData->where('predikat', 'Baik')->count(),
-            'Cukup' => $gradedData->where('predikat', 'Cukup')->count(),
-        ];
-
-        $statsGlobal = [
-            'avg_teknis' => $gradedData->count() > 0 ? round($gradedData->avg('teknis'), 1) : 0,
-            'avg_disiplin' => $gradedData->count() > 0 ? round($gradedData->avg('disiplin'), 1) : 0,
-            'avg_perilaku' => $gradedData->count() > 0 ? round($gradedData->avg('perilaku'), 1) : 0,
-        ];
-
-        $pdf = Pdf::loadView('dinas.pdf.grading', compact('ranking', 'distribusi', 'statsGlobal'));
-        $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Grading-Dinas.pdf');
-    }
-
     // Pengaturan
     public function settings()
     {
@@ -760,177 +668,250 @@ class AdminInstansiController extends Controller
         return view('dinas.laporan_hub');
     }
 
-    // --- 8 BARU: LAPORAN EVALUASI PEMBIMBING LAPANGAN ---
-    public function laporanEvaluasiPembimbing()
+    // --- 1. LAPORAN KINERJA MAHASISWA ---
+    public function laporanKinerjaMahasiswa()
     {
         $instansiId = Auth::user()->instansi_id;
-        $evaluasi = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
-            ->withCount(['bimbingan as total_bimbingan' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai']);
-            }])
-            ->with(['bimbingan' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai'])->whereNotNull('nilai_angka');
-            }])
-            ->get()->map(function($pl) {
-                $pl->rata_nilai = $pl->bimbingan->avg('nilai_angka');
-                return $pl;
-            });
-        return view('dinas.laporan.evaluasi_pembimbing', compact('evaluasi'));
-    }
-
-    public function printEvaluasiPembimbing()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        $evaluasi = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
-            ->withCount(['bimbingan as total_bimbingan' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai']);
-            }])
-            ->with(['bimbingan' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai'])->whereNotNull('nilai_angka');
-            }])
-            ->get()->map(function($pl) {
-                $pl->rata_nilai = $pl->bimbingan->avg('nilai_angka');
-                return $pl;
-            });
-            
-        $pdf = Pdf::loadView('dinas.pdf.evaluasi_pembimbing', compact('evaluasi'));
-        $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Evaluasi-Pembimbing.pdf');
-    }
-
-    // --- 9 BARU: LAPORAN TREN PENDAFTARAN ---
-    public function laporanTrenPendaftaran()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        $tren = Application::whereHas('position', function($q) use ($instansiId) {
-            $q->where('instansi_id', $instansiId);
-        })->select(DB::raw('MONTH(created_at) as bulan'), DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
-          ->groupBy('tahun', 'bulan')
-          ->orderBy('tahun', 'desc')->orderBy('bulan', 'desc')
-          ->get();
-        return view('dinas.laporan.tren_pendaftaran', compact('tren'));
-    }
-
-    public function printTrenPendaftaran()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        $tren = Application::whereHas('position', function($q) use ($instansiId) {
-            $q->where('instansi_id', $instansiId);
-        })->select(DB::raw('MONTH(created_at) as bulan'), DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
-          ->groupBy('tahun', 'bulan')
-          ->orderBy('tahun', 'desc')->orderBy('bulan', 'desc')
-          ->get();
-          
-        $pdf = Pdf::loadView('dinas.pdf.tren_pendaftaran', compact('tren'));
-        $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Tren-Pendaftaran.pdf');
-    }
-
-    // --- 10 BARU: LAPORAN PRODUKTIVITAS LOGBOOK ---
-    public function laporanProduktivitasLogbook()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        $produktivitas = Application::whereHas('position', function($q) use ($instansiId) {
+        $kinerja = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
-        ->withCount('logs')
-        ->with(['user', 'position', 'logs' => function($q) {
-            $q->where('status_validasi', 'disetujui');
-        }])
+        ->with(['user', 'position', 'logs', 'attendances'])
         ->get()->map(function($app) {
-            $app->approved_logs = $app->logs->count();
-            $app->approval_rate = $app->logs_count > 0 ? ($app->approved_logs / $app->logs_count) * 100 : 0;
+            // Hitung Logbook
+            $total_logs = $app->logs->count();
+            $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
+            $log_rate = $total_logs > 0 ? ($approved_logs / $total_logs) * 100 : 0;
+
+            // Hitung Kehadiran (Attendances)
+            $total_attendance = $app->attendances->count();
+            $hadir = $app->attendances->where('status', 'hadir')->count();
+            $attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
+
+            // Hitung Nilai Akhir
+            $t = (float) $app->nilai_teknis;
+            $d = (float) $app->nilai_disiplin;
+            $p = (float) $app->nilai_perilaku;
+            $avg_nilai = ($t + $d + $p) / 3;
+
+            $app->log_rate = $log_rate;
+            $app->attendance_rate = $attendance_rate;
+            $app->avg_nilai = $avg_nilai;
+
             return $app;
-        })->sortByDesc('logs_count');
-        return view('dinas.laporan.produktivitas_logbook', compact('produktivitas'));
+        })->sortByDesc('avg_nilai');
+
+        return view('dinas.laporan.kinerja_mahasiswa', compact('kinerja'));
     }
 
-    public function printProduktivitasLogbook()
+    public function printKinerjaMahasiswa()
     {
         $instansiId = Auth::user()->instansi_id;
-        $produktivitas = Application::whereHas('position', function($q) use ($instansiId) {
+        $kinerja = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
-        ->withCount('logs')
-        ->with(['user', 'position', 'logs' => function($q) {
-            $q->where('status_validasi', 'disetujui');
-        }])
+        ->with(['user', 'position', 'logs', 'attendances'])
         ->get()->map(function($app) {
-            $app->approved_logs = $app->logs->count();
-            $app->approval_rate = $app->logs_count > 0 ? ($app->approved_logs / $app->logs_count) * 100 : 0;
+            $total_logs = $app->logs->count();
+            $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
+            $app->log_rate = $total_logs > 0 ? ($approved_logs / $total_logs) * 100 : 0;
+
+            $total_attendance = $app->attendances->count();
+            $hadir = $app->attendances->where('status', 'hadir')->count();
+            $app->attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
+
+            $t = (float) $app->nilai_teknis;
+            $d = (float) $app->nilai_disiplin;
+            $p = (float) $app->nilai_perilaku;
+            $app->avg_nilai = ($t + $d + $p) / 3;
+
             return $app;
-        })->sortByDesc('logs_count');
-        
-        $pdf = Pdf::loadView('dinas.pdf.produktivitas_logbook', compact('produktivitas'));
-        $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Produktivitas-Logbook.pdf');
+        })->sortByDesc('avg_nilai');
+
+        $pdf = Pdf::loadView('dinas.pdf.kinerja_mahasiswa', compact('kinerja'));
+        $pdf->setPaper('a4', 'landscape'); 
+        return $pdf->stream('Laporan-Kinerja-Mahasiswa.pdf');
     }
 
-    // --- 9 BARU: LAPORAN KOTAK SARAN (ANONIM) ---
-    public function laporanSaranPeserta()
+    // --- 2. LAPORAN BEBAN & KINERJA PEMBIMBING LAPANGAN ---
+    public function laporanBebanPembimbing()
     {
         $instansiId = Auth::user()->instansi_id;
-        
-        // Hanya ambil aplikasi yang sudah selesai dan memiliki saran, urutkan dari yang terbaru
-        $sarans = Application::with('position')
-                    ->whereHas('position', function($q) use ($instansiId) {
-                        $q->where('instansi_id', $instansiId);
-                    })
-                    ->where('status', 'selesai')
-                    ->whereNotNull('saran_peserta')
-                    ->where('saran_peserta', '!=', '')
-                    ->orderBy('updated_at', 'desc')
-                    ->get();
+        $beban = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
+            ->with(['bimbingan' => function($q) {
+                $q->whereIn('status', ['diterima', 'selesai'])
+                  ->with(['logs' => function($q) {
+                      $q->where('status_validasi', 'pending');
+                  }]);
+            }])
+            ->get()->map(function($pl) {
+                $pl->total_bimbingan_aktif = $pl->bimbingan->where('status', 'diterima')->count();
+                $pl->total_lulus = $pl->bimbingan->where('status', 'selesai')->count();
+                
+                // Hitung total logbook pending dari semua mahasiswa bimbingannya
+                $pending_logs = 0;
+                $total_nilai = 0;
+                $count_nilai = 0;
 
-        return view('dinas.laporan.saran_peserta', compact('sarans'));
-    }
+                foreach($pl->bimbingan as $app) {
+                    $pending_logs += $app->logs->count();
+                    
+                    if ($app->nilai_teknis) {
+                        $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
+                        $total_nilai += $avg;
+                        $count_nilai++;
+                    }
+                }
 
-    public function printSaranPeserta()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        
-        $sarans = Application::with('position')
-                    ->whereHas('position', function($q) use ($instansiId) {
-                        $q->where('instansi_id', $instansiId);
-                    })
-                    ->where('status', 'selesai')
-                    ->whereNotNull('saran_peserta')
-                    ->where('saran_peserta', '!=', '')
-                    ->orderBy('updated_at', 'desc')
-                    ->get();
+                $pl->logbook_tertunda = $pending_logs;
+                $pl->rata_nilai_diberikan = $count_nilai > 0 ? $total_nilai / $count_nilai : 0;
 
-        $pdf = Pdf::loadView('dinas.pdf.saran_peserta', compact('sarans'));
-        $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Saran-Peserta.pdf');
-    }
-
-    // --- 9 BARU: LAPORAN KETERISIAN POSISI (OCCUPANCY RATE) ---
-    public function laporanKeterisianPosisi()
-    {
-        $instansiId = Auth::user()->instansi_id;
-        $keterisian = InternshipPosition::where('instansi_id', $instansiId)
-            ->withCount(['applications as total_pelamar', 'applications as diterima' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai']);
-            }])->get()->map(function($pos) {
-                $pos->occupancy_rate = $pos->kuota > 0 ? ($pos->diterima / $pos->kuota) * 100 : 0;
-                return $pos;
+                return $pl;
             });
-        return view('dinas.laporan.keterisian_posisi', compact('keterisian'));
+
+        return view('dinas.laporan.beban_pembimbing', compact('beban'));
     }
 
-    public function printKeterisianPosisi()
+    public function printBebanPembimbing()
     {
         $instansiId = Auth::user()->instansi_id;
-        $keterisian = InternshipPosition::where('instansi_id', $instansiId)
-            ->withCount(['applications as total_pelamar', 'applications as diterima' => function($q) {
-                $q->whereIn('status', ['diterima', 'selesai']);
-            }])->get()->map(function($pos) {
-                $pos->occupancy_rate = $pos->kuota > 0 ? ($pos->diterima / $pos->kuota) * 100 : 0;
-                return $pos;
+        $beban = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
+            ->with(['bimbingan' => function($q) {
+                $q->whereIn('status', ['diterima', 'selesai'])
+                  ->with(['logs' => function($q) {
+                      $q->where('status_validasi', 'pending');
+                  }]);
+            }])
+            ->get()->map(function($pl) {
+                $pl->total_bimbingan_aktif = $pl->bimbingan->where('status', 'diterima')->count();
+                $pl->total_lulus = $pl->bimbingan->where('status', 'selesai')->count();
+                
+                $pending_logs = 0;
+                $total_nilai = 0;
+                $count_nilai = 0;
+
+                foreach($pl->bimbingan as $app) {
+                    $pending_logs += $app->logs->count();
+                    if ($app->nilai_teknis) {
+                        $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
+                        $total_nilai += $avg;
+                        $count_nilai++;
+                    }
+                }
+                $pl->logbook_tertunda = $pending_logs;
+                $pl->rata_nilai_diberikan = $count_nilai > 0 ? $total_nilai / $count_nilai : 0;
+                return $pl;
             });
-            
-        $pdf = Pdf::loadView('dinas.pdf.keterisian_posisi', compact('keterisian'));
+
+        $pdf = Pdf::loadView('dinas.pdf.beban_pembimbing', compact('beban'));
         $pdf->setPaper('a4', 'portrait'); 
-        return $pdf->stream('Laporan-Keterisian-Posisi.pdf');
+        return $pdf->stream('Laporan-Beban-Pembimbing.pdf');
+    }
+
+    // --- 3. LAPORAN DEMOGRAFI KAMPUS / SEKOLAH ---
+    public function laporanDemografiKampus()
+    {
+        $instansiId = Auth::user()->instansi_id;
+        
+        $demografi = Application::whereHas('position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })
+        ->with('user')
+        ->get()
+        ->groupBy(function($app) {
+            return empty($app->user->asal_instansi) ? 'Lainnya / Tidak Diketahui' : $app->user->asal_instansi;
+        })
+        ->map(function($group) {
+            return [
+                'total_pelamar' => $group->count(),
+                'diterima' => $group->whereIn('status', ['diterima', 'selesai'])->count(),
+                'ditolak' => $group->where('status', 'ditolak')->count(),
+                'pending' => $group->where('status', 'pending')->count(),
+            ];
+        })
+        ->sortByDesc('total_pelamar');
+
+        return view('dinas.laporan.demografi_kampus', compact('demografi'));
+    }
+
+    public function printDemografiKampus()
+    {
+        $instansiId = Auth::user()->instansi_id;
+        
+        $demografi = Application::whereHas('position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })
+        ->with('user')
+        ->get()
+        ->groupBy(function($app) {
+            return empty($app->user->asal_instansi) ? 'Lainnya / Tidak Diketahui' : $app->user->asal_instansi;
+        })
+        ->map(function($group) {
+            return [
+                'total_pelamar' => $group->count(),
+                'diterima' => $group->whereIn('status', ['diterima', 'selesai'])->count(),
+                'ditolak' => $group->where('status', 'ditolak')->count(),
+                'pending' => $group->where('status', 'pending')->count(),
+            ];
+        })
+        ->sortByDesc('total_pelamar');
+
+        $pdf = Pdf::loadView('dinas.pdf.demografi_kampus', compact('demografi'));
+        $pdf->setPaper('a4', 'portrait'); 
+        return $pdf->stream('Laporan-Demografi-Kampus.pdf');
+    }
+
+    // --- 4. LAPORAN JURNAL HARIAN MAHASISWA ---
+    public function laporanJurnalHarian(Request $request)
+    {
+        $instansiId = Auth::user()->instansi_id;
+        $filter = $request->query('filter', 'semua');
+        
+        $query = \App\Models\DailyLog::whereHas('application.position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })
+        ->with(['application.user', 'application.position']);
+
+        if ($filter == 'hari') {
+            $query->whereDate('tanggal', \Carbon\Carbon::today());
+        } elseif ($filter == 'minggu') {
+            $query->whereBetween('tanggal', [\Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()]);
+        } elseif ($filter == 'bulan') {
+            $query->whereMonth('tanggal', \Carbon\Carbon::now()->month)
+                  ->whereYear('tanggal', \Carbon\Carbon::now()->year);
+        }
+
+        $jurnal = $query->orderBy('tanggal', 'desc')->get();
+
+        return view('dinas.laporan.jurnal_harian', compact('jurnal', 'filter'));
+    }
+
+    public function printJurnalHarian(Request $request)
+    {
+        $instansiId = Auth::user()->instansi_id;
+        $filter = $request->query('filter', 'semua');
+        
+        $query = \App\Models\DailyLog::whereHas('application.position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })
+        ->with(['application.user', 'application.position']);
+
+        $label_waktu = 'Semua Waktu';
+        if ($filter == 'hari') {
+            $query->whereDate('tanggal', \Carbon\Carbon::today());
+            $label_waktu = 'Hari Ini (' . \Carbon\Carbon::today()->format('d M Y') . ')';
+        } elseif ($filter == 'minggu') {
+            $query->whereBetween('tanggal', [\Carbon\Carbon::now()->startOfWeek(), \Carbon\Carbon::now()->endOfWeek()]);
+            $label_waktu = 'Minggu Ini (' . \Carbon\Carbon::now()->startOfWeek()->format('d M') . ' - ' . \Carbon\Carbon::now()->endOfWeek()->format('d M Y') . ')';
+        } elseif ($filter == 'bulan') {
+            $query->whereMonth('tanggal', \Carbon\Carbon::now()->month)
+                  ->whereYear('tanggal', \Carbon\Carbon::now()->year);
+            $label_waktu = 'Bulan Ini (' . \Carbon\Carbon::now()->format('F Y') . ')';
+        }
+
+        $jurnal = $query->orderBy('tanggal', 'desc')->get();
+
+        $pdf = Pdf::loadView('dinas.pdf.jurnal_harian', compact('jurnal', 'label_waktu'));
+        $pdf->setPaper('a4', 'landscape'); 
+        return $pdf->stream('Laporan-Jurnal-Harian.pdf');
     }
 }

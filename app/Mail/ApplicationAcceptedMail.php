@@ -40,7 +40,7 @@ class ApplicationAcceptedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.applications.accepted',
+            view: 'emails.applications.accepted',
         );
     }
 

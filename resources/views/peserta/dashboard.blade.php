@@ -350,13 +350,13 @@
                 
                 <div class="p-6 space-y-4">
                     @forelse($myApplications as $app)
-                        <div x-data class="flex flex-col md:flex-row justify-between items-start md:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer
+                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4
                             {{ $app->status == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($app->status == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' : ($app->status == 'menunggu' ? 'bg-orange-50/50 border-orange-100' : 'bg-white border-gray-100 hover:border-teal-200')) }}"
                             x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                             
-                            <div class="mb-4 md:mb-0 w-full md:w-auto">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">{{ $app->position->instansi->nama_dinas }}</h4>
+                            <div class="w-full lg:flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                    <h4 class="font-bold text-gray-900 text-lg leading-tight">{{ $app->position->instansi->nama_dinas }}</h4>
                                     @php
                                         $badges = [
                                             'pending' => 'bg-yellow-100 text-yellow-800',
@@ -367,11 +367,11 @@
                                             'ditolak' => 'bg-red-100 text-red-800'
                                         ];
                                     @endphp
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase {{ $badges[$app->display_status] ?? 'bg-gray-100' }}">
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase whitespace-nowrap {{ $badges[$app->display_status] ?? 'bg-gray-100' }}">
                                         {{ $app->display_status }}
                                     </span>
                                     @if($app->is_automatic_placement)
-                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1">
+                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1 whitespace-nowrap">
                                             <i class="fas fa-magic text-[10px]"></i> Penempatan Otomatis
                                         </span>
                                     @endif
@@ -398,7 +398,7 @@
                                 @endif
                             </div>
 
-                            <div class="flex flex-wrap gap-2 justify-end w-full md:w-auto" x-on:click.stop>
+                            <div class="flex flex-wrap gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-2 lg:mt-0" x-on:click.stop>
                                 @if($app->display_status == 'diterima')
                                     <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
@@ -443,7 +443,7 @@
                                     <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.');">
                                         @csrf
                                         <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-sm flex items-center gap-2">
-                                            <i class="fas fa-times-circle"></i> Batalkan Lamaran
+                                            <i class="fas fa-times-circle"></i> Batalkan
                                         </button>
                                     </form>
                                 @endif

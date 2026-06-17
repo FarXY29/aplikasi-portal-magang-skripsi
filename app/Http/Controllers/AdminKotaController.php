@@ -83,11 +83,12 @@ class AdminKotaController extends Controller
             'alamat' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'radius_absen' => 'required|numeric|min:10',
             'email_admin' => 'required|email|unique:users,email',
             'password_admin' => 'required|min:8',
         ]);
 
-        $instansi = Instansi::create($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude']));
+        $instansi = Instansi::create($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
 
         User::create([
             'name' => 'Admin ' . $request->nama_dinas,
@@ -116,9 +117,10 @@ class AdminKotaController extends Controller
             'alamat' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'radius_absen' => 'required|numeric|min:10',
         ]);
 
-        $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude']));
+        $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
 
         return redirect()->route('admin.instansi.index')->with('success', 'Data INSTANSI berhasil diperbarui!');
     }

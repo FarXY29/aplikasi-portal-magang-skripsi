@@ -126,18 +126,17 @@ Route::middleware('auth')->group(function () {
         // Laporan & Cetak
         Route::get('/laporan/rekap', [AdminInstansiController::class, 'laporanRekap'])->name('laporan.rekap');
         Route::get('/laporan/rekap/print', [AdminInstansiController::class, 'printRekap'])->name('laporan.rekap.print');
-        Route::get('/laporan/grading', [AdminInstansiController::class, 'laporanGradingDinas'])->name('laporan.grading');
-        Route::get('/laporan/grading/print', [AdminInstansiController::class, 'printGradingDinas'])->name('laporan.grading.print');
-        Route::get('/laporan/evaluasi-pembimbing', [AdminInstansiController::class, 'laporanEvaluasiPembimbing'])->name('laporan.evaluasi_pembimbing');
-        Route::get('/laporan/evaluasi-pembimbing/print', [AdminInstansiController::class, 'printEvaluasiPembimbing'])->name('laporan.evaluasi_pembimbing.print');
-        Route::get('/laporan/tren-pendaftaran', [AdminInstansiController::class, 'laporanTrenPendaftaran'])->name('laporan.tren_pendaftaran');
-        Route::get('/laporan/tren-pendaftaran/print', [AdminInstansiController::class, 'printTrenPendaftaran'])->name('laporan.tren_pendaftaran.print');
-        Route::get('/laporan/produktivitas-logbook', [AdminInstansiController::class, 'laporanProduktivitasLogbook'])->name('laporan.produktivitas_logbook');
-        Route::get('/laporan/produktivitas-logbook/print', [AdminInstansiController::class, 'printProduktivitasLogbook'])->name('laporan.produktivitas_logbook.print');
-        Route::get('/laporan/keterisian-posisi', [AdminInstansiController::class, 'laporanKeterisianPosisi'])->name('laporan.keterisian_posisi');
-        Route::get('/laporan/keterisian-posisi/print', [AdminInstansiController::class, 'printKeterisianPosisi'])->name('laporan.keterisian_posisi.print');
-        Route::get('/laporan/saran-peserta', [AdminInstansiController::class, 'laporanSaranPeserta'])->name('laporan.saran_peserta');
-        Route::get('/laporan/saran-peserta/print', [AdminInstansiController::class, 'printSaranPeserta'])->name('laporan.saran_peserta.print');
+        Route::get('/laporan/kinerja-mahasiswa', [AdminInstansiController::class, 'laporanKinerjaMahasiswa'])->name('laporan.kinerja_mahasiswa');
+        Route::get('/laporan/kinerja-mahasiswa/print', [AdminInstansiController::class, 'printKinerjaMahasiswa'])->name('laporan.kinerja_mahasiswa.print');
+        Route::get('/laporan/beban-pembimbing', [AdminInstansiController::class, 'laporanBebanPembimbing'])->name('laporan.beban_pembimbing');
+        Route::get('/laporan/beban-pembimbing/print', [AdminInstansiController::class, 'printBebanPembimbing'])->name('laporan.beban_pembimbing.print');
+        // Laporan Demografi Kampus
+        Route::get('/laporan/demografi-kampus', [AdminInstansiController::class, 'laporanDemografiKampus'])->name('laporan.demografi_kampus');
+        Route::get('/laporan/demografi-kampus/print', [AdminInstansiController::class, 'printDemografiKampus'])->name('laporan.demografi_kampus.print');
+        // Laporan Jurnal Harian
+        Route::get('/laporan/jurnal-harian', [AdminInstansiController::class, 'laporanJurnalHarian'])->name('laporan.jurnal_harian');
+        Route::get('/laporan/jurnal-harian/print', [AdminInstansiController::class, 'printJurnalHarian'])->name('laporan.jurnal_harian.print');
+        
         Route::get('/peserta/{id}/absensi/pdf', [AdminInstansiController::class, 'printAbsensi'])->name('peserta.absensi.pdf');
 
         // Pengaturan

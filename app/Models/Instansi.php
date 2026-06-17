@@ -21,6 +21,7 @@ class Instansi extends Model
         'jam_mulai_pulang', 
         'latitude',
         'longitude',
+        'radius_absen',
         'ttd_kepala', // Kolom Tanda Tangan Kepala Dinas
     ];
 

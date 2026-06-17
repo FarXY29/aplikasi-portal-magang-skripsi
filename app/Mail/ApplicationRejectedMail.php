@@ -40,7 +40,7 @@ class ApplicationRejectedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.applications.rejected',
+            view: 'emails.applications.rejected',
         );
     }
 

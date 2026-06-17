@@ -1,34 +1,45 @@
-@component('mail::message')
-# PEMBERITAHUAN BERAKHIRNYA MASA MAGANG
-**Pemerintah Kota Banjarmasin**
+@extends('emails.layouts.master')
 
-Yth. Sdr/i **{{ $application->user->name }}**,
+@section('title', 'Pemberitahuan Berakhirnya Masa Magang')
 
-Melalui surat elektronik ini, kami memberitahukan bahwa program magang yang sedang Anda jalani akan segera berakhir dalam waktu **7 hari ke depan**.
+@section('header_class', 'warning')
+@section('header_title', 'Masa Magang Segera Berakhir')
 
-Berikut adalah rincian magang Anda:
+@section('content')
+    <p>Yth. Sdr/i <strong>{{ $application->user->name }}</strong>,</p>
+    
+    <p>Melalui surat elektronik ini, kami memberitahukan bahwa program magang yang sedang Anda jalani akan segera berakhir dalam waktu <strong>7 hari ke depan</strong>.</p>
+    
+    <p>Berikut adalah rincian magang Anda:</p>
 
-@component('mail::table')
-| Keterangan | Detail |
-| :--- | :--- |
-| **Instansi** | {{ $application->position->instansi->nama_dinas ?? '-' }} |
-| **Tanggal Selesai** | {{ \Carbon\Carbon::parse($application->tanggal_selesai)->translatedFormat('d F Y') }} |
-@endcomponent
+    <table class="details-table">
+        <tr>
+            <td>Instansi</td>
+            <td>{{ $application->position->instansi->nama_dinas ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td>Tanggal Selesai</td>
+            <td>{{ \Carbon\Carbon::parse($application->tanggal_selesai)->translatedFormat('d F Y') }}</td>
+        </tr>
+    </table>
 
-Mengingat waktu yang tersisa, kami mengingatkan Anda untuk segera menyelesaikan kewajiban administratif berikut:
-1. Memastikan seluruh **Logbook / Laporan Harian** telah diisi dan diverifikasi.
-2. Memeriksa kembali kelengkapan **Absensi Harian**.
-3. Meminta **Penilaian Akhir** dari Pembimbing Lapangan Anda di instansi.
-
-Penyelesaian kewajiban di atas adalah syarat mutlak untuk penerbitan **Sertifikat dan Transkrip Nilai** magang Anda.
-
-@component('mail::button', ['url' => route('login')])
-Buka Dashboard Magang
-@endcomponent
-
-Terima kasih atas dedikasi Anda sejauh ini. Tetap semangat menyelesaikan program ini dengan tuntas!
-
-Hormat kami,<br>
-**Admin SiMagang**<br>
-Pemerintah Kota Banjarmasin
-@endcomponent
+    <div class="alert-box">
+        <h3>Peringatan Kewajiban Administratif</h3>
+        <p style="font-style: normal; color: #374151; margin-top: 10px;">Mengingat waktu yang tersisa, kami mengingatkan Anda untuk segera menyelesaikan kewajiban berikut:</p>
+        <ul style="margin-top: 10px; color: #4b5563;">
+            <li>Memastikan seluruh <strong>Logbook / Laporan Harian</strong> telah diisi dan diverifikasi.</li>
+            <li>Memeriksa kembali kelengkapan <strong>Absensi Harian</strong>.</li>
+            <li>Meminta <strong>Penilaian Akhir</strong> dari Pembimbing Lapangan Anda di instansi.</li>
+        </ul>
+        <p style="font-style: italic; color: #b45309; margin-top: 15px; font-size: 14px;">Penyelesaian kewajiban di atas adalah syarat mutlak untuk penerbitan Sertifikat dan Transkrip Nilai magang Anda.</p>
+    </div>
+    
+    <div class="button-container">
+        <a href="{{ route('login') }}" class="button">Buka Dashboard Magang</a>
+    </div>
+    
+    <p>Terima kasih atas dedikasi Anda sejauh ini. Tetap semangat menyelesaikan program ini dengan tuntas!</p>
+    
+    <p style="margin-top: 30px; margin-bottom: 0;">Hormat kami,</p>
+    <p style="font-weight: bold; margin-top: 5px;">Admin SiMagang<br><span style="font-weight: normal; color: #6b7280;">Pemerintah Kota Banjarmasin</span></p>
+@endsection

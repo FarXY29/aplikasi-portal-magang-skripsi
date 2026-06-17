@@ -40,7 +40,7 @@ class InternshipEndingMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.internship.ending',
+            view: 'emails.internship.ending',
         );
     }
 
