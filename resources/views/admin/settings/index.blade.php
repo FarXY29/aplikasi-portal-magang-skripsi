@@ -32,6 +32,18 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div x-data="{ show: true }" x-show="show" x-transition class="flex items-center p-4 mb-6 text-red-800 rounded-xl bg-red-50 border border-red-100 shadow-sm relative">
+                    <i class="fas fa-exclamation-circle flex-shrink-0 w-5 h-5 mr-3 text-red-600"></i>
+                    <div class="text-sm font-bold">
+                        {{ session('error') }}
+                    </div>
+                    <button @click="show = false" type="button" class="ml-auto bg-red-100 text-red-500 rounded-lg p-1.5 hover:bg-red-200 inline-flex h-8 w-8 items-center justify-center transition">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+
             <form action="{{ route('admin.settings.update') }}" method="POST">
                 @csrf
                 
@@ -105,6 +117,23 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-gray-100">
+                        <div class="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shadow-inner">
+                                    <i class="fas fa-database text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Backup Database</h3>
+                                    <p class="text-sm text-gray-500">Mencadangkan seluruh data sistem saat ini (Format .sql).</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.settings.backup') }}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-bold rounded-lg shadow-sm hover:bg-purple-700 transition">
+                                <i class="fas fa-download mr-2"></i> Download Backup
+                            </a>
                         </div>
                     </div>
 

@@ -221,6 +221,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+        Route::get('/settings/backup', [AdminSettingController::class, 'backupDatabase'])->name('settings.backup');
     });
 
     // G. PROFILE

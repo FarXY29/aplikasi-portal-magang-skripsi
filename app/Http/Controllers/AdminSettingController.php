@@ -54,4 +54,23 @@ class AdminSettingController extends Controller
 
         return back()->with('success', 'Pengaturan sistem berhasil diperbarui.');
     }
+
+    public function backupDatabase()
+    {
+        try {
+            $filename = 'backup_' . env('DB_DATABASE') . '_' . date('Y-m-d_H-i-s') . '.sql';
+            $path = storage_path('app/public/backups/');
+            
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+            
+            $dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:host=' . env('DB_HOST') . ';dbname=' . env('DB_DATABASE'), env('DB_USERNAME'), env('DB_PASSWORD'));
+            $dump->start($path . $filename);
+            
+            return response()->download($path . $filename)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal melakukan backup database: ' . $e->getMessage());
+        }
+    }
 }
