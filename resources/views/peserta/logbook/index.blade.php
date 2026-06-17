@@ -122,7 +122,7 @@
 
                 <!-- Right Column: Timeline/Cards -->
                 <div class="xl:col-span-8">
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden min-h-[500px] flex flex-col">
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden min-h-[500px] flex flex-col xl:h-[120vh]">
                         
                         <!-- Header & Filters -->
                         <div class="p-6 flex flex-col justify-between gap-4 sticky top-0 z-10 glass-effect">
@@ -147,6 +147,7 @@
                                         Revisi
                                     </button>
                                 </div>
+                                
                             </div>
                             
                             <!-- Advanced Filters -->
@@ -165,11 +166,14 @@
                                         <i class="fas fa-times-circle"></i> Reset Filter
                                     </button>
                                 </div>
+                                <a href="{{ route('peserta.logbook.print') }}" target="_blank" class="px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-900 transition shadow-sm flex items-center gap-2">
+                <i class="fas fa-print"></i> Cetak Rekap Logbook
+            </a>
                             </div>
                         </div>
 
                         <!-- Card Grid -->
-                        <div class="p-6 bg-gray-50/30 flex-1">
+                        <div class="p-6 bg-gray-50/30 flex-1 overflow-y-auto">
                             @if($logs->isEmpty())
                                 <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
                                     <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-4">

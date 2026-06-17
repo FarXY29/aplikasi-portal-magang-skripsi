@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminKotaController;
 use App\Http\Controllers\AdminInstansiController;
 use App\Http\Controllers\LogbookController;
 use App\Http\Controllers\PembimbingLapanganController;
-use App\Http\Controllers\KepalaDinasController;
+
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\GoogleAuthController;
@@ -48,7 +48,7 @@ Route::get('/dashboard', function () {
     if ($role == 'pembimbing_lapangan') return redirect()->route('pembimbing_lapangan.dashboard');
     if ($role == 'peserta') return redirect()->route('peserta.dashboard');
     if ($role == 'pembimbing') return redirect()->route('pembimbing.dashboard');
-    if ($role == 'kepala_dinas') return redirect()->route('kepala_dinas.dashboard');
+
     
     return view('dashboard'); 
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/lamaran/{id}/batal', [MagangController::class, 'cancelApplication'])->name('lamaran.batal');
 
         // ROUTE ABSENSI 
+        Route::get('/absensi', [App\Http\Controllers\AttendanceController::class, 'index'])->name('absensi.index');
         Route::post('/absen/masuk', [App\Http\Controllers\AttendanceController::class, 'store'])->name('absen.masuk');
         Route::post('/absen/pulang', [App\Http\Controllers\AttendanceController::class, 'clockOut'])->name('absen.pulang');
         Route::post('/absen/izin', [App\Http\Controllers\AttendanceController::class, 'permission'])->name('absen.izin');

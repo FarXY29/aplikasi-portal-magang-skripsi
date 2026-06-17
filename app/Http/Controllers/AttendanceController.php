@@ -11,6 +11,34 @@ use Carbon\Carbon;
 class AttendanceController extends Controller
 {
     /**
+     * Tampilkan riwayat absen (Attendance History) untuk Peserta
+     */
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $application = Application::where('user_id', $user->id)
+                        ->whereIn('status', ['diterima', 'selesai'])
+                        ->first();
+
+        if (!$application) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');
+        }
+
+        $query = Attendance::where('application_id', $application->id)
+                           ->orderBy('date', 'desc');
+
+        // Filter berdasarkan bulan jika ada
+        if ($request->has('month') && $request->month != '') {
+            $query->whereMonth('date', Carbon::parse($request->month)->month)
+                  ->whereYear('date', Carbon::parse($request->month)->year);
+        }
+
+        $attendances = $query->paginate(15);
+
+        return view('peserta.absensi.index', compact('attendances', 'application'));
+    }
+
+    /**
      * ABSEN DATANG (Clock In)
      * Mengecek jam mulai masuk dari tabel INSTANSI.
      */

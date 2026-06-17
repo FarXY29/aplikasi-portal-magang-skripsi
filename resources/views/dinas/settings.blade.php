@@ -131,20 +131,19 @@
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Scan Tanda Tangan</label>
                                 
                                 <div class="border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 h-40 flex items-center justify-center mb-4 relative overflow-hidden group">
-                                    @if($instansi->ttd_kepala)
-                                        <img src="{{ asset('storage/' . $instansi->ttd_kepala) }}" class="h-28 object-contain z-10">
-                                        <div class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 z-20">
-                                            <span class="text-xs font-bold text-gray-500">Tanda tangan saat ini</span>
-                                        </div>
-                                    @else
-                                        <div class="text-center text-gray-400">
-                                            <i class="fas fa-image text-3xl mb-2"></i>
-                                            <p class="text-xs">Belum ada tanda tangan</p>
-                                        </div>
-                                    @endif
+                                    <img id="preview-ttd" src="{{ $instansi->ttd_kepala ? asset('storage/' . $instansi->ttd_kepala) : '' }}" class="h-28 object-contain z-10 {{ $instansi->ttd_kepala ? '' : 'hidden' }}">
+                                    
+                                    <div id="no-ttd-text" class="text-center text-gray-400 {{ $instansi->ttd_kepala ? 'hidden' : '' }}">
+                                        <i class="fas fa-image text-3xl mb-2"></i>
+                                        <p class="text-xs">Belum ada tanda tangan</p>
+                                    </div>
+
+                                    <div id="ttd-hover-text" class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 z-20 {{ $instansi->ttd_kepala ? '' : 'hidden' }}">
+                                        <span class="text-xs font-bold text-gray-500">Tanda tangan saat ini</span>
+                                    </div>
                                 </div>
 
-                                <input type="file" name="ttd_kepala" accept="image/png"
+                                <input type="file" id="ttd_kepala_input" name="ttd_kepala" accept="image/png" onchange="previewTtd(this)"
                                     class="block w-full text-xs text-gray-500
                                     file:mr-4 file:py-2 file:px-4
                                     file:rounded-full file:border-0
@@ -176,14 +175,11 @@
                         <p class="text-sm font-bold text-gray-800">{{ $instansi->jabatan_pejabat ?? '[Jabatan Kosong]' }}</p>
                     </div>
                     
-                    <div class="h-24 flex items-center justify-start my-2">
-                        @if($instansi->ttd_kepala)
-                            <img src="{{ asset('storage/' . $instansi->ttd_kepala) }}" class="h-20 object-contain">
-                        @else
-                            <div class="w-full h-full border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-xs text-gray-300 italic rounded">
-                                Area Tanda Tangan
-                            </div>
-                        @endif
+                    <div class="h-24 flex items-center justify-start my-2 relative">
+                        <img id="doc-preview-ttd" src="{{ $instansi->ttd_kepala ? asset('storage/' . $instansi->ttd_kepala) : '' }}" class="h-20 object-contain {{ $instansi->ttd_kepala ? '' : 'hidden' }}">
+                        <div id="doc-no-ttd" class="w-full h-full border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-xs text-gray-300 italic rounded {{ $instansi->ttd_kepala ? 'hidden' : '' }}">
+                            Area Tanda Tangan
+                        </div>
                     </div>
 
                     <div class="text-left">
@@ -197,4 +193,38 @@
 
         </div>
     </div>
+
+    <script>
+        function previewTtd(input) {
+            const preview = document.getElementById('preview-ttd');
+            const noTtdText = document.getElementById('no-ttd-text');
+            const hoverText = document.getElementById('ttd-hover-text');
+            
+            // For the document preview at the bottom
+            const docPreview = document.getElementById('doc-preview-ttd');
+            const docNoTtd = document.getElementById('doc-no-ttd');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    if (noTtdText) noTtdText.classList.add('hidden');
+                    if (hoverText) {
+                        hoverText.classList.remove('hidden');
+                        hoverText.querySelector('span').innerText = 'Preview tanda tangan baru';
+                    }
+
+                    if (docPreview) {
+                        docPreview.src = e.target.result;
+                        docPreview.classList.remove('hidden');
+                    }
+                    if (docNoTtd) {
+                        docNoTtd.classList.add('hidden');
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </x-app-layout>

@@ -5,7 +5,7 @@
         'pembimbing_lapangan'     => 'bg-blue-100 text-blue-700 border-blue-200',
         'peserta'    => 'bg-green-100 text-green-700 border-green-200',
         'pembimbing' => 'bg-orange-100 text-orange-700 border-orange-200',
-        'kepala_dinas' => 'bg-red-100 text-red-700 border-red-200',
+
     ];
     $roleName = [
         'admin_kota' => 'Super Admin',
@@ -13,7 +13,7 @@
         'pembimbing_lapangan'     => 'Pembimbing Lapangan Lap.',
         'peserta'    => 'Peserta',
         'pembimbing' => 'Pembimbing Sekolah',
-        'kepala_dinas' => 'Kepala Dinas',
+
     ][$role] ?? ucwords(str_replace('_', ' ', $role));
 @endphp
 <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border {{ $colors[$role] ?? 'bg-gray-100' }}">

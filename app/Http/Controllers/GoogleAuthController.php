@@ -63,7 +63,7 @@ class GoogleAuthController extends Controller
         if ($role == 'pembimbing_lapangan') return redirect()->route('pembimbing_lapangan.dashboard');
         if ($role == 'peserta') return redirect()->route('peserta.dashboard');
         if ($role == 'pembimbing') return redirect()->route('pembimbing.dashboard');
-        if ($role == 'kepala_dinas') return redirect()->route('kepala_dinas.dashboard');
+
         
         return redirect('/');
     }

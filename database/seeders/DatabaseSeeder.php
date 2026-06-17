@@ -75,18 +75,18 @@ class DatabaseSeeder extends Seeder
                 'instansi_id' => $instansi->id,
             ]);
 
-            // Buat 2-3 Pembimbing per INSTANSI
+            // Buat 2-3 Pembimbing Lapangan per INSTANSI
             $numPembimbing = rand(2, 3);
             for ($i = 0; $i < $numPembimbing; $i++) {
-                $pembimbing = User::create([
-                    'name' => $faker->name,
-                    'username' => 'pembimbing_' . $instansi->id . '_' . $i,
-                    'email' => 'pembimbing.' . $instansi->id . '_' . $i . '@banjarmasin.go.id',
+                $pembimbingLapangan = User::create([
+                    'name' => 'Pembimbing ' . $faker->name,
+                    'username' => 'pembimbing_lapangan_' . $instansi->id . '_' . $i,
+                    'email' => 'pembimbing.lapangan.' . $instansi->id . '_' . $i . '@banjarmasin.go.id',
                     'password' => Hash::make('password'),
-                    'role' => 'pembimbing',
+                    'role' => 'pembimbing_lapangan',
                     'instansi_id' => $instansi->id,
                 ]);
-                $pembimbings[$instansi->id][] = $pembimbing;
+                $pembimbings[$instansi->id][] = $pembimbingLapangan;
             }
 
             // Buat 2-4 Posisi Magang per INSTANSI
@@ -118,11 +118,25 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // Buat Pembimbing Akademik / Sekolah (10 orang)
+        $pembimbingSekolahList = [];
+        for ($k = 1; $k <= 10; $k++) {
+            $pembimbingSekolahList[] = User::create([
+                'name' => 'Dosen/Guru ' . $faker->name,
+                'username' => 'pembimbing_' . $k,
+                'email' => 'pembimbing' . $k . '@kampus.ac.id',
+                'password' => Hash::make('password'),
+                'role' => 'pembimbing',
+            ]);
+        }
+
         // 3. Buat Akun Peserta & Lamaran
         $institusiList = ['Universitas Lambung Mangkurat', 'Politeknik Negeri Banjarmasin', 'Universitas Islam Kalimantan', 'SMKN 1 Banjarmasin', 'SMKN 2 Banjarmasin'];
         
         // Buat 60 Peserta
         for ($i = 1; $i <= 60; $i++) {
+            $pembimbingSekolah = $faker->randomElement($pembimbingSekolahList);
+            
             $peserta = User::create([
                 'name' => $faker->name,
                 'username' => 'peserta_' . $i,
@@ -130,6 +144,8 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'peserta',
                 'asal_instansi' => $faker->randomElement($institusiList),
+                'pembimbing_sekolah_id' => $pembimbingSekolah->id,
+                'nama_pembimbing_sekolah' => $pembimbingSekolah->name,
                 'phone' => $faker->phoneNumber,
                 'nik' => $faker->numerify('6371##########'),
             ]);
