@@ -111,6 +111,36 @@
                                 @error('ttd_kepala') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
+                            <!-- Akun Admin Instansi -->
+                            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4 flex items-center gap-2"><i class="fas fa-user-shield text-teal-600"></i> Akun Admin Instansi</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Email Login</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <input type="email" name="email_admin" value="{{ old('email_admin', $adminUser->email ?? '') }}" 
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                        </div>
+                                        @error('email_admin') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Password Baru (Opsional)</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            <input type="password" name="password_admin" placeholder="Kosongkan jika tidak diubah"
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm">
+                                        </div>
+                                        @error('password_admin') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 

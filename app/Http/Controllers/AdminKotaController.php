@@ -104,12 +104,14 @@ class AdminKotaController extends Controller
     public function edit($id)
     {
         $instansi = Instansi::findOrFail($id);
-        return view('admin.instansi.edit', compact('instansi'));
+        $adminUser = User::where('instansi_id', $instansi->id)->where('role', 'admin_instansi')->first();
+        return view('admin.instansi.edit', compact('instansi', 'adminUser'));
     }
 
     public function update(Request $request, $id)
     {
         $instansi = Instansi::findOrFail($id);
+        $adminUser = User::where('instansi_id', $instansi->id)->where('role', 'admin_instansi')->first();
 
         $request->validate([
             'nama_dinas' => 'required|string|max:255',
@@ -118,9 +120,27 @@ class AdminKotaController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'radius_absen' => 'required|numeric|min:10',
+            'email_admin' => $adminUser ? 'required|email|unique:users,email,'.$adminUser->id : 'nullable|email|unique:users,email',
+            'password_admin' => 'nullable|min:8',
         ]);
 
         $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
+
+        if ($adminUser && $request->email_admin) {
+            $adminUser->email = $request->email_admin;
+            if ($request->filled('password_admin')) {
+                $adminUser->password = Hash::make($request->password_admin);
+            }
+            $adminUser->save();
+        } elseif (!$adminUser && $request->email_admin && $request->filled('password_admin')) {
+            User::create([
+                'name' => 'Admin ' . $request->nama_dinas,
+                'email' => $request->email_admin,
+                'password' => Hash::make($request->password_admin),
+                'role' => 'admin_instansi',
+                'instansi_id' => $instansi->id,
+            ]);
+        }
 
         return redirect()->route('admin.instansi.index')->with('success', 'Data INSTANSI berhasil diperbarui!');
     }
