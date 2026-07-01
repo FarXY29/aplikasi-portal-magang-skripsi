@@ -208,8 +208,8 @@
 
                                             <!-- Image Header -->
                                             @if($log->bukti_foto_path)
-                                                <div class="h-48 w-full bg-gray-100 relative cursor-pointer overflow-hidden" @click="openGallery('{{ Storage::url($log->bukti_foto_path) }}')">
-                                                    <img src="{{ Storage::url($log->bukti_foto_path) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                                <div class="h-48 w-full bg-gray-100 relative cursor-pointer overflow-hidden" @click="openGallery('{{ asset('storage/' . $log->bukti_foto_path) }}')">
+                                                    <img src="{{ asset('storage/' . $log->bukti_foto_path) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
                                                     </div>
@@ -347,6 +347,10 @@
                 removeBtn.classList.add('flex');
             }
             reader.readAsDataURL(input.files[0]);
+        } else {
+            // If user clicked cancel in the file dialog, it clears the input.
+            // We must clear the preview so they know the file is gone.
+            removeImage();
         }
     }
 

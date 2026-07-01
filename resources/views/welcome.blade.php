@@ -220,7 +220,7 @@
                     </div>
                     <div>
                         <div class="text-3xl font-black text-slate-800 tracking-tight">{{ $totalInstansi }}</div>
-                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mt-0.5">Instansi Mitra</div>
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mt-0.5">Instansi</div>
                     </div>
                 </div>
                 <!-- Lowongan -->

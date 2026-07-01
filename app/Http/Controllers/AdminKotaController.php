@@ -155,9 +155,50 @@ class AdminKotaController extends Controller
 
     // --- LAPORAN & EXCEL ---
     
-    public function report()
+    public function report(Request $request)
     {
-        $laporan = Instansi::with(['positions.applications'])->get()->map(function($dinas) {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'pelamar_desc');
+
+        $query = Instansi::with(['positions.applications']);
+        
+        if ($search) {
+            $query->where('nama_dinas', 'like', '%' . $search . '%');
+        }
+
+        $instansis = $query->get();
+
+        // 1. Hitung Statistik Global (seluruh kota)
+        $allInstansis = Instansi::with(['positions.applications'])->get();
+        $totalInstansi = $allInstansis->count();
+        $totalLowongan = $allInstansis->flatMap->positions->where('status', 'buka')->count();
+        
+        $allApps = $allInstansis->flatMap->positions->flatMap->applications;
+        $totalPelamar = $allApps->count();
+        $totalDiterima = $allApps->whereIn('status', ['diterima', 'selesai'])->count();
+        
+        $avgSeleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
+        
+        // Instansi Terfavorit
+        $favDinas = $allInstansis->map(function($d) {
+            return [
+                'nama' => $d->nama_dinas,
+                'count' => $d->positions->flatMap->applications->count()
+            ];
+        })->sortByDesc('count')->first();
+        $favDinasName = $favDinas && $favDinas['count'] > 0 ? $favDinas['nama'] : '-';
+
+        $stats = [
+            'total_instansi' => $totalInstansi,
+            'total_lowongan' => $totalLowongan,
+            'total_pelamar' => $totalPelamar,
+            'total_diterima' => $totalDiterima,
+            'avg_seleksi_rate' => $avgSeleksiRate,
+            'fav_dinas' => $favDinasName
+        ];
+
+        // 2. Map data untuk dinas terfilter
+        $laporan = $instansis->map(function($dinas) {
             $positions = $dinas->positions;
             $applications = $positions->flatMap->applications;
             
@@ -165,11 +206,7 @@ class AdminKotaController extends Controller
             $totalDiterima = $applications->whereIn('status', ['diterima', 'selesai'])->count();
             $totalPosisi = $positions->count();
             
-            // --- PROSES DATA (LOGIKA TAMBAHAN) ---
-            // Menghitung berapa persen pelamar yang berhasil diterima (Efektivitas Seleksi)
             $seleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
-            
-            // Menghitung rata-rata pelamar per posisi untuk melihat instansi terpopuler
             $avgPelamar = $totalPosisi > 0 ? round($totalPelamar / $totalPosisi, 1) : 0;
 
             return [
@@ -177,36 +214,88 @@ class AdminKotaController extends Controller
                 'lowongan_aktif' => $positions->where('status', 'buka')->count(),
                 'total_pelamar' => $totalPelamar,
                 'total_magang' => $totalDiterima,
-                'seleksi_rate' => $seleksiRate . '%', // Hasil Proses
-                'avg_peminat' => $avgPelamar . ' orang/posisi', // Hasil Proses
+                'seleksi_rate' => $seleksiRate,
+                'avg_peminat' => $avgPelamar,
             ];
         });
 
-        $laporan = $laporan->sortByDesc('total_pelamar');
-        return view('admin.laporan', compact('laporan'));
+        // 3. Sorting
+        if ($sort === 'name_asc') {
+            $laporan = $laporan->sortBy('nama_dinas');
+        } elseif ($sort === 'name_desc') {
+            $laporan = $laporan->sortByDesc('nama_dinas');
+        } elseif ($sort === 'pelamar_asc') {
+            $laporan = $laporan->sortBy('total_pelamar');
+        } elseif ($sort === 'pelamar_desc') {
+            $laporan = $laporan->sortByDesc('total_pelamar');
+        } elseif ($sort === 'lowongan_desc') {
+            $laporan = $laporan->sortByDesc('lowongan_aktif');
+        } elseif ($sort === 'lowongan_asc') {
+            $laporan = $laporan->sortBy('lowongan_aktif');
+        } elseif ($sort === 'seleksi_desc') {
+            $laporan = $laporan->sortByDesc('seleksi_rate');
+        } elseif ($sort === 'seleksi_asc') {
+            $laporan = $laporan->sortBy('seleksi_rate');
+        } else {
+            $laporan = $laporan->sortByDesc('total_pelamar');
+        }
+
+        $laporan = $laporan->values();
+
+        return view('admin.laporan', compact('laporan', 'stats'));
     }
 
-    public function printLaporan()
+    public function printLaporan(Request $request)
     {
-        // Copy the same query from report()
-        $instansis = Instansi::with(['positions.applications'])->get();
-        $totalDinas = $instansis->count();
-        $totalPositions = InternshipPosition::count();
-        
-        $allApplications = Application::whereIn('status', ['diterima', 'selesai'])->get();
-        $totalDiterima = $allApplications->count();
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'pelamar_desc');
 
+        $query = Instansi::with(['positions.applications']);
+        
+        if ($search) {
+            $query->where('nama_dinas', 'like', '%' . $search . '%');
+        }
+
+        $instansis = $query->get();
+
+        // 1. Hitung Statistik Global (seluruh kota)
+        $allInstansis = Instansi::with(['positions.applications'])->get();
+        $totalInstansi = $allInstansis->count();
+        $totalLowongan = $allInstansis->flatMap->positions->where('status', 'buka')->count();
+        
+        $allApps = $allInstansis->flatMap->positions->flatMap->applications;
+        $totalPelamar = $allApps->count();
+        $totalDiterima = $allApps->whereIn('status', ['diterima', 'selesai'])->count();
+        
+        $avgSeleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
+        
+        // Instansi Terfavorit
+        $favDinas = $allInstansis->map(function($d) {
+            return [
+                'nama' => $d->nama_dinas,
+                'count' => $d->positions->flatMap->applications->count()
+            ];
+        })->sortByDesc('count')->first();
+        $favDinasName = $favDinas && $favDinas['count'] > 0 ? $favDinas['nama'] : '-';
+
+        $stats = [
+            'total_instansi' => $totalInstansi,
+            'total_lowongan' => $totalLowongan,
+            'total_pelamar' => $totalPelamar,
+            'total_diterima' => $totalDiterima,
+            'avg_seleksi_rate' => $avgSeleksiRate,
+            'fav_dinas' => $favDinasName
+        ];
+
+        // 2. Map data untuk dinas terfilter
         $laporan = $instansis->map(function($dinas) {
             $positions = $dinas->positions;
-            $totalPosisi = $positions->count();
-            $totalPelamar = $positions->sum(function($pos) {
-                return $pos->applications->count();
-            });
+            $applications = $positions->flatMap->applications;
             
-            $totalDiterima = $positions->sum(function($pos) {
-                return $pos->applications->whereIn('status', ['diterima', 'selesai'])->count();
-            });
-
+            $totalPelamar = $applications->count();
+            $totalDiterima = $applications->whereIn('status', ['diterima', 'selesai'])->count();
+            $totalPosisi = $positions->count();
+            
             $seleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
             $avgPelamar = $totalPosisi > 0 ? round($totalPelamar / $totalPosisi, 1) : 0;
 
@@ -215,14 +304,35 @@ class AdminKotaController extends Controller
                 'lowongan_aktif' => $positions->where('status', 'buka')->count(),
                 'total_pelamar' => $totalPelamar,
                 'total_magang' => $totalDiterima,
-                'seleksi_rate' => $seleksiRate . '%',
-                'avg_peminat' => $avgPelamar . ' orang/posisi',
+                'seleksi_rate' => $seleksiRate,
+                'avg_peminat' => $avgPelamar,
             ];
         });
 
-        $laporan = $laporan->sortByDesc('total_pelamar')->values();
+        // 3. Sorting
+        if ($sort === 'name_asc') {
+            $laporan = $laporan->sortBy('nama_dinas');
+        } elseif ($sort === 'name_desc') {
+            $laporan = $laporan->sortByDesc('nama_dinas');
+        } elseif ($sort === 'pelamar_asc') {
+            $laporan = $laporan->sortBy('total_pelamar');
+        } elseif ($sort === 'pelamar_desc') {
+            $laporan = $laporan->sortByDesc('total_pelamar');
+        } elseif ($sort === 'lowongan_desc') {
+            $laporan = $laporan->sortByDesc('lowongan_aktif');
+        } elseif ($sort === 'lowongan_asc') {
+            $laporan = $laporan->sortBy('lowongan_aktif');
+        } elseif ($sort === 'seleksi_desc') {
+            $laporan = $laporan->sortByDesc('seleksi_rate');
+        } elseif ($sort === 'seleksi_asc') {
+            $laporan = $laporan->sortBy('seleksi_rate');
+        } else {
+            $laporan = $laporan->sortByDesc('total_pelamar');
+        }
 
-        $pdf = Pdf::loadView('admin.pdf.laporan', compact('laporan'));
+        $laporan = $laporan->values();
+
+        $pdf = Pdf::loadView('admin.pdf.laporan', compact('laporan', 'stats', 'request'));
         $pdf->setPaper('a4', 'portrait');
         return $pdf->stream('Laporan-Statistik-Magang.pdf');
     }
@@ -268,12 +378,15 @@ class AdminKotaController extends Controller
         // 1. Siapkan Query Dasar
         $query = Application::with(['user', 'position.instansi']);
 
-        // 2. Filter Status (Jika ada parameter, filter sesuai status, jika tidak default diterima/selesai)
-        if ($request->has('status')) {
-            if ($request->filled('status') && $request->status !== 'semua') {
+        // 2. Filter Status
+        if ($request->has('status') && $request->status !== '') {
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['pending', 'menunggu']);
+            } elseif ($request->status !== 'semua') {
                 $query->where('status', $request->status);
             }
         } else {
+            // Default show active/completed if no status filter parameter
             $query->whereIn('status', ['diterima', 'selesai']);
         }
 
@@ -315,20 +428,29 @@ class AdminKotaController extends Controller
             $query->where('tanggal_selesai', '<=', $request->end_date);
         }
 
-        $allInterns = $query->orderBy('created_at', 'desc')->get();
+        // Urutkan berdasarkan dinas
+        $allInterns = $query->get()->sortBy(function($app) {
+            return $app->position->instansi->nama_dinas ?? '';
+        })->values();
+
+        // 7. Hitung Statistik Dinamis (Berdasarkan data terfilter)
+        $stats = [
+            'total' => $allInterns->count(),
+            'aktif' => $allInterns->where('status', 'diterima')->count(),
+            'selesai' => $allInterns->where('status', 'selesai')->count(),
+            'pending' => $allInterns->whereIn('status', ['pending', 'menunggu'])->count(),
+            'total_dinas' => $allInterns->pluck('position.instansi.id')->unique()->filter()->count(),
+            'total_kampus' => $allInterns->pluck('user.asal_instansi')->unique()->filter()->count()
+        ];
 
         // --- DATA UNTUK DROPDOWN FILTER ---
-        // Ambil list semua INSTANSI untuk dropdown
         $listDinas = Instansi::orderBy('nama_dinas', 'asc')->get();
-        
-        // Ambil list semua Instansi yang unik dari tabel users
-        // Hanya ambil user yang pernah melamar (agar list tidak kosong)
         $listInstansi = User::where('role', 'peserta')
                             ->whereNotNull('asal_instansi')
                             ->distinct()
                             ->pluck('asal_instansi');
 
-        return view('admin.laporan.peserta_global', compact('allInterns', 'listDinas', 'listInstansi'));
+        return view('admin.laporan.peserta_global', compact('allInterns', 'listDinas', 'listInstansi', 'stats'));
     }
 
     public function printPesertaGlobal(Request $request)
@@ -336,36 +458,69 @@ class AdminKotaController extends Controller
         // Copy-paste logika query yang sama agar hasil cetak sesuai filter
         $query = Application::with(['user', 'position.instansi']);
 
-        if ($request->has('status')) {
-            if ($request->filled('status') && $request->status !== 'semua') {
+        // Filter Status
+        if ($request->has('status') && $request->status !== '') {
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['pending', 'menunggu']);
+            } elseif ($request->status !== 'semua') {
                 $query->where('status', $request->status);
             }
         } else {
             $query->whereIn('status', ['diterima', 'selesai']);
         }
 
+        // Filter Berdasarkan INSTANSI (Lokasi Magang)
         if ($request->has('instansi_id') && $request->instansi_id != '') {
             $query->whereHas('position.instansi', function($q) use ($request) {
                 $q->where('id', $request->instansi_id);
             });
         }
 
+        // Filter Berdasarkan Instansi (Kampus/Sekolah)
         if ($request->has('instansi') && $request->instansi != '') {
             $query->whereHas('user', function($q) use ($request) {
                 $q->where('asal_instansi', $request->instansi);
             });
         }
 
+        // Filter Berdasarkan Nama Posisi (Programming, Admin, dll)
         if ($request->has('posisi') && $request->posisi != '') {
             $query->whereHas('position', function($q) use ($request) {
                 $q->where('judul_posisi', 'like', '%' . $request->posisi . '%');
             });
         }
 
+        // Filter Berdasarkan Tanggal (Periode Magang)
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = $request->start_date;
+            $end = $request->end_date;
+            
+            $query->where(function($q) use ($start, $end) {
+                $q->whereBetween('tanggal_mulai', [$start, $end])
+                  ->orWhereBetween('tanggal_selesai', [$start, $end]);
+            });
+        } 
+        elseif ($request->filled('start_date')) {
+            $query->where('tanggal_mulai', '>=', $request->start_date);
+        }
+        elseif ($request->filled('end_date')) {
+            $query->where('tanggal_selesai', '<=', $request->end_date);
+        }
+
         // Urutkan berdasarkan INSTANSI agar rapi di laporan PDF
-        $allInterns = $query->get()->sortBy(function($query){
-            return $query->position->instansi->nama_dinas;
-        });
+        $allInterns = $query->get()->sortBy(function($app) {
+            return $app->position->instansi->nama_dinas ?? '';
+        })->values();
+
+        // Hitung Statistik Dinamis (Berdasarkan data terfilter)
+        $stats = [
+            'total' => $allInterns->count(),
+            'aktif' => $allInterns->where('status', 'diterima')->count(),
+            'selesai' => $allInterns->where('status', 'selesai')->count(),
+            'pending' => $allInterns->whereIn('status', ['pending', 'menunggu'])->count(),
+            'total_dinas' => $allInterns->pluck('position.instansi.id')->unique()->filter()->count(),
+            'total_kampus' => $allInterns->pluck('user.asal_instansi')->unique()->filter()->count()
+        ];
 
         // Generate Dynamic Title
         $title = "LAPORAN REKAPITULASI PESERTA MAGANG";
@@ -380,30 +535,65 @@ class AdminKotaController extends Controller
             $subtitles[] = "ASAL " . strtoupper($request->instansi);
         }
 
-        if ($request->has('status') && $request->status !== 'semua') {
-            $subtitles[] = "STATUS " . strtoupper($request->status);
+        if ($request->has('status') && $request->status !== '') {
+            if ($request->status === 'pending') {
+                $subtitles[] = "STATUS PENDING";
+            } elseif ($request->status !== 'semua') {
+                $subtitles[] = "STATUS " . strtoupper($request->status === 'diterima' ? 'aktif' : $request->status);
+            }
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $subtitles[] = "PERIODE " . \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') . " - " . \Carbon\Carbon::parse($request->end_date)->format('d/m/Y');
+        }
+
+        if ($request->filled('posisi')) {
+            $subtitles[] = "POSISI " . strtoupper($request->posisi);
         }
 
         if(!empty($subtitles)) {
             $title .= "\n(" . implode(' | ', $subtitles) . ")";
         }
 
-        $pdf = Pdf::loadView('admin.pdf.laporan_global', compact('allInterns', 'title'));
+        $pdf = Pdf::loadView('admin.pdf.laporan_global', compact('allInterns', 'title', 'stats', 'request'));
         $pdf->setPaper('a4', 'landscape'); 
 
         return $pdf->stream('Laporan-Global-Peserta.pdf');
     }
 
-    public function laporanGrading()
+    public function laporanGrading(Request $request)
     {
         // 1. Ambil data aplikasi yang sudah memiliki nilai (status selesai/diterima)
         $query = Application::with(['user', 'position.instansi'])
-                    ->whereNotNull('nilai_teknis') // Pastikan kolom nilai tidak kosong
+                    ->where(function($q) {
+                        $q->whereNotNull('nilai_rata_rata')
+                          ->orWhereNotNull('nilai_teknis');
+                    })
                     ->get();
 
         // 2. PROSES DATA: Menghitung Rata-rata Kategori & Total
         $gradedData = $query->map(function($app) {
-            $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
+            if ($app->nilai_rata_rata !== null) {
+                $avg = (float) $app->nilai_rata_rata;
+                $kerajinan = (float) ($app->nilai_kerajinan ?? 0);
+                $disiplin = (float) ($app->nilai_disiplin ?? 0);
+                $adaptasi = (float) ($app->nilai_adaptasi ?? 0);
+                $kreatifitas = (float) ($app->nilai_kreatifitas ?? 0);
+                $skill = (float) ($app->nilai_skill_pengetahuan ?? 0);
+                
+                $teknis = $skill; 
+                $perilaku = ($adaptasi + $kreatifitas + $kerajinan) / 3;
+            } else {
+                $teknis = (float) ($app->nilai_teknis ?? 0);
+                $disiplin = (float) ($app->nilai_disiplin ?? 0);
+                $perilaku = (float) ($app->nilai_perilaku ?? 0);
+                $avg = ($teknis + $disiplin + $perilaku) / 3;
+                
+                $kerajinan = $disiplin;
+                $adaptasi = $perilaku;
+                $kreatifitas = $perilaku;
+                $skill = $teknis;
+            }
             
             // Penentuan Predikat
             if ($avg >= 86) $predikat = 'Sangat Baik';
@@ -412,80 +602,222 @@ class AdminKotaController extends Controller
             else $predikat = 'Kurang';
 
             return [
-                'nama' => $app->user->name,
-                'instansi' => $app->position->instansi->nama_dinas,
-                'teknis' => $app->nilai_teknis,
-                'disiplin' => $app->nilai_disiplin,
-                'perilaku' => $app->nilai_perilaku,
+                'id' => $app->id,
+                'nama' => $app->user->name ?? '-',
+                'asal_instansi' => $app->user->asal_instansi ?? '-',
+                'instansi_id' => $app->position->instansi->id ?? null,
+                'instansi' => $app->position->instansi->nama_dinas ?? '-',
+                'posisi' => $app->position->judul_posisi ?? '-',
+                'nilai_rata_rata' => $app->nilai_rata_rata,
+                'nilai_teknis' => $app->nilai_teknis,
+                'teknis' => round($teknis, 2),
+                'disiplin' => round($disiplin, 2),
+                'perilaku' => round($perilaku, 2),
+                'kerajinan' => round($kerajinan, 2),
+                'adaptasi' => round($adaptasi, 2),
+                'kreatifitas' => round($kreatifitas, 2),
+                'skill' => round($skill, 2),
                 'rata_rata' => round($avg, 2),
                 'predikat' => $predikat
             ];
         });
 
-        // 3. LOGIKA PEMERINGKATAN (Ranking)
-        $ranking = $gradedData->sortByDesc('rata_rata')->values()->take(10); // Ambil 10 Besar
+        // 3. LOGIKA PEMERINGKATAN GLOBAL (Podium Top 3 - unfiltered)
+        $podium = $gradedData->sortByDesc('rata_rata')->values()->take(3);
 
-        // 4. LOGIKA DISTRIBUSI NILAI
-        $distribusi = [
-            'Sangat Baik' => $gradedData->where('predikat', 'Sangat Baik')->count(),
-            'Baik' => $gradedData->where('predikat', 'Baik')->count(),
-            'Cukup' => $gradedData->where('predikat', 'Cukup')->count(),
-            'Kurang' => $gradedData->where('predikat', 'Kurang')->count(),
+        // 4. TERAPKAN FILTER
+        $filteredData = $gradedData;
+
+        if ($request->filled('q')) {
+            $q = strtolower($request->q);
+            $filteredData = $filteredData->filter(function($item) use ($q) {
+                return str_contains(strtolower($item['nama']), $q);
+            });
+        }
+
+        if ($request->filled('instansi')) {
+            $instansi = $request->instansi;
+            $filteredData = $filteredData->filter(function($item) use ($instansi) {
+                return $item['asal_instansi'] === $instansi;
+            });
+        }
+
+        if ($request->filled('instansi_id')) {
+            $instansiId = (int) $request->instansi_id;
+            $filteredData = $filteredData->filter(function($item) use ($instansiId) {
+                return (int)$item['instansi_id'] === $instansiId;
+            });
+        }
+
+        if ($request->filled('predikat')) {
+            $predikat = $request->predikat;
+            $filteredData = $filteredData->filter(function($item) use ($predikat) {
+                return $item['predikat'] === $predikat;
+            });
+        }
+
+        // Graded List sorted by score descending
+        $gradedList = $filteredData->sortByDesc('rata_rata')->values();
+
+        // 5. STATS CARDS GRID (Berdasarkan data terfilter)
+        $stats = [
+            'total' => $filteredData->count(),
+            'sangat_baik' => $filteredData->where('predikat', 'Sangat Baik')->count(),
+            'baik' => $filteredData->where('predikat', 'Baik')->count(),
+            'cukup' => $filteredData->where('predikat', 'Cukup')->count(),
+            'kurang' => $filteredData->where('predikat', 'Kurang')->count(),
+            'avg_nilai' => $filteredData->count() > 0 ? round($filteredData->avg('rata_rata'), 1) : 0,
         ];
 
-        // 5. RATA-RATA GLOBAL PER KATEGORI
+        // 6. RATA-RATA GLOBAL PER KATEGORI (Berdasarkan data terfilter)
         $statsGlobal = [
-            'avg_teknis' => round($gradedData->avg('teknis'), 1),
-            'avg_disiplin' => round($gradedData->avg('disiplin'), 1),
-            'avg_perilaku' => round($gradedData->avg('perilaku'), 1),
+            'avg_teknis' => $filteredData->count() > 0 ? round($filteredData->avg('teknis'), 1) : 0,
+            'avg_disiplin' => $filteredData->count() > 0 ? round($filteredData->avg('disiplin'), 1) : 0,
+            'avg_perilaku' => $filteredData->count() > 0 ? round($filteredData->avg('perilaku'), 1) : 0,
         ];
 
-        return view('admin.laporan.grading', compact('ranking', 'distribusi', 'statsGlobal'));
+        // 7. DATA DROPDOWNS
+        $listDinas = Instansi::orderBy('nama_dinas', 'asc')->get();
+        $listCampus = User::where('role', 'peserta')
+                            ->whereNotNull('asal_instansi')
+                            ->distinct()
+                            ->orderBy('asal_instansi', 'asc')
+                            ->pluck('asal_instansi');
+
+        return view('admin.laporan.grading', compact('podium', 'gradedList', 'stats', 'statsGlobal', 'listDinas', 'listCampus', 'request'));
     }
 
-    public function printGrading()
+    public function printGrading(Request $request)
     {
         // 1. Ambil data aplikasi yang sudah memiliki nilai (status selesai/diterima)
         $query = Application::with(['user', 'position.instansi'])
-                    ->whereNotNull('nilai_teknis') // Pastikan kolom nilai tidak kosong
+                    ->where(function($q) {
+                        $q->whereNotNull('nilai_rata_rata')
+                          ->orWhereNotNull('nilai_teknis');
+                    })
                     ->get();
 
         // 2. PROSES DATA: Menghitung Rata-rata Kategori & Total
         $gradedData = $query->map(function($app) {
-            $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
+            if ($app->nilai_rata_rata !== null) {
+                $avg = (float) $app->nilai_rata_rata;
+                $kerajinan = (float) ($app->nilai_kerajinan ?? 0);
+                $disiplin = (float) ($app->nilai_disiplin ?? 0);
+                $adaptasi = (float) ($app->nilai_adaptasi ?? 0);
+                $kreatifitas = (float) ($app->nilai_kreatifitas ?? 0);
+                $skill = (float) ($app->nilai_skill_pengetahuan ?? 0);
+                
+                $teknis = $skill; 
+                $perilaku = ($adaptasi + $kreatifitas + $kerajinan) / 3;
+            } else {
+                $teknis = (float) ($app->nilai_teknis ?? 0);
+                $disiplin = (float) ($app->nilai_disiplin ?? 0);
+                $perilaku = (float) ($app->nilai_perilaku ?? 0);
+                $avg = ($teknis + $disiplin + $perilaku) / 3;
+                
+                $kerajinan = $disiplin;
+                $adaptasi = $perilaku;
+                $kreatifitas = $perilaku;
+                $skill = $teknis;
+            }
             
+            // Penentuan Predikat
             if ($avg >= 86) $predikat = 'Sangat Baik';
             elseif ($avg >= 71) $predikat = 'Baik';
             elseif ($avg >= 56) $predikat = 'Cukup';
             else $predikat = 'Kurang';
 
             return [
-                'nama' => $app->user->name,
-                'instansi' => $app->position->instansi->nama_dinas,
-                'teknis' => $app->nilai_teknis,
-                'disiplin' => $app->nilai_disiplin,
-                'perilaku' => $app->nilai_perilaku,
+                'nama' => $app->user->name ?? '-',
+                'asal_instansi' => $app->user->asal_instansi ?? '-',
+                'instansi_id' => $app->position->instansi->id ?? null,
+                'instansi' => $app->position->instansi->nama_dinas ?? '-',
+                'posisi' => $app->position->judul_posisi ?? '-',
+                'teknis' => round($teknis, 2),
+                'disiplin' => round($disiplin, 2),
+                'perilaku' => round($perilaku, 2),
                 'rata_rata' => round($avg, 2),
                 'predikat' => $predikat
             ];
         });
 
-        $ranking = $gradedData->sortByDesc('rata_rata')->values()->take(10); // Ambil 10 Besar
+        // 3. TERAPKAN FILTER
+        $filteredData = $gradedData;
 
-        $distribusi = [
-            'Sangat Baik' => $gradedData->where('predikat', 'Sangat Baik')->count(),
-            'Baik' => $gradedData->where('predikat', 'Baik')->count(),
-            'Cukup' => $gradedData->where('predikat', 'Cukup')->count(),
-            'Kurang' => $gradedData->where('predikat', 'Kurang')->count(),
+        if ($request->filled('q')) {
+            $q = strtolower($request->q);
+            $filteredData = $filteredData->filter(function($item) use ($q) {
+                return str_contains(strtolower($item['nama']), $q);
+            });
+        }
+
+        if ($request->filled('instansi')) {
+            $instansi = $request->instansi;
+            $filteredData = $filteredData->filter(function($item) use ($instansi) {
+                return $item['asal_instansi'] === $instansi;
+            });
+        }
+
+        if ($request->filled('instansi_id')) {
+            $instansiId = (int) $request->instansi_id;
+            $filteredData = $filteredData->filter(function($item) use ($instansiId) {
+                return (int)$item['instansi_id'] === $instansiId;
+            });
+        }
+
+        if ($request->filled('predikat')) {
+            $predikat = $request->predikat;
+            $filteredData = $filteredData->filter(function($item) use ($predikat) {
+                return $item['predikat'] === $predikat;
+            });
+        }
+
+        // Graded List sorted by score descending
+        $gradedList = $filteredData->sortByDesc('rata_rata')->values();
+
+        // 4. STATS CARDS GRID (Berdasarkan data terfilter)
+        $stats = [
+            'total' => $filteredData->count(),
+            'sangat_baik' => $filteredData->where('predikat', 'Sangat Baik')->count(),
+            'baik' => $filteredData->where('predikat', 'Baik')->count(),
+            'cukup' => $filteredData->where('predikat', 'Cukup')->count(),
+            'kurang' => $filteredData->where('predikat', 'Kurang')->count(),
+            'avg_nilai' => $filteredData->count() > 0 ? round($filteredData->avg('rata_rata'), 1) : 0,
         ];
 
+        // 5. RATA-RATA GLOBAL PER KATEGORI (Berdasarkan data terfilter)
         $statsGlobal = [
-            'avg_teknis' => round($gradedData->avg('teknis'), 1),
-            'avg_disiplin' => round($gradedData->avg('disiplin'), 1),
-            'avg_perilaku' => round($gradedData->avg('perilaku'), 1),
+            'avg_teknis' => $filteredData->count() > 0 ? round($filteredData->avg('teknis'), 1) : 0,
+            'avg_disiplin' => $filteredData->count() > 0 ? round($filteredData->avg('disiplin'), 1) : 0,
+            'avg_perilaku' => $filteredData->count() > 0 ? round($filteredData->avg('perilaku'), 1) : 0,
         ];
 
-        $pdf = Pdf::loadView('admin.pdf.grading', compact('ranking', 'distribusi', 'statsGlobal'));
+        // 6. GENERATE TITLE
+        $title = "LAPORAN ANALISIS KOMPETENSI & PERFORMA PESERTA";
+        $subtitles = [];
+
+        if ($request->has('instansi_id') && $request->instansi_id != '') {
+            $instansiName = Instansi::find($request->instansi_id)->nama_dinas ?? '';
+            if($instansiName) $subtitles[] = strtoupper($instansiName);
+        }
+
+        if ($request->has('instansi') && $request->instansi != '') {
+            $subtitles[] = "ASAL " . strtoupper($request->instansi);
+        }
+
+        if ($request->has('predikat') && $request->predikat != '') {
+            $subtitles[] = "PREDIKAT " . strtoupper($request->predikat);
+        }
+
+        if ($request->has('q') && $request->q != '') {
+            $subtitles[] = "PENCARIAN '" . strtoupper($request->q) . "'";
+        }
+
+        if(!empty($subtitles)) {
+            $title .= "\n(" . implode(' | ', $subtitles) . ")";
+        }
+
+        $pdf = Pdf::loadView('admin.pdf.grading', compact('gradedList', 'stats', 'statsGlobal', 'title', 'request'));
         $pdf->setPaper('a4', 'portrait'); 
         return $pdf->stream('Laporan-Grading-Global.pdf');
     }
@@ -497,58 +829,199 @@ class AdminKotaController extends Controller
     }
 
     // --- 12 BARU: LAPORAN INSTANSI PALING DISIPLIN ---
-    public function laporanInstansiDisiplin()
+    public function laporanInstansiDisiplin(Request $request)
     {
-        $instansis = Instansi::with(['applications' => function($q) {
+        $query = Instansi::with(['applications' => function($q) {
             $q->whereIn('applications.status', ['diterima', 'selesai'])->with('attendances');
-        }])->get()->map(function($instansi) {
+        }]);
+
+        if ($request->filled('q')) {
+            $query->where('nama_dinas', 'like', '%' . $request->q . '%');
+        }
+
+        $instansis = $query->get()->map(function($instansi) {
             $totalAttendances = 0;
             $totalTerlambat = 0;
             $totalAlpa = 0;
+            $totalHadir = 0;
+            $totalSakit = 0;
+            $totalIzin = 0;
+
+            $pelanggarList = [];
 
             foreach($instansi->applications as $app) {
+                $pTerlambat = 0;
+                $pAlpa = 0;
+
                 foreach($app->attendances as $att) {
                     $totalAttendances++;
-                    if ($att->status == 'alpa') $totalAlpa++;
-                    if ($att->status == 'hadir' && $att->clock_in > '08:00:00') $totalTerlambat++;
+                    if ($att->status == 'alpa') {
+                        $totalAlpa++;
+                        $pAlpa++;
+                    }
+                    if ($att->status == 'hadir') {
+                        $totalHadir++;
+                        $jamMasuk = $instansi->jam_mulai_masuk ?: '08:00:00';
+                        if ($att->clock_in > $jamMasuk) {
+                            $totalTerlambat++;
+                            $pTerlambat++;
+                        }
+                    }
+                    if ($att->status == 'sakit') $totalSakit++;
+                    if ($att->status == 'izin') $totalIzin++;
+                }
+
+                if ($pTerlambat > 0 || $pAlpa > 0) {
+                    $pelanggarList[] = [
+                        'nama' => $app->user->name ?? '-',
+                        'kampus' => $app->user->asal_instansi ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'terlambat' => $pTerlambat,
+                        'alpa' => $pAlpa,
+                    ];
                 }
             }
 
             $instansi->total_attendances = $totalAttendances;
+            $instansi->total_hadir = $totalHadir;
+            $instansi->total_sakit = $totalSakit;
+            $instansi->total_izin = $totalIzin;
+            $instansi->total_alpa = $totalAlpa;
+            $instansi->total_terlambat = $totalTerlambat;
             $instansi->total_pelanggaran = $totalTerlambat + $totalAlpa;
-            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 0;
-            
-            return $instansi;
-        })->sortByDesc('tingkat_disiplin');
+            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 100;
+            $instansi->pelanggar_list = collect($pelanggarList)->sortByDesc(function($p) {
+                return $p['terlambat'] + $p['alpa'];
+            })->values()->all();
 
-        return view('admin.laporan.instansi_disiplin', compact('instansis'));
+            return $instansi;
+        });
+
+        if ($request->filled('disiplin_range')) {
+            $range = $request->disiplin_range;
+            $instansis = $instansis->filter(function($instansi) use ($range) {
+                if ($range === 'sangat') {
+                    return $instansi->tingkat_disiplin >= 90;
+                } elseif ($range === 'cukup') {
+                    return $instansi->tingkat_disiplin >= 70 && $instansi->tingkat_disiplin < 90;
+                } elseif ($range === 'kurang') {
+                    return $instansi->tingkat_disiplin < 70;
+                }
+                return true;
+            });
+        }
+
+        $instansis = $instansis->sortByDesc('tingkat_disiplin')->values();
+
+        // 3. LOGIKA PEMERINGKATAN GLOBAL (Podium Top 3 - only active instansis)
+        $podium = $instansis->filter(function($i) { return $i->total_attendances > 0; })
+                            ->sortByDesc('tingkat_disiplin')
+                            ->values()
+                            ->take(3);
+
+        // 4. STATS CARDS GRID (Berdasarkan data terfilter)
+        $stats = [
+            'total_instansi' => $instansis->count(),
+            'avg_disiplin' => $instansis->count() > 0 ? round($instansis->avg('tingkat_disiplin'), 1) : 100,
+            'total_kehadiran' => $instansis->sum('total_attendances'),
+            'total_pelanggaran' => $instansis->sum('total_pelanggaran'),
+            'total_terlambat' => $instansis->sum('total_terlambat'),
+            'total_alpa' => $instansis->sum('total_alpa'),
+        ];
+
+        return view('admin.laporan.instansi_disiplin', compact('podium', 'instansis', 'stats', 'request'));
     }
 
-    public function printInstansiDisiplin()
+    public function printInstansiDisiplin(Request $request)
     {
-        $instansis = Instansi::with(['applications' => function($q) {
+        $query = Instansi::with(['applications' => function($q) {
             $q->whereIn('applications.status', ['diterima', 'selesai'])->with('attendances');
-        }])->get()->map(function($instansi) {
+        }]);
+
+        if ($request->filled('q')) {
+            $query->where('nama_dinas', 'like', '%' . $request->q . '%');
+        }
+
+        $instansis = $query->get()->map(function($instansi) {
             $totalAttendances = 0;
             $totalTerlambat = 0;
             $totalAlpa = 0;
+            $totalHadir = 0;
+            $totalSakit = 0;
+            $totalIzin = 0;
 
             foreach($instansi->applications as $app) {
                 foreach($app->attendances as $att) {
                     $totalAttendances++;
                     if ($att->status == 'alpa') $totalAlpa++;
-                    if ($att->status == 'hadir' && $att->clock_in > '08:00:00') $totalTerlambat++;
+                    if ($att->status == 'hadir') {
+                        $totalHadir++;
+                        $jamMasuk = $instansi->jam_mulai_masuk ?: '08:00:00';
+                        if ($att->clock_in > $jamMasuk) {
+                            $totalTerlambat++;
+                        }
+                    }
+                    if ($att->status == 'sakit') $totalSakit++;
+                    if ($att->status == 'izin') $totalIzin++;
                 }
             }
 
             $instansi->total_attendances = $totalAttendances;
+            $instansi->total_hadir = $totalHadir;
+            $instansi->total_sakit = $totalSakit;
+            $instansi->total_izin = $totalIzin;
+            $instansi->total_alpa = $totalAlpa;
+            $instansi->total_terlambat = $totalTerlambat;
             $instansi->total_pelanggaran = $totalTerlambat + $totalAlpa;
-            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 0;
-            
-            return $instansi;
-        })->sortByDesc('tingkat_disiplin');
+            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 100;
 
-        $pdf = Pdf::loadView('admin.pdf.instansi_disiplin', compact('instansis'));
+            return $instansi;
+        });
+
+        if ($request->filled('disiplin_range')) {
+            $range = $request->disiplin_range;
+            $instansis = $instansis->filter(function($instansi) use ($range) {
+                if ($range === 'sangat') {
+                    return $instansi->tingkat_disiplin >= 90;
+                } elseif ($range === 'cukup') {
+                    return $instansi->tingkat_disiplin >= 70 && $instansi->tingkat_disiplin < 90;
+                } elseif ($range === 'kurang') {
+                    return $instansi->tingkat_disiplin < 70;
+                }
+                return true;
+            });
+        }
+
+        $instansis = $instansis->sortByDesc('tingkat_disiplin')->values();
+
+        $stats = [
+            'total_instansi' => $instansis->count(),
+            'avg_disiplin' => $instansis->count() > 0 ? round($instansis->avg('tingkat_disiplin'), 1) : 100,
+            'total_kehadiran' => $instansis->sum('total_attendances'),
+            'total_pelanggaran' => $instansis->sum('total_pelanggaran'),
+            'total_terlambat' => $instansis->sum('total_terlambat'),
+            'total_alpa' => $instansis->sum('total_alpa'),
+        ];
+
+        $title = "LAPORAN REKAPITULASI KEDISIPLINAN INSTANSI";
+        $subtitles = [];
+        if ($request->filled('q')) {
+            $subtitles[] = "PENCARIAN '" . strtoupper($request->q) . "'";
+        }
+        if ($request->filled('disiplin_range')) {
+            $rangeLabel = [
+                'sangat' => 'SANGAT DISIPLIN (>=90%)',
+                'cukup' => 'CUKUP DISIPLIN (70-89%)',
+                'kurang' => 'KURANG DISIPLIN (<70%)'
+            ];
+            $subtitles[] = "KATEGORI " . ($rangeLabel[$request->disiplin_range] ?? '');
+        }
+
+        if(!empty($subtitles)) {
+            $title .= "\n(" . implode(' | ', $subtitles) . ")";
+        }
+
+        $pdf = Pdf::loadView('admin.pdf.instansi_disiplin', compact('instansis', 'stats', 'title', 'request'));
         $pdf->setPaper('a4', 'portrait'); 
         return $pdf->stream('Laporan-Instansi-Disiplin.pdf');
     }

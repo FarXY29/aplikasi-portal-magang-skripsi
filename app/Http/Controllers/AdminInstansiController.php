@@ -522,18 +522,22 @@ class AdminInstansiController extends Controller
     {
         $user = Auth::user();
         
-        // 1. Query Dasar: Ambil aplikasi yang melamar ke INSTANSI user yang login
-        $query = Application::with(['user', 'position'])
+        // 1. Query Dasar
+        $query = Application::with(['user', 'position', 'pembimbing_lapangan'])
             ->whereHas('position', function($q) use ($user) {
-                $q->where('instansi_id', $user->instansi_id); // Filter hanya INSTANSI login
+                $q->where('instansi_id', $user->instansi_id);
             });
 
         // 2. Filter Status
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['pending', 'menunggu']);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
-        // 3. Filter Asal Sekolah/Universitas (Instansi)
+        // 3. Filter Asal Sekolah/Universitas
         if ($request->has('asal_instansi') && $request->asal_instansi != '') {
             $searchInstansi = $request->asal_instansi;
             $query->whereHas('user', function($q) use ($searchInstansi) {
@@ -541,26 +545,24 @@ class AdminInstansiController extends Controller
             });
         }
 
-        // 4. Filter Periode (Berdasarkan Tanggal Mulai atau Selesai yang beririsan)
+        // 4. Filter Periode
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $start = $request->start_date;
             $end = $request->end_date;
             
             $query->where(function($q) use ($start, $end) {
-                // Logika: Tampilkan jika tanggal magang peserta beririsan dengan filter
                 $q->whereBetween('tanggal_mulai', [$start, $end])
                 ->orWhereBetween('tanggal_selesai', [$start, $end]);
             });
         }
 
-        // 5. Sorting (Urutan Nama)
-        // Kita perlu JOIN table users karena kolom 'name' ada di tabel users, bukan applications
+        // 5. Sorting
         if ($request->has('sort')) {
             $sort = $request->sort;
             if ($sort == 'name_asc') {
                 $query->join('users', 'applications.user_id', '=', 'users.id')
                     ->orderBy('users.name', 'asc')
-                    ->select('applications.*'); // Penting: Select apps saja agar ID tidak tertimpa
+                    ->select('applications.*');
             } elseif ($sort == 'name_desc') {
                 $query->join('users', 'applications.user_id', '=', 'users.id')
                     ->orderBy('users.name', 'desc')
@@ -574,24 +576,35 @@ class AdminInstansiController extends Controller
 
         $applications = $query->get();
 
-        return view('dinas.laporan.rekap', compact('applications'));
-    }
+        $stats = [
+            'total' => $applications->count(),
+            'aktif' => $applications->where('status', 'diterima')->count(),
+            'selesai' => $applications->where('status', 'selesai')->count(),
+            'pending' => $applications->whereIn('status', ['pending', 'menunggu'])->count(),
+            'ditolak' => $applications->where('status', 'ditolak')->count(),
+            'total_kampus' => $applications->pluck('user.asal_instansi')->unique()->filter()->count()
+        ];
 
-    
+        return view('dinas.laporan.rekap', compact('applications', 'stats'));
+    }
 
     public function printRekap(Request $request)
     {
         $user = Auth::user();
         
         // 1. Query Dasar
-        $query = Application::with(['user', 'position'])
+        $query = Application::with(['user', 'position', 'pembimbing_lapangan'])
             ->whereHas('position', function($q) use ($user) {
                 $q->where('instansi_id', $user->instansi_id);
             });
 
         // 2. Filter Status
         if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['pending', 'menunggu']);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
         // 3. Filter Asal Sekolah
@@ -629,11 +642,20 @@ class AdminInstansiController extends Controller
         }
 
         $applications = $query->get();
-        $instansi = $user->instansi; // Data dinas untuk kop surat
+        $instansi = $user->instansi; 
+
+        $stats = [
+            'total' => $applications->count(),
+            'aktif' => $applications->where('status', 'diterima')->count(),
+            'selesai' => $applications->where('status', 'selesai')->count(),
+            'pending' => $applications->whereIn('status', ['pending', 'menunggu'])->count(),
+            'ditolak' => $applications->where('status', 'ditolak')->count(),
+            'total_kampus' => $applications->pluck('user.asal_instansi')->unique()->filter()->count()
+        ];
 
         // Generate PDF
-        $pdf = Pdf::loadView('dinas.pdf.rekap_peserta', compact('applications', 'instansi', 'request'));
-        $pdf->setPaper('a4', 'landscape'); // Landscape agar tabel muat
+        $pdf = Pdf::loadView('dinas.pdf.rekap_peserta', compact('applications', 'instansi', 'request', 'stats'));
+        $pdf->setPaper('a4', 'landscape'); 
         
         return $pdf->stream('Laporan_Rekap_Peserta.pdf');
     }
@@ -675,7 +697,7 @@ class AdminInstansiController extends Controller
         $kinerja = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
-        ->with(['user', 'position', 'logs', 'attendances'])
+        ->with(['user', 'position', 'logs', 'attendances', 'pembimbing_lapangan'])
         ->get()->map(function($app) {
             // Hitung Logbook
             $total_logs = $app->logs->count();
@@ -688,10 +710,17 @@ class AdminInstansiController extends Controller
             $attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
 
             // Hitung Nilai Akhir
-            $t = (float) $app->nilai_teknis;
-            $d = (float) $app->nilai_disiplin;
-            $p = (float) $app->nilai_perilaku;
-            $avg_nilai = ($t + $d + $p) / 3;
+            $avg_nilai = 0;
+            if ($app->nilai_rata_rata) {
+                $avg_nilai = (float) $app->nilai_rata_rata;
+            } else {
+                $t = (float) $app->nilai_teknis;
+                $d = (float) $app->nilai_disiplin;
+                $p = (float) $app->nilai_perilaku;
+                if ($t > 0 || $d > 0 || $p > 0) {
+                    $avg_nilai = ($t + $d + $p) / 3;
+                }
+            }
 
             $app->log_rate = $log_rate;
             $app->attendance_rate = $attendance_rate;
@@ -700,7 +729,19 @@ class AdminInstansiController extends Controller
             return $app;
         })->sortByDesc('avg_nilai');
 
-        return view('dinas.laporan.kinerja_mahasiswa', compact('kinerja'));
+        // Hitung statistik instansi keseluruhan
+        $stats = [
+            'total_peserta' => $kinerja->count(),
+            'aktif' => $kinerja->where('status', 'diterima')->count(),
+            'selesai' => $kinerja->where('status', 'selesai')->count(),
+            'avg_kehadiran' => $kinerja->count() > 0 ? round($kinerja->avg('attendance_rate'), 1) : 0,
+            'avg_logbook' => $kinerja->count() > 0 ? round($kinerja->avg('log_rate'), 1) : 0,
+            'avg_nilai' => $kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
+                ? round($kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
+                : 0
+        ];
+
+        return view('dinas.laporan.kinerja_mahasiswa', compact('kinerja', 'stats'));
     }
 
     public function printKinerjaMahasiswa()
@@ -709,7 +750,7 @@ class AdminInstansiController extends Controller
         $kinerja = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
-        ->with(['user', 'position', 'logs', 'attendances'])
+        ->with(['user', 'position', 'logs', 'attendances', 'pembimbing_lapangan'])
         ->get()->map(function($app) {
             $total_logs = $app->logs->count();
             $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
@@ -717,17 +758,38 @@ class AdminInstansiController extends Controller
 
             $total_attendance = $app->attendances->count();
             $hadir = $app->attendances->where('status', 'hadir')->count();
+            $app->attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 105 : 0; // limit at 100 inside PDF render if needed
+            // Wait, let's keep it consistent:
             $app->attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
 
-            $t = (float) $app->nilai_teknis;
-            $d = (float) $app->nilai_disiplin;
-            $p = (float) $app->nilai_perilaku;
-            $app->avg_nilai = ($t + $d + $p) / 3;
+            $avg_nilai = 0;
+            if ($app->nilai_rata_rata) {
+                $avg_nilai = (float) $app->nilai_rata_rata;
+            } else {
+                $t = (float) $app->nilai_teknis;
+                $d = (float) $app->nilai_disiplin;
+                $p = (float) $app->nilai_perilaku;
+                if ($t > 0 || $d > 0 || $p > 0) {
+                    $avg_nilai = ($t + $d + $p) / 3;
+                }
+            }
+            $app->avg_nilai = $avg_nilai;
 
             return $app;
         })->sortByDesc('avg_nilai');
 
-        $pdf = Pdf::loadView('dinas.pdf.kinerja_mahasiswa', compact('kinerja'));
+        $stats = [
+            'total_peserta' => $kinerja->count(),
+            'aktif' => $kinerja->where('status', 'diterima')->count(),
+            'selesai' => $kinerja->where('status', 'selesai')->count(),
+            'avg_kehadiran' => $kinerja->count() > 0 ? round($kinerja->avg('attendance_rate'), 1) : 0,
+            'avg_logbook' => $kinerja->count() > 0 ? round($kinerja->avg('log_rate'), 1) : 0,
+            'avg_nilai' => $kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
+                ? round($kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
+                : 0
+        ];
+
+        $pdf = Pdf::loadView('dinas.pdf.kinerja_mahasiswa', compact('kinerja', 'stats'));
         $pdf->setPaper('a4', 'landscape'); 
         return $pdf->stream('Laporan-Kinerja-Mahasiswa.pdf');
     }
@@ -739,28 +801,76 @@ class AdminInstansiController extends Controller
         $beban = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
             ->with(['bimbingan' => function($q) {
                 $q->whereIn('status', ['diterima', 'selesai'])
-                  ->with(['logs' => function($q) {
-                      $q->where('status_validasi', 'pending');
-                  }]);
+                  ->with(['user', 'position', 'logs', 'attendances']);
             }])
             ->get()->map(function($pl) {
                 $pl->total_bimbingan_aktif = $pl->bimbingan->where('status', 'diterima')->count();
                 $pl->total_lulus = $pl->bimbingan->where('status', 'selesai')->count();
                 
-                // Hitung total logbook pending dari semua mahasiswa bimbingannya
                 $pending_logs = 0;
                 $total_nilai = 0;
                 $count_nilai = 0;
 
-                foreach($pl->bimbingan as $app) {
-                    $pending_logs += $app->logs->count();
+                // Detail mahasiswa aktif
+                $pl->mahasiswa_aktif = $pl->bimbingan->where('status', 'diterima')->map(function($app) use (&$pending_logs) {
+                    $total_l = $app->logs->count();
+                    $approved_l = $app->logs->where('status_validasi', 'disetujui')->count();
+                    $pending_l = $app->logs->where('status_validasi', 'pending')->count();
+                    $revisi_l = $app->logs->where('status_validasi', 'revisi')->count();
+                    $pending_logs += $pending_l;
+
+                    $total_att = $app->attendances->count();
+                    $hadir_att = $app->attendances->where('status', 'hadir')->count();
+                    $pending_att = $app->attendances->where('validation_status', 'pending')->count();
                     
-                    if ($app->nilai_teknis) {
-                        $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
-                        $total_nilai += $avg;
+                    return [
+                        'id' => $app->id,
+                        'nama' => $app->user->name ?? '-',
+                        'kampus' => $app->user->asal_instansi ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'mulai' => $app->tanggal_mulai,
+                        'selesai' => $app->tanggal_selesai,
+                        'logbook' => [
+                            'total' => $total_l,
+                            'disetujui' => $approved_l,
+                            'pending' => $pending_l,
+                            'revisi' => $revisi_l,
+                            'rate' => $total_l > 0 ? round(($approved_l / $total_l) * 100) : 0,
+                        ],
+                        'absensi' => [
+                            'total' => $total_att,
+                            'hadir' => $hadir_att,
+                            'pending' => $pending_att,
+                        ]
+                    ];
+                })->values();
+
+                // Detail mahasiswa lulus
+                $pl->mahasiswa_lulus = $pl->bimbingan->where('status', 'selesai')->map(function($app) use (&$total_nilai, &$count_nilai) {
+                    $grade = 0;
+                    if ($app->nilai_rata_rata) {
+                        $grade = (float) $app->nilai_rata_rata;
+                    } elseif ($app->nilai_teknis) {
+                        $grade = ((float) $app->nilai_teknis + (float) $app->nilai_disiplin + (float) $app->nilai_perilaku) / 3;
+                    }
+
+                    if ($grade > 0) {
+                        $total_nilai += $grade;
                         $count_nilai++;
                     }
-                }
+
+                    return [
+                        'nama' => $app->user->name ?? '-',
+                        'kampus' => $app->user->asal_instansi ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'nilai' => $grade > 0 ? round($grade, 2) : '-',
+                        'predikat' => $app->predikat ?? '-',
+                        'catatan' => $app->catatan_pembimbing_lapangan ?? '-',
+                        'nomor_sertifikat' => $app->nomor_sertifikat ?? '-',
+                    ];
+                })->values();
 
                 $pl->logbook_tertunda = $pending_logs;
                 $pl->rata_nilai_diberikan = $count_nilai > 0 ? $total_nilai / $count_nilai : 0;
@@ -768,7 +878,21 @@ class AdminInstansiController extends Controller
                 return $pl;
             });
 
-        return view('dinas.laporan.beban_pembimbing', compact('beban'));
+        // Hitung statistik instansi keseluruhan
+        $stats = [
+            'total_pembimbing' => $beban->count(),
+            'total_bimbingan_aktif' => $beban->sum('total_bimbingan_aktif'),
+            'total_lulus' => $beban->sum('total_lulus'),
+            'total_logbook_tertunda' => $beban->sum('logbook_tertunda'),
+            'rata_nilai_semua' => $beban->where('rata_nilai_diberikan', '>', 0)->count() > 0 
+                ? $beban->where('rata_nilai_diberikan', '>', 0)->avg('rata_nilai_diberikan') 
+                : 0,
+            'pembimbing_teraktif' => $beban->sortByDesc('total_bimbingan_aktif')->first()?->name ?? '-',
+            'pembimbing_teraktif_jumlah' => $beban->sortByDesc('total_bimbingan_aktif')->first()?->total_bimbingan_aktif ?? 0,
+            'tertib_validasi' => $beban->where('logbook_tertunda', 0)->where('total_bimbingan_aktif', '>', 0)->count()
+        ];
+
+        return view('dinas.laporan.beban_pembimbing', compact('beban', 'stats'));
     }
 
     public function printBebanPembimbing()
@@ -777,9 +901,7 @@ class AdminInstansiController extends Controller
         $beban = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')
             ->with(['bimbingan' => function($q) {
                 $q->whereIn('status', ['diterima', 'selesai'])
-                  ->with(['logs' => function($q) {
-                      $q->where('status_validasi', 'pending');
-                  }]);
+                  ->with(['user', 'position', 'logs', 'attendances']);
             }])
             ->get()->map(function($pl) {
                 $pl->total_bimbingan_aktif = $pl->bimbingan->where('status', 'diterima')->count();
@@ -789,21 +911,85 @@ class AdminInstansiController extends Controller
                 $total_nilai = 0;
                 $count_nilai = 0;
 
-                foreach($pl->bimbingan as $app) {
-                    $pending_logs += $app->logs->count();
-                    if ($app->nilai_teknis) {
-                        $avg = ($app->nilai_teknis + $app->nilai_disiplin + $app->nilai_perilaku) / 3;
-                        $total_nilai += $avg;
+                $pl->mahasiswa_aktif = $pl->bimbingan->where('status', 'diterima')->map(function($app) use (&$pending_logs) {
+                    $total_l = $app->logs->count();
+                    $approved_l = $app->logs->where('status_validasi', 'disetujui')->count();
+                    $pending_l = $app->logs->where('status_validasi', 'pending')->count();
+                    $revisi_l = $app->logs->where('status_validasi', 'revisi')->count();
+                    $pending_logs += $pending_l;
+
+                    $total_att = $app->attendances->count();
+                    $hadir_att = $app->attendances->where('status', 'hadir')->count();
+                    $pending_att = $app->attendances->where('validation_status', 'pending')->count();
+                    
+                    return [
+                        'nama' => $app->user->name ?? '-',
+                        'kampus' => $app->user->asal_instansi ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'mulai' => $app->tanggal_mulai,
+                        'selesai' => $app->tanggal_selesai,
+                        'logbook' => [
+                            'total' => $total_l,
+                            'disetujui' => $approved_l,
+                            'pending' => $pending_l,
+                            'revisi' => $revisi_l,
+                            'rate' => $total_l > 0 ? round(($approved_l / $total_l) * 100) : 0,
+                        ],
+                        'absensi' => [
+                            'total' => $total_att,
+                            'hadir' => $hadir_att,
+                            'pending' => $pending_att,
+                        ]
+                    ];
+                })->values();
+
+                $pl->mahasiswa_lulus = $pl->bimbingan->where('status', 'selesai')->map(function($app) use (&$total_nilai, &$count_nilai) {
+                    $grade = 0;
+                    if ($app->nilai_rata_rata) {
+                        $grade = (float) $app->nilai_rata_rata;
+                    } elseif ($app->nilai_teknis) {
+                        $grade = ((float) $app->nilai_teknis + (float) $app->nilai_disiplin + (float) $app->nilai_perilaku) / 3;
+                    }
+
+                    if ($grade > 0) {
+                        $total_nilai += $grade;
                         $count_nilai++;
                     }
-                }
+
+                    return [
+                        'nama' => $app->user->name ?? '-',
+                        'kampus' => $app->user->asal_instansi ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'nilai' => $grade > 0 ? round($grade, 2) : '-',
+                        'predikat' => $app->predikat ?? '-',
+                        'catatan' => $app->catatan_pembimbing_lapangan ?? '-',
+                        'nomor_sertifikat' => $app->nomor_sertifikat ?? '-',
+                    ];
+                })->values();
+
                 $pl->logbook_tertunda = $pending_logs;
                 $pl->rata_nilai_diberikan = $count_nilai > 0 ? $total_nilai / $count_nilai : 0;
+
                 return $pl;
             });
 
-        $pdf = Pdf::loadView('dinas.pdf.beban_pembimbing', compact('beban'));
-        $pdf->setPaper('a4', 'portrait'); 
+        $stats = [
+            'total_pembimbing' => $beban->count(),
+            'total_bimbingan_aktif' => $beban->sum('total_bimbingan_aktif'),
+            'total_lulus' => $beban->sum('total_lulus'),
+            'total_logbook_tertunda' => $beban->sum('logbook_tertunda'),
+            'rata_nilai_semua' => $beban->where('rata_nilai_diberikan', '>', 0)->count() > 0 
+                ? $beban->where('rata_nilai_diberikan', '>', 0)->avg('rata_nilai_diberikan') 
+                : 0,
+            'pembimbing_teraktif' => $beban->sortByDesc('total_bimbingan_aktif')->first()?->name ?? '-',
+            'pembimbing_teraktif_jumlah' => $beban->sortByDesc('total_bimbingan_aktif')->first()?->total_bimbingan_aktif ?? 0,
+            'tertib_validasi' => $beban->where('logbook_tertunda', 0)->where('total_bimbingan_aktif', '>', 0)->count()
+        ];
+
+        $pdf = Pdf::loadView('dinas.pdf.beban_pembimbing', compact('beban', 'stats'));
+        $pdf->setPaper('a4', 'landscape'); 
         return $pdf->stream('Laporan-Beban-Pembimbing.pdf');
     }
 
@@ -812,51 +998,143 @@ class AdminInstansiController extends Controller
     {
         $instansiId = Auth::user()->instansi_id;
         
-        $demografi = Application::whereHas('position', function($q) use ($instansiId) {
+        $applications = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->with('user')
-        ->get()
+        ->with(['user', 'position'])
+        ->get();
+
+        // 1. Demografi per Kampus
+        $demografi = $applications
         ->groupBy(function($app) {
             return empty($app->user->asal_instansi) ? 'Lainnya / Tidak Diketahui' : $app->user->asal_instansi;
         })
-        ->map(function($group) {
+        ->map(function($group, $kampus) {
+            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
+            $selesai = $group->where('status', 'selesai');
             return [
                 'total_pelamar' => $group->count(),
-                'diterima' => $group->whereIn('status', ['diterima', 'selesai'])->count(),
+                'diterima' => $diterima->count(),
+                'selesai' => $selesai->count(),
                 'ditolak' => $group->where('status', 'ditolak')->count(),
                 'pending' => $group->where('status', 'pending')->count(),
+                'dibatalkan' => $group->whereIn('status', ['dibatalkan', 'dikeluarkan'])->count(),
+                'acceptance_rate' => $group->count() > 0 ? round(($diterima->count() / $group->count()) * 100) : 0,
+                'jurusan' => $group->groupBy(function($app) {
+                    return $app->user->major ?? 'Tidak Diketahui';
+                })->map->count()->sortByDesc(fn($v) => $v),
+                'posisi' => $group->groupBy(function($app) {
+                    return $app->position->judul_posisi ?? 'Tidak Diketahui';
+                })->map->count()->sortByDesc(fn($v) => $v),
+                'peserta_aktif' => $diterima->map(function($app) {
+                    return [
+                        'nama' => $app->user->name ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'status' => $app->status,
+                        'mulai' => $app->tanggal_mulai,
+                        'selesai' => $app->tanggal_selesai,
+                    ];
+                })->values(),
             ];
         })
         ->sortByDesc('total_pelamar');
 
-        return view('dinas.laporan.demografi_kampus', compact('demografi'));
+        // 2. Demografi per Jurusan
+        $demografiJurusan = $applications
+        ->groupBy(function($app) {
+            return empty($app->user->major) ? 'Tidak Diketahui' : $app->user->major;
+        })
+        ->map(function($group) {
+            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
+            return [
+                'total' => $group->count(),
+                'diterima' => $diterima->count(),
+                'acceptance_rate' => $group->count() > 0 ? round(($diterima->count() / $group->count()) * 100) : 0,
+            ];
+        })
+        ->sortByDesc('total');
+
+        // 3. Statistik Ringkasan
+        $stats = [
+            'total_kampus' => $demografi->count(),
+            'total_jurusan' => $demografiJurusan->count(),
+            'total_pelamar' => $applications->count(),
+            'total_diterima' => $applications->whereIn('status', ['diterima', 'selesai'])->count(),
+            'total_selesai' => $applications->where('status', 'selesai')->count(),
+            'total_ditolak' => $applications->where('status', 'ditolak')->count(),
+            'total_pending' => $applications->where('status', 'pending')->count(),
+            'kampus_terbanyak' => $demografi->count() > 0 ? $demografi->keys()->first() : '-',
+            'kampus_terbanyak_jumlah' => $demografi->count() > 0 ? $demografi->first()['total_pelamar'] : 0,
+        ];
+
+        return view('dinas.laporan.demografi_kampus', compact('demografi', 'demografiJurusan', 'stats'));
     }
 
     public function printDemografiKampus()
     {
         $instansiId = Auth::user()->instansi_id;
         
-        $demografi = Application::whereHas('position', function($q) use ($instansiId) {
+        $applications = Application::whereHas('position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->with('user')
-        ->get()
+        ->with(['user', 'position'])
+        ->get();
+
+        $demografi = $applications
         ->groupBy(function($app) {
             return empty($app->user->asal_instansi) ? 'Lainnya / Tidak Diketahui' : $app->user->asal_instansi;
         })
         ->map(function($group) {
+            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
+            $selesai = $group->where('status', 'selesai');
             return [
                 'total_pelamar' => $group->count(),
-                'diterima' => $group->whereIn('status', ['diterima', 'selesai'])->count(),
+                'diterima' => $diterima->count(),
+                'selesai' => $selesai->count(),
                 'ditolak' => $group->where('status', 'ditolak')->count(),
                 'pending' => $group->where('status', 'pending')->count(),
+                'dibatalkan' => $group->whereIn('status', ['dibatalkan', 'dikeluarkan'])->count(),
+                'acceptance_rate' => $group->count() > 0 ? round(($diterima->count() / $group->count()) * 100) : 0,
+                'jurusan' => $group->groupBy(function($app) {
+                    return $app->user->major ?? 'Tidak Diketahui';
+                })->map->count()->sortByDesc(fn($v) => $v),
+                'peserta' => $diterima->map(function($app) {
+                    return [
+                        'nama' => $app->user->name ?? '-',
+                        'jurusan' => $app->user->major ?? '-',
+                        'posisi' => $app->position->judul_posisi ?? '-',
+                        'status' => $app->status,
+                    ];
+                })->values(),
             ];
         })
         ->sortByDesc('total_pelamar');
 
-        $pdf = Pdf::loadView('dinas.pdf.demografi_kampus', compact('demografi'));
-        $pdf->setPaper('a4', 'portrait'); 
+        $demografiJurusan = $applications
+        ->groupBy(function($app) {
+            return empty($app->user->major) ? 'Tidak Diketahui' : $app->user->major;
+        })
+        ->map(function($group) {
+            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
+            return [
+                'total' => $group->count(),
+                'diterima' => $diterima->count(),
+                'acceptance_rate' => $group->count() > 0 ? round(($diterima->count() / $group->count()) * 100) : 0,
+            ];
+        })
+        ->sortByDesc('total');
+
+        $stats = [
+            'total_kampus' => $demografi->count(),
+            'total_jurusan' => $demografiJurusan->count(),
+            'total_pelamar' => $applications->count(),
+            'total_diterima' => $applications->whereIn('status', ['diterima', 'selesai'])->count(),
+            'total_selesai' => $applications->where('status', 'selesai')->count(),
+        ];
+
+        $pdf = Pdf::loadView('dinas.pdf.demografi_kampus', compact('demografi', 'demografiJurusan', 'stats'));
+        $pdf->setPaper('a4', 'landscape'); 
         return $pdf->stream('Laporan-Demografi-Kampus.pdf');
     }
 
@@ -869,7 +1147,7 @@ class AdminInstansiController extends Controller
         $query = \App\Models\DailyLog::whereHas('application.position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->with(['application.user', 'application.position']);
+        ->with(['application.user', 'application.position', 'application.pembimbing_lapangan']);
 
         if ($filter == 'hari') {
             $query->whereDate('tanggal', \Carbon\Carbon::today());
@@ -882,7 +1160,22 @@ class AdminInstansiController extends Controller
 
         $jurnal = $query->orderBy('tanggal', 'desc')->get();
 
-        return view('dinas.laporan.jurnal_harian', compact('jurnal', 'filter'));
+        $total_peserta_aktif = Application::whereHas('position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })->where('status', 'diterima')->count();
+
+        $stats = [
+            'total_jurnal' => $jurnal->count(),
+            'disetujui' => $jurnal->where('status_validasi', 'disetujui')->count(),
+            'pending' => $jurnal->where('status_validasi', 'pending')->count(),
+            'revisi' => $jurnal->where('status_validasi', 'revisi')->count(),
+            'total_peserta_aktif' => $total_peserta_aktif,
+            'rasio_validasi' => $jurnal->count() > 0 
+                ? round(($jurnal->where('status_validasi', 'disetujui')->count() / $jurnal->count()) * 100) 
+                : 0
+        ];
+
+        return view('dinas.laporan.jurnal_harian', compact('jurnal', 'filter', 'stats'));
     }
 
     public function printJurnalHarian(Request $request)
@@ -893,7 +1186,7 @@ class AdminInstansiController extends Controller
         $query = \App\Models\DailyLog::whereHas('application.position', function($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->with(['application.user', 'application.position']);
+        ->with(['application.user', 'application.position', 'application.pembimbing_lapangan']);
 
         $label_waktu = 'Semua Waktu';
         if ($filter == 'hari') {
@@ -910,7 +1203,22 @@ class AdminInstansiController extends Controller
 
         $jurnal = $query->orderBy('tanggal', 'desc')->get();
 
-        $pdf = Pdf::loadView('dinas.pdf.jurnal_harian', compact('jurnal', 'label_waktu'));
+        $total_peserta_aktif = Application::whereHas('position', function($q) use ($instansiId) {
+            $q->where('instansi_id', $instansiId);
+        })->where('status', 'diterima')->count();
+
+        $stats = [
+            'total_jurnal' => $jurnal->count(),
+            'disetujui' => $jurnal->where('status_validasi', 'disetujui')->count(),
+            'pending' => $jurnal->where('status_validasi', 'pending')->count(),
+            'revisi' => $jurnal->where('status_validasi', 'revisi')->count(),
+            'total_peserta_aktif' => $total_peserta_aktif,
+            'rasio_validasi' => $jurnal->count() > 0 
+                ? round(($jurnal->where('status_validasi', 'disetujui')->count() / $jurnal->count()) * 100) 
+                : 0
+        ];
+
+        $pdf = Pdf::loadView('dinas.pdf.jurnal_harian', compact('jurnal', 'label_waktu', 'stats'));
         $pdf->setPaper('a4', 'landscape'); 
         return $pdf->stream('Laporan-Jurnal-Harian.pdf');
     }
