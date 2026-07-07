@@ -670,18 +670,25 @@ class AdminInstansiController extends Controller
     public function updateSettings(Request $request)
     {
         $request->validate([
-            'jam_mulai_masuk' => 'required',
-            'jam_mulai_pulang' => 'required',
+            'jam_mulai_masuk' => 'nullable|required_without:latitude',
+            'jam_mulai_pulang' => 'nullable|required_without:latitude',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'radius_absen' => 'nullable|integer|min:10|max:10000',
         ]);
 
         $instansi = Auth::user()->instansi;
         
-        $instansi->update([
-            'jam_mulai_masuk' => $request->jam_mulai_masuk,
-            'jam_mulai_pulang' => $request->jam_mulai_pulang,
-        ]);
+        $data = [];
+        if ($request->has('jam_mulai_masuk')) $data['jam_mulai_masuk'] = $request->jam_mulai_masuk;
+        if ($request->has('jam_mulai_pulang')) $data['jam_mulai_pulang'] = $request->jam_mulai_pulang;
+        if ($request->has('latitude')) $data['latitude'] = $request->latitude;
+        if ($request->has('longitude')) $data['longitude'] = $request->longitude;
+        if ($request->has('radius_absen')) $data['radius_absen'] = $request->radius_absen;
 
-        return back()->with('success', 'Pengaturan jam kerja berhasil diperbarui.');
+        $instansi->update($data);
+
+        return back()->with('success', 'Pengaturan instansi berhasil diperbarui.');
     }
 
     // --- PUSAT LAPORAN HUB ---

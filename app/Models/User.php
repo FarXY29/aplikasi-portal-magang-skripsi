@@ -79,4 +79,68 @@ class User extends Authenticatable
     public function mahasiswa_bimbingan() {
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
     }
+
+    // =============================================
+    // MULTI-DEVICE SESSION MANAGEMENT
+    // =============================================
+
+    /**
+     * Relasi ke sesi aktif user.
+     */
+    public function activeSessions()
+    {
+        return $this->hasMany(UserSession::class);
+    }
+
+    /**
+     * Relasi ke log percobaan login yang diblokir.
+     */
+    public function loginAttempts()
+    {
+        return $this->hasMany(LoginAttempt::class);
+    }
+
+    /**
+     * Bersihkan sesi yang sudah expired (tidak ada aktivitas > SESSION_LIFETIME menit).
+     * @return int Jumlah sesi yang dihapus
+     */
+    public function cleanExpiredSessions(): int
+    {
+        $lifetime = config('session.lifetime', 120);
+
+        return $this->activeSessions()
+            ->where(function ($query) use ($lifetime) {
+                $query->where('last_activity_at', '<', now()->subMinutes($lifetime))
+                      ->orWhereNull('last_activity_at');
+            })
+            ->delete();
+    }
+
+    /**
+     * Cek apakah user masih bisa menerima sesi baru (slot < 3).
+     * Otomatis membersihkan sesi expired terlebih dahulu.
+     */
+    public function canAcceptNewSession(): bool
+    {
+        $this->cleanExpiredSessions();
+        return $this->activeSessions()->count() < 3;
+    }
+
+    /**
+     * Cek apakah session_id tertentu termasuk sesi aktif milik user ini.
+     */
+    public function hasActiveSession(string $sessionId): bool
+    {
+        return $this->activeSessions()->where('session_id', $sessionId)->exists();
+    }
+
+    /**
+     * Hitung jumlah percobaan login yang diblokir dalam 24 jam terakhir.
+     */
+    public function recentBlockedAttempts(): int
+    {
+        return $this->loginAttempts()
+            ->where('attempted_at', '>=', now()->subHours(24))
+            ->count();
+    }
 }

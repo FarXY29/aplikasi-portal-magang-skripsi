@@ -11,6 +11,8 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
+            <x-security-alert />
+
             @php
                 $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
             @endphp
@@ -87,7 +89,8 @@
                     </div>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <!-- Desktop Table View (md and above) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead class="bg-gray-50">
                             <tr>
@@ -202,6 +205,96 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View (< md) -->
+                <div class="md:hidden divide-y divide-gray-100">
+                    @forelse($interns as $mhs)
+                    <div class="p-5 space-y-4 hover:bg-gray-50/50 transition">
+                        <!-- Header Card: Foto, Nama, Email -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-base border border-indigo-200 shadow-sm shrink-0">
+                                    {{ strtoupper(substr($mhs->user->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div class="text-base font-bold text-gray-900">{{ $mhs->user->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $mhs->user->email }}</div>
+                                </div>
+                            </div>
+                            <div>
+                                @if($mhs->status == 'diterima')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> AKTIF
+                                    </span>
+                                @elseif($mhs->status == 'selesai')
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                                        <i class="fas fa-check-circle mr-1 text-[8px]"></i> SELESAI
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Periode & Stats Grid -->
+                        <div class="grid grid-cols-2 gap-2 bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs">
+                            <div class="col-span-2 flex items-center gap-1.5 text-gray-600 font-medium pb-2 border-b border-gray-200/60">
+                                <i class="far fa-calendar-alt text-indigo-500"></i>
+                                @if($mhs->tanggal_mulai)
+                                    <span>{{ \Carbon\Carbon::parse($mhs->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($mhs->tanggal_selesai)->format('d M Y') }}</span>
+                                @else
+                                    <span class="text-gray-400 italic">Jadwal belum diset</span>
+                                @endif
+                            </div>
+                            <div class="pt-1 flex flex-col">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Kehadiran Valid</span>
+                                @php
+                                    $validLogs = $mhs->logs->where('status_validasi', 'disetujui')->count();
+                                @endphp
+                                <span class="text-base font-black text-gray-800">{{ $validLogs }} <span class="text-xs font-normal text-gray-500">Hari</span></span>
+                            </div>
+                            <div class="pt-1 flex flex-col border-l border-gray-200/60 pl-3">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">Nilai Akhir</span>
+                                @if($mhs->nilai_angka)
+                                    <span class="text-base font-black text-indigo-600">{{ $mhs->nilai_angka }} <span class="text-xs font-bold text-indigo-400">({{ $mhs->predikat }})</span></span>
+                                @else
+                                    <span class="text-xs text-gray-400 italic pt-0.5">Belum dinilai</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Tombol Aksi Full-Width untuk HP -->
+                        <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                            <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" 
+                               class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-gray-300 rounded-xl text-gray-700 text-xs font-bold hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-book-open text-indigo-500"></i> Cek Logbook
+                            </a>
+
+                            <a href="{{ route('pembimbing_lapangan.attendance.index', $mhs->id) }}" 
+                               class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-gray-300 rounded-xl text-gray-700 text-xs font-bold hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 transition shadow-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-clock text-teal-500"></i> Cek Absensi
+                            </a>
+
+                            @if($mhs->status == 'diterima' || $mhs->status == 'selesai')
+                                <a href="{{ route('pembimbing_lapangan.penilaian', $mhs->id) }}" 
+                                   class="w-full sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-2
+                                   {{ $mhs->nilai_angka 
+                                        ? 'bg-yellow-50 text-yellow-700 border border-yellow-300 hover:bg-yellow-100' 
+                                        : 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                                   }}">
+                                    <i class="fas fa-star text-yellow-400"></i> {{ $mhs->nilai_angka ? 'Edit Nilai' : 'Input Nilai' }}
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-8 text-center text-gray-400">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users-slash text-3xl text-gray-300"></i>
+                        </div>
+                        <p class="font-bold text-gray-600">Belum ada mahasiswa bimbingan</p>
+                        <p class="text-xs mt-1">Anda belum ditugaskan untuk membimbing peserta magang manapun.</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
 

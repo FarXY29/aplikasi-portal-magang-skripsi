@@ -28,6 +28,8 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $user,
             'pembimbings' => $pembimbings,
+            'activeSessions' => $user->activeSessions()->orderByDesc('last_activity_at')->get(),
+            'currentSessionId' => request()->session()->getId(),
         ]);
     }
 
@@ -69,6 +71,21 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Logout dari semua perangkat.
+     */
+    public function logoutAllDevices(Request $request): RedirectResponse
+    {
+        $request->user()->activeSessions()->delete();
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('status', 'Berhasil logout dari semua perangkat.');
     }
 
     /**

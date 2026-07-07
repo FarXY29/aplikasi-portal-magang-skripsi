@@ -74,6 +74,24 @@ class AttendanceController extends Controller
             return back()->with('error', 'Absen datang belum dibuka. Jadwal absen masuk dimulai pukul ' . $waktuBukaAbsen->format('H:i'));
         }
 
+        // 2.5 CEK LOKASI GPS & RADIUS ABSEN
+        $kantorLat = $application->position->instansi->latitude ?? null;
+        $kantorLng = $application->position->instansi->longitude ?? null;
+        $radiusAbsen = $application->position->instansi->radius_absen ?? 100;
+
+        if ($kantorLat && $kantorLng) {
+            if (!$request->has('latitude') || !$request->has('longitude') || $request->latitude == null || $request->longitude == null) {
+                return back()->with('error', 'Gagal Absen Datang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.');
+            }
+
+            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
+            $jarakMeter = $jarakKm * 1000;
+
+            if ($jarakMeter > $radiusAbsen) {
+                return back()->with('error', 'Gagal Absen Datang! Posisi Anda berada di luar radius kantor (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            }
+        }
+
         // 3. Cek Duplikasi (Sudah absen hari ini?)
         $existing = Attendance::where('application_id', $application->id)
                         ->where('date', $today)
@@ -99,7 +117,7 @@ class AttendanceController extends Controller
      * ABSEN PULANG (Clock Out)
      * Mengecek jam mulai pulang dari tabel INSTANSI.
      */
-    public function clockOut()
+    public function clockOut(Request $request)
     {
         $user = Auth::user();
         $now = Carbon::now();
@@ -126,6 +144,24 @@ class AttendanceController extends Controller
         // Validasi: Jika sekarang belum waktunya pulang
         if ($now->lessThan($waktuBolehPulang)) {
             return back()->with('error', 'Belum waktunya pulang! Absen pulang baru dibuka pukul ' . $waktuBolehPulang->format('H:i'));
+        }
+
+        // 2.5 CEK LOKASI GPS & RADIUS ABSEN
+        $kantorLat = $application->position->instansi->latitude ?? null;
+        $kantorLng = $application->position->instansi->longitude ?? null;
+        $radiusAbsen = $application->position->instansi->radius_absen ?? 100;
+
+        if ($kantorLat && $kantorLng) {
+            if (!$request->has('latitude') || !$request->has('longitude') || $request->latitude == null || $request->longitude == null) {
+                return back()->with('error', 'Gagal Absen Pulang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.');
+            }
+
+            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
+            $jarakMeter = $jarakKm * 1000;
+
+            if ($jarakMeter > $radiusAbsen) {
+                return back()->with('error', 'Gagal Absen Pulang! Posisi Anda berada di luar radius kantor (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            }
         }
 
         // 3. Cari Data Absen Pagi Tadi
@@ -203,5 +239,25 @@ class AttendanceController extends Controller
         ]);
 
         return back()->with('success', 'Pengajuan Izin/Sakit berhasil dikirim.');
+    }
+
+    /**
+     * Fungsi Matematika Haversine (Menghitung Jarak 2 Titik Koordinat dalam KM)
+     */
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2) 
+    {
+        $earthRadius = 6371; // Radius bumi dalam KM
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat/2) * sin($dLat/2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon/2) * sin($dLon/2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $distance = $earthRadius * $c;
+
+        return $distance;
     }
 }

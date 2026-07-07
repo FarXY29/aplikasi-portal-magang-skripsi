@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\LoginAttempt;
+use App\Models\UserSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -29,8 +31,37 @@ class GoogleAuthController extends Controller
                 if (empty($existingUser->google_id)) {
                     $existingUser->update(['google_id' => $googleUser->getId()]);
                 }
+
+                // Bersihkan sesi expired terlebih dahulu
+                $existingUser->cleanExpiredSessions();
+
+                // Cek apakah masih ada slot tersedia (maks 3 perangkat)
+                if ($existingUser->activeSessions()->count() >= 3) {
+                    // Catat percobaan login yang diblokir
+                    LoginAttempt::create([
+                        'user_id' => $existingUser->id,
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent(),
+                        'reason' => 'max_devices_reached',
+                        'attempted_at' => now(),
+                    ]);
+
+                    return redirect()->route('login')
+                        ->with('device_limit_reached', true);
+                }
                 
                 Auth::login($existingUser);
+                request()->session()->regenerate();
+
+                // Buat record sesi baru
+                UserSession::create([
+                    'user_id' => $existingUser->id,
+                    'session_id' => request()->session()->getId(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'device_name' => UserSession::parseDeviceName(request()->userAgent()),
+                    'last_activity_at' => now(),
+                ]);
                 
                 // Redirect sesuai role (Logic redirect dashboard Anda)
                 return $this->redirectBasedOnRole($existingUser->role);
@@ -46,6 +77,17 @@ class GoogleAuthController extends Controller
                 ]);
 
                 Auth::login($newUser);
+                request()->session()->regenerate();
+
+                // Buat record sesi baru
+                UserSession::create([
+                    'user_id' => $newUser->id,
+                    'session_id' => request()->session()->getId(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'device_name' => UserSession::parseDeviceName(request()->userAgent()),
+                    'last_activity_at' => now(),
+                ]);
 
                 return redirect()->route('peserta.dashboard');
             }

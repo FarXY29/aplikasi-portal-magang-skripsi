@@ -46,7 +46,8 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
+                <!-- Desktop Table View (md and above) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead class="bg-gray-50">
                             <tr>
@@ -66,13 +67,13 @@
                                             {{ substr($dinas->nama_dinas, 0, 1) }}
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-bold text-gray-900 line-clamp-1" title="{{ $dinas->nama_dinas }}">
+                                            <div class="text-sm font-bold text-gray-900 break-words" title="{{ $dinas->nama_dinas }}">
                                                 {{ $dinas->nama_dinas }}
                                             </div>
-                                            <div class="text-xs text-gray-500 flex items-center mt-0.5">
-                                                <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                                <span class="line-clamp-1" title="{{ $dinas->alamat }}">
-                                                    {{ $dinas->alamat ? Str::limit($dinas->alamat, 35) : 'Alamat belum diisi' }}
+                                            <div class="text-xs text-gray-500 flex items-start mt-1 gap-1.5">
+                                                <i class="fas fa-map-marker-alt text-gray-400 mt-0.5 shrink-0"></i>
+                                                <span class="break-words" title="{{ $dinas->alamat }}">
+                                                    {{ $dinas->alamat ? $dinas->alamat : 'Alamat belum diisi' }}
                                                 </span>
                                             </div>
                                         </div>
@@ -157,6 +158,87 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View (< md) -->
+                <div class="md:hidden divide-y divide-gray-100">
+                    @forelse($instansis as $dinas)
+                    <div class="p-5 space-y-3 hover:bg-gray-50/80 transition">
+                        <!-- Header Card: Icon, Nama Lengkap (Tanpa Terpotong), & Kode Unit -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3 min-w-0 flex-1">
+                                <div class="h-12 w-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 font-bold text-lg border border-teal-100 shadow-sm shrink-0">
+                                    {{ substr($dinas->nama_dinas, 0, 1) }}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-base font-extrabold text-gray-900 leading-snug break-words">
+                                        {{ $dinas->nama_dinas }}
+                                    </div>
+                                    <span class="inline-block mt-1.5 px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-700 font-bold text-xs border border-gray-200">
+                                        {{ $dinas->kode_unit_kerja }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alamat Lengkap Tanpa Batasan Batas Karakter -->
+                        <div class="bg-gray-50/80 p-3.5 rounded-xl border border-gray-100 text-xs text-gray-600 space-y-2">
+                            <div class="flex items-start gap-2">
+                                <i class="fas fa-map-marker-alt text-teal-500 mt-0.5 shrink-0"></i>
+                                <span class="leading-relaxed break-words font-medium">
+                                    {{ $dinas->alamat ? $dinas->alamat : 'Alamat belum diisi' }}
+                                </span>
+                            </div>
+                            <div class="flex flex-wrap gap-2 pt-1.5 border-t border-gray-200/60 font-mono text-[11px] text-gray-500">
+                                <span class="bg-white px-2 py-0.5 rounded border border-gray-200 shadow-2xs">Lat: {{ $dinas->latitude ?? '-' }}</span>
+                                <span class="bg-white px-2 py-0.5 rounded border border-gray-200 shadow-2xs">Lng: {{ $dinas->longitude ?? '-' }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Statistik Lowongan & Peserta -->
+                        <div class="grid grid-cols-2 gap-2 bg-teal-50/30 p-3 rounded-xl border border-teal-100/60">
+                            @php
+                                $posCount = $dinas->positions_count ?? $dinas->positions->count();
+                                $totalPeserta = $dinas->applications_count ?? 0;
+                                if(!isset($dinas->applications_count)) {
+                                    $totalPeserta = $dinas->positions->flatMap->applications
+                                        ->whereIn('status', ['diterima', 'selesai'])->count();
+                                }
+                            @endphp
+                            <div class="flex flex-col items-center justify-center p-1 bg-white/80 rounded-lg border border-teal-100/50">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Lowongan</span>
+                                <span class="text-base font-black {{ $posCount > 0 ? 'text-blue-600' : 'text-gray-400' }} mt-0.5">{{ $posCount }}</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-1 bg-white/80 rounded-lg border border-teal-100/50">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Peserta Aktif/Selesai</span>
+                                <span class="text-base font-black {{ $totalPeserta > 0 ? 'text-green-600' : 'text-gray-400' }} mt-0.5">{{ $totalPeserta }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Aksi Mobile Full-Width -->
+                        <div class="flex gap-2 pt-1">
+                            <a href="{{ route('admin.instansi.edit', $dinas->id) }}" class="flex-1 py-2.5 px-3 bg-white border border-gray-300 rounded-xl text-teal-700 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-teal-50 hover:border-teal-300 transition shadow-sm">
+                                <i class="fas fa-edit text-teal-600"></i> Edit Instansi
+                            </a>
+                            
+                            <form action="{{ route('admin.instansi.destroy', $dinas->id) }}" method="POST" class="flex-1" onsubmit="return confirm('APAKAH ANDA YAKIN?\n\nMenghapus instansi ini akan menghapus:\n- Semua User Admin terkait\n- Semua Lowongan Magang\n- Data Pelamar terkait\n\nTindakan ini tidak dapat dibatalkan!');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full py-2.5 px-3 bg-red-50 border border-red-200 rounded-xl text-red-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-red-600 hover:text-white transition shadow-sm">
+                                    <i class="fas fa-trash-alt"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-10 text-center text-gray-500">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                            <i class="fas fa-folder-open text-2xl"></i>
+                        </div>
+                        <p class="text-sm font-semibold">Belum ada data Instansi.</p>
+                        <p class="text-xs mt-1">Silakan klik tombol tambah di atas.</p>
+                    </div>
+                    @endforelse
                 </div>
                 
                 @if($instansis->hasPages())

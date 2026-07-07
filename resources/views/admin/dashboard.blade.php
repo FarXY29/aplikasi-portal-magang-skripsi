@@ -19,6 +19,8 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
+            <x-security-alert />
+
             <!-- ROW 1: Banner Sambutan & Cek Sertifikat -->
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <!-- Banner Sambutan -->
@@ -180,7 +182,8 @@
                                 <p class="text-xs text-gray-500 mt-1">Distribusi peminat magang berdasarkan dinas.</p>
                             </div>
                         </div>
-                        <div class="overflow-y-auto custom-scrollbar flex-1 p-0 relative">
+                        <!-- Desktop Table View (md and above) -->
+                        <div class="hidden md:block overflow-y-auto custom-scrollbar flex-1 p-0 relative">
                             <table class="min-w-full divide-y divide-gray-100">
                                 <thead class="bg-gray-50/80 backdrop-blur-sm sticky top-0 z-10">
                                     <tr>
@@ -220,6 +223,36 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Card View (< md) -->
+                        <div class="md:hidden divide-y divide-gray-50 flex-1">
+                            @forelse($instansiStats as $index => $instansi)
+                                @php
+                                    $percentage = ($instansi->applications_count / $maxPelamar) * 100;
+                                @endphp
+                                <div class="p-4 space-y-2 hover:bg-gray-50/80 transition">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <span class="w-6 h-6 rounded-lg bg-teal-100 text-teal-700 font-black text-xs flex items-center justify-center shrink-0">
+                                                {{ $instansiStats->firstItem() + $index }}
+                                            </span>
+                                            <p class="text-sm font-bold text-gray-800 truncate">{{ $instansi->nama_dinas }}</p>
+                                        </div>
+                                        <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-black bg-teal-50 text-teal-700 border border-teal-100 shrink-0">
+                                            {{ $instansi->applications_count }} Pelamar
+                                        </span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden flex">
+                                        <div class="bg-teal-500 h-1.5 rounded-full" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="p-8 text-center text-gray-400">
+                                    <i class="fas fa-building text-3xl mb-2"></i>
+                                    <p class="text-xs font-bold">Belum ada data instansi.</p>
+                                </div>
+                            @endforelse
                         </div>
                         @if($instansiStats->hasPages())
                         <div class="p-4 border-t border-gray-50 bg-gray-50/30">

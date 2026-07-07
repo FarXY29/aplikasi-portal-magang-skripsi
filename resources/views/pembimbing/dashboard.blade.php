@@ -9,6 +9,8 @@
     <div class="py-12 bg-gray-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
+            <x-security-alert />
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100">
                 <div class="p-8">
                     <h3 class="text-2xl font-extrabold mb-2">Selamat datang, {{ Auth::user()->name }}!</h3>
@@ -43,21 +45,21 @@
                     <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-users text-teal-600 mr-2"></i> Daftar Mahasiswa Magang</h3>
                     
                     <!-- Filter Status -->
-                    <form action="{{ route('pembimbing.dashboard') }}" method="GET" class="flex items-center gap-2">
-                        <div class="bg-gray-100 p-1 rounded-xl flex items-center">
-                            <label class="cursor-pointer">
+                    <form action="{{ route('pembimbing.dashboard') }}" method="GET" class="w-full md:w-auto flex items-center gap-2">
+                        <div class="bg-gray-100 p-1 rounded-xl flex items-center w-full justify-between md:w-auto">
+                            <label class="cursor-pointer flex-1 md:flex-initial text-center">
                                 <input type="radio" name="status" value="aktif" {{ $statusFilter === 'aktif' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
                                 <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-teal-600 peer-checked:shadow-sm transition block">
                                     Sedang Aktif
                                 </span>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="cursor-pointer flex-1 md:flex-initial text-center">
                                 <input type="radio" name="status" value="selesai" {{ $statusFilter === 'selesai' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
                                 <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-teal-600 peer-checked:shadow-sm transition block">
                                     Selesai
                                 </span>
                             </label>
-                            <label class="cursor-pointer">
+                            <label class="cursor-pointer flex-1 md:flex-initial text-center">
                                 <input type="radio" name="status" value="semua" {{ $statusFilter === 'semua' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
                                 <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-teal-600 peer-checked:shadow-sm transition block">
                                     Semua
@@ -74,7 +76,7 @@
                             <p>Tidak ada mahasiswa magang dengan status "{{ ucfirst($statusFilter) }}".</p>
                         </div>
                     @else
-                        <div class="overflow-x-auto">
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -123,6 +125,52 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Card View (< md) -->
+                        <div class="md:hidden divide-y divide-gray-100">
+                            @foreach($applications as $app)
+                            <div class="p-5 space-y-3 hover:bg-teal-50/20 transition">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-base shrink-0 border border-teal-200">
+                                            {{ substr($app->user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="text-base font-bold text-gray-900">{{ $app->user->name }}</div>
+                                            <div class="text-xs text-gray-500">{{ $app->user->major ?? '-' }}</div>
+                                        </div>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold {{ $app->status == 'selesai' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200' }}">
+                                        {{ ucfirst($app->status) }}
+                                    </span>
+                                </div>
+
+                                <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 space-y-1.5 text-xs">
+                                    <div class="flex items-center gap-2 text-gray-800 font-bold">
+                                        <i class="fas fa-building text-teal-600 w-4"></i>
+                                        <span>{{ $app->position->instansi->nama_dinas }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-gray-600">
+                                        <i class="fas fa-briefcase text-gray-400 w-4"></i>
+                                        <span>{{ $app->position->posisi }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-gray-500 pt-1 border-t border-gray-200/60">
+                                        <i class="far fa-calendar-alt text-gray-400 w-4"></i>
+                                        <span>{{ \Carbon\Carbon::parse($app->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                                    <a href="{{ route('pembimbing.peserta.logbook', $app->id) }}" class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-teal-200 text-teal-700 rounded-xl hover:bg-teal-50 transition text-xs font-bold shadow-sm flex items-center justify-center gap-2">
+                                        <i class="fas fa-book-open text-teal-600"></i> Cek Logbook
+                                    </a>
+                                    <a href="{{ route('pembimbing.peserta.absensi', $app->id) }}" class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-blue-200 text-blue-700 rounded-xl hover:bg-blue-50 transition text-xs font-bold shadow-sm flex items-center justify-center gap-2">
+                                        <i class="fas fa-clipboard-list text-blue-600"></i> Cek Absensi
+                                    </a>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     @endif
                 </div>

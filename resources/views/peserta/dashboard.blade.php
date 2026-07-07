@@ -11,6 +11,8 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
+            <x-security-alert />
+
             @php
                 $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
             @endphp
@@ -117,26 +119,32 @@
                                     <i class="fas fa-hourglass-start text-indigo-500"></i> Magang Belum Dimulai
                                 </div>
                             @elseif(!$attendanceToday)
-                                <form action="{{ route('peserta.absen.masuk') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold shadow-lg shadow-teal-200 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                                        <i class="fas fa-fingerprint"></i> Absen Datang
+                                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                                    <form id="form-absen-masuk" action="{{ route('peserta.absen.masuk') }}" method="POST" class="w-full sm:w-auto">
+                                        @csrf
+                                        <input type="hidden" name="latitude" id="lat-masuk">
+                                        <input type="hidden" name="longitude" id="lng-masuk">
+                                        <button type="submit" onclick="submitAttendanceWithGPS(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk')" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-black shadow-lg shadow-teal-600/25 transition active:scale-95 flex items-center gap-2 text-sm">
+                                            <i class="fas fa-fingerprint text-base"></i> Absen Datang
+                                        </button>
+                                    </form>
+                                    
+                                    <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'modal-izin')" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-white border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 rounded-xl font-black transition active:scale-95 flex items-center gap-2 text-sm">
+                                        <i class="fas fa-file-medical text-base"></i> Izin / Sakit
                                     </button>
-                                </form>
-                                
-                                <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'modal-izin')" class="px-6 py-3 bg-white border border-yellow-400 text-yellow-600 hover:bg-yellow-50 rounded-xl font-bold transition flex items-center gap-2">
-                                    <i class="fas fa-file-medical"></i> Izin / Sakit
-                                </button>
+                                </div>
 
                             @elseif($attendanceToday->status == 'hadir' && empty($attendanceToday->clock_out))
-                                <div class="flex flex-col items-center gap-3">
+                                <div class="flex flex-col items-center gap-3 w-full sm:w-auto">
                                     <div class="text-xs font-bold text-teal-700 bg-teal-50 px-4 py-2 rounded-lg border border-teal-150">
                                         <i class="fas fa-check-circle mr-1"></i> Datang: {{ \Carbon\Carbon::parse($attendanceToday->clock_in)->format('H:i') }}
                                     </div>
-                                    <form action="{{ route('peserta.absen.pulang') }}" method="POST">
+                                    <form id="form-absen-pulang" action="{{ route('peserta.absen.pulang') }}" method="POST" class="w-full sm:w-auto">
                                         @csrf
-                                        <button type="submit" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200 transition transform hover:-translate-y-0.5 flex items-center gap-2">
-                                            <i class="fas fa-sign-out-alt"></i> Absen Pulang
+                                        <input type="hidden" name="latitude" id="lat-pulang">
+                                        <input type="hidden" name="longitude" id="lng-pulang">
+                                        <button type="submit" onclick="submitAttendanceWithGPS(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang')" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-black shadow-lg shadow-red-500/25 transition active:scale-95 flex items-center gap-2 text-sm">
+                                            <i class="fas fa-sign-out-alt text-base"></i> Absen Pulang
                                         </button>
                                     </form>
                                 </div>
@@ -161,6 +169,26 @@
                         </div>
 
                     </div>
+                    @if($activeApp && $jamKerja && $jamKerja->latitude && $jamKerja->longitude && $activeApp->display_status != 'selesai' && $activeApp->display_status != 'belum mulai')
+                    <div id="gps-status-banner" 
+                         data-lat="{{ $jamKerja->latitude }}" 
+                         data-lng="{{ $jamKerja->longitude }}" 
+                         data-radius="{{ $jamKerja->radius_absen ?? 100 }}"
+                         class="px-6 py-4 bg-blue-50/60 border-t border-blue-100 flex items-center justify-between flex-wrap gap-3 transition-all duration-300">
+                        <div class="flex items-center gap-3.5">
+                            <div id="gps-icon-wrapper" class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center text-lg shadow-md shadow-blue-500/20 transition-all duration-300">
+                                <i class="fas fa-satellite-dish animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h4 id="gps-title" class="text-xs font-extrabold text-blue-900 uppercase tracking-wider">Mendeteksi Lokasi GPS Otomatis...</h4>
+                                <p id="gps-desc" class="text-xs text-blue-600 font-medium">Mohon tunggu, sistem sedang memvalidasi posisi Anda dengan koordinat kantor.</p>
+                            </div>
+                        </div>
+                        <div id="gps-badge" class="px-3.5 py-1.5 rounded-xl bg-white text-blue-700 text-xs font-extrabold shadow-sm border border-blue-200/60 flex items-center gap-1.5">
+                            <i class="fas fa-spinner fa-spin text-blue-600"></i> Mencari Sinyal...
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 <!-- 2. Grid Dashboard Stats & Detail Magang -->
@@ -320,10 +348,10 @@
                     </h3>
                     
                     <!-- Form Filter Riwayat -->
-                    <form action="{{ route('peserta.dashboard') }}" method="GET" class="w-full md:w-auto flex flex-wrap items-center gap-3">
+                    <form action="{{ route('peserta.dashboard') }}" method="GET" class="w-full md:w-auto flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
                         <!-- Filter Status -->
-                        <div>
-                            <select name="status" onchange="this.form.submit()" class="text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1.5 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600">
+                        <div class="w-full sm:w-auto">
+                            <select name="status" onchange="this.form.submit()" class="w-full sm:w-auto text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600">
                                 <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Daftar Tunggu</option>
@@ -333,25 +361,27 @@
                             </select>
                         </div>
                         
-                        <!-- Filter Tanggal Awal -->
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase">Dari:</span>
-                            <input type="date" name="start_date" value="{{ request('start_date') }}" onchange="this.form.submit()" 
-                                   class="text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1 px-2 cursor-pointer shadow-sm text-gray-600 font-medium">
-                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+                            <!-- Filter Tanggal Awal -->
+                            <div class="flex items-center gap-1 flex-1 sm:flex-initial">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Dari:</span>
+                                <input type="date" name="start_date" value="{{ request('start_date') }}" onchange="this.form.submit()" 
+                                       class="w-full sm:w-auto text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1.5 px-2 cursor-pointer shadow-sm text-gray-600 font-medium">
+                            </div>
 
-                        <!-- Filter Tanggal Akhir -->
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase">S/D:</span>
-                            <input type="date" name="end_date" value="{{ request('end_date') }}" onchange="this.form.submit()" 
-                                   class="text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1 px-2 cursor-pointer shadow-sm text-gray-600 font-medium">
-                        </div>
+                            <!-- Filter Tanggal Akhir -->
+                            <div class="flex items-center gap-1 flex-1 sm:flex-initial">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">S/D:</span>
+                                <input type="date" name="end_date" value="{{ request('end_date') }}" onchange="this.form.submit()" 
+                                       class="w-full sm:w-auto text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1.5 px-2 cursor-pointer shadow-sm text-gray-600 font-medium">
+                            </div>
 
-                        @if(request('status') || request('start_date') || request('end_date'))
-                            <a href="{{ route('peserta.dashboard') }}" class="p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition" title="Reset Filter">
-                                <i class="fas fa-times text-xs"></i>
-                            </a>
-                        @endif
+                            @if(request('status') || request('start_date') || request('end_date'))
+                                <a href="{{ route('peserta.dashboard') }}" class="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition shrink-0" title="Reset Filter">
+                                    <i class="fas fa-times text-xs"></i>
+                                </a>
+                            @endif
+                        </div>
                     </form>
                 </div>
                 
@@ -405,37 +435,37 @@
                                 @endif
                             </div>
 
-                            <div class="flex flex-wrap gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-2 lg:mt-0" x-on:click.stop>
+                            <div class="flex flex-col sm:flex-row flex-wrap gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-3 lg:mt-0" x-on:click.stop>
                                 @if($app->display_status == 'diterima')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
                                     </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-file-contract"></i> Surat Balasan
                                     </a>
 
-                                    <a href="{{ route('peserta.logbook.index') }}" class="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-bold hover:bg-teal-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.logbook.index') }}" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-book-open"></i> Logbook
                                     </a>
 
                                 @elseif($app->display_status == 'belum mulai')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
                                     </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-file-contract"></i> Surat Balasan
                                     </a>
                                 @elseif($app->display_status == 'selesai')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-id-card"></i> ID Card
                                     </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-file-contract"></i> Surat Balasan
                                     </a>
-                                    <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-certificate"></i> Sertifikat
                                     </a>
-                                    <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition shadow-sm flex items-center gap-2">
+                                    <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-file-alt"></i> Transkrip
                                     </a>
                                     
@@ -443,15 +473,15 @@
                                 @endif
 
                                 @if(in_array($app->status, ['pending', 'menunggu']) || ($app->status === 'diterima' && $app->display_status === 'belum mulai'))
-                                    <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.');">
+                                    <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="w-full sm:w-auto inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.');">
                                         @csrf
-                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 transition shadow-sm flex items-center gap-2">
+                                        <button type="submit" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-sm flex items-center gap-2">
                                             <i class="fas fa-times-circle"></i> Batalkan
                                         </button>
                                     </form>
                                 @endif
 
-                                <button type="button" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition shadow-sm flex items-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
+                                <button type="button" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition shadow-sm flex items-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </button>
                             </div>
@@ -551,4 +581,164 @@
 
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    function autoDetectGPS() {
+        const banner = document.getElementById('gps-status-banner');
+        if (!banner) return;
+
+        const officeLat = parseFloat(banner.dataset.lat);
+        const officeLng = parseFloat(banner.dataset.lng);
+        const radius = parseInt(banner.dataset.radius) || 100;
+
+        const iconWrapper = document.getElementById('gps-icon-wrapper');
+        const title = document.getElementById('gps-title');
+        const desc = document.getElementById('gps-desc');
+        const badge = document.getElementById('gps-badge');
+
+        if (!navigator.geolocation) {
+            banner.className = "px-6 py-4 bg-red-50/60 border-t border-red-100 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+            iconWrapper.className = "w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center text-lg shadow-md shadow-red-500/20";
+            iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            title.className = "text-xs font-extrabold text-red-900 uppercase tracking-wider";
+            title.innerText = "GPS Tidak Didukung";
+            desc.className = "text-xs text-red-600 font-medium";
+            desc.innerText = "Browser Anda tidak mendukung fitur geolokasi GPS.";
+            badge.className = "px-3.5 py-1.5 rounded-xl bg-white text-red-700 text-xs font-extrabold shadow-sm border border-red-200/60 flex items-center gap-1.5";
+            badge.innerHTML = '<i class="fas fa-times"></i> Gagal';
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                const latMasuk = document.getElementById('lat-masuk');
+                const lngMasuk = document.getElementById('lng-masuk');
+                const latPulang = document.getElementById('lat-pulang');
+                const lngPulang = document.getElementById('lng-pulang');
+
+                if (latMasuk && lngMasuk) {
+                    latMasuk.value = lat.toFixed(6);
+                    lngMasuk.value = lng.toFixed(6);
+                }
+                if (latPulang && lngPulang) {
+                    latPulang.value = lat.toFixed(6);
+                    lngPulang.value = lng.toFixed(6);
+                }
+
+                const R = 6371000;
+                const dLat = (officeLat - lat) * Math.PI / 180;
+                const dLon = (officeLng - lng) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                          Math.cos(lat * Math.PI / 180) * Math.cos(officeLat * Math.PI / 180) *
+                          Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const distance = Math.round(R * c);
+
+                if (distance <= radius) {
+                    banner.className = "px-6 py-4 bg-green-50/80 border-t border-green-200/60 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+                    iconWrapper.className = "w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center text-lg shadow-md shadow-green-500/20";
+                    iconWrapper.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
+                    title.className = "text-xs font-extrabold text-green-900 uppercase tracking-wider";
+                    title.innerText = "Lokasi Terverifikasi (Dalam Radius)";
+                    desc.className = "text-xs text-green-700 font-medium";
+                    desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Anda siap melakukan absensi!`;
+                    badge.className = "px-3.5 py-1.5 rounded-xl bg-white text-green-700 text-xs font-extrabold shadow-sm border border-green-200/60 flex items-center gap-1.5";
+                    badge.innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Siap Absen';
+                } else {
+                    banner.className = "px-6 py-4 bg-orange-50/80 border-t border-orange-200/60 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+                    iconWrapper.className = "w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center text-lg shadow-md shadow-orange-500/20";
+                    iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    title.className = "text-xs font-extrabold text-orange-900 uppercase tracking-wider";
+                    title.innerText = "Di Luar Radius Kantor";
+                    desc.className = "text-xs text-orange-700 font-medium";
+                    desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Mendekatlah ke kantor untuk absen.`;
+                    badge.className = "px-3.5 py-1.5 rounded-xl bg-white text-orange-700 text-xs font-extrabold shadow-sm border border-orange-200/60 flex items-center gap-1.5";
+                    badge.innerHTML = `<i class="fas fa-ruler-horizontal text-orange-500"></i> Jarak: ${distance}m`;
+                }
+            },
+            function(error) {
+                banner.className = "px-6 py-4 bg-red-50/80 border-t border-red-200/60 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+                iconWrapper.className = "w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center text-lg shadow-md shadow-red-500/20";
+                iconWrapper.innerHTML = '<i class="fas fa-map-pin"></i>';
+                title.className = "text-xs font-extrabold text-red-900 uppercase tracking-wider";
+                title.innerText = "Izin Lokasi (GPS) Diperlukan";
+                
+                let errorMsg = "Sistem gagal mengambil lokasi GPS Anda. Pastikan GPS aktif.";
+                if (error.code === 1) errorMsg = "Akses lokasi ditolak! Silakan izinkan akses lokasi (GPS) pada browser/HP Anda.";
+                else if (error.code === 2) errorMsg = "Sinyal GPS tidak ditemukan. Pastikan GPS HP/perangkat Anda aktif.";
+                else if (error.code === 3) errorMsg = "Waktu permintaan lokasi habis (timeout). Silakan coba lagi.";
+
+                desc.className = "text-xs text-red-700 font-medium";
+                desc.innerText = errorMsg;
+                badge.className = "px-3.5 py-1.5 rounded-xl bg-white text-red-700 text-xs font-extrabold shadow-sm border border-red-200/60 flex items-center gap-1.5 cursor-pointer hover:bg-red-50";
+                badge.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Coba Deteksi Ulang';
+                badge.onclick = autoDetectGPS;
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
+    }
+
+    document.addEventListener("DOMContentLoaded", autoDetectGPS);
+    window.addEventListener("turbo:load", autoDetectGPS);
+
+    function submitAttendanceWithGPS(event, formId, latId, lngId) {
+        event.preventDefault();
+        const btn = event.currentTarget;
+        const originalHtml = btn.innerHTML;
+        const form = document.getElementById(formId);
+        const latVal = document.getElementById(latId)?.value;
+        const lngVal = document.getElementById(lngId)?.value;
+
+        if (latVal && lngVal && latVal !== "" && lngVal !== "") {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengirim Absensi...</span>';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            form.submit();
+            return;
+        }
+
+        if (!navigator.geolocation) {
+            alert('Browser Anda tidak mendukung fitur geolokasi GPS. Silakan gunakan browser/HP lain.');
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Memeriksa GPS & Radius...</span>';
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                document.getElementById(latId).value = lat.toFixed(6);
+                document.getElementById(lngId).value = lng.toFixed(6);
+
+                btn.innerHTML = '<i class="fas fa-check"></i> <span>Lokasi Terverifikasi!</span>';
+                
+                setTimeout(() => {
+                    form.submit();
+                }, 500);
+            },
+            function(error) {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+                let msg = 'Gagal mengambil lokasi GPS Anda. Untuk absensi, wajib mengaktifkan GPS/Lokasi.';
+                if (error.code === 1) msg = 'Akses Lokasi (GPS) ditolak! Silakan izinkan akses lokasi pada browser/HP Anda untuk melakukan absensi.';
+                else if (error.code === 2) msg = 'Sinyal GPS tidak ditemukan atau tidak akurat. Pastikan GPS HP Anda aktif.';
+                else if (error.code === 3) msg = 'Waktu permintaan lokasi habis (timeout). Silakan coba tekan tombol absen lagi.';
+                
+                alert(msg);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
+    }
+    </script>
+    @endpush
 </x-app-layout>

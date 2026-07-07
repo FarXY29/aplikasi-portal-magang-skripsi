@@ -2,7 +2,14 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0d9488">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Portal Magang">
+    <link rel="apple-touch-icon" href="{{ asset('images/Banjarmasin_Logo.svg.png') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
     <title>SiMagang - Pemerintah Kota Banjarmasin</title>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -103,8 +110,15 @@
 
                  <!-- Mobile Menu Toggle -->
                  <div class="md:hidden flex items-center">
-                     <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-xl transition focus:outline-none" :class="scrolled ? 'text-slate-600' : 'text-white'">
-                         <i class="fas" :class="mobileMenuOpen ? 'fa-times text-2xl' : 'fa-bars text-2xl'"></i>
+                     <button @click.stop="mobileMenuOpen = !mobileMenuOpen" type="button" class="p-2.5 rounded-xl transition duration-200 focus:outline-none flex items-center justify-center border border-transparent hover:bg-slate-100/50" :class="scrolled ? 'text-slate-800 hover:text-teal-600' : 'text-white hover:bg-white/10'" aria-label="Toggle Menu">
+                         <!-- Hamburger Icon -->
+                         <svg x-show="!mobileMenuOpen" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                         </svg>
+                         <!-- Close (X) Icon -->
+                         <svg x-show="mobileMenuOpen" x-cloak class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                         </svg>
                      </button>
                  </div>
              </div>
@@ -113,14 +127,14 @@
          <!-- Mobile Menu Drawer -->
          <div x-show="mobileMenuOpen" 
               x-cloak
-              @click.away="mobileMenuOpen = false"
+              @click.outside="if (!$event.target.closest('button')) mobileMenuOpen = false"
               x-transition:enter="transition ease-out duration-200"
               x-transition:enter-start="opacity-0 -translate-y-4"
               x-transition:enter-end="opacity-100 translate-y-0"
               x-transition:leave="transition ease-in duration-150"
               x-transition:leave-start="opacity-100 translate-y-0"
               x-transition:leave-end="opacity-0 -translate-y-4"
-              class="md:hidden bg-white border-t border-slate-100 shadow-xl absolute w-full left-0">
+              class="md:hidden bg-white border-t border-slate-100 shadow-xl absolute w-full left-0 top-full">
              <div class="px-4 py-6 space-y-3 bg-white">
                  <a href="#lowongan" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-base font-bold text-slate-700 bg-slate-50 rounded-xl hover:bg-teal-50 hover:text-teal-600 transition">
                      <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-teal-500 mr-3">

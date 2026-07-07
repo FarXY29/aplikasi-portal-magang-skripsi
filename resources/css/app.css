@@ -2,8 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] {
+    display: none !important;
+}
+
 .turbo-progress-bar {
     height: 4px;
     background-color: #0d9488; /* Teal 600 */
 }
+
+/* ==========================================================================
+   Mobile, Android & iOS Touch Optimizations
+   ========================================================================== */
+
+/* 1. iOS Safari Auto-Zoom Fix: Mencegah zoom otomatis di iPhone/iPad saat fokus ke input form */
+@media screen and (max-width: 768px) {
+    input, select, textarea, .form-input, .form-select, .form-textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* 2. Menghilangkan kotak highlight abu-abu saat elemen ditekan di layar sentuh Android & iOS */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 3. Smooth Inertial Scrolling untuk tabel dan elemen yang bisa di-scroll pada perangkat iOS/Android */
+.overflow-x-auto, .overflow-y-auto, .overflow-auto, .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 4. Dukungan iOS Safe Area (iPhone Notch & Home Indicator) */
+body {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* 5. Mencegah seleksi teks yang tidak sengaja serta menghapus delay 300ms saat tap tombol/link */
+button, a, .btn, [role="button"] {
+    touch-action: manipulation;
+}
+
+/* 6. Navbar & Topbar Mobile Alignment Fix: Mencegah teks dan badge di header rata tengah (lopsided) saat di layar HP */
+@media screen and (max-width: 768px) {
+    header .flex-col.items-center {
+        align-items: flex-start !important;
+    }
+}
+
 

@@ -46,15 +46,18 @@ class LogbookController extends Controller
             return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') . '.');
         }
 
-        // 2. LOGIKA GEOTAGGING (Cek Jarak)
+        // 2. LOGIKA GEOTAGGING (Cek Jarak & Radius)
         $kantorLat = $app->position->instansi->latitude; // Pastikan tabel INSTANSI punya kolom latitude
         $kantorLng = $app->position->instansi->longitude;
+        $radiusAbsen = $app->position->instansi->radius_absen ?? 100; // Radius dalam meter (default 100m)
         
-        $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
-        
-        // Batas toleransi 100 meter (0.1 KM)
-        if ($jarakKm > 20000) {
-            return back()->with('error', 'Gagal Check-in! Posisi Anda terlalu jauh dari kantor dinas (' . number_format($jarakKm*1000) . ' meter).');
+        if ($kantorLat && $kantorLng) {
+            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
+            $jarakMeter = $jarakKm * 1000;
+            
+            if ($jarakMeter > $radiusAbsen) {
+                return back()->with('error', 'Gagal Check-in! Posisi Anda terlalu jauh dari kantor dinas (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            }
         }
 
         // 3. Upload Foto

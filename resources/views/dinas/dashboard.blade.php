@@ -14,6 +14,8 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
+            <x-security-alert />
+
             @php
                 $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
             @endphp
@@ -34,14 +36,14 @@
                 </div>
             @endif
 
-            <div class="relative bg-gradient-to-r from-teal-600 to-teal-800 rounded-3xl p-8 shadow-xl shadow-teal-100 mb-10 overflow-hidden text-white">
+            <div class="relative bg-gradient-to-r from-teal-600 to-teal-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-teal-100 mb-6 sm:mb-10 overflow-hidden text-white">
                 <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
                 <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-teal-400 opacity-20 rounded-full blur-2xl"></div>
 
-                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
                     <div>
-                        <h1 class="text-3xl font-extrabold mb-2">Selamat Datang, Admin!</h1>
-                        <p class="text-teal-100 text-lg max-w-xl font-light leading-relaxed">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold mb-2">Selamat Datang, Admin!</h1>
+                        <p class="text-teal-100 text-sm sm:text-lg max-w-xl font-light leading-relaxed">
                             Kelola peserta magang di <span class="font-bold text-white bg-white/20 px-2 rounded">{{ $instansi->nama_dinas }}</span> dengan mudah dan efisien.
                         </p>
                     </div>
@@ -146,10 +148,10 @@
                             <p class="text-xs text-gray-500 mt-1">Statistik jumlah pelamar baru.</p>
                         </div>
                         
-                        <div class="bg-gray-100 p-1 rounded-lg flex text-xs font-bold">
-                            <button onclick="updateChart(3)" class="px-3 py-1.5 rounded-md transition hover:bg-white hover:shadow-sm" id="btn-3">3 Bln</button>
-                            <button onclick="updateChart(6)" class="px-3 py-1.5 rounded-md transition hover:bg-white hover:shadow-sm" id="btn-6">6 Bln</button>
-                            <button onclick="updateChart(12)" class="px-3 py-1.5 rounded-md bg-white shadow-sm text-teal-600" id="btn-12">1 Thn</button>
+                        <div class="bg-gray-100 p-1 rounded-xl flex text-xs font-bold w-full sm:w-auto justify-between sm:justify-start">
+                            <button onclick="updateChart(3)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white hover:shadow-sm" id="btn-3">3 Bln</button>
+                            <button onclick="updateChart(6)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white hover:shadow-sm" id="btn-6">6 Bln</button>
+                            <button onclick="updateChart(12)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white shadow-sm text-teal-600" id="btn-12">1 Thn</button>
                         </div>
                     </div>
 
