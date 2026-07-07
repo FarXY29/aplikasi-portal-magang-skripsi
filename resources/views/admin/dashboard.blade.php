@@ -19,8 +19,6 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <x-security-alert />
-
             <!-- ROW 1: Banner Sambutan & Cek Sertifikat -->
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <!-- Banner Sambutan -->

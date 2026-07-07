@@ -14,8 +14,6 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <x-security-alert />
-
             @php
                 $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
             @endphp

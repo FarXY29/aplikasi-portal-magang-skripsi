@@ -10,7 +10,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\UserSession;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -54,17 +53,6 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        request()->session()->regenerate();
-
-        // Buat record sesi baru
-        UserSession::create([
-            'user_id' => $user->id,
-            'session_id' => request()->session()->getId(),
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-            'device_name' => UserSession::parseDeviceName(request()->userAgent()),
-            'last_activity_at' => now(),
-        ]);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }

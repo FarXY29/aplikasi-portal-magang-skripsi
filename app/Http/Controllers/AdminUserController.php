@@ -168,16 +168,4 @@ class AdminUserController extends Controller
         return $pdf->stream('Laporan-Master-Peserta.pdf');
     }
 
-    /**
-     * Reset semua sesi aktif milik user tertentu.
-     * Fitur ini memungkinkan admin untuk "membuka kunci" akun yang terjebak.
-     */
-    public function resetSessions($id)
-    {
-        $user = User::findOrFail($id);
-        $count = $user->activeSessions()->delete();
-
-        return back()->with('success', "Berhasil mereset {$count} sesi aktif milik {$user->name}.");
-    }
-
 }

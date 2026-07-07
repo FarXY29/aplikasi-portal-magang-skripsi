@@ -25,14 +25,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(\Illuminate\Auth\Events\Logout::class, function ($event) {
-            if ($event->user) {
-                // Hapus sesi yang cocok dari tabel user_sessions
-                $event->user->activeSessions()
-                    ->where('session_id', session()->getId())
-                    ->delete();
-            }
-        });
+        //
     }
 
     /**

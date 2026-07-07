@@ -216,7 +216,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan-penyerapan-kuota/print', [AdminKotaController::class, 'printPenyerapanKuota'])->name('laporan.penyerapan_kuota.print');
         // User Management & Settings
         Route::resource('users', AdminUserController::class);
-        Route::post('/users/{id}/reset-sessions', [AdminUserController::class, 'resetSessions'])->name('users.reset-sessions');
         Route::get('/monitoring-logbook', [AdminUserController::class, 'logbooks'])->name('users.logbooks');
         Route::get('/monitoring-logbook/{id}', [AdminUserController::class, 'showLogbook'])->name('users.logbooks.show');
         
@@ -229,7 +228,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/profile/logout-all-devices', [ProfileController::class, 'logoutAllDevices'])->name('profile.logout-all');
     });
 
     // Route Publik untuk Verifikasi

@@ -48,43 +48,6 @@
 
             <x-auth-session-status class="mb-6" :status="session('status')" />
 
-            {{-- Peringatan: Batas perangkat tercapai --}}
-            @if(session('device_limit_reached'))
-            <div class="mb-6 rounded-xl border-2 border-red-400 bg-red-50 p-5 shadow-lg">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                            <i class="fas fa-shield-alt text-red-600 text-lg"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <h3 class="text-sm font-bold text-red-800">
-                            Batas Perangkat Tercapai!
-                        </h3>
-                        <p class="mt-1 text-sm text-red-700">
-                            Akun ini sudah aktif di <strong>3 perangkat</strong>. Silakan logout dari salah satu perangkat terlebih dahulu, atau hubungi admin untuk mereset sesi Anda.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            {{-- Pesan error umum --}}
-            @if(session('error'))
-            <div class="mb-6 rounded-xl border-2 border-red-300 bg-red-50 p-4 shadow-md">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
-                            <i class="fas fa-exclamation-circle text-red-500"></i>
-                        </div>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
-                    </div>
-                </div>
-            </div>
-            @endif
-
             <form method="POST" action="{{ route('login') }}" class="space-y-6">
                 @csrf
 
