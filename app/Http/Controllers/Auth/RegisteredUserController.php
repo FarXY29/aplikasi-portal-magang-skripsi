@@ -52,6 +52,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Jika role peserta atau pembimbing, jangan langsung diloginkan.
+        // Wajib verifikasi email terlebih dahulu sebelum bisa login.
+        if (in_array($user->role, ['peserta', 'pembimbing'])) {
+            return redirect()->route('login')->with('status', 'Registrasi berhasil! Link verifikasi telah dikirim ke alamat email Anda (' . $user->email . '). Silakan verifikasi email Anda terlebih dahulu sebelum login.');
+        }
+
         Auth::login($user);
 
         return redirect()->intended(RouteServiceProvider::HOME);

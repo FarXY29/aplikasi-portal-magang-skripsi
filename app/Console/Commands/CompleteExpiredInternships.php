@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Application;
+use App\Services\ApplicationLifecycleService;
 
 class CompleteExpiredInternships extends Command
 {
@@ -24,7 +25,7 @@ class CompleteExpiredInternships extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(ApplicationLifecycleService $lifecycleService)
     {
         $expiredApplications = Application::where('status', 'diterima')
             ->where('tanggal_selesai', '<', now()->toDateString())
@@ -34,8 +35,7 @@ class CompleteExpiredInternships extends Command
 
         if ($count > 0) {
             foreach ($expiredApplications as $application) {
-                $application->status = 'selesai';
-                $application->save();
+                $lifecycleService->markAsFinished($application);
             }
             $this->info("Successfully completed {$count} expired internship(s).");
         } else {

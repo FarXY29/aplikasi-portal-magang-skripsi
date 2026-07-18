@@ -13,7 +13,7 @@ class AdminSettingController extends Controller
         // Ambil semua setting dan ubah jadi array key => value
         $settings = Setting::all()->pluck('value', 'key');
         
-        return view('admin.settings.index', compact('settings'));
+        return view('admin_kota.settings.index', compact('settings'));
     }
 
     public function update(Request $request)

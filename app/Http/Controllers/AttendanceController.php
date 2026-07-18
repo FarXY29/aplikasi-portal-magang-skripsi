@@ -107,6 +107,10 @@ class AttendanceController extends Controller
             'date' => $today,
             'status' => 'hadir',
             'clock_in' => $now->format('H:i:s'),
+            'latitude_in' => $request->latitude,
+            'longitude_in' => $request->longitude,
+            'ip_address' => $request->ip(),
+            'device_info' => $request->userAgent(),
             'validation_status' => 'pending',
         ]);
 
@@ -181,6 +185,8 @@ class AttendanceController extends Controller
         // 4. Update Jam Pulang
         $attendance->update([
             'clock_out' => $now->format('H:i:s'),
+            'latitude_out' => $request->latitude,
+            'longitude_out' => $request->longitude,
         ]);
 
         return back()->with('success', 'Berhasil Absen Pulang! Hati-hati di jalan.');

@@ -33,13 +33,13 @@ class AdminUserController extends Controller
         $users = $query->latest()->paginate(10);
         $users->appends($request->all());
 
-        return view('admin.users.index', compact('users'));
+        return view('admin_kota.users.index', compact('users'));
     }
 
     public function create()
     {
         $instansis = Instansi::all();
-        return view('admin.users.create', compact('instansis'));
+        return view('admin_kota.users.create', compact('instansis'));
     }
 
     public function store(Request $request)
@@ -69,7 +69,7 @@ class AdminUserController extends Controller
     {
         $user = User::findOrFail($id);
         $instansis = Instansi::all();
-        return view('admin.users.edit', compact('user', 'instansis'));
+        return view('admin_kota.users.edit', compact('user', 'instansis'));
     }
 
     public function update(Request $request, $id)
@@ -125,7 +125,7 @@ class AdminUserController extends Controller
         $participants = $query->latest()->paginate(10);
         $participants->appends($request->all());
 
-        return view('admin.users.logbooks', compact('participants'));
+        return view('admin_kota.users.logbooks', compact('participants'));
     }
 
     // 2. Detail Logbook Peserta Tertentu
@@ -146,7 +146,7 @@ class AdminUserController extends Controller
         // Ambil logbooknya
         $logs = DailyLog::where('application_id', $app->id)->orderBy('tanggal', 'desc')->get();
 
-        return view('admin.users.logbook_detail', compact('user', 'app', 'logs'));
+        return view('admin_kota.users.logbook_detail', compact('user', 'app', 'logs'));
     }
 
     // Cetak Laporan Data Master Peserta (PDF)
@@ -159,7 +159,7 @@ class AdminUserController extends Controller
                             ->get();
 
         // Load View PDF
-        $pdf = Pdf::loadView('admin.pdf.peserta', compact('participants'));
+        $pdf = Pdf::loadView('pdf.admin_kota.peserta', compact('participants'));
 
         // Setup Kertas A4 Landscape
         $pdf->setPaper('a4', 'landscape');
