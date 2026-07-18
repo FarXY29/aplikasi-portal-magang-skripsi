@@ -201,15 +201,16 @@
                                                     'sakit' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
                                                     'izin' => 'bg-blue-100 text-blue-700 border-blue-200',
                                                 ];
-                                                $style = $statusStyles[$row->status] ?? 'bg-gray-100 text-gray-600';
+                                                $statusVal = $row->status instanceof \App\Enums\AttendanceStatus ? $row->status->value : $row->status;
+                                                $style = $statusStyles[$statusVal] ?? 'bg-gray-100 text-gray-600';
                                                 
                                                 // Cek Pending Validation
-                                                $isPending = ($row->status != 'hadir' && $row->validation_status == 'pending');
+                                                $isPending = ($statusVal != 'hadir' && ($row->validation_status instanceof \App\Enums\ValidationStatus ? $row->validation_status->value : $row->validation_status) == 'pending');
                                             @endphp
 
                                             <div class="relative inline-block">
                                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full border {{ $style }}">
-                                                    {{ ucfirst($row->status) }}
+                                                    {{ ucfirst($statusVal) }}
                                                 </span>
                                                 @if($isPending)
                                                     <span class="absolute -top-1 -right-2 flex h-3 w-3">

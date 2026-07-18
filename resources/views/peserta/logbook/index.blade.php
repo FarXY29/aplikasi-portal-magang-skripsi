@@ -307,6 +307,9 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="mt-6">
+                                    {{ $logs->links() }}
+                                </div>
                             @endif
                         </div>
                     </div>

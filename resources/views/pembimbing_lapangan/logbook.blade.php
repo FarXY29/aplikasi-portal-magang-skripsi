@@ -114,38 +114,68 @@
                                 <span class="text-[10px] font-bold bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{{ $logs->count() }}</span>
                             </div>
                             
-                            <div class="max-h-[70vh] overflow-y-auto custom-scrollbar">
-                                <ul class="divide-y divide-gray-50">
-                                    @foreach($logs as $log)
-                                    <li>
-                                        <button 
-                                            @click="activeTab = {{ $log->id }}"
-                                            :class="{ 'bg-teal-50 border-l-4 border-teal-500': activeTab === {{ $log->id }}, 'hover:bg-gray-50 border-l-4 border-transparent': activeTab !== {{ $log->id }} }"
-                                            class="w-full text-left px-4 py-3 transition duration-150 ease-in-out focus:outline-none group">
-                                            
-                                            <div class="flex justify-between items-start mb-1">
-                                                <span class="text-sm font-bold text-gray-800" 
-                                                      :class="{ 'text-teal-700': activeTab === {{ $log->id }} }">
-                                                    {{ \Carbon\Carbon::parse($log->tanggal)->format('d M Y') }}
-                                                </span>
+                            <form action="{{ route('pembimbing_lapangan.logbook.batch_validasi') }}" method="POST">
+                                @csrf
+                                <div class="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                                    <ul class="divide-y divide-gray-50">
+                                        @foreach($logs as $log)
+                                        <li class="flex items-center pr-2 hover:bg-gray-50 transition duration-150 group">
+                                            @if($log->status_validasi != 'disetujui')
+                                                <div class="pl-4 pr-1">
+                                                    <input type="checkbox" name="log_ids[]" value="{{ $log->id }}" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer">
+                                                </div>
+                                            @else
+                                                <div class="pl-4 pr-1 opacity-0 w-5"></div>
+                                            @endif
+
+                                            <button type="button"
+                                                @click="activeTab = {{ $log->id }}"
+                                                :class="{ 'bg-teal-50 border-l-4 border-teal-500': activeTab === {{ $log->id }}, 'border-l-4 border-transparent': activeTab !== {{ $log->id }} }"
+                                                class="w-full text-left px-3 py-3 focus:outline-none">
                                                 
-                                                @if($log->status_validasi == 'disetujui')
-                                                    <i class="fas fa-check-circle text-green-500 text-xs" title="Disetujui"></i>
-                                                @elseif($log->status_validasi == 'revisi')
-                                                    <i class="fas fa-exclamation-circle text-red-500 text-xs" title="Revisi"></i>
-                                                @else
-                                                    <div class="w-2 h-2 rounded-full bg-yellow-400 mt-1.5" title="Pending"></div>
-                                                @endif
-                                            </div>
-                                            
-                                            <p class="text-xs text-gray-500 truncate group-hover:text-gray-700">
-                                                {{ Str::limit($log->kegiatan, 40) }}
-                                            </p>
+                                                <div class="flex justify-between items-start mb-1">
+                                                    <span class="text-sm font-bold text-gray-800" 
+                                                          :class="{ 'text-teal-700': activeTab === {{ $log->id }} }">
+                                                        {{ \Carbon\Carbon::parse($log->tanggal)->format('d M Y') }}
+                                                    </span>
+                                                    
+                                                    @if($log->status_validasi == 'disetujui')
+                                                        <i class="fas fa-check-circle text-green-500 text-xs" title="Disetujui"></i>
+                                                    @elseif($log->status_validasi == 'revisi')
+                                                        <i class="fas fa-exclamation-circle text-red-500 text-xs" title="Revisi"></i>
+                                                    @else
+                                                        <div class="w-2 h-2 rounded-full bg-yellow-400 mt-1.5" title="Pending"></div>
+                                                    @endif
+                                                </div>
+                                                
+                                                <p class="text-xs text-gray-500 truncate group-hover:text-gray-700">
+                                                    {{ Str::limit($log->kegiatan, 30) }}
+                                                </p>
+                                            </button>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                
+                                <!-- Batch Action Buttons -->
+                                <div class="p-4 border-t border-gray-100 bg-gray-50 flex flex-col gap-2">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="text-xs font-bold text-gray-700 flex items-center gap-1 cursor-pointer">
+                                            <input type="checkbox" onchange="document.querySelectorAll('input[name=\'log_ids[]\']').forEach(c => c.checked = this.checked)" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                            Pilih Semua
+                                        </label>
+                                        <span class="text-[10px] text-gray-500 font-medium">Validasi Massal</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button type="submit" name="status" value="disetujui" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2 rounded-lg transition shadow-sm">
+                                            <i class="fas fa-check mr-1"></i> Terima
                                         </button>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                                        <button type="submit" name="status" value="revisi" class="flex-1 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold py-2 rounded-lg transition shadow-sm">
+                                            <i class="fas fa-undo mr-1"></i> Revisi
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
 

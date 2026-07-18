@@ -17,6 +17,7 @@ class EmailVerificationTest extends TestCase
     public function test_email_verification_screen_can_be_rendered(): void
     {
         $user = User::factory()->create([
+            'role' => 'peserta',
             'email_verified_at' => null,
         ]);
 

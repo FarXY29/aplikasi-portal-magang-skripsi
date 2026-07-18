@@ -82,7 +82,7 @@
                 </div>
             @endif
 
-            @if($activeApp && in_array($activeApp->status, ['diterima', 'selesai']))
+            @if($activeApp && in_array($activeApp->status?->value, ['diterima', 'selesai']))
                 <!-- 1. Banner Sambutan & Absen Harian -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-gradient-to-r from-teal-50/50 via-white to-teal-50/20">
@@ -385,8 +385,11 @@
                 
                 <div class="p-6 space-y-4">
                     @forelse($myApplications as $app)
+                        @php
+                            $appStatus = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status;
+                        @endphp
                         <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4
-                            {{ $app->status == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($app->status == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' : ($app->status == 'menunggu' ? 'bg-orange-50/50 border-orange-100' : 'bg-white border-gray-100 hover:border-teal-200')) }}"
+                            {{ $appStatus == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($appStatus == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' : ($appStatus == 'menunggu' ? 'bg-orange-50/50 border-orange-100' : 'bg-white border-gray-100 hover:border-teal-200')) }}"
                             x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                             
                             <div class="w-full lg:flex-1 min-w-0">
@@ -418,7 +421,7 @@
                                         <i class="far fa-paper-plane text-gray-300"></i>
                                         Tgl Lamar: <span class="text-gray-600 font-bold">{{ \Carbon\Carbon::parse($app->created_at)->translatedFormat('d M Y') }}</span>
                                     </span>
-                                    @if(in_array($app->status, ['diterima', 'selesai']) && $app->tanggal_mulai)
+                                    @if(in_array($appStatus, ['diterima', 'selesai']) && $app->tanggal_mulai)
                                     <span class="flex items-center gap-1.5">
                                         <i class="far fa-calendar-alt text-gray-300"></i>
                                         Periode Magang: <span class="text-gray-600 font-bold">{{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}</span>
@@ -470,7 +473,7 @@
 
                                 @endif
 
-                                @if(in_array($app->status, ['pending', 'menunggu']) || ($app->status === 'diterima' && $app->display_status === 'belum mulai'))
+                                 @if(in_array($app->status?->value, ['pending', 'menunggu']) || ($app->status?->value === 'diterima' && $app->display_status === 'belum mulai'))
                                     <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="w-full sm:w-auto inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.');">
                                         @csrf
                                         <button type="submit" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-sm flex items-center gap-2">
@@ -508,7 +511,7 @@
                                             <p class="text-gray-500 mb-1 text-xs font-bold uppercase">Tanggal Daftar</p>
                                             <p class="font-semibold text-gray-800">{{ \Carbon\Carbon::parse($app->created_at)->translatedFormat('d M Y') }}</p>
                                         </div>
-                                        @if(in_array($app->status, ['diterima', 'selesai']) && $app->tanggal_mulai)
+                                        @if(in_array($app->status?->value, ['diterima', 'selesai']) && $app->tanggal_mulai)
                                             <div class="col-span-2">
                                                 <p class="text-gray-500 mb-1 text-xs font-bold uppercase">Periode Pelaksanaan</p>
                                                 <p class="font-semibold text-gray-800">{{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} <span class="text-gray-400 mx-2">&rarr;</span> {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}</p>
@@ -526,7 +529,7 @@
                                     </div>
                                 @endif
 
-                                @if($app->status == 'selesai')
+                                 @if($app->status?->value == 'selesai')
                                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                                         <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
                                             <i class="fas fa-star text-teal-500"></i> Evaluasi & Saran untuk Instansi
@@ -562,17 +565,16 @@
                             </div>
                         </x-modal>
                     @empty
-                        <div class="text-center py-10">
-                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-300">
-                                <i class="fas fa-inbox text-3xl"></i>
-                            </div>
-                            <p class="text-gray-500 font-medium">Tidak ada lamaran yang sesuai filter.</p>
+                        <x-ui.empty-state 
+                            title="Tidak Ada Lamaran" 
+                            description="Tidak ada lamaran magang yang ditemukan atau sesuai dengan filter pencarian Anda."
+                            icon="fa-inbox">
                             @if(request('status') || request('start_date') || request('end_date'))
-                                <a href="{{ route('peserta.dashboard') }}" class="mt-2 inline-block text-teal-600 font-bold hover:underline">Reset Filter</a>
+                                <a href="{{ route('peserta.dashboard') }}" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition">Reset Filter</a>
                             @else
-                                <a href="{{ route('home') }}" class="mt-2 inline-block text-teal-600 font-bold hover:underline">Cari Lowongan Magang &rarr;</a>
+                                <a href="{{ route('home') }}" class="px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-xl text-xs font-bold transition shadow-sm">Cari Lowongan Magang &rarr;</a>
                             @endif
-                        </div>
+                        </x-ui.empty-state>
                     @endforelse
                 </div>
             </div>

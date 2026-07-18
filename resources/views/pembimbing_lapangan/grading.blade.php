@@ -17,23 +17,25 @@
 
                 <form action="{{ route('pembimbing_lapangan.grading.store', $app->id) }}" method="POST" class="space-y-6">
                     @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-5 rounded-2xl border border-gray-100 mb-6">
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Nilai Teknis (0-100)</label>
-                            <input type="number" name="nilai_teknis" min="0" max="100" required 
-                                class="w-full rounded-xl border-gray-200 focus:ring-teal-500" placeholder="Keahlian bidang">
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Nilai Disiplin (0-100)</label>
+                            <label class="text-sm font-bold text-gray-700 flex justify-between">
+                                <span>Nilai Disiplin (0-100)</span>
+                                <span class="text-teal-600 bg-teal-50 px-2 py-0.5 rounded text-xs">Bobot 40%</span>
+                            </label>
                             <input type="number" name="nilai_disiplin" min="0" max="100" required 
-                                class="w-full rounded-xl border-gray-200 focus:ring-teal-500" placeholder="Kehadiran & aturan">
+                                class="w-full rounded-xl border-gray-200 focus:ring-teal-500" placeholder="Contoh: 85">
+                            <p class="text-xs text-gray-500">Berdasarkan kehadiran dan kepatuhan aturan.</p>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-gray-700">Nilai Perilaku (0-100)</label>
-                            <input type="number" name="nilai_perilaku" min="0" max="100" required 
-                                class="w-full rounded-xl border-gray-200 focus:ring-teal-500" placeholder="Etika & kerjasama">
+                            <label class="text-sm font-bold text-gray-700 flex justify-between">
+                                <span>Nilai Kinerja (0-100)</span>
+                                <span class="text-teal-600 bg-teal-50 px-2 py-0.5 rounded text-xs">Bobot 60%</span>
+                            </label>
+                            <input type="number" name="nilai_kinerja" min="0" max="100" required 
+                                class="w-full rounded-xl border-gray-200 focus:ring-teal-500" placeholder="Contoh: 90">
+                            <p class="text-xs text-gray-500">Berdasarkan penyelesaian tugas dan output kerja.</p>
                         </div>
                     </div>
 

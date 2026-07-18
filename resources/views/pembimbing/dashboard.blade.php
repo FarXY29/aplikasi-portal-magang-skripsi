@@ -107,8 +107,12 @@
                                                     {{ \Carbon\Carbon::parse($app->tanggal_mulai)->format('d M Y') }} - 
                                                     {{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}
                                                 </div>
-                                                <span class="inline-flex mt-1 items-center px-2 py-0.5 rounded text-xs font-bold {{ $app->status == 'selesai' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
-                                                    {{ ucfirst($app->status) }}
+                                                @php
+                                                    $statusLabel = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($app->status);
+                                                    $statusVal = $app->status instanceof \UnitEnum ? $app->status->value : $app->status;
+                                                @endphp
+                                                <span class="inline-flex mt-1 items-center px-2 py-0.5 rounded text-xs font-bold {{ $statusVal == 'selesai' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
+                                                    {{ $statusLabel }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-center space-x-2">
@@ -139,8 +143,12 @@
                                             <div class="text-xs text-gray-500">{{ $app->user->major ?? '-' }}</div>
                                         </div>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold {{ $app->status == 'selesai' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200' }}">
-                                        {{ ucfirst($app->status) }}
+                                    @php
+                                        $statusLabel = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($app->status);
+                                        $statusVal = $app->status instanceof \UnitEnum ? $app->status->value : $app->status;
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold {{ $statusVal == 'selesai' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-blue-100 text-blue-800 border border-blue-200' }}">
+                                        {{ $statusLabel }}
                                     </span>
                                 </div>
 
