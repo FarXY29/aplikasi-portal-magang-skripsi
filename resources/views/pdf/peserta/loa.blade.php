@@ -48,7 +48,7 @@
             margin-bottom: 10px;
         }
 
-        /* TABEL INFO (Nomor & Tujuan) */
+        /* TABEL INFO (Nomor &amp; Tujuan) */
         .info-container {
             width: 100%;
             margin-bottom: 15px;

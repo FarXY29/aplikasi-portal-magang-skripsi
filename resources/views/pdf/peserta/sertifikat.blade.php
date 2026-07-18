@@ -35,7 +35,7 @@
             text-align: center;
         }
 
-        /* 4. Typography & Spacing (Diperpadat & Lebih Premium) */
+        /* 4. Typography &amp; Spacing (Diperpadat &amp; Lebih Premium) */
         .header-text {
             font-size: 18pt;
             font-weight: bold;
