@@ -36,42 +36,21 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    <input type="text" name="name" value="{{ old('name') }}" 
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm" 
-                                        placeholder="Nama Lengkap User" required>
-                                </div>
-                                @error('name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
+                                <x-text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name') }}" placeholder="Nama Lengkap User" required />
+                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Email Login</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                    <input type="email" name="email" value="{{ old('email') }}"
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm" 
-                                        placeholder="email@example.com" required>
-                                </div>
-                                @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-label for="email" value="Email Login" class="mb-2 font-bold" />
+                                <x-text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email') }}" placeholder="email@example.com" required />
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Password</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                    <input type="password" name="password"
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm" 
-                                        placeholder="Minimal 8 karakter" required>
-                                </div>
-                                @error('password') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-label for="password" value="Password" class="mb-2 font-bold" />
+                                <x-text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" required />
+                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
                         </div>
 
@@ -124,8 +103,8 @@
                                 </div>
 
                                 <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Nomor HP (Opsional)</label>
-                                    <input type="text" name="phone" class="w-full rounded-lg border-gray-300 text-sm" placeholder="08xxxxxxxxxx">
+                                    <x-input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
+                                    <x-text-input id="phone" name="phone" type="text" placeholder="08xxxxxxxxxx" />
                                 </div>
 
                                 <div id="noneField" class="hidden text-center text-gray-400 text-sm py-2">

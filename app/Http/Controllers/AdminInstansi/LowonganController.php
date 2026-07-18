@@ -6,13 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminInstansi\LowonganRequest;
 use App\Models\InternshipPosition;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LowonganController extends Controller
 {
-    public function indexLowongan()
+    public function indexLowongan(Request $request)
     {
         $instansiId = Auth::user()->instansi_id;
-        $lowongans = InternshipPosition::where('instansi_id', $instansiId)->get();
+        $query = InternshipPosition::where('instansi_id', $instansiId);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('judul_posisi', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%")
+                  ->orWhere('required_major', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $lowongans = $query->get();
         return view('admin_instansi.lowongan.index', compact('lowongans'));
     }
 

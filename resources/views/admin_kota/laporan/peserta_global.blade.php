@@ -288,11 +288,11 @@
                     <table class="min-w-full divide-y divide-gray-100 border-collapse">
                         <thead class="bg-gray-50/90 text-gray-500 text-[11px] uppercase tracking-wider font-extrabold sticky top-0 z-10 border-b border-gray-100">
                             <tr>
-                                <th class="px-5 py-4 text-center w-12">No</th>
-                                <th class="px-6 py-4 text-left">Peserta & Asal Kampus / Sekolah</th>
-                                <th class="px-6 py-4 text-left">Penempatan Dinas & Posisi</th>
-                                <th class="px-6 py-4 text-left">Periode & Durasi Magang</th>
-                                <th class="px-6 py-4 text-center w-36">Status Magang</th>
+                                <th class="px-5 py-4 text-center w-12 whitespace-nowrap">No</th>
+                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[250px]">Peserta & Asal Kampus / Sekolah</th>
+                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[200px]">Penempatan Dinas & Posisi</th>
+                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[200px]">Periode & Durasi Magang</th>
+                                <th class="px-6 py-4 text-center w-36 whitespace-nowrap min-w-[150px]">Status Magang</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100/80 text-sm">

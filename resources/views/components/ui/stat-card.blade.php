@@ -45,13 +45,25 @@
             'iconBg' => 'bg-teal-500 text-white shadow-teal-200',
             'text' => 'text-teal-950',
         ],
+        'purple' => [
+            'bg' => 'bg-gradient-to-br from-purple-500/10 via-purple-50/40 to-white',
+            'border' => 'border-purple-100/80 hover:border-purple-300',
+            'iconBg' => 'bg-purple-500 text-white shadow-purple-200',
+            'text' => 'text-purple-950',
+        ],
+        'green' => [
+            'bg' => 'bg-gradient-to-br from-green-500/10 via-green-50/40 to-white',
+            'border' => 'border-green-100/80 hover:border-green-300',
+            'iconBg' => 'bg-green-500 text-white shadow-green-200',
+            'text' => 'text-green-950',
+        ],
     ];
 
     $style = $colorMap[$color] ?? $colorMap['indigo'];
     $tag = $href ? 'a' : 'div';
 @endphp
 
-<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group block relative overflow-hidden rounded-2xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md {$style['bg']} {$style['border']}"]) }}>
+<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group block relative overflow-hidden rounded-xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md {$style['bg']} {$style['border']}"]) }}>
     <div class="flex items-start justify-between gap-4">
         <div>
             <p class="text-xs font-bold uppercase tracking-wider text-gray-500">{{ $title }}</p>

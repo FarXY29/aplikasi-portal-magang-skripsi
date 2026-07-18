@@ -228,9 +228,9 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="mt-2 w-full bg-teal-600 text-white py-2.5 rounded-xl shadow-lg shadow-teal-200 hover:bg-teal-700 text-sm font-bold transition transform active:scale-95 flex items-center justify-center">
+                        <x-primary-button class="w-full mt-2 justify-center">
                             <i class="fas fa-search mr-2"></i> Terapkan Filter
-                        </button>
+                        </x-primary-button>
                     </form>
                 </div>
 
@@ -248,12 +248,12 @@
                             <table class="min-w-full divide-y divide-gray-100 border-collapse">
                                 <thead class="bg-gray-50 sticky top-0 z-20 shadow-[inset_0_-1px_0_rgba(229,231,235,1)]">
                                     <tr>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16">Rank</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Instansi</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28">Total Kehadiran</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Pelanggaran (Telat/Alpa)</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36">Tingkat Disiplin</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12">Detail</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16 whitespace-nowrap">Rank</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Instansi</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28 whitespace-nowrap min-w-[150px]">Total Kehadiran</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36 whitespace-nowrap min-w-[200px]">Pelanggaran (Telat/Alpa)</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-36 whitespace-nowrap min-w-[150px]">Tingkat Disiplin</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12 whitespace-nowrap">Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-50 text-sm">
@@ -345,11 +345,11 @@
                                                             <table class="min-w-full divide-y divide-gray-100 text-xs text-left">
                                                                 <thead class="bg-gray-50">
                                                                     <tr>
-                                                                        <th class="px-4 py-2 font-bold text-gray-500 uppercase">Nama Peserta / Asal</th>
-                                                                        <th class="px-4 py-2 font-bold text-gray-500 uppercase">Posisi</th>
-                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-20">Terlambat</th>
-                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-20">Alpa</th>
-                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-28">Total Pelanggaran</th>
+                                                                        <th class="px-4 py-2 font-bold text-gray-500 uppercase whitespace-nowrap min-w-[150px]">Nama Peserta / Asal</th>
+                                                                        <th class="px-4 py-2 font-bold text-gray-500 uppercase whitespace-nowrap min-w-[150px]">Posisi</th>
+                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-20 whitespace-nowrap">Terlambat</th>
+                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-20 whitespace-nowrap">Alpa</th>
+                                                                        <th class="px-4 py-2 text-center font-bold text-gray-500 uppercase w-28 whitespace-nowrap min-w-[150px]">Total Pelanggaran</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody class="divide-y divide-gray-50 bg-white">

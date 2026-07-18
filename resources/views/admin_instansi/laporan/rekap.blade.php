@@ -76,9 +76,9 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-teal-100 hover:bg-teal-700 transition transform active:scale-95 text-sm flex items-center justify-center gap-2">
+                        <x-primary-button class="w-full justify-center">
                             <i class="fas fa-search"></i> Terapkan Filter
-                        </button>
+                        </x-primary-button>
                     </form>
                 </div>
 
@@ -167,11 +167,11 @@
                             <table class="min-w-full divide-y divide-gray-100">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12 text-center">No</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Peserta & Kampus</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Posisi & Pembimbing</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode Magang</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28">Status</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12 whitespace-nowrap">No</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Peserta & Kampus</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Posisi & Pembimbing</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Periode Magang</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28 whitespace-nowrap">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-50">

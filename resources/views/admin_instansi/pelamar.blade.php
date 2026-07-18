@@ -73,30 +73,26 @@
             </div>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-green-800 rounded-xl bg-green-50 border border-green-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-green-600"></i>
-                    <div class="text-sm font-bold">{{ session('success') }}</div>
-                    <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700"><i class="fas fa-times"></i></button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
             
             @if(session('error'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-red-800 rounded-xl bg-red-50 border border-red-100 shadow-sm relative">
-                    <i class="fas fa-exclamation-triangle flex-shrink-0 w-5 h-5 mr-3 text-red-600"></i>
-                    <div class="text-sm font-bold">{{ session('error') }}</div>
-                    <button @click="show = false" class="ml-auto text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
-                </div>
-            @endif
+    <x-ui.alert type="error" class="mb-4">
+        {{ session('error') }}
+    </x-ui.alert>
+@endif
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Peserta</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode & Posisi</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi / Dokumen</th>
+                                <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider">Profil Peserta</th>
+                                <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider">Periode & Posisi</th>
+                                <th scope="col" class="px-5 py-3.5 text-center text-[10px] font-black text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-5 py-3.5 text-right text-[10px] font-black text-gray-500 uppercase tracking-wider">Aksi / Dokumen</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-50">
@@ -209,7 +205,7 @@
 
                                             <div class="flex items-center gap-2">
                                                 @if($app->position->kuota > 0)
-                                                    <form action="{{ route('dinas.pelamar.terima', $app->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menerima peserta ini? Kuota akan dikunci dan notifikasi dikirim.')">
+                                                    <form action="{{ route('dinas.pelamar.terima', $app->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Apakah Anda yakin ingin menerima peserta ini? Kuota akan dikunci dan notifikasi dikirim.', onConfirm: () => $el.submit() })">
                                                         @csrf
                                                         <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg hover:bg-teal-700 active:scale-95 transition shadow-sm" title="Terima Peserta">
                                                             <i class="fas fa-check mr-1.5"></i> Terima

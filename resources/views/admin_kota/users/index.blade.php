@@ -40,24 +40,25 @@
             </a>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-3 text-green-800 rounded-xl bg-green-50 border border-green-200 shadow-xs text-xs font-bold w-full lg:w-auto" role="alert">
-                    <i class="fas fa-check-circle flex-shrink-0 w-4 h-4 mr-2 text-green-600"></i>
-                    <div class="flex-1">{{ session('success') }}</div>
-                    <button type="button" @click="show = false" class="ml-3 text-green-500 hover:text-green-800">
-                        <i class="fas fa-times text-xs"></i>
-                    </button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
         </div>
 
-        {{-- Filter & Actions Bar --}}
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <form method="GET" action="{{ route('admin.users.index') }}" id="searchForm" class="flex flex-col sm:flex-row w-full md:w-auto flex-1 max-w-3xl gap-2.5">
-                
-                {{-- Role Filter --}}
-                <div class="relative w-full sm:w-48 shrink-0">
-                    <select name="role" onchange="document.getElementById('searchForm').submit()"
-                        class="w-full pl-9 pr-8 py-2.5 bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl focus:ring-teal-500 focus:border-teal-500 cursor-pointer hover:bg-gray-100 transition font-bold appearance-none">
+        <div class="flex flex-col gap-4 mb-6 print:hidden">
+            <div class="flex justify-between items-center">
+                <!-- Wrapper for alignment if needed, although Back to Dashboard is above -->
+            </div>
+
+            <!-- Form Filter Multi-Kriteria -->
+            <x-ui.filter-bar :action="route('admin.users.index')" :resetUrl="request()->hasAny(['search', 'role']) ? route('admin.users.index') : null">
+                <div class="flex-grow min-w-[200px]">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." class="w-full text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
+                </div>
+
+                <div class="min-w-[150px]">
+                    <select name="role" class="w-full text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600">
                         <option value="">Semua Role</option>
                         <option value="admin_kota" {{ request('role') == 'admin_kota' ? 'selected' : '' }}>Super Admin</option>
                         <option value="admin_instansi" {{ request('role') == 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
@@ -65,39 +66,14 @@
                         <option value="pembimbing" {{ request('role') == 'pembimbing' ? 'selected' : '' }}>Pembimbing Sekolah</option>
                         <option value="peserta" {{ request('role') == 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
                     </select>
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-filter text-gray-400 text-[10px]"></i>
-                    </div>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="fas fa-chevron-down text-gray-400 text-[10px]"></i>
-                    </div>
                 </div>
-
-                {{-- Search Input --}}
-                <div class="relative w-full">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400 text-xs"></i>
-                    </div>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                        placeholder="Cari nama atau email..." 
-                        class="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-2xs"
-                        oninput="autoSubmitSearch()">
-                    
-                    <div id="loadingIcon" class="absolute inset-y-0 right-0 pr-3 flex items-center hidden">
-                        <i class="fas fa-circle-notch fa-spin text-teal-500 text-xs"></i>
-                    </div>
-                    
-                    @if(request('search'))
-                        <a href="{{ route('admin.users.index') }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-red-500 transition" title="Hapus Pencarian">
-                            <i class="fas fa-times-circle text-xs"></i>
-                        </a>
-                    @endif
+                
+                <div class="flex items-center ml-auto pl-4 border-l border-gray-100">
+                    <a href="{{ route('admin.users.create') }}" class="action-btn inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 active:scale-95 transition shadow-sm" style="background-color: #2563eb;">
+                        <i class="fas fa-user-plus mr-2 text-[10px]"></i> Tambah Pengguna
+                    </a>
                 </div>
-            </form>
-
-            <a href="{{ route('admin.users.create') }}" class="action-btn inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 active:scale-95 transition shadow-sm w-full md:w-auto" style="background-color: #2563eb;">
-                <i class="fas fa-user-plus mr-2 text-[10px]"></i> Tambah Pengguna
-            </a>
+            </x-ui.filter-bar>
         </div>
 
         {{-- Table Container --}}
@@ -148,7 +124,7 @@
                                     </a>
                                     
                                     @if(auth()->id() != $user->id)
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Yakin ingin menghapus user ini?', onConfirm: () => $el.submit() })">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="p-2 bg-white border border-gray-200 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-200 transition shadow-2xs" title="Hapus Pengguna">
                                                 <i class="fas fa-trash-alt text-xs"></i>
@@ -204,7 +180,7 @@
                         </a>
                         
                         @if(auth()->id() != $user->id)
-                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="flex-1" @submit.prevent="$dispatch('open-confirm', { message: 'Yakin ingin menghapus user ini?', onConfirm: () => $el.submit() })">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="w-full py-2 px-3 bg-red-50 border border-red-200 rounded-xl text-red-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-red-600 hover:text-white transition shadow-2xs">
                                     <i class="fas fa-trash-alt text-red-500"></i> Hapus

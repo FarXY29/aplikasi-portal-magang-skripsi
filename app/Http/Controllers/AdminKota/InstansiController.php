@@ -13,12 +13,20 @@ class InstansiController extends Controller
     /**
      * Daftar Instansi/OPD
      */
-    public function indexInstansi()
+    public function indexInstansi(Request $request)
     {
-        $instansis = Instansi::with('positions')
-                    ->withCount('applications')
-                    ->orderBy('nama_dinas', 'asc')
-                    ->paginate(10);
+        $query = Instansi::with('positions')->withCount('applications');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_dinas', 'like', "%{$search}%")
+                  ->orWhere('kode_unit_kerja', 'like', "%{$search}%");
+            });
+        }
+
+        $instansis = $query->orderBy('nama_dinas', 'asc')
+                    ->paginate(10)->withQueryString();
 
         return view('admin_kota.instansi.index', compact('instansis'));
     }

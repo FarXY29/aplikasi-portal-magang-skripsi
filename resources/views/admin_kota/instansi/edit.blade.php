@@ -1,21 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
-                <i class="fas fa-edit text-teal-600"></i>
-                {{ __('Edit Data Instansi') }}
-            </h2>
-        </div>
+        <x-ui.page-header 
+            title="Edit Data Instansi"
+            :breadcrumbs="[
+                ['label' => 'Daftar Instansi', 'url' => route('admin.instansi.index')],
+                ['label' => 'Edit']
+            ]"
+        />
     </x-slot>
 
     <div class="py-12 bg-gray-50/50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="mb-6">
-                <a href="{{ route('admin.instansi.index') }}" class="inline-flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                    <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Instansi
-                </a>
-            </div>
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100">
                 

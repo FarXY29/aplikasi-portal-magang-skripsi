@@ -24,12 +24,10 @@
             </div>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-green-800 rounded-xl bg-green-50 border border-green-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-green-600"></i>
-                    <div class="text-sm font-bold">{{ session('success') }}</div>
-                    <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700"><i class="fas fa-times"></i></button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
 
             <div class="flex flex-col lg:flex-row gap-8 items-start">
                 
@@ -142,7 +140,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             
-                                            <form action="{{ route('dinas.pembimbing_lapangan.destroy', $pembimbing_lapangan->id) }}" method="POST" onsubmit="return confirm('Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.')">
+                                            <form action="{{ route('dinas.pembimbing_lapangan.destroy', $pembimbing_lapangan->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="p-2 bg-white border border-gray-200 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-200 transition shadow-sm" title="Hapus Akun">

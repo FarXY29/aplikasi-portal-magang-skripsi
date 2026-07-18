@@ -14,25 +14,41 @@
     <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 print:hidden">
-                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                    <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs"></i>
-                    </div>
-                    Kembali ke Dashboard
-                </a>
+            <div class="flex flex-col gap-4 mb-6 print:hidden">
+                <div class="flex justify-between items-center">
+                    <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
+                        <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+                            <i class="fas fa-arrow-left text-xs"></i>
+                        </div>
+                        Kembali ke Dashboard
+                    </a>
+                </div>
 
-                <a href="{{ route('dinas.lowongan.create') }}" class="flex items-center px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 transition transform active:scale-95 text-sm">
-                    <i class="fas fa-plus mr-2"></i> Buat Lowongan Baru
-                </a>
+                <x-ui.filter-bar :action="route('dinas.lowongan.index')" :resetUrl="request()->hasAny(['search', 'status']) ? route('dinas.lowongan.index') : null">
+                    <div class="flex-grow min-w-[200px]">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari posisi, syarat, atau deskripsi..." class="w-full text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
+                    </div>
+
+                    <div class="min-w-[150px]">
+                        <select name="status" class="w-full text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600">
+                            <option value="">Semua Status</option>
+                            <option value="buka" {{ request('status') == 'buka' ? 'selected' : '' }}>Buka</option>
+                            <option value="tutup" {{ request('status') == 'tutup' ? 'selected' : '' }}>Tutup</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center ml-auto pl-4 border-l border-gray-100">
+                        <a href="{{ route('dinas.lowongan.create') }}" class="flex items-center px-4 py-2 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-sm transition transform active:scale-95 text-xs uppercase tracking-wider">
+                            <i class="fas fa-plus mr-2 text-[10px]"></i> Buat Lowongan
+                        </a>
+                    </div>
+                </x-ui.filter-bar>
             </div>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-green-800 rounded-xl bg-green-50 border border-green-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-green-600"></i>
-                    <div class="text-sm font-bold">{{ session('success') }}</div>
-                    <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700"><i class="fas fa-times"></i></button>
-                </div>
+                <x-ui.alert type="success" class="mb-4">
+                    {{ session('success') }}
+                </x-ui.alert>
             @endif
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -40,17 +56,17 @@
                     <table class="min-w-full divide-y divide-gray-100">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-1/3">Posisi & Syarat</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kuota & Deadline</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider w-1/3">Posisi & Syarat</th>
+                                <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider">Kuota & Deadline</th>
+                                <th scope="col" class="px-5 py-3.5 text-center text-[10px] font-black text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-5 py-3.5 text-right text-[10px] font-black text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-50">
+                        <tbody class="bg-white divide-y divide-gray-100">
                             @forelse($lowongans as $loker)
-                            <tr class="hover:bg-gray-50 transition duration-150 group">
+                            <tr class="table-row hover:bg-gray-50/60 transition duration-150 group">
                                 
-                                <td class="px-6 py-4">
+                                <td class="px-5 py-4">
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-600 transition">
                                             {{ $loker->judul_posisi }}
@@ -64,7 +80,7 @@
                                     </div>
                                 </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-5 py-4 whitespace-nowrap">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center text-sm font-bold text-gray-700">
                                             <i class="fas fa-users mr-2 text-gray-400"></i> {{ $loker->kuota }} <span class="text-xs font-normal text-gray-500 ml-1">orang</span>
@@ -85,7 +101,7 @@
                                     </div>
                                 </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <td class="px-5 py-4 whitespace-nowrap text-center">
                                     @if($loker->status == 'buka')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
                                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></span> Buka
@@ -97,7 +113,7 @@
                                     @endif
                                 </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td class="px-5 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
                                         <a href="{{ route('dinas.lowongan.edit', $loker->id) }}" class="p-2 bg-white border border-gray-200 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition shadow-sm" title="Edit Data">
                                             <i class="fas fa-edit"></i>

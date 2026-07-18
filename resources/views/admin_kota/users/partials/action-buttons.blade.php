@@ -4,7 +4,7 @@
     </a>
 
     @if(auth()->id() != $user->id)
-        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Yakin ingin menghapus user ini?', onConfirm: () => $el.submit() })">
             @csrf @method('DELETE')
             <button type="submit" class="p-2 bg-white border border-gray-200 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-300 transition shadow-sm">
                 <i class="fas fa-trash-alt"></i>

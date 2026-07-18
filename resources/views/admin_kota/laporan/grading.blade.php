@@ -303,9 +303,9 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="mt-2 w-full bg-teal-600 text-white py-2.5 rounded-xl shadow-lg shadow-teal-200 hover:bg-teal-700 text-sm font-bold transition transform active:scale-95 flex items-center justify-center">
+                        <x-primary-button class="w-full mt-2 justify-center">
                             <i class="fas fa-search mr-2"></i> Terapkan Filter
-                        </button>
+                        </x-primary-button>
                     </form>
                 </div>
 
@@ -323,12 +323,12 @@
                             <table class="min-w-full divide-y divide-gray-100 border-collapse">
                                 <thead class="bg-gray-50 sticky top-0 z-20 shadow-[inset_0_-1px_0_rgba(229,231,235,1)]">
                                     <tr>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16">Rank</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Peserta & Asal Kampus</th>
-                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Penempatan Dinas & Posisi</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-24">Skor Akhir</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28">Predikat</th>
-                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12">Detail</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-16 whitespace-nowrap">Rank</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Peserta & Asal Kampus</th>
+                                        <th class="px-5 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap min-w-[200px]">Penempatan Dinas & Posisi</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-24 whitespace-nowrap min-w-[100px]">Skor Akhir</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-28 whitespace-nowrap min-w-[120px]">Predikat</th>
+                                        <th class="px-5 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-12 whitespace-nowrap">Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-50 text-sm">

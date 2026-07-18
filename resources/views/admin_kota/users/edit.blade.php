@@ -3,22 +3,17 @@
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
-                <i class="fas fa-user-edit text-teal-600"></i>
-                {{ __('Edit Data Pengguna') }}
-            </h2>
-        </div>
+        <x-ui.page-header 
+            title="Edit Data Pengguna"
+            :breadcrumbs="[
+                ['label' => 'Manajemen User', 'url' => route('admin.users.index')],
+                ['label' => 'Edit']
+            ]"
+        />
     </x-slot>
 
     <div class="py-12 bg-gray-50/50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="mb-6">
-                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                    <i class="fas fa-arrow-left mr-2"></i> Kembali ke Manajemen User
-                </a>
-            </div>
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100">
                 
@@ -37,43 +32,27 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    <input type="text" name="name" value="{{ old('name', $user->name) }}" 
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm" 
-                                        required>
-                                </div>
-                                @error('name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
+                                <x-text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required />
+                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Email Login</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                    <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm" 
-                                        required>
-                                </div>
-                                @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-label for="email" value="Email Login" class="mb-2 font-bold" />
+                                <x-text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required />
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 
-                            <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Ubah Password (Opsional)</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                        <i class="fas fa-key"></i>
-                                    </span>
-                                    <input type="password" name="password"
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm bg-white" 
-                                        placeholder="Kosongkan jika tidak ingin mengubah">
-                                </div>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <x-input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
+                                <x-text-input id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="password" value="Password Baru (Kosongkan jika tidak diubah)" class="mb-2 font-bold" />
+                                <x-text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" />
                                 <p class="text-xs text-gray-500 mt-2 italic">*Hanya isi jika user meminta reset password.</p>
-                                @error('password') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
                         </div>
 

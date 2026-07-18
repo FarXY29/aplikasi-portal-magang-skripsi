@@ -21,28 +21,16 @@
             </div>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" x-transition class="flex items-center p-4 mb-6 text-teal-800 rounded-xl bg-teal-50 border border-teal-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-teal-600"></i>
-                    <div class="text-sm font-bold">
-                        {{ session('success') }}
-                    </div>
-                    <button @click="show = false" type="button" class="ml-auto bg-teal-100 text-teal-500 rounded-lg p-1.5 hover:bg-teal-200 inline-flex h-8 w-8 items-center justify-center transition">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
 
             @if(session('error'))
-                <div x-data="{ show: true }" x-show="show" x-transition class="flex items-center p-4 mb-6 text-red-800 rounded-xl bg-red-50 border border-red-100 shadow-sm relative">
-                    <i class="fas fa-exclamation-circle flex-shrink-0 w-5 h-5 mr-3 text-red-600"></i>
-                    <div class="text-sm font-bold">
-                        {{ session('error') }}
-                    </div>
-                    <button @click="show = false" type="button" class="ml-auto bg-red-100 text-red-500 rounded-lg p-1.5 hover:bg-red-200 inline-flex h-8 w-8 items-center justify-center transition">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            @endif
+    <x-ui.alert type="error" class="mb-4">
+        {{ session('error') }}
+    </x-ui.alert>
+@endif
 
             <form action="{{ route('admin.settings.update') }}" method="POST">
                 @csrf

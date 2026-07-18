@@ -30,33 +30,36 @@
 
     <div class="space-y-5 font-[Inter]">
         
-        {{-- Navigation & Alert Bar --}}
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <a href="{{ route('admin.dashboard') }}" class="group inline-flex items-center text-xs font-bold text-gray-500 hover:text-teal-600 transition-colors">
-                <div class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-xs transition-colors">
-                    <i class="fas fa-arrow-left text-[10px]"></i>
-                </div>
-                Kembali ke Dashboard
-            </a>
-
-            @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-3 text-green-800 rounded-xl bg-green-50 border border-green-200 shadow-xs text-xs font-bold w-full lg:w-auto" role="alert">
-                    <i class="fas fa-check-circle flex-shrink-0 w-4 h-4 mr-2 text-green-600"></i>
-                    <div class="flex-1">{{ session('success') }}</div>
-                    <button type="button" @click="show = false" class="ml-3 text-green-500 hover:text-green-800">
-                        <i class="fas fa-times text-xs"></i>
-                    </button>
-                </div>
-            @endif
-
-            <div class="flex gap-2.5">
-                <a href="{{ route('admin.instansi.print_pdf') }}" target="_blank" class="action-btn inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-700 active:scale-95 transition shadow-sm">
-                    <i class="fas fa-print mr-2 text-[10px]"></i> Cetak PDF
-                </a>
-                <a href="{{ route('admin.instansi.create') }}" class="action-btn inline-flex items-center justify-center px-4 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 active:scale-95 transition shadow-sm" style="background-color: #0d9488;">
-                    <i class="fas fa-plus mr-2 text-[10px]"></i> Tambah Instansi
+        <div class="flex flex-col gap-4 mb-6 print:hidden">
+            <div class="flex justify-between items-center">
+                <a href="{{ route('admin.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
+                    <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </div>
+                    Kembali ke Dashboard
                 </a>
             </div>
+
+            @if(session('success'))
+                <x-ui.alert type="success" class="mb-2">
+                    {{ session('success') }}
+                </x-ui.alert>
+            @endif
+
+            <x-ui.filter-bar :action="route('admin.instansi.index')" :resetUrl="request()->has('search') ? route('admin.instansi.index') : null">
+                <div class="flex-grow min-w-[200px]">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama instansi atau kode unit..." class="w-full text-xs rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
+                </div>
+                
+                <div class="flex items-center gap-2.5 ml-auto pl-4 border-l border-gray-100">
+                    <a href="{{ route('admin.instansi.print_pdf') }}" target="_blank" class="action-btn inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-700 active:scale-95 transition shadow-sm">
+                        <i class="fas fa-print mr-2 text-[10px]"></i> Cetak PDF
+                    </a>
+                    <a href="{{ route('admin.instansi.create') }}" class="action-btn inline-flex items-center justify-center px-4 py-2 bg-teal-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 active:scale-95 transition shadow-sm" style="background-color: #0d9488;">
+                        <i class="fas fa-plus mr-2 text-[10px]"></i> Tambah
+                    </a>
+                </div>
+            </x-ui.filter-bar>
         </div>
 
         {{-- Table & Card List Container --}}
@@ -150,7 +153,7 @@
                                         <i class="fas fa-edit text-xs"></i>
                                     </a>
                                     
-                                    <form action="{{ route('admin.instansi.destroy', $dinas->id) }}" method="POST" onsubmit="return confirm('APAKAH ANDA YAKIN?\n\nMenghapus instansi ini akan menghapus:\n- Semua User Admin terkait\n- Semua Lowongan Magang\n- Data Pelamar terkait\n\nTindakan ini tidak dapat dibatalkan!');">
+                                    <form action="{{ route('admin.instansi.destroy', $dinas->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'APAKAH ANDA YAKIN?\n\nMenghapus instansi ini akan menghapus:\n- Semua User Admin terkait\n- Semua Lowongan Magang\n- Data Pelamar terkait\n\nTindakan ini tidak dapat dibatalkan!', onConfirm: () => $el.submit() })">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 bg-white border border-gray-200 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-200 transition shadow-2xs" title="Hapus Instansi">
@@ -232,7 +235,7 @@
                             <i class="fas fa-edit text-teal-600"></i> Edit
                         </a>
                         
-                        <form action="{{ route('admin.instansi.destroy', $dinas->id) }}" method="POST" class="flex-1" onsubmit="return confirm('APAKAH ANDA YAKIN?\n\nMenghapus instansi ini akan menghapus:\n- Semua User Admin terkait\n- Semua Lowongan Magang\n- Data Pelamar terkait\n\nTindakan ini tidak dapat dibatalkan!');">
+                        <form action="{{ route('admin.instansi.destroy', $dinas->id) }}" method="POST" class="flex-1" @submit.prevent="$dispatch('open-confirm', { message: 'APAKAH ANDA YAKIN?\n\nMenghapus instansi ini akan menghapus:\n- Semua User Admin terkait\n- Semua Lowongan Magang\n- Data Pelamar terkait\n\nTindakan ini tidak dapat dibatalkan!', onConfirm: () => $el.submit() })">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="w-full py-2 px-3 bg-red-50 border border-red-200 rounded-xl text-red-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-red-600 hover:text-white transition shadow-2xs">

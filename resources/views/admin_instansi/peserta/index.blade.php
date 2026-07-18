@@ -41,12 +41,10 @@
             </x-ui.filter-bar>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-green-800 rounded-xl bg-green-50 border border-green-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-green-600"></i>
-                    <div class="text-sm font-bold">{{ session('success') }}</div>
-                    <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700"><i class="fas fa-times"></i></button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="overflow-x-auto">
@@ -59,14 +57,17 @@
                                 <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi & Sertifikat</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-5">
+                        <tbody class="bg-white divide-y divide-gray-50">
                             @forelse($interns as $intern)
-                            <tr class="hover:bg-gray-50 transition duration-150 {{ $intern->status == 'selesai' ? 'bg-gray-50/50' : '' }}">
+                            @php
+                                $statusValue = $intern->status instanceof \App\Enums\ApplicationStatus ? $intern->status->value : $intern->status;
+                            @endphp
+                            <tr class="hover:bg-gray-50 transition duration-150 {{ $statusValue == 'selesai' ? 'bg-gray-50/50' : '' }}">
                                 
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            @if($intern->status == 'selesai')
+                                            @if($statusValue == 'selesai')
                                                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200" title="Alumni">
                                                     <i class="fas fa-graduation-cap"></i>
                                                 </div>
@@ -77,7 +78,7 @@
                                             @endif
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="text-sm font-bold text-gray-900 truncate {{ $intern->status == 'selesai' ? 'text-gray-500 line-through' : '' }}">
+                                            <div class="text-sm font-bold text-gray-900 truncate {{ $statusValue == 'selesai' ? 'text-gray-500 line-through' : '' }}">
                                                 {{ $intern->user->name }}
                                             </div>
                                             <div class="text-xs text-gray-500">{{ $intern->user->email }}</div>
@@ -87,7 +88,7 @@
                                             
                                             <div class="mt-1.5 flex items-center gap-1.5">
                                                 <x-ui.badge :status="$intern->status" />
-                                                @if($intern->status == 'selesai' && $intern->nilai_rata_rata)
+                                                @if($statusValue == 'selesai' && $intern->nilai_rata_rata)
                                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-50 text-yellow-700 border border-yellow-100">
                                                         <i class="fas fa-star mr-1 text-yellow-500"></i> Nilai: {{ $intern->nilai_rata_rata }}
                                                     </span>
@@ -97,37 +98,54 @@
                                     </div>
                                 </td>
 
-                                <td class="px-6 py-4">
-                                    @if($intern->status == 'diterima')
-                                        <form action="{{ route('dinas.peserta.assign', $intern->id) }}" method="POST" class="flex flex-col gap-2">
-                                            @csrf
-                                            <div class="flex items-center gap-2">
-                                                <select name="pembimbing_lapangan_id" class="w-full text-xs rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 cursor-pointer py-1.5 pl-2 pr-8 shadow-sm">
-                                                    <option value="">-- Pilih Pembimbing Lapangan --</option>
-                                                    @foreach($pembimbing_lapangan as $pl)
-                                                        <option value="{{ $pl->id }}" {{ $intern->pembimbing_lapangan_id == $pl->id ? 'selected' : '' }}>
-                                                            {{ $pl->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <button type="submit" class="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition shadow-sm" title="Simpan Pembimbing Lapangan">
-                                                    <i class="fas fa-save text-xs"></i>
-                                                </button>
-                                            </div>
+                                <td class="px-6 py-4" x-data="{ editing: false }">
+                                    @if($statusValue == 'diterima' || $statusValue == 'selesai')
+                                        {{-- Tampilan Normal --}}
+                                        <div x-show="!editing" class="flex flex-col gap-1.5">
                                             @if($intern->pembimbing_lapangan_id)
-                                                <div class="text-[10px] text-green-600 font-medium flex items-center">
-                                                    <i class="fas fa-check-circle mr-1"></i> Pembimbing Lapangan: {{ $intern->pembimbing_lapangan->name }}
+                                                <div class="text-xs font-semibold text-gray-800 flex items-center gap-1.5">
+                                                    <i class="fas fa-user-tie text-teal-600"></i>
+                                                    {{ $intern->pembimbing_lapangan->name }}
                                                 </div>
+                                                <button type="button" @click="editing = true" class="text-[10px] font-bold text-teal-600 hover:text-teal-800 hover:underline flex items-center gap-1 w-fit transition active:scale-95">
+                                                    <i class="fas fa-edit text-[9px]"></i> Ubah Pembimbing
+                                                </button>
                                             @else
-                                                <div class="text-[10px] text-red-500 font-medium flex items-center animate-pulse">
-                                                    <i class="fas fa-exclamation-circle mr-1"></i> Wajib pilih pembimbing_lapangan!
+                                                <div class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-100 px-2 py-1 rounded-lg w-fit flex items-center gap-1">
+                                                    <i class="fas fa-exclamation-circle animate-pulse text-[10px]"></i> Belum Ada Pembimbing
                                                 </div>
+                                                <button type="button" @click="editing = true" class="mt-1.5 inline-flex items-center gap-1 px-2.5 py-1 bg-teal-600 text-white text-[10px] font-bold rounded-lg hover:bg-teal-700 active:scale-95 transition shadow-sm w-fit">
+                                                    <i class="fas fa-user-plus text-[9px]"></i> Assign Pembimbing
+                                                </button>
                                             @endif
-                                        </form>
+                                        </div>
+
+                                        {{-- Form Edit Inline --}}
+                                        <div x-show="editing" x-cloak class="flex flex-col gap-2">
+                                            <form action="{{ route('dinas.peserta.assign', $intern->id) }}" method="POST" class="flex flex-col gap-2">
+                                                @csrf
+                                                <div class="flex items-center gap-2">
+                                                    <select name="pembimbing_lapangan_id" required class="w-full text-xs rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 cursor-pointer py-1.5 pl-2 pr-8 shadow-sm">
+                                                        <option value="">-- Pilih Pembimbing --</option>
+                                                        @foreach($pembimbing_lapangan as $pl)
+                                                            <option value="{{ $pl->id }}" {{ $intern->pembimbing_lapangan_id == $pl->id ? 'selected' : '' }}>
+                                                                {{ $pl->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <button type="submit" class="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition active:scale-95 shadow-sm" title="Simpan">
+                                                        <i class="fas fa-save text-xs"></i>
+                                                    </button>
+                                                    <button type="button" @click="editing = false" class="p-1.5 bg-gray-100 text-gray-500 border border-gray-200 rounded-md hover:bg-gray-200 transition active:scale-95" title="Batal">
+                                                        <i class="fas fa-times text-xs"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     @else
-                                        <div class="text-xs text-gray-500 italic flex items-center">
-                                            <i class="fas fa-user-tie mr-1.5 text-gray-400"></i>
-                                            {{ $intern->pembimbing_lapangan->name ?? 'Tidak ada pembimbing_lapangan' }}
+                                        <div class="text-xs text-gray-500 italic flex items-center gap-1.5">
+                                            <i class="fas fa-user-tie text-gray-400"></i>
+                                            {{ $intern->pembimbing_lapangan->name ?? 'Tidak ada pembimbing lapangan' }}
                                         </div>
                                     @endif
                                 </td>
@@ -147,7 +165,7 @@
                                                 $sisa = now()->diffInDays($selesai, false);
                                             @endphp
 
-                                            @if($intern->status != 'selesai')
+                                            @if($statusValue != 'selesai')
                                                 @if($sisa > 0)
                                                     <span class="text-[10px] text-teal-600 font-bold mt-1 bg-teal-50 w-fit px-1.5 py-0.5 rounded">
                                                         <i class="fas fa-hourglass-half mr-1"></i> Sisa {{ ceil($sisa) }} hari
@@ -184,14 +202,14 @@
                                                 <i class="fas fa-certificate text-teal-500 group-hover:text-white"></i>
                                                 <span class="text-xs font-bold hidden xl:inline">Sertifikat</span>
                                             </a>
-                                        @elseif($intern->status == 'diterima')
-                                            <form action="{{ route('dinas.peserta.selesai', $intern->id) }}" method="POST" onsubmit="return confirm('PERINGATAN!\n\nPeserta ini BELUM DINILAI oleh pembimbing_lapangan.\nJika Anda meluluskan sekarang, peserta TIDAK AKAN MENDAPAT NILAI di sertifikat.\n\nLanjutkan?')">
+                                        @elseif($statusValue == 'diterima')
+                                            <form action="{{ route('dinas.peserta.selesai', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nPeserta ini BELUM DINILAI oleh pembimbing_lapangan.\nJika Anda meluluskan sekarang, peserta TIDAK AKAN MENDAPAT NILAI di sertifikat.\n\nLanjutkan?', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 <button type="submit" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition shadow-sm font-bold border border-blue-100" title="Luluskan Peserta (Tanpa Sertifikat)">
                                                     <i class="fas fa-check-double"></i>
                                                 </button>
                                             </form>
-                                            <form action="{{ route('dinas.peserta.keluarkan', $intern->id) }}" method="POST" onsubmit="return confirm('PERINGATAN!\n\nApakah Anda yakin ingin mengeluarkan peserta ini dari tempat magang? Tindakan ini tidak dapat dikembalikan.')">
+                                            <form action="{{ route('dinas.peserta.keluarkan', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nApakah Anda yakin ingin mengeluarkan peserta ini dari tempat magang? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition shadow-sm font-bold border border-red-100" title="Keluarkan Peserta">
                                                     <i class="fas fa-user-times"></i>
