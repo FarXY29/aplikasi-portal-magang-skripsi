@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'role',
         'google_id',
         'instansi_id',
+        'university_id',
+        'school_id',
         'nik',
         'phone',
         'asal_instansi', 
@@ -60,6 +63,16 @@ class User extends Authenticatable
         return $this->belongsTo(Instansi::class);
     }
 
+    // Relasi ke Universitas (Master Data PT)
+    public function university() {
+        return $this->belongsTo(University::class);
+    }
+
+    // Relasi ke Sekolah (Master Data Sekolah Menengah)
+    public function school() {
+        return $this->belongsTo(School::class);
+    }
+
     // --- TAMBAHAN PENTING: RELASI KE LAMARAN (APPLICATIONS) ---
     // Diperlukan agar Super Admin bisa melihat logbook peserta
     public function applications() {
@@ -78,5 +91,29 @@ class User extends Authenticatable
     // Relasi pembimbing sekolah ke mahasiswanya
     public function mahasiswa_bimbingan() {
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
+    }
+
+    /**
+     * Tentukan apakah email pengguna telah diverifikasi.
+     * Hanya role 'peserta' dan 'pembimbing' (pembimbing sekolah/akademik) yang wajib verifikasi email.
+     * Role lain (admin_kota, admin_instansi, pembimbing_lapangan) otomatis dianggap sudah terverifikasi.
+     */
+    public function hasVerifiedEmail()
+    {
+        if (! in_array($this->role, ['peserta', 'pembimbing'])) {
+            return true;
+        }
+
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Kirim notifikasi verifikasi email hanya jika role membutuhkan verifikasi.
+     */
+    public function sendEmailVerificationNotification()
+    {
+        if (in_array($this->role, ['peserta', 'pembimbing'])) {
+            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+        }
     }
 }

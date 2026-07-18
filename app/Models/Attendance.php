@@ -19,6 +19,12 @@ class Attendance extends Model
         'proof_file',
         'validation_status', 
         'pembimbing_lapangan_note',
+        'latitude_in',
+        'longitude_in',
+        'latitude_out',
+        'longitude_out',
+        'ip_address',
+        'device_info',
     ];
 
     public function application()

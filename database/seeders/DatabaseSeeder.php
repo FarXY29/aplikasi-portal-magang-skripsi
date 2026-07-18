@@ -19,14 +19,24 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        // 1. Buat Akun Super Admin (Admin Kota)
-        User::create([
-            'name' => 'Super Admin Kota',
-            'username' => 'superadmin',
-            'email' => 'admin@banjarmasin.go.id',
-            'password' => Hash::make('password'),
-            'role' => 'admin_kota',
+        $this->call([
+            UniversityAndSchoolSeeder::class,
+            RoleAndPermissionSeeder::class,
         ]);
+
+        $univList = \App\Models\University::all();
+        $schoolList = \App\Models\School::all();
+
+        // 1. Buat Akun Super Admin (Admin Kota)
+        User::updateOrCreate(
+            ['email' => 'admin@banjarmasin.go.id'],
+            [
+                'name' => 'Super Admin Kota',
+                'username' => 'superadmin',
+                'password' => Hash::make('password'),
+                'role' => 'admin_kota',
+            ]
+        );
 
         // List Nama Dinas Realistis
         $dinasList = [
@@ -54,38 +64,44 @@ class DatabaseSeeder extends Seeder
         // 2. Buat Instansi, Admin INSTANSI, Posisi Magang, dan Pembimbing
         foreach ($dinasList as $index => $namaDinas) {
             // Buat INSTANSI
-            $instansi = Instansi::create([
-                'nama_dinas' => $namaDinas,
-                'kode_unit_kerja' => 'INSTANSI-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT),
-                'alamat' => $faker->address,
-                'nama_pejabat' => $faker->name,
-                'nip_pejabat' => $faker->numerify('19########## 2 0##'),
-                'latitude' => $faker->latitude(-3.35, -3.25),
-                'longitude' => $faker->longitude(114.55, 114.65),
-            ]);
+            $instansi = Instansi::updateOrCreate(
+                ['kode_unit_kerja' => 'INSTANSI-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT)],
+                [
+                    'nama_dinas' => $namaDinas,
+                    'alamat' => $faker->address,
+                    'nama_pejabat' => $faker->name,
+                    'nip_pejabat' => $faker->numerify('19########## 2 0##'),
+                    'latitude' => $faker->latitude(-3.35, -3.25),
+                    'longitude' => $faker->longitude(114.55, 114.65),
+                ]
+            );
             $instansis[] = $instansi;
 
             // Buat Admin INSTANSI
-            User::create([
-                'name' => 'Admin ' . explode(',', $namaDinas)[0],
-                'username' => 'admin_instansi_' . ($index + 1),
-                'email' => 'admin.instansi' . ($index + 1) . '@banjarmasin.go.id',
-                'password' => Hash::make('password'),
-                'role' => 'admin_instansi',
-                'instansi_id' => $instansi->id,
-            ]);
+            User::updateOrCreate(
+                ['email' => 'admin.instansi' . ($index + 1) . '@banjarmasin.go.id'],
+                [
+                    'name' => 'Admin ' . explode(',', $namaDinas)[0],
+                    'username' => 'admin_instansi_' . ($index + 1),
+                    'password' => Hash::make('password'),
+                    'role' => 'admin_instansi',
+                    'instansi_id' => $instansi->id,
+                ]
+            );
 
             // Buat 2-3 Pembimbing Lapangan per INSTANSI
             $numPembimbing = rand(2, 3);
             for ($i = 0; $i < $numPembimbing; $i++) {
-                $pembimbingLapangan = User::create([
-                    'name' => 'Pembimbing ' . $faker->name,
-                    'username' => 'pembimbing_lapangan_' . $instansi->id . '_' . $i,
-                    'email' => 'pembimbing.lapangan.' . $instansi->id . '_' . $i . '@banjarmasin.go.id',
-                    'password' => Hash::make('password'),
-                    'role' => 'pembimbing_lapangan',
-                    'instansi_id' => $instansi->id,
-                ]);
+                $pembimbingLapangan = User::updateOrCreate(
+                    ['email' => 'pembimbing.lapangan.' . $instansi->id . '_' . $i . '@banjarmasin.go.id'],
+                    [
+                        'name' => 'Pembimbing ' . $faker->name,
+                        'username' => 'pembimbing_lapangan_' . $instansi->id . '_' . $i,
+                        'password' => Hash::make('password'),
+                        'role' => 'pembimbing_lapangan',
+                        'instansi_id' => $instansi->id,
+                    ]
+                );
                 $pembimbings[$instansi->id][] = $pembimbingLapangan;
             }
 
@@ -106,14 +122,18 @@ class DatabaseSeeder extends Seeder
                 ];
                 $reqMajor = $faker->randomElement($jurusanList);
 
-                $position = InternshipPosition::create([
-                    'instansi_id' => $instansi->id,
-                    'judul_posisi' => $posisiStr,
-                    'required_major' => $reqMajor,
-                    'deskripsi' => $faker->paragraph,
-                    'kuota' => rand(2, 5),
-                    'status' => $faker->boolean(80) ? 'buka' : 'tutup',
-                ]);
+                $position = InternshipPosition::updateOrCreate(
+                    [
+                        'instansi_id' => $instansi->id,
+                        'judul_posisi' => $posisiStr,
+                    ],
+                    [
+                        'required_major' => $reqMajor,
+                        'deskripsi' => $faker->paragraph,
+                        'kuota' => rand(2, 5),
+                        'status' => $faker->boolean(80) ? 'buka' : 'tutup',
+                    ]
+                );
                 $positions[] = $position;
             }
         }
@@ -121,13 +141,22 @@ class DatabaseSeeder extends Seeder
         // Buat Pembimbing Akademik / Sekolah (10 orang)
         $pembimbingSekolahList = [];
         for ($k = 1; $k <= 10; $k++) {
-            $pembimbingSekolahList[] = User::create([
-                'name' => 'Dosen/Guru ' . $faker->name,
-                'username' => 'pembimbing_' . $k,
-                'email' => 'pembimbing' . $k . '@kampus.ac.id',
-                'password' => Hash::make('password'),
-                'role' => 'pembimbing',
-            ]);
+            $isUniv = $faker->boolean();
+            $univ = $isUniv && $univList->isNotEmpty() ? $univList->random() : null;
+            $school = !$isUniv && $schoolList->isNotEmpty() ? $schoolList->random() : null;
+
+            $pembimbingSekolahList[] = User::updateOrCreate(
+                ['email' => 'pembimbing' . $k . '@kampus.ac.id'],
+                [
+                    'name' => 'Dosen/Guru ' . $faker->name,
+                    'username' => 'pembimbing_' . $k,
+                    'password' => Hash::make('password'),
+                    'role' => 'pembimbing',
+                    'university_id' => $univ?->id,
+                    'school_id' => $school?->id,
+                    'asal_instansi' => $univ?->name ?? $school?->name ?? 'Kampus Merdeka',
+                ]
+            );
         }
 
         // 3. Buat Akun Peserta & Lamaran
@@ -136,19 +165,26 @@ class DatabaseSeeder extends Seeder
         // Buat 60 Peserta
         for ($i = 1; $i <= 60; $i++) {
             $pembimbingSekolah = $faker->randomElement($pembimbingSekolahList);
+            $univId = $pembimbingSekolah->university_id;
+            $schoolId = $pembimbingSekolah->school_id;
+            $asalName = $pembimbingSekolah->asal_instansi ?? $faker->randomElement($institusiList);
             
-            $peserta = User::create([
-                'name' => $faker->name,
-                'username' => 'peserta_' . $i,
-                'email' => 'peserta' . $i . '@gmail.com',
-                'password' => Hash::make('password'),
-                'role' => 'peserta',
-                'asal_instansi' => $faker->randomElement($institusiList),
-                'pembimbing_sekolah_id' => $pembimbingSekolah->id,
-                'nama_pembimbing_sekolah' => $pembimbingSekolah->name,
-                'phone' => $faker->phoneNumber,
-                'nik' => $faker->numerify('6371##########'),
-            ]);
+            $peserta = User::updateOrCreate(
+                ['email' => 'peserta' . $i . '@gmail.com'],
+                [
+                    'name' => $faker->name,
+                    'username' => 'peserta_' . $i,
+                    'password' => Hash::make('password'),
+                    'role' => 'peserta',
+                    'university_id' => $univId,
+                    'school_id' => $schoolId,
+                    'asal_instansi' => $asalName,
+                    'pembimbing_sekolah_id' => $pembimbingSekolah->id,
+                    'nama_pembimbing_sekolah' => $pembimbingSekolah->name,
+                    'phone' => $faker->phoneNumber,
+                    'nik' => $faker->numerify('6371##########'),
+                ]
+            );
 
             // Peserta melamar 1-2 posisi
             $numLamar = rand(1, 2);
@@ -180,28 +216,36 @@ class DatabaseSeeder extends Seeder
                     $pembimbing_lapanganId = $instansiPembimbings[array_rand($instansiPembimbings)]->id;
                 }
 
-                $app = Application::create([
-                    'user_id' => $peserta->id,
-                    'internship_position_id' => $pos->id,
-                    'status' => $status,
-                    'tanggal_mulai' => $tanggalMulai,
-                    'tanggal_selesai' => $tanggalSelesai,
-                    'pembimbing_lapangan_id' => $pembimbing_lapanganId,
-                    'cv_path' => 'dummy/cv.pdf',
-                    'surat_pengantar_path' => 'dummy/surat.pdf',
-                ]);
+                $app = Application::updateOrCreate(
+                    [
+                        'user_id' => $peserta->id,
+                        'internship_position_id' => $pos->id,
+                    ],
+                    [
+                        'status' => $status,
+                        'tanggal_mulai' => $tanggalMulai,
+                        'tanggal_selesai' => $tanggalSelesai,
+                        'pembimbing_lapangan_id' => $pembimbing_lapanganId,
+                        'cv_path' => 'dummy/cv.pdf',
+                        'surat_pengantar_path' => 'dummy/surat.pdf',
+                    ]
+                );
 
                 // Generate DailyLogs jika aktif/selesai
                 if (in_array($status, ['diterima', 'selesai'])) {
                     $numLogs = rand(5, 15);
                     for ($j = 0; $j < $numLogs; $j++) {
-                        DailyLog::create([
-                            'application_id' => $app->id,
-                            'tanggal' => (clone $tanggalMulai)->modify('+' . $j . ' days'),
-                            'kegiatan' => $faker->sentence(10),
-                            'status_validasi' => $faker->randomElement(['pending', 'disetujui', 'revisi']),
-                            'komentar_pembimbing_lapangan' => $faker->boolean(30) ? $faker->sentence() : null,
-                        ]);
+                        DailyLog::updateOrCreate(
+                            [
+                                'application_id' => $app->id,
+                                'tanggal' => (clone $tanggalMulai)->modify('+' . $j . ' days'),
+                            ],
+                            [
+                                'kegiatan' => $faker->sentence(10),
+                                'status_validasi' => $faker->randomElement(['pending', 'disetujui', 'revisi']),
+                                'komentar_pembimbing_lapangan' => $faker->boolean(30) ? $faker->sentence() : null,
+                            ]
+                        );
                     }
                 }
 
@@ -222,5 +266,12 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+
+        // 4. Sinkronisasikan Role Spatie untuk Seluruh User
+        User::all()->each(function ($user) {
+            if ($user->role && \Spatie\Permission\Models\Role::where('name', $user->role)->exists()) {
+                $user->assignRole($user->role);
+            }
+        });
     }
 }
