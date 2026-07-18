@@ -21,7 +21,10 @@ class LogbookController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif.');
         }
 
-        $logs = DailyLog::where('application_id', $activeApp->id)->orderBy('tanggal', 'desc')->get();
+        $logs = DailyLog::where('application_id', $activeApp->id)
+            ->orderBy('tanggal', 'desc')
+            ->paginate(15)
+            ->withQueryString();
         return view('peserta.logbook.index', compact('logs', 'activeApp'));
     }
 
@@ -131,7 +134,7 @@ class LogbookController extends Controller
                 ->orderBy('tanggal', 'asc')
                 ->get();
 
-        $pdf = Pdf::loadView('pdf.logbook_rekap', compact('app', 'logs', 'user'));
+        $pdf = Pdf::loadView('pdf.peserta.logbook_rekap', compact('app', 'logs', 'user'));
         
         // Set ukuran kertas F4 atau A4 Landscape agar muat banyak
         $pdf->setPaper('a4', 'portrait');

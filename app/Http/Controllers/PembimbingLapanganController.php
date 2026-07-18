@@ -37,7 +37,7 @@ class PembimbingLapanganController extends Controller
     public function showLogbook(Request $request, $applicationId)
     {
         $app = Application::findOrFail($applicationId);
-        if($app->pembimbing_lapangan_id != Auth::id()) abort(403);
+        $this->authorize('view', $app);
 
         $filterType = $request->input('filter_type', 'semua');
         $selectedDate = $request->input('date', date('Y-m-d'));
@@ -61,8 +61,8 @@ class PembimbingLapanganController extends Controller
 
     public function validateLogbook(Request $request, $id)
     {
-        $log = DailyLog::findOrFail($id);
-        if($log->application->pembimbing_lapangan_id != Auth::id()) abort(403);
+        $log = DailyLog::with('application')->findOrFail($id);
+        $this->authorize('validateRecords', $log->application);
 
         $log->update([
             'status_validasi' => $request->status,
@@ -72,12 +72,35 @@ class PembimbingLapanganController extends Controller
         return back()->with('success', 'Logbook divalidasi.');
     }
 
+    public function batchValidateLogbook(Request $request)
+    {
+        $request->validate([
+            'log_ids' => 'required|array',
+            'status' => 'required|in:disetujui,ditolak',
+            'komentar' => 'nullable|string'
+        ]);
+
+        $logs = DailyLog::whereIn('id', $request->log_ids)->with('application')->get();
+
+        $validatedCount = 0;
+        foreach ($logs as $log) {
+            $this->authorize('validateRecords', $log->application);
+            $log->update([
+                'status_validasi' => $request->status,
+                'komentar_pembimbing_lapangan' => $request->komentar
+            ]);
+            $validatedCount++;
+        }
+
+        return back()->with('success', $validatedCount . ' Logbook berhasil divalidasi massal.');
+    }
+
     // --- FITUR BARU: PENILAIAN AKHIR ---
 
     public function gradingForm($id)
     {
         $app = Application::findOrFail($id);
-        if($app->pembimbing_lapangan_id != Auth::id()) abort(403);
+        $this->authorize('grade', $app);
 
         return view('pembimbing_lapangan.grading', compact('app'));
     }
@@ -85,25 +108,31 @@ class PembimbingLapanganController extends Controller
     public function storeGrade(Request $request, $id)
     {
         $app = Application::findOrFail($id);
-        if($app->pembimbing_lapangan_id != Auth::id()) abort(403);
+        $this->authorize('grade', $app);
 
         $request->validate([
-            'nilai_angka' => 'required|numeric|min:0|max:100',
-            'catatan' => 'required|string'
+            'nilai_disiplin' => 'required|numeric|min:0|max:100',
+            'nilai_kinerja' => 'required|numeric|min:0|max:100',
+            'catatan_pembimbing_lapangan' => 'required|string'
         ]);
 
-        // Hitung Predikat Otomatis
-        $nilai = $request->nilai_angka;
+        // Hitung Predikat & Nilai Akhir Otomatis
+        $disiplin = $request->nilai_disiplin;
+        $kinerja = $request->nilai_kinerja;
+        $nilai_akhir = ($disiplin * 0.40) + ($kinerja * 0.60);
+        
         $predikat = 'E';
-        if ($nilai >= 85) $predikat = 'A (Sangat Baik)';
-        elseif ($nilai >= 75) $predikat = 'B (Baik)';
-        elseif ($nilai >= 60) $predikat = 'C (Cukup)';
-        elseif ($nilai >= 50) $predikat = 'D (Kurang)';
+        if ($nilai_akhir >= 85) $predikat = 'A (Sangat Baik)';
+        elseif ($nilai_akhir >= 75) $predikat = 'B (Baik)';
+        elseif ($nilai_akhir >= 60) $predikat = 'C (Cukup)';
+        elseif ($nilai_akhir >= 50) $predikat = 'D (Kurang)';
 
         $app->update([
-            'nilai_angka' => $nilai,
+            'nilai_disiplin' => $disiplin,
+            'nilai_kinerja' => $kinerja,
+            'nilai_angka' => $nilai_akhir,
             'predikat' => $predikat,
-            'catatan_pembimbing_lapangan' => $request->catatan
+            'catatan_pembimbing_lapangan' => $request->catatan_pembimbing_lapangan
         ]);
 
         return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Nilai berhasil disimpan.');
@@ -120,37 +149,31 @@ class PembimbingLapanganController extends Controller
         $selectedDate = $request->input('date', date('Y-m-d'));
         $carbonDate = \Carbon\Carbon::parse($selectedDate);
 
-        // 3. Buat List 7 Hari Terakhir untuk Sidebar
-        $dateList = collect([]);
-        for ($i = 0; $i < 7; $i++) {
-            $dateList->push(\Carbon\Carbon::now()->subDays($i));
-        }
+        // Query Utama: Absensi dari mahasiswa yang dibimbing
+        $query = Attendance::whereHas('application', function($q) use ($pembimbing_lapanganId) {
+            $q->where('pembimbing_lapangan_id', $pembimbing_lapanganId);
+        })->with(['application.user']);
 
-        // 4. Ambil ID Mahasiswa Bimbingan
-        $applicationIds = Application::where('pembimbing_lapangan_id', $pembimbing_lapanganId)
-                            ->whereIn('status', ['diterima', 'selesai'])
-                            ->pluck('id');
-
-        // 5. Query Absensi Berdasarkan Filter
-        $query = Attendance::whereIn('application_id', $applicationIds)
-                    ->with(['application.user', 'application.position']);
-
-        if ($filterType === 'mingguan') {
+        if ($filterType === 'harian') {
+            $query->where('date', $selectedDate);
+        } elseif ($filterType === 'mingguan') {
             $startOfWeek = $carbonDate->copy()->startOfWeek()->format('Y-m-d');
             $endOfWeek = $carbonDate->copy()->endOfWeek()->format('Y-m-d');
             $query->whereBetween('date', [$startOfWeek, $endOfWeek]);
         } elseif ($filterType === 'bulanan') {
             $query->whereMonth('date', $carbonDate->month)
                   ->whereYear('date', $carbonDate->year);
-        } else {
-            $query->where('date', $selectedDate);
         }
 
-        $attendances = $query->orderBy('date', 'desc')
-                    ->latest()
-                    ->get();
+        // 3. Buat List 7 Hari Terakhir untuk Sidebar
+        $dateList = collect([]);
+        for ($i = 0; $i < 7; $i++) {
+            $dateList->push(\Carbon\Carbon::now()->subDays($i));
+        }
 
-        return view('pembimbing_lapangan.attendance', compact('attendances', 'dateList', 'selectedDate', 'filterType'));
+        $attendances = $query->orderBy('date', 'desc')->orderBy('clock_in', 'asc')->get();
+
+        return view('pembimbing_lapangan.attendance', compact('attendances', 'dateList', 'filterType', 'selectedDate'));
     }
 
     /**
@@ -163,12 +186,8 @@ class PembimbingLapanganController extends Controller
             'pembimbing_lapangan_note' => 'nullable|string'
         ]);
 
-        $attendance = Attendance::findOrFail($id);
-        
-        // Pastikan yang memvalidasi adalah pembimbing_lapangan yang berhak
-        if ($attendance->application->pembimbing_lapangan_id != Auth::id()) {
-            abort(403, 'Akses Ditolak');
-        }
+        $attendance = Attendance::with('application')->findOrFail($id);
+        $this->authorize('validateRecords', $attendance->application);
 
         $attendance->update([
             'validation_status' => $request->status_validasi,
@@ -178,8 +197,11 @@ class PembimbingLapanganController extends Controller
         return back()->with('success', 'Status izin/sakit berhasil diperbarui.');
     }
 
-    public function simpanNilai(Request $request, $id)
+    public function simpanNilai(Request $request, $id, \App\Services\ApplicationLifecycleService $lifecycleService)
     {
+        $app = Application::findOrFail($id);
+        $this->authorize('grade', $app);
+
         // 1. Validasi 10 Input
         $validated = $request->validate([
             'nilai_kerajinan' => 'required|numeric|min:0|max:100',
@@ -191,8 +213,6 @@ class PembimbingLapanganController extends Controller
             'saran_pembimbing' => 'nullable|string',
         ]);
 
-        $app = Application::findOrFail($id);
-
         // 2. Hitung Rata-rata
         $total = $request->nilai_kerajinan + $request->nilai_disiplin + $request->nilai_adaptasi + 
                 $request->nilai_kreatifitas + $request->nilai_skill_pengetahuan;
@@ -202,22 +222,17 @@ class PembimbingLapanganController extends Controller
         // 3. Simpan ke Database
         $app->update(array_merge($validated, [
             'nilai_rata_rata' => $rataRata,
-            'status' => 'selesai' // Status berubah jadi selesai agar peserta bisa download sertifikat
         ]));
+
+        $lifecycleService->markAsFinished($app);
 
         return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Penilaian berhasil disimpan!');
     }
 
     public function formPenilaian($id)
     {
-        // Ambil data aplikasi berdasarkan ID
-        // Pastikan aplikasi ini memang dibimbing oleh pembimbing_lapangan yang sedang login (Opsional tapi disarankan untuk keamanan)
         $application = Application::findOrFail($id);
-
-        // Cek apakah pembimbing_lapangan berhak menilai (misal cek pembimbing_lapangan_id)
-        if ($application->pembimbing_lapangan_id != Auth::id()) {
-            abort(403, 'Anda bukan pembimbing peserta ini.');
-        }
+        $this->authorize('grade', $application);
 
         return view('pembimbing_lapangan.penilaian', compact('application'));
     }

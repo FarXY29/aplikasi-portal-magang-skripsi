@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Application;
 use Illuminate\Support\Facades\Cache;
+use App\Services\ApplicationLifecycleService;
 
 class UpdateExpiredInternships
 {
@@ -23,9 +24,9 @@ class UpdateExpiredInternships
                 ->where('tanggal_selesai', '<', now()->toDateString())
                 ->get();
 
+            $lifecycleService = app(ApplicationLifecycleService::class);
             foreach ($expiredApplications as $application) {
-                $application->status = 'selesai';
-                $application->save();
+                $lifecycleService->markAsFinished($application);
             }
             return true;
         });

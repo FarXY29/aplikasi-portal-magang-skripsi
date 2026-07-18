@@ -22,17 +22,17 @@ class CertificateController extends Controller
     public function verify($token)
     {
         // Gunakan 'with' untuk memuat relasi yang diperlukan di sertifikat
-        $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan']) 
+        $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan', 'certificate']) 
                 ->where('token_verifikasi', $token)
                 ->whereIn('status', ['diterima', 'selesai'])
                 ->firstOrFail();
 
-        return view('certificate.verify', compact('app'));
+        return view('public.certificate.verify', compact('app'));
     }
 
     public function showScanner()
     {
-        return view('certificate.scanner');
+        return view('public.certificate.scanner');
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -56,6 +57,24 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        // Cek apakah user wajib verifikasi email sebelum login (Peserta & Pembimbing)
+        $user = Auth::user();
+        if ($user && in_array($user->role, ['peserta', 'pembimbing']) && ! $user->hasVerifiedEmail()) {
+            $cacheKey = 'resend_verification_' . $user->id;
+
+            // Otomatis kirim email verifikasi jika belum dikirim dalam 2 menit terakhir
+            if (! Cache::has($cacheKey)) {
+                $user->sendEmailVerificationNotification();
+                Cache::put($cacheKey, true, now()->addMinutes(2));
+            }
+
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda belum diverifikasi. Tautan verifikasi baru telah dikirimkan secara otomatis ke alamat email Anda (' . $user->email . '). Silakan cek inbox/spam untuk memverifikasi akun Anda sebelum login.',
             ]);
         }
 
