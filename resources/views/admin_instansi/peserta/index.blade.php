@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-users-cog text-teal-600"></i>
                 {{ __('Kelola Peserta') }}
             </h2>
-            <div class="text-sm text-gray-500 font-medium bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-100">
+            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
                 Peserta Aktif: <span class="font-bold text-teal-600">{{ $activeCount }}</span>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans" x-data="{
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans" x-data="{
         showAssignModal: false,
         assignActionUrl: '',
         assignApplicantName: '',
@@ -20,8 +20,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 print:hidden">
-                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                    <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </div>
                     Kembali ke Dashboard
@@ -31,8 +31,8 @@
             <!-- Filter Status using x-ui.filter-bar -->
             <x-ui.filter-bar :action="route('dinas.peserta.index')" :resetUrl="route('dinas.peserta.index', ['status' => 'semua'])">
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-gray-600">Status Magang:</span>
-                    <select name="status" class="text-xs font-bold rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 py-1.5 pl-3 pr-8 shadow-sm bg-gray-50/50">
+                    <span class="text-xs font-bold text-gray-600 dark:text-gray-400">Status Magang:</span>
+                    <select name="status" class="text-xs font-bold rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-1.5 pl-3 pr-8 shadow-sm bg-gray-50 dark:bg-gray-900/50">
                         <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
                         <option value="aktif" {{ request('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Peserta Aktif Magang</option>
                         <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai / Alumni</option>
@@ -46,23 +46,23 @@
     </x-ui.alert>
 @endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Peserta</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-1/3">Assign Pembimbing Lapangan</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode Magang</th>
-                                <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi & Sertifikat</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Profil Peserta</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/3">Assign Pembimbing Lapangan</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Periode Magang</th>
+                                <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi & Sertifikat</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-50">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
                             @forelse($interns as $intern)
                             @php
                                 $statusValue = $intern->status instanceof \App\Enums\ApplicationStatus ? $intern->status->value : $intern->status;
                             @endphp
-                            <tr class="hover:bg-gray-50 transition duration-150 {{ $statusValue == 'selesai' ? 'bg-gray-50/50' : '' }}">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition duration-150 {{ $statusValue == 'selesai' ? 'bg-gray-50 dark:bg-gray-900/50' : '' }}">
                                 
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
@@ -78,11 +78,11 @@
                                             @endif
                                         </div>
                                         <div class="min-w-0">
-                                            <div class="text-sm font-bold text-gray-900 truncate {{ $statusValue == 'selesai' ? 'text-gray-500 line-through' : '' }}">
+                                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate {{ $statusValue == 'selesai' ? 'text-gray-500 dark:text-gray-400 line-through' : '' }}">
                                                 {{ $intern->user->name }}
                                             </div>
-                                            <div class="text-xs text-gray-500">{{ $intern->user->email }}</div>
-                                            <div class="text-[11px] text-gray-500 mt-0.5" title="Pembimbing Akademik / Sekolah">
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ $intern->user->email }}</div>
+                                            <div class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5" title="Pembimbing Akademik / Sekolah">
                                                 <i class="fas fa-chalkboard-teacher mr-1 text-gray-400"></i> {{ $intern->user->nama_pembimbing_sekolah ?? '-' }}
                                             </div>
                                             
@@ -103,7 +103,7 @@
                                         {{-- Tampilan Normal --}}
                                         <div x-show="!editing" class="flex flex-col gap-1.5">
                                             @if($intern->pembimbing_lapangan_id)
-                                                <div class="text-xs font-semibold text-gray-800 flex items-center gap-1.5">
+                                                <div class="text-xs font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
                                                     <i class="fas fa-user-tie text-teal-600"></i>
                                                     {{ $intern->pembimbing_lapangan->name }}
                                                 </div>
@@ -125,7 +125,7 @@
                                             <form action="{{ route('dinas.peserta.assign', $intern->id) }}" method="POST" class="flex flex-col gap-2">
                                                 @csrf
                                                 <div class="flex items-center gap-2">
-                                                    <select name="pembimbing_lapangan_id" required class="w-full text-xs rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 cursor-pointer py-1.5 pl-2 pr-8 shadow-sm">
+                                                    <select name="pembimbing_lapangan_id" required class="w-full text-xs rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500 cursor-pointer py-1.5 pl-2 pr-8 shadow-sm">
                                                         <option value="">-- Pilih Pembimbing --</option>
                                                         @foreach($pembimbing_lapangan as $pl)
                                                             <option value="{{ $pl->id }}" {{ $intern->pembimbing_lapangan_id == $pl->id ? 'selected' : '' }}>
@@ -136,14 +136,14 @@
                                                     <button type="submit" class="p-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition active:scale-95 shadow-sm" title="Simpan">
                                                         <i class="fas fa-save text-xs"></i>
                                                     </button>
-                                                    <button type="button" @click="editing = false" class="p-1.5 bg-gray-100 text-gray-500 border border-gray-200 rounded-md hover:bg-gray-200 transition active:scale-95" title="Batal">
+                                                    <button type="button" @click="editing = false" class="p-1.5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-200 transition active:scale-95" title="Batal">
                                                         <i class="fas fa-times text-xs"></i>
                                                     </button>
                                                 </div>
                                             </form>
                                         </div>
                                     @else
-                                        <div class="text-xs text-gray-500 italic flex items-center gap-1.5">
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 italic flex items-center gap-1.5">
                                             <i class="fas fa-user-tie text-gray-400"></i>
                                             {{ $intern->pembimbing_lapangan->name ?? 'Tidak ada pembimbing lapangan' }}
                                         </div>
@@ -153,7 +153,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($intern->tanggal_mulai)
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                                                 <i class="far fa-calendar-alt text-gray-400"></i>
                                                 {{ \Carbon\Carbon::parse($intern->tanggal_mulai)->format('d M y') }} 
                                                 <i class="fas fa-arrow-right text-gray-300 text-[10px]"></i> 
@@ -185,12 +185,12 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end items-center gap-2">
                                         
-                                        <div class="flex bg-gray-50 rounded-lg border border-gray-200">
-                                            <a href="{{ route('dinas.peserta.logbook', $intern->id) }}" class="p-2 text-gray-600 hover:text-teal-600 transition" title="Logbook">
+                                        <div class="flex bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                            <a href="{{ route('dinas.peserta.logbook', $intern->id) }}" class="p-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 transition" title="Logbook">
                                                 <i class="fas fa-book-open"></i>
                                             </a>
                                             <div class="w-px bg-gray-200 my-1"></div>
-                                            <a href="{{ route('dinas.peserta.absensi', $intern->id) }}" class="p-2 text-gray-600 hover:text-purple-600 transition" title="Absensi">
+                                            <a href="{{ route('dinas.peserta.absensi', $intern->id) }}" class="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 transition" title="Absensi">
                                                 <i class="fas fa-calendar-check"></i>
                                             </a>
                                         </div>
@@ -226,10 +226,10 @@
                             <tr>
                                 <td colspan="4" class="px-6 py-12 text-center">
                                     <div class="flex flex-col items-center justify-center text-gray-400">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
                                             <i class="fas fa-users-slash text-3xl text-gray-300"></i>
                                         </div>
-                                        <p class="font-bold text-gray-600">Tidak ada peserta ditemukan</p>
+                                        <p class="font-bold text-gray-600 dark:text-gray-400">Tidak ada peserta ditemukan</p>
                                         <p class="text-xs mt-1">Silakan sesuaikan filter atau terima pelamar terlebih dahulu.</p>
                                     </div>
                                 </td>
@@ -238,7 +238,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="p-4 border-t border-gray-100 bg-gray-50">
+                <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                     {{ $interns->links() }}
                 </div>
             </div>

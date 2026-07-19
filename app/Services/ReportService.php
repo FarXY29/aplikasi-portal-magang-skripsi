@@ -370,7 +370,7 @@ class ReportService
     /**
      * Get Global Interns Report Data (Admin Kota)
      */
-    public function getGlobalInternsData(Request $request)
+    public function getGlobalInternsData(Request $request, bool $paginate = true)
     {
         $query = Application::with(['user', 'position.instansi']);
 
@@ -427,6 +427,23 @@ class ReportService
             'total_dinas' => $allInterns->pluck('position.instansi.id')->unique()->filter()->count(),
             'total_kampus' => $allInterns->pluck('user.asal_instansi')->unique()->filter()->count()
         ];
+
+        if ($paginate) {
+            $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage();
+            $perPage = 10;
+            $currentPageItems = $allInterns->slice(($currentPage - 1) * $perPage, $perPage)->values();
+            
+            $paginatedInterns = new \Illuminate\Pagination\LengthAwarePaginator(
+                $currentPageItems,
+                $allInterns->count(),
+                $perPage,
+                $currentPage,
+                ['path' => \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPath()]
+            );
+            $paginatedInterns->withQueryString();
+            
+            $allInterns = $paginatedInterns;
+        }
 
         return compact('allInterns', 'stats');
     }

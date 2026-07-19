@@ -27,8 +27,8 @@
                 <i class="fas fa-shield-alt text-sm"></i>
             </div>
             <div>
-                <h2 class="font-black text-xl text-gray-900 leading-tight">Super Admin Dashboard</h2>
-                <p class="text-xs text-gray-500 font-medium hidden md:block">Pusat Kontrol & Monitoring Portal Magang</p>
+                <h2 class="font-black text-xl text-gray-900 dark:text-gray-100 leading-tight">Super Admin Dashboard</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium hidden md:block">Pusat Kontrol & Monitoring Portal Magang</p>
             </div>
         </div>
     </x-slot>
@@ -107,79 +107,7 @@
             </div>
         </div>
 
-        {{-- ══════════════════════════════════════════════════════════ --}}
-        {{-- ROW 2: QUICK ACTION SHORTCUTS --}}
-        {{-- ══════════════════════════════════════════════════════════ --}}
-        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-200/60 p-1.5 md:p-2 overflow-x-auto custom-scrollbar">
-            <div class="flex items-center min-w-max gap-1 md:gap-1.5 p-1 md:p-1.5">
-
-                <a href="{{ route('admin.instansi.index') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-teal-50 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-building text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Instansi</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Kelola Dinas</span>
-                    </div>
-                </a>
-                <div class="w-px h-7 bg-gray-100 shrink-0"></div>
-
-                <a href="{{ route('admin.users.index') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-blue-50 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-users-cog text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Pengguna</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Akses Akun</span>
-                    </div>
-                </a>
-                <div class="w-px h-7 bg-gray-100 shrink-0"></div>
-
-                <a href="{{ route('admin.laporan') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-orange-50 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-orange-100 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-chart-pie text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Laporan</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Unduh PDF/Excel</span>
-                    </div>
-                </a>
-                <div class="w-px h-7 bg-gray-100 shrink-0"></div>
-
-                <a href="{{ route('admin.laporan.peserta_global') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-pink-50 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-pink-100 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-globe-asia text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Data Global</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Semua Pelamar</span>
-                    </div>
-                </a>
-                <div class="w-px h-7 bg-gray-100 shrink-0"></div>
-
-                <a href="{{ route('admin.users.logbooks') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-purple-50 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-book-open text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Logbook</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Cek Harian</span>
-                    </div>
-                </a>
-                <div class="w-px h-7 bg-gray-100 shrink-0"></div>
-
-                <a href="{{ route('admin.settings.index') }}" class="shortcut-pill group flex items-center gap-2.5 md:gap-3 px-3.5 md:px-5 py-2.5 md:py-3 rounded-xl md:rounded-2xl hover:bg-gray-100 transition-all active:scale-[0.97]">
-                    <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gray-200 text-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-cogs text-sm"></i>
-                    </div>
-                    <div>
-                        <span class="block text-xs font-black text-gray-800">Sistem</span>
-                        <span class="block text-[10px] text-gray-500 font-medium">Konfigurasi</span>
-                    </div>
-                </a>
-
-            </div>
-        </div>
+        
 
         {{-- ══════════════════════════════════════════════════════════ --}}
         @include('admin_kota.dashboard._stats-grid')
@@ -195,15 +123,15 @@
             <div class="xl:col-span-2 space-y-4 md:space-y-5">
                 
                 {{-- Tabel: Statistik Pelamar per Instansi --}}
-                <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-                    <div class="p-4 md:p-5 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-20">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden">
+                    <div class="p-4 md:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800 sticky top-0 z-20">
                         <div class="flex items-center gap-3">
                             <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-sm" style="background-color: #0d9488;">
                                 <i class="fas fa-chart-bar text-sm"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm md:text-base font-black text-gray-800">Statistik Pelamar per Instansi</h3>
-                                <p class="text-[10px] md:text-xs text-gray-500 font-medium mt-0.5">Distribusi peminat magang berdasarkan dinas</p>
+                                <h3 class="text-sm md:text-base font-black text-gray-800 dark:text-gray-200">Statistik Pelamar per Instansi</h3>
+                                <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">Distribusi peminat magang berdasarkan dinas</p>
                             </div>
                         </div>
                         <a href="{{ route('admin.laporan.peserta_global') }}" class="hidden md:inline-flex items-center gap-1.5 text-xs text-teal-600 bg-teal-50 px-3 py-1.5 rounded-lg hover:bg-teal-100 font-bold transition border border-teal-100">
@@ -214,25 +142,25 @@
                     {{-- Desktop Table (md+) --}}
                     <div class="hidden md:block overflow-y-auto custom-scrollbar flex-1 relative">
                         <table class="min-w-full divide-y divide-gray-100">
-                            <thead class="bg-gray-50/80 sticky top-0 z-10">
+                            <thead class="bg-gray-50 dark:bg-gray-900/80 sticky top-0 z-10">
                                 <tr>
-                                    <th class="px-5 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider w-14">No</th>
-                                    <th class="px-5 py-3 text-left text-[10px] font-black text-gray-500 uppercase tracking-wider">Nama Instansi</th>
-                                    <th class="px-5 py-3 text-right text-[10px] font-black text-gray-500 uppercase tracking-wider w-36">Total Pelamar</th>
+                                    <th class="px-5 py-3 text-left text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-14">No</th>
+                                    <th class="px-5 py-3 text-left text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama Instansi</th>
+                                    <th class="px-5 py-3 text-right text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-36">Total Pelamar</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-50">
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
                                 @forelse($instansiStats as $index => $instansi)
                                     @php
                                         $percentage = ($instansi->applications_count / $maxPelamar) * 100;
                                     @endphp
-                                    <tr class="feed-item hover:bg-gray-50/60 group">
+                                    <tr class="feed-item hover:bg-gray-50 dark:hover:bg-gray-900/60 group">
                                         <td class="px-5 py-3.5 whitespace-nowrap text-xs font-bold text-gray-400 group-hover:text-teal-600 transition-colors">
                                             {{ $instansiStats->firstItem() + $index }}
                                         </td>
                                         <td class="px-5 py-3.5 pr-8">
-                                            <p class="text-sm font-bold text-gray-800 group-hover:text-teal-700 transition-colors">{{ $instansi->nama_dinas }}</p>
-                                            <div class="w-full bg-gray-100 rounded-full h-1.5 mt-2 overflow-hidden">
+                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-teal-700 transition-colors">{{ $instansi->nama_dinas }}</p>
+                                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mt-2 overflow-hidden">
                                                 <div class="bg-teal-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $percentage }}%; background-color: #14b8a6;"></div>
                                             </div>
                                         </td>
@@ -246,10 +174,10 @@
                                     <tr>
                                         <td colspan="3" class="px-6 py-12 text-center">
                                             <div class="flex flex-col items-center gap-2">
-                                                <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                                <div class="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                                                     <i class="fas fa-building text-2xl text-gray-300"></i>
                                                 </div>
-                                                <p class="text-sm font-bold text-gray-500">Belum ada data instansi.</p>
+                                                <p class="text-sm font-bold text-gray-500 dark:text-gray-400">Belum ada data instansi.</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -264,25 +192,25 @@
                             @php
                                 $percentage = ($instansi->applications_count / $maxPelamar) * 100;
                             @endphp
-                            <div class="p-4 space-y-2 feed-item hover:bg-gray-50/60 active:bg-gray-100/40">
+                            <div class="p-4 space-y-2 feed-item hover:bg-gray-50 dark:hover:bg-gray-900/60 active:bg-gray-100 dark:active:bg-gray-800/40">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center gap-2.5 min-w-0">
                                         <span class="w-7 h-7 rounded-lg bg-teal-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm" style="background-color: #0d9488;">
                                             {{ $instansiStats->firstItem() + $index }}
                                         </span>
-                                        <p class="text-sm font-bold text-gray-800 line-clamp-2">{{ $instansi->nama_dinas }}</p>
+                                        <p class="text-sm font-bold text-gray-800 dark:text-gray-200 line-clamp-2">{{ $instansi->nama_dinas }}</p>
                                     </div>
                                     <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-black bg-teal-50 text-teal-700 border border-teal-100 shrink-0">
                                         {{ $instansi->applications_count }}
                                     </span>
                                 </div>
-                                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 overflow-hidden">
                                     <div class="bg-teal-500 h-1.5 rounded-full" style="width: {{ $percentage }}%; background-color: #14b8a6;"></div>
                                 </div>
                             </div>
                         @empty
                             <div class="p-10 text-center">
-                                <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-2">
+                                <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2">
                                     <i class="fas fa-building text-xl text-gray-300"></i>
                                 </div>
                                 <p class="text-xs font-bold text-gray-400">Belum ada data instansi.</p>
@@ -291,7 +219,7 @@
                     </div>
 
                     @if($instansiStats->hasPages())
-                    <div class="p-3 md:p-4 border-t border-gray-100 bg-gray-50/30">
+                    <div class="p-3 md:p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                         {{ $instansiStats->links() }}
                     </div>
                     @endif
@@ -304,7 +232,7 @@
             <div class="space-y-4 md:space-y-5">
                 
                 {{-- Donut Chart: Status Lamaran --}}
-                <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 md:p-6 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-5">
                             <div class="flex items-center gap-3">
@@ -312,8 +240,8 @@
                                     <i class="fas fa-chart-pie text-sm"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm md:text-base font-black text-gray-800">Status Lamaran</h3>
-                                    <p class="text-[10px] text-gray-500 font-medium">Distribusi status keseluruhan</p>
+                                    <h3 class="text-sm md:text-base font-black text-gray-800 dark:text-gray-200">Status Lamaran</h3>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Distribusi status keseluruhan</p>
                                 </div>
                             </div>
                         </div>
@@ -325,9 +253,9 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-gray-100">
+                    <div class="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-gray-100 dark:border-gray-700">
                         <div class="bg-green-50 p-3 rounded-xl border border-green-100 text-center">
-                            <span class="block text-[10px] text-gray-500 font-bold uppercase">Lolos</span>
+                            <span class="block text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase">Lolos</span>
                             <span class="text-lg font-black text-green-600">
                                 @if($totalApplications > 0)
                                     {{ round((($activeInterns + $completedInterns) / $totalApplications) * 100, 1) }}%
@@ -337,7 +265,7 @@
                             </span>
                         </div>
                         <div class="bg-red-50 p-3 rounded-xl border border-red-100 text-center">
-                            <span class="block text-[10px] text-gray-500 font-bold uppercase">Tolak</span>
+                            <span class="block text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase">Tolak</span>
                             <span class="text-lg font-black text-red-500">
                                 @if($totalApplications > 0)
                                     {{ round((($totalApplications - $activeInterns - $completedInterns - $pendingApplications) / $totalApplications) * 100, 1) }}%
@@ -350,24 +278,24 @@
                 </div>
 
                 {{-- Instansi Terbaru --}}
-                <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-4 md:p-5 border-b border-gray-100 flex items-center justify-between bg-white">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="p-4 md:p-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center shadow-xs" style="background-color: #0d9488;">
                                 <i class="fas fa-plus-circle text-xs"></i>
                             </div>
-                            <h3 class="text-sm font-black text-gray-800">Instansi Terbaru</h3>
+                            <h3 class="text-sm font-black text-gray-800 dark:text-gray-200">Instansi Terbaru</h3>
                         </div>
                         <a href="{{ route('admin.instansi.index') }}" class="text-[10px] text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg hover:bg-teal-100 font-black transition border border-teal-100">Semua</a>
                     </div>
                     <div class="divide-y divide-gray-50">
                         @foreach($recentInstansis as $dinas)
-                        <div class="p-3.5 md:p-4 flex items-center gap-3 feed-item hover:bg-gray-50/60">
+                        <div class="p-3.5 md:p-4 flex items-center gap-3 feed-item hover:bg-gray-50 dark:hover:bg-gray-900/60">
                             <div class="w-9 h-9 rounded-xl bg-teal-50 border border-teal-100 text-teal-600 flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fas fa-building"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs font-bold text-gray-800 truncate">{{ $dinas->nama_dinas }}</p>
+                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{{ $dinas->nama_dinas }}</p>
                                 <p class="text-[10px] text-gray-400 truncate mt-0.5 font-medium">
                                     <i class="far fa-clock text-[9px]"></i> {{ $dinas->created_at->diffForHumans() }}
                                 </p>
@@ -378,37 +306,37 @@
                 </div>
 
                 {{-- Info Server --}}
-                <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 p-5 md:p-6">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 md:p-6">
                     <div class="flex items-center gap-2.5 mb-4">
-                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 flex items-center justify-center">
                             <i class="fas fa-server text-xs"></i>
                         </div>
-                        <h3 class="text-sm font-black text-gray-800">Informasi Sistem</h3>
+                        <h3 class="text-sm font-black text-gray-800 dark:text-gray-200">Informasi Sistem</h3>
                     </div>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between text-xs font-bold pb-3 border-b border-gray-50">
-                            <span class="flex items-center gap-2 text-gray-500">
+                            <span class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                 <i class="fas fa-code-branch text-gray-400 text-[10px] w-4 text-center"></i>
                                 Framework
                             </span>
                             <span class="text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-100 font-black text-[11px]">v{{ app()->version() }}</span>
                         </div>
                         <div class="flex items-center justify-between text-xs font-bold pb-3 border-b border-gray-50">
-                            <span class="flex items-center gap-2 text-gray-500">
+                            <span class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                 <i class="fas fa-code text-gray-400 text-[10px] w-4 text-center"></i>
                                 PHP
                             </span>
                             <span class="text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 font-black text-[11px]">{{ PHP_VERSION }}</span>
                         </div>
                         <div class="flex items-center justify-between text-xs font-bold pb-3 border-b border-gray-50">
-                            <span class="flex items-center gap-2 text-gray-500">
+                            <span class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                 <i class="fas fa-globe text-gray-400 text-[10px] w-4 text-center"></i>
                                 Lingkungan
                             </span>
                             <span class="text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100 font-black text-[11px] uppercase">{{ app()->environment() }}</span>
                         </div>
                         <div class="flex items-center justify-between text-xs font-bold">
-                            <span class="flex items-center gap-2 text-gray-500">
+                            <span class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                                 <i class="fas fa-heartbeat text-gray-400 text-[10px] w-4 text-center"></i>
                                 Scheduler
                             </span>

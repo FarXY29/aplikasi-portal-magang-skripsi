@@ -23,21 +23,21 @@
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 relative z-10">
             
             <div class="mb-8">
-                <a href="{{ route('dinas.lowongan.index') }}" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-teal-700 transition-all group bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
-                    <div class="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center mr-3 group-hover:border-teal-400 group-hover:bg-teal-50 transition-colors">
+                <a href="{{ route('dinas.lowongan.index') }}" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-teal-700 transition-all group bg-white dark:bg-gray-800/60 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 shadow-sm hover:shadow-md">
+                    <div class="w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-slate-200 flex items-center justify-center mr-3 group-hover:border-teal-400 group-hover:bg-teal-50 transition-colors">
                         <i class="fas fa-arrow-left text-xs text-slate-400 group-hover:text-teal-600"></i>
                     </div>
                     Kembali ke Daftar Lowongan
                 </a>
             </div>
 
-            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-100/60 overflow-hidden transform transition-all">
+            <div class="bg-white dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-xl border border-slate-100/60 overflow-hidden transform transition-all">
                 
                 <div class="relative overflow-hidden bg-gradient-to-r from-teal-600 to-emerald-500 p-8 text-white">
-                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white rounded-full opacity-10 blur-2xl"></div>
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white dark:bg-gray-800 rounded-full opacity-10 blur-2xl"></div>
                     <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-teal-900 rounded-full opacity-10 blur-xl"></div>
                     <div class="relative z-10 flex items-center gap-5">
-                        <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl border border-white/30 shadow-inner">
+                        <div class="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800/20 backdrop-blur-md flex items-center justify-center text-white text-2xl border border-white/30 shadow-inner">
                             <i class="fas fa-edit"></i>
                         </div>
                         <div>
@@ -60,7 +60,7 @@
                                 </label>
                                 <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                     <input type="text" name="judul_posisi" value="{{ old('judul_posisi', $loker->judul_posisi) }}" 
-                                        class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-bold text-slate-800 text-lg">
+                                        class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-bold text-slate-800 text-lg">
                                 </div>
                             </div>
 
@@ -72,7 +72,7 @@
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                         <input type="text" name="required_major" value="{{ old('required_major', $loker->required_major) }}" 
-                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-medium text-slate-800"
+                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-medium text-slate-800"
                                             placeholder="Contoh: Teknik Informatika, DKV">
                                     </div>
                                     <p class="text-xs text-slate-500 mt-2 ml-1 font-medium"><i class="fas fa-info-circle text-slate-400 mr-1"></i> Pisahkan dengan koma jika lebih dari satu.</p>
@@ -84,7 +84,7 @@
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                         <input type="number" name="kuota" value="{{ old('kuota', $loker->kuota) }}" min="0" 
-                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all font-medium text-slate-800">
+                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all font-medium text-slate-800">
                                     </div>
                                 </div>
 
@@ -97,7 +97,7 @@
                                         <i class="fas fa-info-circle text-amber-500"></i> Status Pendaftaran
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
-                                        <select name="status" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-bold text-slate-800 cursor-pointer appearance-none">
+                                        <select name="status" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-bold text-slate-800 cursor-pointer appearance-none">
                                             <option value="buka" {{ $loker->status == 'buka' ? 'selected' : '' }}>🟢 Dibuka (Aktif)</option>
                                             <option value="tutup" {{ $loker->status == 'tutup' ? 'selected' : '' }}>🔴 Ditutup (Arsip)</option>
                                         </select>
@@ -113,7 +113,7 @@
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                         <input type="date" name="batas_daftar" value="{{ old('batas_daftar', \Carbon\Carbon::parse($loker->batas_daftar)->format('Y-m-d')) }}" 
-                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-slate-800">
+                                            class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-slate-800">
                                     </div>
                                 </div>
 
@@ -123,7 +123,7 @@
                                 <label class="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-file-alt text-teal-600"></i> Deskripsi & Syarat Detail
                                 </label>
-                                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm focus-within:ring-4 focus-within:ring-teal-500/10 focus-within:border-teal-500 transition-all duration-300 bg-white">
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm focus-within:ring-4 focus-within:ring-teal-500/10 focus-within:border-teal-500 transition-all duration-300 bg-white dark:bg-gray-800">
                                     <textarea id="editor" name="deskripsi" class="w-full border-0 focus:ring-0">{{ old('deskripsi', $loker->deskripsi) }}</textarea>
                                 </div>
                             </div>

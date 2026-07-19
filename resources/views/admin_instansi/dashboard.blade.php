@@ -4,14 +4,14 @@
     @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-chart-pie text-teal-600"></i>
                 {{ __('Dashboard Statistik Instansi') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             @php
@@ -35,17 +35,17 @@
             @endif
 
             <div class="relative bg-gradient-to-r from-teal-600 to-teal-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-teal-100 mb-6 sm:mb-10 overflow-hidden text-white">
-                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white dark:bg-gray-800 opacity-10 rounded-full blur-3xl"></div>
                 <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-teal-400 opacity-20 rounded-full blur-2xl"></div>
 
                 <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-extrabold mb-2">Selamat Datang, Admin!</h1>
                         <p class="text-teal-100 text-sm sm:text-lg max-w-xl font-light leading-relaxed">
-                            Kelola peserta magang di <span class="font-bold text-white bg-white/20 px-2 rounded">{{ $instansi->nama_dinas }}</span> dengan mudah dan efisien.
+                            Kelola peserta magang di <span class="font-bold text-white bg-white dark:bg-gray-800/20 px-2 rounded">{{ $instansi->nama_dinas }}</span> dengan mudah dan efisien.
                         </p>
                     </div>
-                    <div class="hidden md:block bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+                    <div class="hidden md:block bg-white dark:bg-gray-800/20 p-4 rounded-2xl backdrop-blur-sm">
                         <i class="fas fa-building text-4xl text-white"></i>
                     </div>
                 </div>
@@ -85,8 +85,8 @@
                 } else {
                     $growth = $currentMonth > 0 ? 100 : 0;
                     $trendIcon = 'fa-minus';
-                    $trendColor = 'text-gray-500';
-                    $trendBg = 'bg-gray-50';
+                    $trendColor = 'text-gray-500 dark:text-gray-400';
+                    $trendBg = 'bg-gray-50 dark:bg-gray-900';
                 }
             @endphp
 
@@ -120,28 +120,28 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <i class="fas fa-chart-line text-teal-500"></i> Trend Peminat
                             </h3>
-                            <p class="text-xs text-gray-500 mt-1">Statistik jumlah pelamar baru.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Statistik jumlah pelamar baru.</p>
                         </div>
                         
-                        <div class="bg-gray-100 p-1 rounded-xl flex text-xs font-bold w-full sm:w-auto justify-between sm:justify-start">
-                            <button onclick="updateChart(3)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white hover:shadow-sm" id="btn-3">3 Bln</button>
-                            <button onclick="updateChart(6)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white hover:shadow-sm" id="btn-6">6 Bln</button>
-                            <button onclick="updateChart(12)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white shadow-sm text-teal-600" id="btn-12">1 Thn</button>
+                        <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-xl flex text-xs font-bold w-full sm:w-auto justify-between sm:justify-start">
+                            <button onclick="updateChart(3)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm" id="btn-3">3 Bln</button>
+                            <button onclick="updateChart(6)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm" id="btn-6">6 Bln</button>
+                            <button onclick="updateChart(12)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm text-teal-600" id="btn-12">1 Thn</button>
                         </div>
                     </div>
 
                     <div class="mb-6 flex items-center gap-3 p-3 rounded-xl {{ $trendBg }} border border-transparent w-fit">
-                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm {{ $trendColor }}">
+                        <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm {{ $trendColor }}">
                             <i class="fas {{ $trendIcon }}"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase">Bulan Ini</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">Bulan Ini</p>
                             <p class="text-sm font-bold {{ $trendColor }}">
                                 {{ $growth }}% <span class="text-gray-400 font-normal">vs bulan lalu</span>
                             </p>
@@ -153,10 +153,10 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col">
                     <div class="mb-4 pb-4 border-b border-gray-50">
-                        <h3 class="text-lg font-bold text-gray-800">Asal Peserta</h3>
-                        <p class="text-xs text-gray-500 mt-1">Institusi pengirim terbanyak.</p>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Asal Peserta</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Institusi pengirim terbanyak.</p>
                     </div>
                     
                     <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 max-h-[350px]">
@@ -165,16 +165,16 @@
                                 @foreach($topInstansi as $index => $inst)
                                 <div class="flex items-center justify-between group">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-100">
+                                        <div class="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold text-xs border border-gray-100 dark:border-gray-700">
                                             {{ $index + 1 }}
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             {{-- MODIFIKASI: Menambahkan 'title' dan 'cursor-help' untuk popup native browser --}}
-                                            <p class="text-sm font-bold text-gray-700 truncate w-32 md:w-40 cursor-help hover:text-teal-600 transition" 
+                                            <p class="text-sm font-bold text-gray-700 dark:text-gray-300 truncate w-32 md:w-40 cursor-help hover:text-teal-600 transition" 
                                                title="{{ $inst->asal_instansi }}">
                                                 {{ $inst->asal_instansi }}
                                             </p>
-                                            <div class="w-full bg-gray-100 rounded-full h-1.5 mt-1.5">
+                                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 mt-1.5">
                                                 <div class="bg-indigo-500 h-1.5 rounded-full" style="width: {{ min(($inst->total_peserta / $topInstansi[0]->total_peserta) * 100, 100) }}%"></div>
                                             </div>
                                         </div>
@@ -251,9 +251,9 @@
 
             window.updateChart = function(range) {
                 document.querySelectorAll('[id^="btn-"]').forEach(btn => {
-                    btn.className = "px-3 py-1.5 rounded-md transition hover:bg-white hover:shadow-sm";
+                    btn.className = "px-3 py-1.5 rounded-md transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm";
                 });
-                document.getElementById('btn-' + range).className = "px-3 py-1.5 rounded-md bg-white shadow-sm text-teal-600 font-bold";
+                document.getElementById('btn-' + range).className = "px-3 py-1.5 rounded-md bg-white dark:bg-gray-800 shadow-sm text-teal-600 font-bold";
 
                 const newLabels = allLabels.slice(-range);
                 const newData = allData.slice(-range);

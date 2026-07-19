@@ -97,7 +97,7 @@ class ReportController extends Controller
      */
     public function printPesertaGlobal(Request $request)
     {
-        $data = $this->reportService->getGlobalInternsData($request);
+        $data = $this->reportService->getGlobalInternsData($request, false);
         $title = 'Laporan Global Peserta Magang';
         if ($request->has('status') && $request->status !== '' && $request->status !== 'semua') {
             $title .= ' (' . ucfirst($request->status) . ')';

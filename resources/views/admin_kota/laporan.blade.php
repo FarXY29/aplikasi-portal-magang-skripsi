@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-chart-pie text-teal-600"></i>
                 {{ __('Laporan Statistik Instansi') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
         <div class="flex justify-between items-center mb-6 print:hidden max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+            <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 transition">
+                <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                     <i class="fas fa-arrow-left text-xs"></i>
                 </div>
                 Kembali ke Pusat Laporan
@@ -22,42 +22,42 @@
             
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 border border-teal-100">
                         <i class="fas fa-building text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-gray-800">{{ $stats['total_instansi'] }}</p>
+                    <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_instansi'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Instansi</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100">
                         <i class="fas fa-briefcase text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-blue-700">{{ $stats['total_lowongan'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Lowongan Aktif</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 border border-indigo-100">
                         <i class="fas fa-users text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-indigo-700">{{ $stats['total_pelamar'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Pelamar</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-2 border border-green-100">
                         <i class="fas fa-user-check text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-green-700">{{ $stats['total_diterima'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Diterima / Lulus</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 border border-amber-100">
                         <i class="fas fa-percentage text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-amber-700">{{ $stats['avg_seleksi_rate'] }}%</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Seleksi Kota</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-2 border border-rose-100">
                         <i class="fas fa-award text-xs"></i>
                     </div>
@@ -68,7 +68,7 @@
 
             {{-- Highlight Banner --}}
             <div class="bg-gradient-to-r from-teal-700 to-emerald-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-700/20 flex flex-col sm:flex-row items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="text-center sm:text-left flex-grow">
@@ -78,13 +78,13 @@
                 </div>
                 @if($laporan->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download PDF">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download Excel">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download Excel">
                         <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download CSV">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download CSV">
                         <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>
@@ -92,7 +92,7 @@
             </div>
 
             {{-- Search & Sorting Panel --}}
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                 <form action="{{ route('admin.laporan') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
                     <div class="w-full md:flex-grow">
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Pencarian Instansi</label>
@@ -102,12 +102,12 @@
                             </span>
                             <input type="text" name="search" value="{{ request('search') }}" 
                                 placeholder="Cari nama dinas / badan pemerintahan..."
-                                class="w-full pl-9 border-gray-200 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 shadow-sm">
+                                class="w-full pl-9 border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 shadow-sm">
                         </div>
                     </div>
                     <div class="w-full md:w-64">
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Urutkan Data</label>
-                        <select name="sort" class="w-full border-gray-200 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 shadow-sm bg-gray-50 cursor-pointer">
+                        <select name="sort" class="w-full border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 shadow-sm bg-gray-50 dark:bg-gray-900 cursor-pointer">
                             <option value="pelamar_desc" {{ request('sort') == 'pelamar_desc' ? 'selected' : '' }}>Peminat Terbanyak (Default)</option>
                             <option value="pelamar_asc" {{ request('sort') == 'pelamar_asc' ? 'selected' : '' }}>Peminat Tersedikit</option>
                             <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama Instansi (A - Z)</option>
@@ -123,7 +123,7 @@
                             <i class="fas fa-filter"></i> Filter
                         </button>
                         @if(request()->anyFilled(['search', 'sort']))
-                            <a href="{{ route('admin.laporan') }}" class="inline-flex items-center justify-center border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
+                            <a href="{{ route('admin.laporan') }}" class="inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
                                 Reset
                             </a>
                         @endif
@@ -132,16 +132,16 @@
             </div>
 
             {{-- Main Table Card --}}
-            <div class="bg-white shadow-sm rounded-3xl border border-gray-100 overflow-hidden">
-                <div class="p-6 border-b border-gray-100">
-                    <h3 class="font-bold text-gray-800 text-lg">Penerimaan & Daya Serap per Instansi</h3>
-                    <p class="text-xs text-gray-500 mt-1">Daftar rekapitulasi performa daya serap pelamar magang dan efektivitas seleksi untuk masing-masing instansi.</p>
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 text-lg">Penerimaan & Daya Serap per Instansi</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Daftar rekapitulasi performa daya serap pelamar magang dan efektivitas seleksi untuk masing-masing instansi.</p>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50/55 border-b border-gray-100">
+                            <tr class="text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-900/55 border-b border-gray-100 dark:border-gray-700">
                                 <th class="px-6 py-4 w-12 text-center">No</th>
                                 <th class="px-6 py-4">Nama Instansi</th>
                                 <th class="px-6 py-4 text-center w-36">Lowongan Aktif</th>
@@ -162,11 +162,11 @@
                                         <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
                                             <i class="far fa-building"></i>
                                         </div>
-                                        <span class="font-bold text-gray-800 group-hover:text-teal-700 transition">{{ $data['nama_dinas'] }}</span>
+                                        <span class="font-bold text-gray-800 dark:text-gray-200 group-hover:text-teal-700 transition">{{ $data['nama_dinas'] }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="text-gray-700 font-semibold bg-gray-100 px-3 py-1 rounded-full text-xs">
+                                    <span class="text-gray-700 dark:text-gray-300 font-semibold bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-xs">
                                         {{ $data['lowongan_aktif'] }} Posisi
                                     </span>
                                 </td>
@@ -182,15 +182,15 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex flex-col items-center gap-1">
-                                        <span class="font-black text-gray-800">{{ $data['seleksi_rate'] }}%</span>
+                                        <span class="font-black text-gray-800 dark:text-gray-200">{{ $data['seleksi_rate'] }}%</span>
                                         {{-- Visual progress bar --}}
-                                        <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="w-24 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                                             <div class="h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-500" style="width: {{ $data['seleksi_rate'] }}%"></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span class="text-gray-600 font-medium italic">
+                                    <span class="text-gray-600 dark:text-gray-400 font-medium italic">
                                         {{ $data['avg_peminat'] }} <span class="text-[10px] text-gray-400 font-normal">pelamar/posisi</span>
                                     </span>
                                 </td>
@@ -199,11 +199,11 @@
                             <tr>
                                 <td colspan="7" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center justify-center">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3 text-gray-300">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-300">
                                             <i class="fas fa-search text-2xl"></i>
                                         </div>
-                                        <p class="text-gray-900 font-bold">Data instansi tidak ditemukan</p>
-                                        <p class="text-gray-500 text-sm mt-1">Coba sesuaikan kata kunci pencarian Anda.</p>
+                                        <p class="text-gray-900 dark:text-gray-100 font-bold">Data instansi tidak ditemukan</p>
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Coba sesuaikan kata kunci pencarian Anda.</p>
                                     </div>
                                 </td>
                             </tr>

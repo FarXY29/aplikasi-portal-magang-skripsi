@@ -1,63 +1,63 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-chalkboard-teacher text-teal-600"></i>
                 {{ __('Dashboard Pembimbing Lapangan Lapangan') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group hover:shadow-md transition">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
                         <i class="fas fa-users text-6xl text-indigo-500"></i>
                     </div>
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">Peserta Bimbingan</p>
-                        <h3 class="text-3xl font-black text-gray-800">{{ $interns->count() }}</h3>
-                        <p class="text-xs text-gray-500 mt-2">Total mahasiswa yang Anda bimbing.</p>
+                        <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200">{{ $interns->count() }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Total mahasiswa yang Anda bimbing.</p>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-teal-100 relative overflow-hidden group hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-teal-100 relative overflow-hidden group hover:shadow-md transition">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
                         <i class="fas fa-user-check text-6xl text-teal-500"></i>
                     </div>
                     <div class="relative z-10">
                         <p class="text-xs font-bold text-teal-500 uppercase tracking-widest mb-1">Status Aktif</p>
-                        <h3 class="text-3xl font-black text-gray-800">{{ $interns->where('status', 'diterima')->count() }}</h3>
-                        <p class="text-xs text-gray-500 mt-2">Mahasiswa yang sedang menjalani magang.</p>
+                        <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200">{{ $interns->where('status', 'diterima')->count() }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mahasiswa yang sedang menjalani magang.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <i class="fas fa-list text-gray-400"></i> Daftar Mahasiswa Bimbingan
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">Kelola dan pantau aktivitas harian peserta.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kelola dan pantau aktivitas harian peserta.</p>
                     </div>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Peserta</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Posisi Magang</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode & Status</th>
-                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Profil Peserta</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Posisi Magang</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Periode & Status</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-50">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
                             @forelse($interns as $mhs)
-                            <tr class="hover:bg-gray-50 transition group {{ $mhs->status == 'selesai' ? 'bg-gray-50/60' : '' }}">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition group {{ $mhs->status == 'selesai' ? 'bg-gray-50 dark:bg-gray-900/60' : '' }}">
                                 
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
@@ -67,21 +67,21 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition">{{ $mhs->user->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $mhs->user->email }}</div>
+                                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 transition">{{ $mhs->user->name }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ $mhs->user->email }}</div>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-lg w-fit border border-gray-200">
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg w-fit border border-gray-200 dark:border-gray-700">
                                         {{ $mhs->position->judul_posisi }}
                                     </div>
                                 </td>
 
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col gap-1">
-                                        <div class="text-xs text-gray-500">
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">
                                             {{ \Carbon\Carbon::parse($mhs->tanggal_mulai)->format('d M') }} - {{ \Carbon\Carbon::parse($mhs->tanggal_selesai)->format('d M Y') }}
                                         </div>
                                         <div>
@@ -105,7 +105,7 @@
                                             <i class="fas fa-book-reader mr-2"></i> Periksa Logbook
                                         </a>
                                     @else
-                                        <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition shadow-sm">
+                                        <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition shadow-sm">
                                             <i class="fas fa-history mr-2"></i> Riwayat
                                         </a>
                                     @endif
@@ -115,10 +115,10 @@
                             <tr>
                                 <td colspan="4" class="px-6 py-12 text-center">
                                     <div class="flex flex-col items-center justify-center text-gray-400">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
                                             <i class="fas fa-user-slash text-3xl text-gray-300"></i>
                                         </div>
-                                        <p class="font-bold text-gray-600">Belum ada peserta bimbingan</p>
+                                        <p class="font-bold text-gray-600 dark:text-gray-400">Belum ada peserta bimbingan</p>
                                         <p class="text-xs mt-1">Anda belum ditugaskan untuk membimbing peserta magang manapun.</p>
                                     </div>
                                 </td>
