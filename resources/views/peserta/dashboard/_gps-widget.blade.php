@@ -1,0 +1,20 @@
+                    @if($activeApp && $jamKerja && $jamKerja->latitude && $jamKerja->longitude && $activeApp->display_status != 'selesai' && $activeApp->display_status != 'belum mulai')
+                    <div id="gps-status-banner" 
+                         data-lat="{{ $jamKerja->latitude }}" 
+                         data-lng="{{ $jamKerja->longitude }}" 
+                         data-radius="{{ $jamKerja->radius_absen ?? 100 }}"
+                         class="px-6 py-4 bg-blue-50/60 border-t border-blue-100 flex items-center justify-between flex-wrap gap-3 transition-all duration-300">
+                        <div class="flex items-center gap-3.5">
+                            <div id="gps-icon-wrapper" class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center text-lg shadow-md shadow-blue-500/20 transition-all duration-300">
+                                <i class="fas fa-satellite-dish animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h4 id="gps-title" class="text-xs font-extrabold text-blue-900 uppercase tracking-wider">Mendeteksi Lokasi GPS Otomatis...</h4>
+                                <p id="gps-desc" class="text-xs text-blue-600 font-medium">Mohon tunggu, sistem sedang memvalidasi posisi Anda dengan koordinat kantor.</p>
+                            </div>
+                        </div>
+                        <div id="gps-badge" class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-blue-700 text-xs font-extrabold shadow-sm border border-blue-200/60 flex items-center gap-1.5">
+                            <i class="fas fa-spinner fa-spin text-blue-600"></i> Mencari Sinyal...
+                        </div>
+                    </div>
+                    @endif

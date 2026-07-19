@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Monitoring Absensi Mahasiswa') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-gray-50/50 min-h-screen">
+    <div class="py-12 bg-gray-50 dark:bg-gray-900/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <div class="flex justify-between mb-6 print:hidden">
-                <a href="{{ route('pembimbing_lapangan.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-indigo-600 transition">
+                <a href="{{ route('pembimbing_lapangan.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-indigo-600 transition">
                     <i class="fas fa-arrow-left mr-2"></i> Kembali ke Dashboard
                 </a>
             </div>
@@ -17,7 +17,7 @@
             <div class="flex flex-col lg:flex-row gap-8 items-start">
                 
                 <div class="w-full lg:w-1/4 flex-shrink-0 print:hidden">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-8">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-8">
                         <div class="mb-5 pb-3 border-b border-gray-50">
                             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <i class="fas fa-filter"></i> Filter Data
@@ -28,23 +28,23 @@
                             
                             <!-- Filter Type Segmented Control -->
                             <div class="mb-5">
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Rentang Waktu</label>
-                                <div class="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-xl">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-2">Rentang Waktu</label>
+                                <div class="grid grid-cols-3 gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
                                     <label class="cursor-pointer">
                                         <input type="radio" name="filter_type" value="harian" {{ $filterType === 'harian' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
+                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
                                             Harian
                                         </span>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="filter_type" value="mingguan" {{ $filterType === 'mingguan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
+                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
                                             Mingguan
                                         </span>
                                     </label>
                                     <label class="cursor-pointer">
                                         <input type="radio" name="filter_type" value="bulanan" {{ $filterType === 'bulanan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 peer-checked:bg-white peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
+                                        <span class="block text-center text-[10px] font-bold py-1.5 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-indigo-600 peer-checked:shadow-sm transition">
                                             Bulanan
                                         </span>
                                     </label>
@@ -52,7 +52,7 @@
                             </div>
 
                             <div class="mb-5">
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-2">
                                     @if($filterType === 'bulanan')
                                         Pilih Bulan
                                     @else
@@ -61,12 +61,12 @@
                                 </label>
                                 @if($filterType === 'bulanan')
                                     <input type="month" name="month" value="{{ \Carbon\Carbon::parse($selectedDate)->format('Y-m') }}" 
-                                        class="w-full border-gray-250 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 text-gray-700 transition"
+                                        class="w-full border-gray-250 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition"
                                         onchange="this.form.date.value = this.value + '-01'; this.form.submit();">
                                     <input type="hidden" name="date" value="{{ $selectedDate }}">
                                 @else
                                     <input type="date" name="date" value="{{ $selectedDate }}" 
-                                        class="w-full border-gray-255 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 text-gray-700 transition">
+                                        class="w-full border-gray-255 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition">
                                     @if($filterType === 'mingguan')
                                         <p class="text-[10px] text-gray-400 mt-1.5">*Mengambil 1 minggu dari tanggal tersebut.</p>
                                     @endif
@@ -80,7 +80,7 @@
                                     @foreach($dateList->take(4) as $dateItem)
                                         @php
                                             $isActive = $dateItem->format('Y-m-d') == $selectedDate;
-                                            $activeClass = $isActive ? 'bg-indigo-600 text-white border-indigo-600 shadow-md transform scale-105' : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600';
+                                            $activeClass = $isActive ? 'bg-indigo-600 text-white border-indigo-600 shadow-md transform scale-105' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-indigo-300 hover:text-indigo-600';
                                         @endphp
                                         <a href="{{ route('pembimbing_lapangan.attendance.index', ['date' => $dateItem->format('Y-m-d'), 'filter_type' => 'harian']) }}" 
                                            class="text-xs text-center py-2 px-1 rounded-lg border transition duration-200 font-bold {{ $activeClass }}">
@@ -105,11 +105,11 @@
                 </div>
 
                 <div class="w-full lg:w-3/4">
-                    <div class="bg-white shadow-sm rounded-2xl border border-gray-100 overflow-hidden">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                         
-                        <div class="p-6 border-b border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
+                        <div class="p-6 border-b border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800">
                             <div>
-                                <h3 class="text-lg font-bold text-gray-800">
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">
                                     @if($filterType === 'mingguan')
                                         Rekap Mingguan
                                     @elseif($filterType === 'bulanan')
@@ -118,7 +118,7 @@
                                         Rekap Harian
                                     @endif
                                 </h3>
-                                <p class="text-sm text-gray-500 mt-1">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                     @if($filterType === 'mingguan')
                                         Periode: <span class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{{ \Carbon\Carbon::parse($selectedDate)->startOfWeek()->translatedFormat('d M Y') }} - {{ \Carbon\Carbon::parse($selectedDate)->endOfWeek()->translatedFormat('d M Y') }}</span>
                                     @elseif($filterType === 'bulanan')
@@ -136,7 +136,7 @@
 
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-50">
-                                <thead class="bg-gray-50/50">
+                                <thead class="bg-gray-50 dark:bg-gray-900/50">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Peserta</th>
                                         @if($filterType !== 'harian')
@@ -148,7 +148,7 @@
                                         <th class="px-6 py-4 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Aksi Validasi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-50">
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
                                     @forelse($attendances as $row)
                                     <tr class="hover:bg-indigo-50/30 transition duration-150">
                                         
@@ -158,21 +158,21 @@
                                                     {{ substr($row->application->user->name, 0, 1) }}
                                                 </div>
                                                 <div class="ml-3">
-                                                    <div class="text-sm font-bold text-gray-900">{{ $row->application->user->name }}</div>
-                                                    <div class="text-xs text-gray-500">{{ Str::limit($row->application->position->judul_posisi, 25) }}</div>
+                                                    <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $row->application->user->name }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ Str::limit($row->application->position->judul_posisi, 25) }}</div>
                                                 </div>
                                             </div>
                                         </td>
 
                                         @if($filterType !== 'harian')
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-600">
+                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-600 dark:text-gray-400">
                                                 {{ \Carbon\Carbon::parse($row->date)->translatedFormat('d M Y') }}
                                             </td>
                                         @endif
                                         
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if($row->status == 'hadir')
-                                                <span class="text-sm font-mono font-bold text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                                                     {{ \Carbon\Carbon::parse($row->clock_in)->format('H:i') }}
                                                 </span>
                                             @else
@@ -183,7 +183,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if($row->status == 'hadir')
                                                 @if($row->clock_out)
-                                                    <span class="text-sm font-mono font-bold text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                                                    <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                                                         {{ \Carbon\Carbon::parse($row->clock_out)->format('H:i') }}
                                                     </span>
                                                 @else
@@ -202,7 +202,7 @@
                                                     'izin' => 'bg-blue-100 text-blue-700 border-blue-200',
                                                 ];
                                                 $statusVal = $row->status instanceof \App\Enums\AttendanceStatus ? $row->status->value : $row->status;
-                                                $style = $statusStyles[$statusVal] ?? 'bg-gray-100 text-gray-600';
+                                                $style = $statusStyles[$statusVal] ?? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400';
                                                 
                                                 // Cek Pending Validation
                                                 $isPending = ($statusVal != 'hadir' && ($row->validation_status instanceof \App\Enums\ValidationStatus ? $row->validation_status->value : $row->validation_status) == 'pending');
@@ -230,7 +230,7 @@
                                                 @if($row->validation_status == 'pending')
                                                     <div class="flex items-center justify-end gap-2">
                                                         <button x-data="" x-on:click="$dispatch('open-modal', 'modal-bukti-{{ $row->id }}')" 
-                                                            class="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-indigo-100 hover:text-indigo-600 transition" title="Lihat Bukti">
+                                                            class="p-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded hover:bg-indigo-100 hover:text-indigo-600 transition" title="Lihat Bukti">
                                                             <i class="fas fa-eye"></i>
                                                         </button>
 
@@ -267,19 +267,19 @@
                                     <x-modal name="modal-bukti-{{ $row->id }}" focusable>
                                         <div class="p-6">
                                             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                                                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                                     <i class="fas fa-file-medical text-indigo-500"></i> Bukti Pengajuan {{ ucfirst($row->status) }}
                                                 </h2>
-                                                <button x-on:click="$dispatch('close')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                                                <button x-on:click="$dispatch('close')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-400"><i class="fas fa-times"></i></button>
                                             </div>
                                             
-                                            <div class="flex justify-center bg-gray-100 rounded-xl p-2 mb-4 border border-gray-200">
+                                            <div class="flex justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-2 mb-4 border border-gray-200 dark:border-gray-700">
                                                 <img src="{{ asset('storage/' . $row->proof_file) }}" class="max-h-[60vh] rounded shadow-sm hover:scale-105 transition duration-300" alt="Bukti">
                                             </div>
                                             
                                             <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                                                 <p class="text-[10px] text-indigo-500 font-bold uppercase mb-1">Keterangan Mahasiswa</p>
-                                                <p class="text-gray-800 text-sm italic font-medium">"{{ $row->description }}"</p>
+                                                <p class="text-gray-800 dark:text-gray-200 text-sm italic font-medium">"{{ $row->description }}"</p>
                                             </div>
                                             
                                             <div class="mt-6 flex justify-end">
@@ -299,8 +299,8 @@
                                                 <input type="hidden" name="status_validasi" value="rejected">
                                                 
                                                 <div class="mb-4">
-                                                    <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Penolakan</label>
-                                                    <textarea name="pembimbing_lapangan_note" rows="3" class="w-full border-gray-300 rounded-xl shadow-sm focus:border-red-500 focus:ring-red-500 text-sm" required placeholder="Contoh: Bukti surat dokter tidak terbaca..."></textarea>
+                                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Alasan Penolakan</label>
+                                                    <textarea name="pembimbing_lapangan_note" rows="3" class="w-full border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:border-red-500 focus:ring-red-500 text-sm" required placeholder="Contoh: Bukti surat dokter tidak terbaca..."></textarea>
                                                 </div>
                                                 
                                                 <div class="mt-6 flex justify-end gap-3">
@@ -317,10 +317,10 @@
                                     <tr>
                                         <td colspan="{{ $filterType !== 'harian' ? 6 : 5 }}" class="px-6 py-12 text-center">
                                             <div class="flex flex-col items-center justify-center text-gray-400">
-                                                <div class="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                                <div class="h-16 w-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
                                                     <i class="fas fa-clipboard-check text-3xl text-gray-300"></i>
                                                 </div>
-                                                <p class="font-medium text-gray-600">Data absensi kosong</p>
+                                                <p class="font-medium text-gray-600 dark:text-gray-400">Data absensi kosong</p>
                                                 <p class="text-xs mt-1">Tidak ada data untuk tanggal/periode yang dipilih.</p>
                                             </div>
                                         </td>
@@ -331,7 +331,7 @@
                         </div>
                         
                         @if($attendances instanceof \Illuminate\Pagination\LengthAwarePaginator && $attendances->hasPages())
-                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                             {{ $attendances->links() }}
                         </div>
                         @endif

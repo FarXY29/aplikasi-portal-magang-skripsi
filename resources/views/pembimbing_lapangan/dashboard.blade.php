@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-chalkboard-teacher text-indigo-600"></i>
                 {{ __('Dashboard Pembimbing Lapangan') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
             @php
@@ -32,11 +32,11 @@
             @endif
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group hover:shadow-md transition">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">Total Bimbingan</p>
-                            <h3 class="text-3xl font-black text-gray-800">{{ $interns->count() }}</h3>
+                            <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200">{{ $interns->count() }}</h3>
                         </div>
                         <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm">
                             <i class="fas fa-users"></i>
@@ -44,11 +44,11 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-teal-100 relative overflow-hidden group hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-teal-100 relative overflow-hidden group hover:shadow-md transition">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-xs font-bold text-teal-500 uppercase tracking-widest mb-1">Sedang Magang</p>
-                            <h3 class="text-3xl font-black text-gray-800">{{ $interns->where('status', 'diterima')->count() }}</h3>
+                            <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200">{{ $interns->where('status', 'diterima')->count() }}</h3>
                         </div>
                         <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm">
                             <i class="fas fa-user-clock"></i>
@@ -56,11 +56,11 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 relative overflow-hidden group hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-blue-100 relative overflow-hidden group hover:shadow-md transition">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Selesai / Lulus</p>
-                            <h3 class="text-3xl font-black text-gray-800">{{ $interns->where('status', 'selesai')->count() }}</h3>
+                            <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200">{{ $interns->where('status', 'selesai')->count() }}</h3>
                         </div>
                         <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm">
                             <i class="fas fa-graduation-cap"></i>
@@ -70,46 +70,44 @@
             </div>
 
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" class="flex items-center p-4 mb-4 text-green-800 rounded-xl bg-green-50 border border-green-100 shadow-sm relative">
-                    <i class="fas fa-check-circle flex-shrink-0 w-5 h-5 mr-3 text-green-600"></i>
-                    <div class="text-sm font-bold">{{ session('success') }}</div>
-                    <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700"><i class="fas fa-times"></i></button>
-                </div>
-            @endif
+    <x-ui.alert type="success" class="mb-4">
+        {{ session('success') }}
+    </x-ui.alert>
+@endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
                     <div>
-                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <i class="fas fa-list-ul text-indigo-500"></i> Daftar Mahasiswa Bimbingan
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">Pantau aktivitas, validasi kehadiran, dan berikan penilaian.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pantau aktivitas, validasi kehadiran, dan berikan penilaian.</p>
                     </div>
                 </div>
                 
                 <!-- Desktop Table View (md and above) -->
                 <div class="hidden md:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Profil Peserta</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode & Status</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Kehadiran (Valid)</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Nilai Akhir</th>
-                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Profil Peserta</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Periode & Status</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Kehadiran (Valid)</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nilai Akhir</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-50">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
                             @forelse($interns as $mhs)
-                            <tr class="hover:bg-gray-50 transition group">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition group">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-sm border border-indigo-200 shadow-sm">
                                             {{ strtoupper(substr($mhs->user->name, 0, 1)) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition">{{ $mhs->user->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $mhs->user->email }}</div>
+                                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 transition">{{ $mhs->user->name }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ $mhs->user->email }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -117,7 +115,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col gap-1">
                                         @if($mhs->tanggal_mulai)
-                                            <span class="text-xs font-medium text-gray-600 flex items-center gap-1">
+                                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1">
                                                 <i class="far fa-calendar-alt"></i>
                                                 {{ \Carbon\Carbon::parse($mhs->tanggal_mulai)->format('d M') }} - {{ \Carbon\Carbon::parse($mhs->tanggal_selesai)->format('d M Y') }}
                                             </span>
@@ -144,7 +142,7 @@
                                         $validLogs = $mhs->logs->where('status_validasi', 'disetujui')->count();
                                     @endphp
                                     <div class="inline-flex flex-col items-center">
-                                        <span class="text-lg font-black text-gray-800">{{ $validLogs }}</span>
+                                        <span class="text-lg font-black text-gray-800 dark:text-gray-200">{{ $validLogs }}</span>
                                         <span class="text-[10px] text-gray-400 font-bold uppercase">Hari Valid</span>
                                     </div>
                                 </td>
@@ -156,7 +154,7 @@
                                             <span class="text-[10px] font-bold text-indigo-400 uppercase">{{ $mhs->predikat }}</span>
                                         </div>
                                     @else
-                                        <span class="text-xs text-gray-400 italic bg-gray-100 px-2 py-1 rounded">Belum dinilai</span>
+                                        <span class="text-xs text-gray-400 italic bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Belum dinilai</span>
                                     @endif
                                 </td>
 
@@ -164,24 +162,20 @@
                                     <div class="flex justify-end gap-2 flex-wrap sm:flex-nowrap">
                                         
                                         <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" 
-                                           class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 text-xs font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition shadow-sm" 
+                                           class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 text-xs font-bold hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition shadow-sm" 
                                            title="Periksa Logbook">
                                             <i class="fas fa-book-open mr-1.5"></i> Logbook
                                         </a>
 
                                         <a href="{{ route('pembimbing_lapangan.attendance.index', $mhs->id) }}" 
-                                           class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 text-xs font-bold hover:text-teal-600 hover:border-teal-300 hover:bg-teal-50 transition shadow-sm" 
+                                           class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 text-xs font-bold hover:text-teal-600 hover:border-teal-300 hover:bg-teal-50 transition shadow-sm" 
                                            title="Riwayat Absensi">
                                             <i class="fas fa-clock mr-1.5"></i> Absensi
                                         </a>
 
                                         @if($mhs->status == 'diterima' || $mhs->status == 'selesai')
                                             <a href="{{ route('pembimbing_lapangan.penilaian', $mhs->id) }}" 
-                                               class="inline-flex items-center px-3 py-1.5 border rounded-lg text-xs font-bold transition shadow-sm
-                                               {{ $mhs->nilai_angka 
-                                                    ? 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100' 
-                                                    : 'bg-indigo-600 text-white border-transparent hover:bg-indigo-700' 
-                                               }}">
+                                               class="inline-flex items-center px-3 py-1.5 border rounded-lg text-xs font-bold transition shadow-sm {{ $mhs->nilai_angka ? 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100' : 'bg-indigo-600 text-white border-transparent hover:bg-indigo-700' }}">
                                                 <i class="fas fa-star mr-1.5"></i> {{ $mhs->nilai_angka ? 'Edit Nilai' : 'Input Nilai' }}
                                             </a>
                                         @endif
@@ -192,10 +186,10 @@
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
                                     <div class="flex flex-col items-center justify-center text-gray-400">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
                                             <i class="fas fa-users-slash text-3xl text-gray-300"></i>
                                         </div>
-                                        <p class="font-bold text-gray-600">Belum ada mahasiswa bimbingan</p>
+                                        <p class="font-bold text-gray-600 dark:text-gray-400">Belum ada mahasiswa bimbingan</p>
                                         <p class="text-xs mt-1">Anda belum ditugaskan untuk membimbing peserta magang manapun.</p>
                                     </div>
                                 </td>
@@ -208,7 +202,7 @@
                 <!-- Mobile Card View (< md) -->
                 <div class="md:hidden divide-y divide-gray-100">
                     @forelse($interns as $mhs)
-                    <div class="p-5 space-y-4 hover:bg-gray-50/50 transition">
+                    <div class="p-5 space-y-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition">
                         <!-- Header Card: Foto, Nama, Email -->
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
@@ -216,8 +210,8 @@
                                     {{ strtoupper(substr($mhs->user->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <div class="text-base font-bold text-gray-900">{{ $mhs->user->name }}</div>
-                                    <div class="text-xs text-gray-500">{{ $mhs->user->email }}</div>
+                                    <div class="text-base font-bold text-gray-900 dark:text-gray-100">{{ $mhs->user->name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $mhs->user->email }}</div>
                                 </div>
                             </div>
                             <div>
@@ -234,8 +228,8 @@
                         </div>
 
                         <!-- Periode & Stats Grid -->
-                        <div class="grid grid-cols-2 gap-2 bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs">
-                            <div class="col-span-2 flex items-center gap-1.5 text-gray-600 font-medium pb-2 border-b border-gray-200/60">
+                        <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 text-xs">
+                            <div class="col-span-2 flex items-center gap-1.5 text-gray-600 dark:text-gray-400 font-medium pb-2 border-b border-gray-200 dark:border-gray-700/60">
                                 <i class="far fa-calendar-alt text-indigo-500"></i>
                                 @if($mhs->tanggal_mulai)
                                     <span>{{ \Carbon\Carbon::parse($mhs->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($mhs->tanggal_selesai)->format('d M Y') }}</span>
@@ -248,9 +242,9 @@
                                 @php
                                     $validLogs = $mhs->logs->where('status_validasi', 'disetujui')->count();
                                 @endphp
-                                <span class="text-base font-black text-gray-800">{{ $validLogs }} <span class="text-xs font-normal text-gray-500">Hari</span></span>
+                                <span class="text-base font-black text-gray-800 dark:text-gray-200">{{ $validLogs }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400">Hari</span></span>
                             </div>
-                            <div class="pt-1 flex flex-col border-l border-gray-200/60 pl-3">
+                            <div class="pt-1 flex flex-col border-l border-gray-200 dark:border-gray-700/60 pl-3">
                                 <span class="text-[10px] text-gray-400 font-bold uppercase">Nilai Akhir</span>
                                 @if($mhs->nilai_angka)
                                     <span class="text-base font-black text-indigo-600">{{ $mhs->nilai_angka }} <span class="text-xs font-bold text-indigo-400">({{ $mhs->predikat }})</span></span>
@@ -263,22 +257,18 @@
                         <!-- Tombol Aksi Full-Width untuk HP -->
                         <div class="flex flex-col sm:flex-row gap-2 pt-1">
                             <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" 
-                               class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-gray-300 rounded-xl text-gray-700 text-xs font-bold hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm flex items-center justify-center gap-2">
+                               class="w-full sm:flex-1 py-2.5 px-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 text-xs font-bold hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm flex items-center justify-center gap-2">
                                 <i class="fas fa-book-open text-indigo-500"></i> Cek Logbook
                             </a>
 
                             <a href="{{ route('pembimbing_lapangan.attendance.index', $mhs->id) }}" 
-                               class="w-full sm:flex-1 py-2.5 px-3 bg-white border border-gray-300 rounded-xl text-gray-700 text-xs font-bold hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 transition shadow-sm flex items-center justify-center gap-2">
+                               class="w-full sm:flex-1 py-2.5 px-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 text-xs font-bold hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 transition shadow-sm flex items-center justify-center gap-2">
                                 <i class="fas fa-clock text-teal-500"></i> Cek Absensi
                             </a>
 
                             @if($mhs->status == 'diterima' || $mhs->status == 'selesai')
                                 <a href="{{ route('pembimbing_lapangan.penilaian', $mhs->id) }}" 
-                                   class="w-full sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-2
-                                   {{ $mhs->nilai_angka 
-                                        ? 'bg-yellow-50 text-yellow-700 border border-yellow-300 hover:bg-yellow-100' 
-                                        : 'bg-indigo-600 text-white hover:bg-indigo-700' 
-                                   }}">
+                                   class="w-full sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-2 {{ $mhs->nilai_angka ? 'bg-yellow-50 text-yellow-700 border border-yellow-300 hover:bg-yellow-100' : 'bg-indigo-600 text-white hover:bg-indigo-700' }}">
                                     <i class="fas fa-star text-yellow-400"></i> {{ $mhs->nilai_angka ? 'Edit Nilai' : 'Input Nilai' }}
                                 </a>
                             @endif
@@ -286,10 +276,10 @@
                     </div>
                     @empty
                     <div class="p-8 text-center text-gray-400">
-                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-users-slash text-3xl text-gray-300"></i>
                         </div>
-                        <p class="font-bold text-gray-600">Belum ada mahasiswa bimbingan</p>
+                        <p class="font-bold text-gray-600 dark:text-gray-400">Belum ada mahasiswa bimbingan</p>
                         <p class="text-xs mt-1">Anda belum ditugaskan untuk membimbing peserta magang manapun.</p>
                     </div>
                     @endforelse

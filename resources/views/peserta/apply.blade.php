@@ -4,19 +4,19 @@
     @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-file-signature text-teal-600"></i>
                 {{ __('Formulir Lamaran Magang') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <div class="mb-6">
-                <a href="{{ route('home') }}" class="group inline-flex items-center text-sm font-bold text-gray-500 hover:text-teal-600 transition">
-                    <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+                <a href="{{ route('home') }}" class="group inline-flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </div>
                     Kembali ke Daftar Lowongan
@@ -26,7 +26,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div class="bg-gradient-to-br from-teal-600 to-teal-800 p-6 text-white">
                             <h3 class="font-bold text-lg leading-tight opacity-90">{{ $position->instansi->nama_dinas }}</h3>
                             <h2 class="font-extrabold text-2xl mt-1">{{ $position->judul_posisi }}</h2>
@@ -41,8 +41,8 @@
                                 </span>
                             </div>
 
-                            <h4 class="text-sm font-bold text-gray-800 uppercase tracking-wide mb-3 border-b border-gray-100 pb-2">Detail Pekerjaan</h4>
-                            <div class="prose prose-sm text-gray-600 text-sm leading-relaxed mb-6">
+                            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wide mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">Detail Pekerjaan</h4>
+                            <div class="prose prose-sm text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
                                 {!! $position->deskripsi !!}
                             </div>
 
@@ -57,9 +57,9 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                        <div class="p-6 border-b border-gray-50 bg-gray-50/30">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/30">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <i class="fas fa-pen-alt text-teal-500"></i> Lengkapi Data Lamaran
                             </h3>
                         </div>
@@ -80,12 +80,12 @@
                                 <input type="hidden" name="is_waiting_list" id="is_waiting_list" value="0">
 
                                 <div class="mb-8">
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Upload Surat Pengantar (PDF)</label>
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Upload Surat Pengantar (PDF)</label>
                                     <div class="flex items-center justify-center w-full">
-                                        <label for="surat" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition group">
+                                        <label for="surat" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition group">
                                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                                 <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 group-hover:text-teal-500 transition mb-2"></i>
-                                                <p class="mb-1 text-sm text-gray-500"><span class="font-semibold text-teal-600">Klik untuk upload</span> atau drag & drop</p>
+                                                <p class="mb-1 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold text-teal-600">Klik untuk upload</span> atau drag & drop</p>
                                                 <p class="text-xs text-gray-400">PDF (Maks. 2MB)</p>
                                             </div>
                                             <input id="surat" name="surat" type="file" class="hidden" accept=".pdf" required />
@@ -96,18 +96,18 @@
                                 </div>
 
                                 <div class="mb-6">
-                                    <label class="block text-sm font-bold text-gray-700 mb-3">Rencana Periode Magang</label>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Rencana Periode Magang</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tanggal Mulai</label>
+                                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Tanggal Mulai</label>
                                             <input type="date" id="tanggal_mulai" name="tanggal_mulai" 
-                                                class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
+                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
                                                 min="{{ date('Y-m-d') }}" required>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tanggal Selesai</label>
+                                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Tanggal Selesai</label>
                                             <input type="date" id="tanggal_selesai" name="tanggal_selesai" 
-                                                class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
+                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
                                                 min="{{ date('Y-m-d') }}" required>
                                         </div>
                                     </div>
@@ -116,8 +116,8 @@
                                 <div id="availability-result" class="hidden mb-8">
                                     </div>
 
-                                <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
-                                    <a href="{{ route('home') }}" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition text-sm">
+                                <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-700">
+                                    <a href="{{ route('home') }}" class="px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition text-sm">
                                         Batal
                                     </a>
                                     <button type="submit" id="submitBtn" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 transition transform active:scale-95 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -172,7 +172,7 @@
         }
 
         function checkAvailability(start, end) {
-            showResult('loading', 'Sedang memeriksa ketersediaan kuota...', 'bg-gray-50 border-gray-200 text-gray-600');
+            showResult('loading', 'Sedang memeriksa ketersediaan kuota...', 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400');
             submitBtn.disabled = true;
 
             fetch(`/magang/check-availability/${positionId}`, {
@@ -198,7 +198,7 @@
                     
                     if(data.suggestion_date) {
                         errorMessage += `
-                            <div class="mt-3 text-sm text-gray-700 bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="mt-3 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <p class="font-bold mb-2">Opsi yang tersedia:</p>
                                 <div class="flex flex-col gap-2">
                                     <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-md text-xs font-bold border border-yellow-300 transition">
@@ -212,7 +212,7 @@
                         `;
                     } else {
                         errorMessage += `
-                            <div class="mt-3 text-sm text-gray-700 bg-white p-3 rounded-lg border border-gray-200">
+                            <div class="mt-3 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-md text-xs font-bold border border-yellow-300 transition">
                                     <i class="fas fa-clock mr-1"></i> Daftar & Masuk Daftar Tunggu (Otomatis diterima saat ada yg selesai)
                                 </button>
