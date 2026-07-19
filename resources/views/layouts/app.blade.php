@@ -31,8 +31,15 @@
     </style>
     @stack('head')
     @stack('styles')
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="font-sans antialiased bg-gray-50 text-gray-800" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 dark:text-gray-100 transition-colors duration-300" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
     
     <div class="flex h-screen overflow-hidden">
 
@@ -51,26 +58,26 @@
         <!-- MAIN SIDEBAR (Desktop & Drawer Slide-Over) -->
         <aside x-cloak 
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 z-50 w-64 md:w-72 bg-white border-r border-gray-200/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 transform h-full flex flex-col flex-shrink-0">
+               class="fixed inset-y-0 left-0 z-50 w-64 md:w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 transform h-full flex flex-col flex-shrink-0">
             @include('layouts.navigation')
         </aside>
 
         <!-- MAIN CONTENT WRAPPER -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50 dark:bg-gray-900">
             
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
-            <header class="hidden md:flex bg-white/90 backdrop-blur-md border-b border-gray-200/80 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-xs">
+            <header class="hidden md:flex bg-white dark:bg-gray-800/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700/80 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-xs">
                 
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
-                    <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-gray-600 hover:text-teal-600 hover:bg-teal-50/80 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
+                    <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-teal-50/80 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
                     <div class="flex-1 min-w-0">
                         @if(isset($header))
                             {{ $header }}
                         @else
-                            <h2 class="font-black text-xl text-gray-800 leading-tight truncate">
+                            <h2 class="font-black text-xl text-gray-800 dark:text-gray-200 dark:text-gray-100 leading-tight truncate">
                                 Dashboard
                             </h2>
                         @endif
@@ -78,12 +85,12 @@
                 </div>
 
                 <div class="flex items-center gap-3 print:hidden">
-                    <div class="flex items-center gap-2 text-xs font-bold text-gray-600 bg-gray-100/80 px-3.5 py-2 rounded-xl border border-gray-200/60 shadow-2xs">
-                        <i class="far fa-calendar-alt text-teal-600"></i>
+                    <div class="flex items-center gap-2 text-xs font-bold text-gray-600 dark:text-gray-400 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/80 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700/60 shadow-2xs">
+                        <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
                         <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
                     </div>
                     
-                    <div id="realtime-clock" class="flex items-center gap-2 text-xs font-mono font-black text-teal-700 bg-teal-50 px-3.5 py-2 rounded-xl border border-teal-200/80 shadow-2xs">
+                    <div id="realtime-clock" class="flex items-center gap-2 text-xs font-mono font-black text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-3.5 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/80 shadow-2xs">
                         <i class="far fa-clock"></i>
                         <span id="clock-span">00:00:00</span>
                     </div>
@@ -91,10 +98,10 @@
             </header>
 
             <!-- MOBILE NATIVE TOP BAR (Android & iOS < md) -->
-            <header class="md:hidden sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-gray-200/80 px-4 py-3 flex items-center justify-between shadow-xs">
+            <header class="md:hidden sticky top-0 z-30 bg-white dark:bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700/80 px-4 py-3 flex items-center justify-between shadow-xs">
                 <div class="flex items-center gap-3 min-w-0">
                     <!-- Tombol Hamburger di pojok kiri atas mobile -->
-                    <button @click="sidebarOpen = true" class="p-2 -ml-1 text-gray-700 hover:text-teal-600 focus:outline-none active:scale-95 transition" title="Buka Sidebar">
+                    <button @click="sidebarOpen = true" class="p-2 -ml-1 text-gray-700 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 focus:outline-none active:scale-95 transition" title="Buka Sidebar">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
@@ -103,8 +110,8 @@
                             <x-application-logo class="w-full h-full fill-current text-white" />
                         </div>
                         <div class="min-w-0">
-                            <h1 class="text-sm font-black text-gray-900 leading-none truncate">Portal<span class="text-teal-600">Magang</span></h1>
-                            <span class="inline-block mt-0.5 px-1.5 py-0.5 text-[8px] font-black uppercase bg-teal-50 text-teal-700 rounded border border-teal-200/60 tracking-wider">
+                            <h1 class="text-sm font-black text-gray-900 dark:text-gray-100 leading-none truncate">Portal<span class="text-teal-600 dark:text-teal-400">Magang</span></h1>
+                            <span class="inline-block mt-0.5 px-1.5 py-0.5 text-[8px] font-black uppercase bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded border border-teal-200/60 dark:border-teal-800 tracking-wider">
                                 {{ str_replace('_', ' ', Auth::user()->role) }}
                             </span>
                         </div>
@@ -112,8 +119,8 @@
                 </div>
 
                 <div class="flex items-center gap-2.5">
-                    <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-700 bg-teal-50 px-2.5 py-1.5 rounded-lg border border-teal-200/60 shadow-2xs">
-                        <i class="far fa-clock mr-1 text-teal-600"></i><span id="mobile-clock-span">00:00:00</span>
+                    <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/60 dark:border-teal-800/80 shadow-2xs">
+                        <i class="far fa-clock mr-1 text-teal-600 dark:text-teal-400"></i><span id="mobile-clock-span">00:00:00</span>
                     </div>
 
                     <!-- Tombol Menu Cepat / Profil -->
@@ -124,7 +131,7 @@
             </header>
 
             <!-- MAIN BODY SLOT -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 custom-scrollbar p-4 pb-24 md:p-6 lg:p-8 md:pb-8">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 custom-scrollbar p-4 pb-24 md:p-6 lg:p-8 md:pb-8">
                 {{ $slot }}
             </main>
 
@@ -180,7 +187,7 @@
     </script>
     <div id="global-image-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" onclick="closeImageModal()">
         <div class="relative max-w-4xl max-h-[90vh] w-full flex justify-center items-center" onclick="event.stopPropagation()">
-            <button onclick="closeImageModal()" class="absolute -top-4 -right-4 md:top-4 md:right-4 bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition backdrop-blur-md border border-white/20 z-10">
+            <button onclick="closeImageModal()" class="absolute -top-4 -right-4 md:top-4 md:right-4 bg-white dark:bg-gray-800/10 hover:bg-white dark:hover:bg-gray-800/20 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition backdrop-blur-md border border-white/20 z-10">
                 <i class="fas fa-times text-xl"></i>
             </button>
             <img id="global-image-modal-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" alt="Preview Image">

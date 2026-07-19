@@ -9,7 +9,7 @@
         'error' => 'bg-rose-50 border-rose-200 text-rose-800',
         'warning' => 'bg-amber-50 border-amber-200 text-amber-800',
         'info' => 'bg-blue-50 border-blue-200 text-blue-800',
-        default => 'bg-gray-50 border-gray-200 text-gray-800',
+        default => 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200',
     };
 
     $iconClasses = match($type) {
@@ -17,7 +17,7 @@
         'error' => 'fas fa-times-circle text-rose-500',
         'warning' => 'fas fa-exclamation-triangle text-amber-500',
         'info' => 'fas fa-info-circle text-blue-500',
-        default => 'fas fa-bell text-gray-500',
+        default => 'fas fa-bell text-gray-500 dark:text-gray-400',
     };
 
     $buttonClasses = match($type) {
@@ -25,7 +25,7 @@
         'error' => 'text-rose-500 hover:text-rose-700 hover:bg-rose-100/50',
         'warning' => 'text-amber-500 hover:text-amber-700 hover:bg-amber-100/50',
         'info' => 'text-blue-500 hover:text-blue-700 hover:bg-blue-100/50',
-        default => 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50',
+        default => 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50',
     };
 @endphp
 

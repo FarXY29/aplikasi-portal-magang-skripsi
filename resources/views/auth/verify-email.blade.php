@@ -3,7 +3,7 @@
         
         <div class="w-full md:w-5/12 bg-teal-600 rounded-3xl shadow-xl overflow-hidden relative flex flex-col justify-between p-8 md:p-12 min-h-[400px]">
             
-            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-white opacity-10 rounded-full blur-3xl"></div>
+            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-white dark:bg-gray-800 opacity-10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-teal-800 opacity-20 rounded-full blur-3xl"></div>
 
             <div class="relative z-10">
@@ -16,7 +16,7 @@
             </div>
 
             <div class="relative z-10 mt-10 md:mt-0 text-center md:text-left">
-                <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/20 shadow-inner mx-auto md:mx-0">
+                <div class="w-20 h-20 bg-white dark:bg-gray-800/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/20 shadow-inner mx-auto md:mx-0">
                     <i class="fas fa-envelope-open-text text-3xl text-white"></i>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-4 drop-shadow-md">
@@ -34,11 +34,11 @@
             </div>
         </div>
 
-        <div class="w-full md:w-7/12 bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 border border-gray-100 flex flex-col justify-center">
+        <div class="w-full md:w-7/12 bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden p-8 md:p-12 border border-gray-100 dark:border-gray-700 flex flex-col justify-center">
             
             <div class="mb-6">
-                <h2 class="text-3xl font-extrabold text-gray-900">Periksa Inbox Anda</h2>
-                <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+                <h2 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Periksa Inbox Anda</h2>
+                <p class="mt-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {{ __('Terima kasih telah mendaftar! Sebelum memulai, silakan verifikasi alamat email Anda dengan mengklik tautan yang baru saja kami kirimkan ke email Anda. Jika Anda tidak menerima email tersebut, kami dengan senang hati akan mengirimkan ulang.') }}
                 </p>
             </div>
@@ -64,15 +64,15 @@
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full sm:w-auto text-center">
                         @csrf
-                        <button type="submit" class="text-sm font-bold text-gray-500 hover:text-red-600 transition underline">
+                        <button type="submit" class="text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-red-600 transition underline">
                             {{ __('Keluar Akun (Log Out)') }}
                         </button>
                     </form>
                 </div>
             @else
-                <div class="mt-6 border-t border-gray-100 pt-6">
-                    <h3 class="text-sm font-bold text-gray-800 mb-2">Belum Menerima Email Verifikasi?</h3>
-                    <p class="text-xs text-gray-500 mb-4">Masukkan email Anda yang terdaftar untuk mengirim ulang tautan verifikasi akun:</p>
+                <div class="mt-6 border-t border-gray-100 dark:border-gray-700 pt-6">
+                    <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-2">Belum Menerima Email Verifikasi?</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Masukkan email Anda yang terdaftar untuk mengirim ulang tautan verifikasi akun:</p>
                     
                     <form method="POST" action="{{ route('verification.send.guest') }}" class="space-y-4">
                         @csrf
@@ -82,7 +82,7 @@
                                     <i class="far fa-envelope text-gray-400"></i>
                                 </div>
                                 <input id="email" name="email" type="email" required
-                                    class="block w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 focus:bg-white transition placeholder-gray-400 shadow-sm"
+                                    class="block w-full pl-11 pr-4 py-3.5 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-gray-50 dark:bg-gray-900 focus:bg-white dark:focus:bg-gray-800 transition placeholder-gray-400 shadow-sm"
                                     placeholder="nama@contoh.com" value="{{ old('email') }}">
                             </div>
                             <x-input-error :messages="$errors->get('email')" class="mt-1" />

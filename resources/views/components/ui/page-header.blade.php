@@ -6,7 +6,7 @@
 <div class="mb-6 md:flex md:items-center md:justify-between">
     <div class="flex-1 min-w-0">
         @if(count($breadcrumbs) > 0)
-            <nav class="flex text-sm text-gray-500 mb-2 font-medium" aria-label="Breadcrumb">
+            <nav class="flex text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium" aria-label="Breadcrumb">
                 <ol class="flex items-center space-x-2">
                     @foreach($breadcrumbs as $index => $breadcrumb)
                         <li>
@@ -16,7 +16,7 @@
                                         {{ $breadcrumb['label'] }}
                                     </a>
                                 @else
-                                    <span class="text-gray-900">{{ $breadcrumb['label'] }}</span>
+                                    <span class="text-gray-900 dark:text-gray-100">{{ $breadcrumb['label'] }}</span>
                                 @endif
                                 
                                 @if($index < count($breadcrumbs) - 1)
@@ -28,7 +28,7 @@
                 </ol>
             </nav>
         @endif
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-100 sm:truncate sm:text-3xl sm:tracking-tight">
             {{ $title }}
         </h2>
     </div>

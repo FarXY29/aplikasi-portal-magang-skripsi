@@ -63,19 +63,19 @@
     $tag = $href ? 'a' : 'div';
 @endphp
 
-<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group block relative overflow-hidden rounded-xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md {$style['bg']} {$style['border']}"]) }}>
-    <div class="flex items-start justify-between gap-4">
-        <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-gray-500">{{ $title }}</p>
-            <h3 class="mt-2 text-3xl font-extrabold tracking-tight {{ $style['text'] }}">{{ $value }}</h3>
+<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group block relative overflow-hidden rounded-xl border p-4 xl:p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md {$style['bg']} {$style['border']} dark:bg-gray-800 dark:bg-none dark:border-gray-700 dark:hover:border-gray-600"]) }}>
+    <div class="flex items-start justify-between gap-2 xl:gap-4">
+        <div class="min-w-0">
+            <p class="text-[10px] xl:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 truncate">{{ $title }}</p>
+            <h3 class="mt-2 text-xl xl:text-3xl font-extrabold tracking-tight {{ $style['text'] }} dark:text-gray-100">{{ $value }}</h3>
             @if($subtitle)
-                <p class="mt-1 text-xs font-medium text-gray-500 flex items-center gap-1">
+                <p class="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
                     {{ $subtitle }}
                 </p>
             @endif
         </div>
-        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-110 {{ $style['iconBg'] }}">
-            <i class="{{ $icon }} text-lg"></i>
+        <div class="flex h-10 w-10 xl:h-12 xl:w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-lg dark:shadow-none transition-transform duration-300 group-hover:scale-110 {{ $style['iconBg'] }}">
+            <i class="{{ $icon }} text-base xl:text-lg"></i>
         </div>
     </div>
 </{{ $tag }}>
