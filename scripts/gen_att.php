@@ -16,7 +16,7 @@ foreach ($applications as $app) {
     if (Attendance::where('application_id', $app->id)->exists()) continue;
 
     $startDate = Carbon::parse($app->tanggal_mulai);
-    $endDate = $app->status == 'selesai' ? Carbon::parse($app->tanggal_selesai) : Carbon::now();
+    $endDate = $app->status?->value == 'selesai' ? Carbon::parse($app->tanggal_selesai) : Carbon::now();
     
     // limit to 20 days max so it doesn't take too long
     $days = min($startDate->diffInDays($endDate), 20);

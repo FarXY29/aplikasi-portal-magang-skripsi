@@ -21,9 +21,9 @@
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex items-start gap-6">
                         <div class="flex-shrink-0">
                             @if($app->user->profile_photo_path)
-                                <img src="{{ Storage::url($app->user->profile_photo_path) }}" class="w-24 h-24 rounded-full object-cover border-4 border-teal-50">
+                                <img src="{{ Storage::url($app->user->profile_photo_path) }}" class="w-24 h-24 rounded-full object-cover border-4 border-teal-50 dark:border-teal-900/50">
                             @else
-                                <div class="w-24 h-24 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 text-3xl font-bold border-4 border-teal-50">
+                                <div class="w-24 h-24 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center text-teal-600 dark:text-teal-400 text-3xl font-bold border-4 border-teal-50 dark:border-teal-900/50">
                                     {{ substr($app->user->name, 0, 1) }}
                                 </div>
                             @endif
@@ -31,7 +31,7 @@
                         <div>
                             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $app->user->name }}</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ $app->user->email }}</p>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300">
                                 {{ $app->position->judul_posisi }}
                             </span>
                             <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
@@ -43,7 +43,7 @@
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                        <div class="p-4 border-b border-gray-50 bg-teal-50/30 flex justify-between items-center">
+                        <div class="p-4 border-b border-gray-50 dark:border-gray-700 bg-teal-50/30 dark:bg-teal-950/20 flex justify-between items-center">
                             <h4 class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <i class="fas fa-clipboard-check text-teal-600"></i> Verifikasi Nilai Akhir
                             </h4>
@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             
-                            <div class="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-100 text-xs text-yellow-800 flex gap-2">
+                            <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl border border-yellow-100 dark:border-yellow-900/40 text-xs text-yellow-800 dark:text-yellow-300 flex gap-2">
                                 <i class="fas fa-info-circle mt-0.5"></i>
                                 <p>Pastikan semua nilai di atas sudah benar sebelum menerbitkan sertifikat. Sertifikat yang sudah diterbitkan tidak dapat diubah nilainya.</p>
                             </div>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="lg:col-span-1">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-teal-100 sticky top-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-teal-100 dark:border-teal-900/50 sticky top-8">
                         <div class="bg-teal-600 p-5 rounded-t-2xl text-white">
                             <h3 class="font-bold text-lg">Penerbitan Sertifikat</h3>
                             <p class="text-teal-100 text-xs mt-1">Isi data legalitas sertifikat di bawah ini.</p>
@@ -103,7 +103,7 @@
                                             <i class="fas fa-barcode text-gray-400"></i>
                                         </div>
                                         <input type="text" name="certificate_number" value="{{ old('certificate_number', $app->certificate_number ?? $autoNumber) }}" required
-                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-sm font-medium"
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-sm font-medium"
                                             placeholder="Contoh: 001/SRT/2024">
                                     </div>
                                     <p class="text-[10px] text-gray-400 mt-1">*Nomor ini akan tercetak di sertifikat.</p>
@@ -112,7 +112,7 @@
                                 <div class="mb-6">
                                     <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Tanggal Terbit</label>
                                     <input type="date" name="certificate_date" value="{{ old('certificate_date', date('Y-m-d')) }}" required
-                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-sm">
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-sm">
                                 </div>
 
                                 <hr class="border-gray-100 dark:border-gray-700 mb-6">

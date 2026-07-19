@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="flex justify-between items-center print:hidden">
-                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-650 transition">
+                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-700 transition">
                     <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </div>
@@ -40,7 +40,7 @@
             {{-- 6 Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-650 flex items-center justify-center mx-auto mb-2 border border-teal-100">
+                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center mx-auto mb-2 border border-teal-100">
                         <i class="fas fa-building text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_instansi'] }}</p>
@@ -61,7 +61,7 @@
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Absensi</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-red-50 text-red-650 flex items-center justify-center mx-auto mb-2 border border-red-100">
+                    <div class="w-8 h-8 rounded-full bg-red-50 text-red-700 flex items-center justify-center mx-auto mb-2 border border-red-100">
                         <i class="fas fa-exclamation-triangle text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-red-700">{{ $stats['total_pelanggaran'] }}</p>
@@ -112,7 +112,7 @@
                         </div>
                         <div class="w-full bg-gradient-to-t from-gray-100 to-gray-200/50 rounded-t-2xl pt-8 pb-4 text-center border-t border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-center items-center h-28">
                             <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">KEDISIPLINAN</span>
-                            <span class="text-2xl font-black text-gray-750 mt-1">{{ number_format($p2->tingkat_disiplin, 1) }}%</span>
+                            <span class="text-2xl font-black text-gray-800 mt-1">{{ number_format($p2->tingkat_disiplin, 1) }}%</span>
                         </div>
                     </div>
                     @endif
@@ -132,11 +132,11 @@
                         </div>
                         <div class="text-center mb-2">
                             <p class="font-black text-gray-950 text-base truncate max-w-[220px]" title="{{ $p1->nama_dinas }}">{{ $p1->nama_dinas }}</p>
-                            <p class="text-xs text-gray-650 font-bold">{{ $p1->total_attendances }} Kehadiran</p>
-                            <p class="text-[10px] text-red-650 bg-red-50 px-2.5 py-0.5 rounded-full inline-block font-extrabold mt-1 border border-red-150">{{ $p1->total_pelanggaran }} Pelanggaran</p>
+                            <p class="text-xs text-gray-700 font-bold">{{ $p1->total_attendances }} Kehadiran</p>
+                            <p class="text-[10px] text-red-700 bg-red-50 px-2.5 py-0.5 rounded-full inline-block font-extrabold mt-1 border border-red-200">{{ $p1->total_pelanggaran }} Pelanggaran</p>
                         </div>
                         <div class="w-full bg-gradient-to-t from-yellow-50 to-yellow-100 rounded-t-2xl pt-10 pb-6 text-center border-t-2 border-yellow-300 shadow flex flex-col justify-center items-center h-36">
-                            <span class="text-xs font-black text-yellow-750 uppercase tracking-wider">KEDISIPLINAN</span>
+                            <span class="text-xs font-black text-yellow-800 uppercase tracking-wider">KEDISIPLINAN</span>
                             <span class="text-3xl font-black text-yellow-700 mt-1">{{ number_format($p1->tingkat_disiplin, 1) }}%</span>
                         </div>
                     </div>
@@ -279,7 +279,7 @@
                                                 </div>
                                                 <div class="min-w-0">
                                                     <div class="font-bold text-gray-900 dark:text-gray-100 truncate" title="{{ $res->nama_dinas }}">{{ $res->nama_dinas }}</div>
-                                                    <div class="text-[9px] text-gray-405 font-bold mt-0.5">
+                                                    <div class="text-[9px] text-gray-500 font-bold mt-0.5">
                                                         Jam Masuk: <span class="text-gray-600 dark:text-gray-400">{{ $res->jam_mulai_masuk ?: '08:00:00' }}</span>
                                                     </div>
                                                 </div>
@@ -327,8 +327,8 @@
                                     {{-- Expanded detail row --}}
                                     <tr x-show="openRow === {{ $index }}" x-transition.opacity x-cloak>
                                         <td colspan="6" class="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-700">
-                                            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-250/60 p-5 shadow-sm space-y-4">
-                                                <div class="flex justify-between items-center border-b pb-2 border-gray-150">
+                                            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-300/60 p-5 shadow-sm space-y-4">
+                                                <div class="flex justify-between items-center border-b pb-2 border-gray-200">
                                                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
                                                         <i class="fas fa-user-clock text-teal-500"></i> Detail Absensi Dinas & Pelanggaran
                                                     </h4>
@@ -341,7 +341,7 @@
                                                     <div class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Peserta dengan Pelanggaran Kehadiran:</div>
                                                     
                                                     @if(count($res->pelanggar_list) > 0)
-                                                        <div class="overflow-x-auto rounded-xl border border-gray-150">
+                                                        <div class="overflow-x-auto rounded-xl border border-gray-200">
                                                             <table class="min-w-full divide-y divide-gray-100 text-xs text-left">
                                                                 <thead class="bg-gray-50 dark:bg-gray-900">
                                                                     <tr>
@@ -357,7 +357,7 @@
                                                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-900">
                                                                         <td class="px-4 py-2.5 font-bold text-gray-800 dark:text-gray-200">
                                                                             {{ $p['nama'] }}
-                                                                            <div class="text-[9px] text-gray-450 font-normal mt-0.5">{{ $p['kampus'] }}</div>
+                                                                            <div class="text-[9px] text-gray-500 font-normal mt-0.5">{{ $p['kampus'] }}</div>
                                                                         </td>
                                                                         <td class="px-4 py-2.5 text-gray-600 dark:text-gray-400 font-medium">{{ $p['posisi'] }}</td>
                                                                         <td class="px-4 py-2.5 text-center text-orange-600 font-bold">{{ $p['terlambat'] }}x</td>
@@ -371,7 +371,7 @@
                                                             </table>
                                                         </div>
                                                     @else
-                                                        <div class="text-center py-6 text-gray-450 flex flex-col items-center justify-center">
+                                                        <div class="text-center py-6 text-gray-500 flex flex-col items-center justify-center">
                                                             <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
                                                             <p class="font-bold text-gray-800 dark:text-gray-200">Tidak Ada Pelanggaran Kehadiran</p>
                                                             <p class="text-[10px] text-gray-400 mt-0.5">Semua entri absensi masuk tepat waktu dan nihil alpa.</p>

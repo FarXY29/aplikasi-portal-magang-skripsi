@@ -98,7 +98,7 @@
                                 @if($user->applications->isNotEmpty())
                                     @php
                                         $app = $user->applications->last();
-                                        $statusColor = $app->status == 'selesai' ? 'text-green-600 bg-green-50 border-green-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+                                        $statusColor = $app->status?->value == 'selesai' ? 'text-green-600 bg-green-50 border-green-200' : 'text-blue-600 bg-blue-50 border-blue-200';
                                     @endphp
                                     <div class="flex items-center px-2.5 py-1 rounded-lg border {{ $statusColor }} w-fit text-xs font-bold">
                                         <i class="fas fa-building mr-1.5 text-[10px]"></i>

@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Enums\ApplicationStatus;
 use App\Services\AuditLogService;
 use App\Services\PdfExportService;
+use App\Http\Requests\Internship\AssignMentorRequest;
+use App\Http\Requests\Internship\ValidateDailyLogRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,14 +61,20 @@ class ActiveInternController extends Controller
         return view('admin_instansi.peserta.index', compact('interns', 'pembimbing_lapangan', 'activeCount'));
     }
 
-    public function assignPembimbingLapangan(Request $request, $id)
+    public function assignPembimbingLapangan(AssignMentorRequest $request, $id)
     {
         $app = Application::findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
 
-        $app->update(['pembimbing_lapangan_id' => $request->pembimbing_lapangan_id]);
+        $mentor = User::query()
+            ->whereKey($request->validated('pembimbing_lapangan_id'))
+            ->where('instansi_id', auth()->user()->instansi_id)
+            ->where('role', 'pembimbing_lapangan')
+            ->firstOrFail();
+
+        $app->update(['pembimbing_lapangan_id' => $mentor->id]);
         $this->auditLogService->record('application.mentor_assigned', $app, [
-            'pembimbing_lapangan_id' => $request->pembimbing_lapangan_id,
+            'pembimbing_lapangan_id' => $mentor->id,
         ]);
         return back()->with('success', 'Pembimbing lapangan berhasil ditetapkan.');
     }
@@ -77,10 +85,6 @@ class ActiveInternController extends Controller
         $this->authorize('manageActiveIntern', $app);
         
         $lifecycleService->markAsFinished($app);
-        $this->auditLogService->record('application.finished', $app, [
-            'applicant_user_id' => $app->user_id,
-        ]);
-        
         try {
             if ($app->user && $app->user->email) {
                 Mail::to($app->user->email)->send(new \App\Mail\InternshipCompleted($app));
@@ -122,17 +126,17 @@ class ActiveInternController extends Controller
         return view('admin_instansi.peserta.detail', compact('app', 'logs'));
     }
 
-    public function validateLogbook(Request $request, $id)
+    public function validateLogbook(ValidateDailyLogRequest $request, $id)
     {
         $log = DailyLog::with('application')->findOrFail($id);
         $this->authorize('validateRecords', $log->application);
 
         $log->update([
-            'status_validasi' => $request->status,
-            'komentar_pembimbing_lapangan' => $request->komentar ?? null
+            'status_validasi' => $request->validated('status'),
+            'komentar_pembimbing_lapangan' => $request->validated('komentar')
         ]);
         $this->auditLogService->record('daily_log.validated', $log, [
-            'status_validasi' => $request->status,
+            'status_validasi' => $request->validated('status'),
             'application_id' => $log->application_id,
         ]);
         return back()->with('success', 'Status logbook diperbarui.');

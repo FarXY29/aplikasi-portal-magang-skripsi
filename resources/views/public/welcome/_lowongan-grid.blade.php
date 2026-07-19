@@ -57,7 +57,7 @@
               </div>
               
               @if(request()->anyFilled(['posisi', 'instansi_id', 'jurusan', 'search']))
-                  <a href="{{ route('home') }}#lowongan" class="group flex items-center bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-450 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold hover:bg-rose-100 dark:hover:bg-rose-900/50 hover:text-rose-700 dark:hover:text-rose-400 transition duration-300 self-start md:self-auto shadow-sm">
+                  <a href="{{ route('home') }}#lowongan" class="group flex items-center bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-500 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold hover:bg-rose-100 dark:hover:bg-rose-900/50 hover:text-rose-700 dark:hover:text-rose-400 transition duration-300 self-start md:self-auto shadow-sm">
                       <i class="fas fa-undo-alt mr-2 group-hover:-rotate-180 transition-transform duration-500"></i> Bersihkan Filter
                   </a>
               @endif
@@ -180,7 +180,7 @@
                                          {{ $loker->judul_posisi }}
                                      </h3>
                                      <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center font-bold mt-1.5">
-                                         <i class="fas fa-building text-teal-600 dark:text-teal-450 mr-2 shrink-0"></i>
+                                         <i class="fas fa-building text-teal-600 dark:text-teal-500 mr-2 shrink-0"></i>
                                          <span class="truncate">{{ $loker->instansi->nama_dinas }}</span>
                                      </p>
                                  </div>
@@ -309,7 +309,7 @@
                                          <!-- Status Card -->
                                          <div class="bg-slate-50 dark:bg-gray-900/50 border border-slate-100 dark:border-gray-800 rounded-2xl p-3.5 flex flex-col justify-between">
                                              <span class="text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status Lowongan</span>
-                                             <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-450 mt-1 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-lg border border-emerald-150/40 dark:border-emerald-900/10 w-fit">
+                                             <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-500 mt-1 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-lg border border-emerald-200/40 dark:border-emerald-900/10 w-fit">
                                                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
                                                  {{ $loker->status }}
                                              </span>
@@ -359,7 +359,7 @@
                                              <i class="fas fa-building text-teal-500"></i> Informasi Kantor & Penempatan
                                          </h5>
                                          
-                                         <div class="bg-slate-50 dark:bg-gray-900/50 border border-slate-150/80 dark:border-gray-800 rounded-2xl p-4 sm:p-5 space-y-3.5 text-xs sm:text-sm">
+                                         <div class="bg-slate-50 dark:bg-gray-900/50 border border-slate-200/80 dark:border-gray-800 rounded-2xl p-4 sm:p-5 space-y-3.5 text-xs sm:text-sm">
                                              @if(!empty($loker->instansi->nama_pejabat))
                                                  <div class="flex items-start gap-3">
                                                      <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5">
@@ -407,7 +407,7 @@
 
                                  <!-- Footer Sticky Drawer -->
                                  <div class="px-6 sm:px-8 py-5 border-t border-slate-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_-4px_25px_rgba(0,0,0,0.04)] dark:shadow-none flex items-center justify-end gap-4 pb-safe sm:pb-5 shrink-0 z-20">
-                                     <button @click="showModal = false" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-750 text-slate-700 dark:text-slate-300 rounded-2xl font-bold active:scale-98 transition-all duration-300 text-xs sm:text-sm">
+                                     <button @click="showModal = false" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-800 text-slate-700 dark:text-slate-300 rounded-2xl font-bold active:scale-98 transition-all duration-300 text-xs sm:text-sm">
                                          Tutup
                                      </button>
                                      
@@ -430,12 +430,12 @@
              @empty
                  <!-- Empty State Lowongan -->
                  <div class="col-span-full py-16 sm:py-24 text-center">
-                     <div class="w-20 h-20 bg-slate-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-350 dark:text-slate-600 border border-slate-200/50 dark:border-gray-800">
+                     <div class="w-20 h-20 bg-slate-100 dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-400 dark:text-slate-600 border border-slate-200/50 dark:border-gray-800">
                          <i class="fas fa-folder-open text-3xl"></i>
                      </div>
                      <h3 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">Tidak Ada Lowongan Ditemukan</h3>
                      <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-sm mx-auto text-xs sm:text-sm px-4">Kami tidak menemukan lowongan yang sesuai dengan kriteria filter Anda. Silakan bersihkan pencarian atau ganti pilihan instansi.</p>
-                     <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 mt-6 bg-slate-900 dark:bg-teal-650 hover:bg-teal-600 dark:hover:bg-teal-600 text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all duration-300 shadow-md">
+                     <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 mt-6 bg-slate-900 dark:bg-teal-700 hover:bg-teal-600 dark:hover:bg-teal-600 text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all duration-300 shadow-md">
                          <i class="fas fa-undo text-xs"></i> Reset Pencarian
                      </a>
                  </div>

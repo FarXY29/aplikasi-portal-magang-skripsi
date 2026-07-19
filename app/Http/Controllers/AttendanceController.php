@@ -7,6 +7,9 @@ use App\Models\Attendance;
 use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Http\Requests\Attendance\ClockInRequest;
+use App\Http\Requests\Attendance\PermissionRequest;
+use App\Services\AuditLogService;
 
 class AttendanceController extends Controller
 {
@@ -42,7 +45,7 @@ class AttendanceController extends Controller
      * ABSEN DATANG (Clock In)
      * Mengecek jam mulai masuk dari tabel INSTANSI.
      */
-    public function store(Request $request)
+    public function store(ClockInRequest $request)
     {
         $user = Auth::user();
         $now = Carbon::now();
@@ -102,7 +105,7 @@ class AttendanceController extends Controller
         }
 
         // 4. Simpan Data
-        Attendance::create([
+        $attendance = Attendance::create([
             'application_id' => $application->id,
             'date' => $today,
             'status' => 'hadir',
@@ -114,6 +117,11 @@ class AttendanceController extends Controller
             'validation_status' => 'pending',
         ]);
 
+        app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [
+            'application_id' => $application->id,
+            'date' => $today,
+        ]);
+
         return back()->with('success', 'Berhasil Absen Datang! Selamat beraktivitas.');
     }
 
@@ -121,7 +129,7 @@ class AttendanceController extends Controller
      * ABSEN PULANG (Clock Out)
      * Mengecek jam mulai pulang dari tabel INSTANSI.
      */
-    public function clockOut(Request $request)
+    public function clockOut(ClockInRequest $request)
     {
         $user = Auth::user();
         $now = Carbon::now();
@@ -189,6 +197,11 @@ class AttendanceController extends Controller
             'longitude_out' => $request->longitude,
         ]);
 
+        app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
+            'application_id' => $application->id,
+            'date' => $today,
+        ]);
+
         return back()->with('success', 'Berhasil Absen Pulang! Hati-hati di jalan.');
     }
 
@@ -196,15 +209,8 @@ class AttendanceController extends Controller
      * PENGAJUAN IZIN / SAKIT
      * Bisa dilakukan kapan saja tanpa batasan jam.
      */
-    public function permission(Request $request)
+    public function permission(PermissionRequest $request)
     {
-        // 1. Validasi Input
-        $request->validate([
-            'status' => 'required|in:izin,sakit',
-            'description' => 'required|string|max:255',
-            'proof_file' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Wajib bukti
-        ]);
-
         $user = Auth::user();
         $today = Carbon::now()->format('Y-m-d');
 
@@ -230,10 +236,10 @@ class AttendanceController extends Controller
         }
 
         // 3. Upload File Bukti
-        $path = $request->file('proof_file')->store('documents/izin', 'public');
+        $path = $request->file('proof_file')->store('documents/attendance', 'private');
 
         // 4. Simpan Data
-        Attendance::create([
+        $attendance = Attendance::create([
             'application_id' => $application->id,
             'date' => $today,
             'status' => $request->status,
@@ -242,6 +248,11 @@ class AttendanceController extends Controller
             'clock_in' => null, // Tidak ada jam masuk
             'clock_out' => null, // Tidak ada jam pulang
             'validation_status' => 'pending'
+        ]);
+
+        app(AuditLogService::class)->record('attendance.permission_requested', $attendance, [
+            'application_id' => $application->id,
+            'status' => $request->status,
         ]);
 
         return back()->with('success', 'Pengajuan Izin/Sakit berhasil dikirim.');

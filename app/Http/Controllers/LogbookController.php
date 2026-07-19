@@ -7,6 +7,9 @@ use App\Models\DailyLog;
 use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf; 
+use App\Http\Requests\Logbook\StoreDailyLogRequest;
+use App\Http\Requests\Logbook\UpdateDailyLogRequest;
+use App\Services\AuditLogService;
 
 class LogbookController extends Controller
 {
@@ -28,16 +31,8 @@ class LogbookController extends Controller
         return view('peserta.logbook.index', compact('logs', 'activeApp'));
     }
 
-    public function store(Request $request)
+    public function store(StoreDailyLogRequest $request, AuditLogService $auditLogService)
     {
-        // 1. Validasi Input
-        $request->validate([
-            'kegiatan' => 'required',
-            'foto' => 'image|max:5048',
-            'latitude' => 'required', // Dikirim dari Javascript di Frontend
-            'longitude' => 'required',
-        ]);
-
         $user = Auth::user();
         
         // Ambil Data Lamaran Aktif & Lokasi INSTANSI
@@ -66,11 +61,11 @@ class LogbookController extends Controller
         // 3. Upload Foto
         $fotoPath = null;
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('logbooks', 'public');
+            $fotoPath = $request->file('foto')->store('documents/logbook', 'private');
         }
 
         // 4. Simpan Log
-        DailyLog::create([
+        $log = DailyLog::create([
             'application_id' => $app->id,
             'tanggal' => now(),
             'kegiatan' => $request->kegiatan,
@@ -78,22 +73,18 @@ class LogbookController extends Controller
             'status_validasi' => 'pending'
         ]);
 
+        $auditLogService->record('daily_log.created', $log, [
+            'application_id' => $app->id,
+            'has_proof' => (bool) $fotoPath,
+        ]);
+
         return back()->with('success', 'Logbook hari ini berhasil disimpan!');
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateDailyLogRequest $request, $id, AuditLogService $auditLogService)
     {
-        $request->validate([
-            'kegiatan' => 'required',
-            'foto' => 'nullable|image|max:5048',
-        ]);
-
-        $log = DailyLog::findOrFail($id);
-        
-        // Pastikan milik user yang sedang login
-        if ($log->application->user_id != Auth::id()) {
-            return back()->with('error', 'Akses ditolak.');
-        }
+        $log = DailyLog::with('application')->findOrFail($id);
+        $this->authorize('update', $log);
 
         if ($log->status_validasi !== 'revisi') {
             return back()->with('error', 'Logbook ini tidak dalam status revisi.');
@@ -102,10 +93,11 @@ class LogbookController extends Controller
         $fotoPath = $log->bukti_foto_path;
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            if ($fotoPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($fotoPath)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($fotoPath);
+            $disk = \Illuminate\Support\Facades\Storage::disk('private')->exists($fotoPath) ? 'private' : 'public';
+            if ($fotoPath && \Illuminate\Support\Facades\Storage::disk($disk)->exists($fotoPath)) {
+                \Illuminate\Support\Facades\Storage::disk($disk)->delete($fotoPath);
             }
-            $fotoPath = $request->file('foto')->store('logbooks', 'public');
+            $fotoPath = $request->file('foto')->store('documents/logbook', 'private');
         }
 
         $log->update([
@@ -113,6 +105,11 @@ class LogbookController extends Controller
             'bukti_foto_path' => $fotoPath,
             'status_validasi' => 'pending',
             'komentar_pembimbing_lapangan' => null, // Reset komentar pembimbing_lapangan setelah revisi
+        ]);
+
+        $auditLogService->record('daily_log.revised', $log, [
+            'application_id' => $log->application_id,
+            'has_proof' => (bool) $fotoPath,
         ]);
 
         return back()->with('success', 'Logbook berhasil direvisi dan dikirim ulang untuk divalidasi!');

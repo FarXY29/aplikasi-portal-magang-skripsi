@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('internship:complete-expired')->daily();
         $schedule->command('app:send-ending-notifications')->dailyAt('08:00');
+        $schedule->command('backups:prune')->hourly();
     }
 
     /**

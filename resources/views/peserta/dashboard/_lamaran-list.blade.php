@@ -47,7 +47,7 @@
                         @php
                             $appStatus = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status;
                         @endphp
-                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4 {{ $appStatus == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($appStatus 'selesai' 'bg-blue-50/50 border-blue-100 hover:border-blue-300' 'menunggu' 'bg-orange-50/50 border-orange-100' 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-teal-200')) }}"
+                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4 {{ $appStatus == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($appStatus == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' : ($appStatus == 'menunggu' ? 'bg-orange-50/50 border-orange-100' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-teal-200')) }}"
                             x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                             
                             <div class="w-full lg:flex-1 min-w-0">

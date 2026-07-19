@@ -204,8 +204,8 @@
 
                                             <!-- Image Header -->
                                             @if($log->bukti_foto_path)
-                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-800 relative cursor-pointer overflow-hidden" @click="openGallery('{{ asset('storage/' . $log->bukti_foto_path) }}')">
-                                                    <img src="{{ asset('storage/' . $log->bukti_foto_path) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-800 relative cursor-pointer overflow-hidden" @click="openGallery('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-white dark:bg-gray-800/20 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
                                                     </div>

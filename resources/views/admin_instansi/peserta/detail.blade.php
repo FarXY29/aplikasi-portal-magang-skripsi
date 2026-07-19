@@ -37,13 +37,13 @@
                 </div>
                 
                 <div class="flex gap-4 text-center">
-                    <div class="px-4 py-2 bg-green-50 rounded-xl border border-green-100">
+                    <div class="px-4 py-2 bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-100 dark:border-green-900/40">
                         <p class="text-xs font-bold text-green-600 uppercase">Disetujui</p>
-                        <p class="text-xl font-black text-green-700">{{ $logs->where('status_validasi', 'disetujui')->count() }}</p>
+                        <p class="text-xl font-black text-green-700 dark:text-green-400">{{ $logs->where('status_validasi', 'disetujui')->count() }}</p>
                     </div>
-                    <div class="px-4 py-2 bg-yellow-50 rounded-xl border border-yellow-100">
+                    <div class="px-4 py-2 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl border border-yellow-100 dark:border-yellow-900/40">
                         <p class="text-xs font-bold text-yellow-600 uppercase">Pending</p>
-                        <p class="text-xl font-black text-yellow-700">{{ $logs->where('status_validasi', 'pending')->count() }}</p>
+                        <p class="text-xl font-black text-yellow-700 dark:text-yellow-400">{{ $logs->where('status_validasi', 'pending')->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -62,8 +62,8 @@
                             </div>
                             
                             @if($log->bukti_foto_path)
-                                <div class="relative group w-full h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="openImageModal('{{ Storage::url($log->bukti_foto_path) }}')">
-                                    <img src="{{ Storage::url($log->bukti_foto_path) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+                                <div class="relative group w-full h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="openImageModal('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
                                     <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                                         <i class="fas fa-search-plus text-white text-xl drop-shadow-lg"></i>
                                     </div>
@@ -83,11 +83,11 @@
                             </div>
 
                             @if($log->komentar_pembimbing_lapangan)
-                                <div class="mt-4 bg-indigo-50 p-3 rounded-xl border border-indigo-100 flex gap-3 items-start">
+                                <div class="mt-4 bg-indigo-50 dark:bg-indigo-950/20 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/40 flex gap-3 items-start">
                                     <i class="fas fa-comment-dots text-indigo-400 mt-1"></i>
                                     <div>
-                                        <span class="block text-xs font-bold text-indigo-700 mb-0.5">Catatan Pembimbing Lapangan</span>
-                                        <p class="text-xs text-indigo-600 italic">"{{ $log->komentar_pembimbing_lapangan }}"</p>
+                                        <span class="block text-xs font-bold text-indigo-700 dark:text-indigo-400 mb-0.5">Catatan Pembimbing Lapangan</span>
+                                        <p class="text-xs text-indigo-600 dark:text-indigo-400 italic">"{{ $log->komentar_pembimbing_lapangan }}"</p>
                                     </div>
                                 </div>
                             @endif
@@ -98,9 +98,9 @@
                             <div class="mb-4 text-center">
                                 @php
                                     $statusStyles = [
-                                        'disetujui' => 'bg-green-100 text-green-700 border-green-200',
-                                        'revisi'    => 'bg-red-100 text-red-700 border-red-200',
-                                        'pending'   => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                        'disetujui' => 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800/40',
+                                        'revisi'    => 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800/40',
+                                        'pending'   => 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800/40',
                                     ];
                                     $style = $statusStyles[$log->status_validasi] ?? 'bg-gray-100 dark:bg-gray-800';
                                 @endphp

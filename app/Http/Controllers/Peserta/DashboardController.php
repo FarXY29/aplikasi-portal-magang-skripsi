@@ -99,7 +99,7 @@ class DashboardController extends Controller
     {
         $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        $canCancel = in_array($app->status, ['pending', 'menunggu']) || ($app->status === 'diterima' && $app->display_status === 'belum mulai');
+        $canCancel = in_array($app->status?->value, ['pending', 'menunggu']) || ($app->status?->value === 'diterima' && $app->display_status === 'belum mulai');
 
         if (!$canCancel) {
             return back()->with('error', 'Lamaran ini tidak dapat dibatalkan karena magang sudah dimulai atau status sudah tidak relevan.');
@@ -140,7 +140,7 @@ class DashboardController extends Controller
                     ->where('user_id', Auth::id())
                     ->firstOrFail();
 
-        if ($app->status != 'diterima' && $app->status != 'selesai') {
+        if ($app->status?->value != 'diterima' && $app->status?->value != 'selesai') {
             return back()->with('error', 'Surat hanya tersedia bagi peserta yang sudah DITERIMA.');
         }
 
@@ -157,7 +157,7 @@ class DashboardController extends Controller
                     ->where('user_id', Auth::id())
                     ->firstOrFail();
 
-        if (!in_array($app->status, ['diterima', 'selesai'])) {
+        if (!in_array($app->status?->value, ['diterima', 'selesai'])) {
             return back()->with('error', 'ID Card hanya tersedia bagi peserta yang sudah DITERIMA.');
         }
 
@@ -181,7 +181,7 @@ class DashboardController extends Controller
                     ->where('user_id', Auth::id())
                     ->firstOrFail();
 
-        if ($app->status !== 'selesai' || !$app->nilai_rata_rata) {
+        if ($app->status?->value !== 'selesai' || !$app->nilai_rata_rata) {
             return back()->with('error', 'Transkrip belum tersedia. Tunggu penilaian dari pembimbing_lapangan.');
         }
 

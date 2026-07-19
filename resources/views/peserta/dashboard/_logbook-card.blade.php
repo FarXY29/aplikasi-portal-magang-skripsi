@@ -5,7 +5,7 @@
                                 <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Logbook Harian</h4>
                                 <span class="p-2 bg-blue-50 rounded-xl text-blue-600"><i class="fas fa-book"></i></span>
                             </div>
-                            <div class="flex justify-between items-center gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150 mb-3">
+                            <div class="flex justify-between items-center gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 mb-3">
                                 <div>
                                     <span class="block text-[10px] font-bold text-gray-400 uppercase">Total Log</span>
                                     <span class="text-lg font-bold text-gray-800 dark:text-gray-200">{{ $stats['logs_count'] }} Entri</span>

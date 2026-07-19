@@ -15,9 +15,9 @@ class CheckRole
             return redirect('login');
         }
 
-        // Cek apakah role user ada di dalam daftar role yang diperbolehkan
-        // Contoh pemakaian: role:admin_kota,admin_instansi (bisa multiple)
-        if (in_array($request->user()->role, $roles)) {
+        // Role Spatie menjadi acuan utama; kolom role lama hanya fallback selama
+        // proses backfill data pengguna masih berlangsung.
+        if ($request->user()->hasPortalRole($roles)) {
             return $next($request);
         }
 

@@ -2,53 +2,68 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Application;
+use App\Models\Attendance;
+use App\Models\DailyLog;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class StorageAccessController extends Controller
 {
-    /**
-     * Menyajikan file secara aman dari disk private dengan pengecekan otorisasi.
-     */
-    public function serveFile($type, $filename)
+    /** Serve a document only after resolving its owning record and policy. */
+    public function serveFile(string $type, string $filename): Response
     {
-        $user = Auth::user();
+        abort_unless($filename === basename($filename), 404);
 
-        // Validasi tipe file yang diizinkan (sementara hanya surat pengantar dokumen)
-        if (!in_array($type, ['surat', 'logbook'])) {
-            abort(404, 'Tipe file tidak ditemukan.');
-        }
+        [$path, $model] = match ($type) {
+            'surat' => $this->applicationDocument($filename),
+            'logbook' => $this->logbookDocument($filename),
+            'attendance' => $this->attendanceDocument($filename),
+            default => abort(404),
+        };
 
-        // Tentukan path relatif dalam folder private
-        $path = '';
-        if ($type === 'surat') {
-            $path = "documents/surat/{$filename}";
-        } elseif ($type === 'logbook') {
-            $path = "documents/logbook/{$filename}";
-        }
+        $this->authorize('view', $model);
 
-        // Pastikan file ada di disk private
-        if (!Storage::disk('private')->exists($path)) {
-            abort(404, 'Berkas tidak ditemukan.');
-        }
+        $disk = Storage::disk('private')->exists($path) ? 'private' : 'public';
+        abort_unless(Storage::disk($disk)->exists($path), 404, 'Berkas tidak ditemukan.');
 
-        // Untuk Phase 8, logik otorisasi sederhana:
-        // - Super Admin, Admin Kota, Admin Instansi dapat melihat file apapun.
-        // - Pembimbing Lapangan dan Pembimbing Akademik dapat melihat file (jika di-assign, namun untuk sekarang dizinkan secara role).
-        // - Peserta hanya dapat melihat file yang bersangkutan dengannya (ideal: harus dicek dari database, tapi untuk keamanan dasar, 
-        //   karena nama file hash, kita percayakan ke role check / kepemilikan. Di sini kita izinkan peserta yang login melihatnya jika valid.)
-
-        // Tentukan respons file
-        $file = Storage::disk('private')->path($path);
-        
-        $mimeType = Storage::disk('private')->mimeType($path);
-
-        return response()->file($file, [
-            'Content-Type' => $mimeType,
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        return Storage::disk($disk)->response($path, null, [
+            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
+            'Cache-Control' => 'private, no-store, max-age=0',
             'Pragma' => 'no-cache',
-            'Expires' => '0',
         ]);
+    }
+
+    /** @return array{string, Application} */
+    private function applicationDocument(string $filename): array
+    {
+        $application = Application::query()
+            ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
+            ->where('surat_pengantar_path', 'like', '%/'.$filename)
+            ->firstOrFail();
+
+        return [$application->surat_pengantar_path, $application];
+    }
+
+    /** @return array{string, DailyLog} */
+    private function logbookDocument(string $filename): array
+    {
+        $log = DailyLog::query()
+            ->with('application.user')
+            ->where('bukti_foto_path', 'like', '%/'.$filename)
+            ->firstOrFail();
+
+        return [$log->bukti_foto_path, $log];
+    }
+
+    /** @return array{string, Attendance} */
+    private function attendanceDocument(string $filename): array
+    {
+        $attendance = Attendance::query()
+            ->with('application.user')
+            ->where('proof_file', 'like', '%/'.$filename)
+            ->firstOrFail();
+
+        return [$attendance->proof_file, $attendance];
     }
 }

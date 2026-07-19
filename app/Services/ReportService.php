@@ -421,9 +421,9 @@ class ReportService
 
         $stats = [
             'total' => $allInterns->count(),
-            'aktif' => $allInterns->where('status', 'diterima')->count(),
-            'selesai' => $allInterns->where('status', 'selesai')->count(),
-            'pending' => $allInterns->whereIn('status', ['pending', 'menunggu'])->count(),
+            'aktif' => $allInterns->where('status.value', 'diterima')->count(),
+            'selesai' => $allInterns->where('status.value', 'selesai')->count(),
+            'pending' => $allInterns->whereIn('status.value', ['pending', 'menunggu'])->count(),
             'total_dinas' => $allInterns->pluck('position.instansi.id')->unique()->filter()->count(),
             'total_kampus' => $allInterns->pluck('user.asal_instansi')->unique()->filter()->count()
         ];
@@ -487,12 +487,12 @@ class ReportService
 
         $stats = [
             'total_peserta' => $kinerja->count(),
-            'aktif' => $kinerja->where('status', 'diterima')->count(),
-            'selesai' => $kinerja->where('status', 'selesai')->count(),
+            'aktif' => $kinerja->where('status.value', 'diterima')->count(),
+            'selesai' => $kinerja->where('status.value', 'selesai')->count(),
             'avg_kehadiran' => $kinerja->count() > 0 ? round($kinerja->avg('attendance_rate'), 1) : 0,
             'avg_logbook' => $kinerja->count() > 0 ? round($kinerja->avg('log_rate'), 1) : 0,
-            'avg_nilai' => $kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
-                ? round($kinerja->where('status', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
+            'avg_nilai' => $kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
+                ? round($kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
                 : 0
         ];
 

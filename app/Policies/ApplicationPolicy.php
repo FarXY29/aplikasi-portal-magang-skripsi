@@ -13,7 +13,7 @@ class ApplicationPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role === 'admin_kota') {
+        if ($user->hasPortalRole('admin_kota')) {
             return true;
         }
 
@@ -25,20 +25,20 @@ class ApplicationPolicy
      */
     public function view(User $user, Application $application): bool
     {
-        if ($user->role === 'peserta') {
+        if ($user->hasPortalRole('peserta')) {
             return $user->id === $application->user_id;
         }
 
-        if ($user->role === 'pembimbing_lapangan') {
+        if ($user->hasPortalRole('pembimbing_lapangan')) {
             return $user->id === $application->pembimbing_lapangan_id ||
                 ($application->position && $user->instansi_id === $application->position->instansi_id);
         }
 
-        if ($user->role === 'admin_instansi') {
+        if ($user->hasPortalRole('admin_instansi')) {
             return $application->position && $user->instansi_id === $application->position->instansi_id;
         }
 
-        if ($user->role === 'pembimbing') {
+        if ($user->hasPortalRole('pembimbing')) {
             return $application->user && $user->id === $application->user->pembimbing_sekolah_id;
         }
 
@@ -50,7 +50,9 @@ class ApplicationPolicy
      */
     public function grade(User $user, Application $application): bool
     {
-        return $user->role === 'pembimbing_lapangan' && $user->id === $application->pembimbing_lapangan_id;
+        return $user->hasPortalRole('pembimbing_lapangan')
+            && $user->hasPortalPermission('input-grading')
+            && $user->id === $application->pembimbing_lapangan_id;
     }
 
     /**
@@ -58,7 +60,8 @@ class ApplicationPolicy
      */
     public function manageActiveIntern(User $user, Application $application): bool
     {
-        return $user->role === 'admin_instansi' &&
+        return $user->hasPortalRole('admin_instansi') &&
+            $user->hasPortalPermission('approve-lamaran') &&
             $application->position &&
             $user->instansi_id === $application->position->instansi_id;
     }
@@ -68,12 +71,17 @@ class ApplicationPolicy
      */
     public function validateRecords(User $user, Application $application): bool
     {
-        if ($user->role === 'pembimbing_lapangan') {
-            return $user->id === $application->pembimbing_lapangan_id;
+        if ($user->hasPortalRole('pembimbing_lapangan')) {
+            return $user->hasPortalPermission('batch-approve-logbook')
+                && $user->hasPortalPermission('verify-attendance')
+                && $user->id === $application->pembimbing_lapangan_id;
         }
 
-        if ($user->role === 'admin_instansi') {
-            return $application->position && $user->instansi_id === $application->position->instansi_id;
+        if ($user->hasPortalRole('admin_instansi')) {
+            return $user->hasPortalPermission('batch-approve-logbook')
+                && $user->hasPortalPermission('verify-attendance')
+                && $application->position
+                && $user->instansi_id === $application->position->instansi_id;
         }
 
         return false;

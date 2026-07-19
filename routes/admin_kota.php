@@ -44,5 +44,8 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
 
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
-    Route::get('/settings/backup', [AdminSettingController::class, 'backupDatabase'])->name('settings.backup');
+    Route::post('/settings/backup', [AdminSettingController::class, 'requestBackup'])->name('settings.backup');
+    Route::get('/settings/backups/{backup}/download', [AdminSettingController::class, 'downloadBackup'])
+        ->middleware('signed')
+        ->name('settings.backups.download');
 });

@@ -30,8 +30,8 @@
 @endif
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 text-xl border border-blue-100">
+                <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-clock"></i>
                     </div>
                     <div>
@@ -53,7 +53,7 @@
                                         <i class="fas fa-sign-in-alt"></i>
                                     </span>
                                     <input type="time" name="jam_mulai_masuk" value="{{ $instansi->jam_mulai_masuk }}" 
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring focus:ring-blue-200 transition shadow-sm font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-blue-500 focus:ring focus:ring-blue-200 transition shadow-sm font-medium">
                                 </div>
                                 <p class="text-xs text-gray-400 mt-2">Tombol absen datang aktif setelah jam ini.</p>
                             </div>
@@ -65,7 +65,7 @@
                                         <i class="fas fa-sign-out-alt"></i>
                                     </span>
                                     <input type="time" name="jam_mulai_pulang" value="{{ $instansi->jam_mulai_pulang }}" 
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring focus:ring-blue-200 transition shadow-sm font-medium">
+                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-blue-500 focus:ring focus:ring-blue-200 transition shadow-sm font-medium">
                                 </div>
                                 <p class="text-xs text-gray-400 mt-2">Tombol absen pulang aktif setelah jam ini.</p>
                             </div>
@@ -82,9 +82,9 @@
 
             <!-- CARD 2: PENGATURAN LOKASI & RADIUS ABSENSI (GEOFENCING) -->
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between flex-wrap gap-4">
+                <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 text-xl border border-red-100">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center text-red-600 dark:text-red-400 text-xl border border-red-100 dark:border-red-900/50">
                             <i class="fas fa-map-marked-alt"></i>
                         </div>
                         <div>
@@ -92,7 +92,7 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400">Tentukan titik koordinat kantor dan batas radius toleransi absensi (Geofencing).</p>
                         </div>
                     </div>
-                    <button type="button" onclick="useCurrentLocation(event)" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-xs border border-red-200 transition flex items-center shadow-sm">
+                    <button type="button" onclick="useCurrentLocation(event)" class="px-4 py-2 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-bold text-xs border border-red-200 dark:border-red-800/40 transition flex items-center shadow-sm">
                         <i class="fas fa-crosshairs mr-1.5"></i> Gunakan Lokasi Saya (GPS)
                     </button>
                 </div>
@@ -119,7 +119,7 @@
                                         <i class="fas fa-globe"></i>
                                     </span>
                                     <input type="number" step="any" id="input_latitude" name="latitude" value="{{ old('latitude', $instansi->latitude ?? '-3.316694') }}" required
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm font-bold">
+                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm font-bold">
                                 </div>
                                 <p class="text-[11px] text-gray-400 mt-1">Koordinat Lintang Kantor</p>
                             </div>
@@ -131,7 +131,7 @@
                                         <i class="fas fa-globe"></i>
                                     </span>
                                     <input type="number" step="any" id="input_longitude" name="longitude" value="{{ old('longitude', $instansi->longitude ?? '114.590111') }}" required
-                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm font-bold">
+                                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm font-bold">
                                 </div>
                                 <p class="text-[11px] text-gray-400 mt-1">Koordinat Bujur Kantor</p>
                             </div>
@@ -139,13 +139,13 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
                                     <span>Radius Toleransi</span>
-                                    <span class="text-xs font-black text-red-600 font-mono bg-red-50 px-2 py-0.5 rounded border border-red-100" id="radius-display">{{ old('radius_absen', $instansi->radius_absen ?? 100) }} Meter</span>
+                                    <span class="text-xs font-black text-red-700 dark:text-red-400 font-mono bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded border border-red-100 dark:border-red-900/50" id="radius-display">{{ old('radius_absen', $instansi->radius_absen ?? 100) }} Meter</span>
                                 </label>
                                 <div class="relative flex items-center gap-3 pt-1">
                                     <input type="range" id="input_radius_slider" min="10" max="2000" step="10" value="{{ old('radius_absen', $instansi->radius_absen ?? 100) }}"
-                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600">
+                                        class="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-red-600">
                                     <input type="number" id="input_radius" name="radius_absen" min="10" max="10000" value="{{ old('radius_absen', $instansi->radius_absen ?? 100) }}" required
-                                        class="w-24 px-3 py-1.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm text-center font-bold">
+                                        class="w-24 px-3 py-1.5 rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-red-500 focus:ring focus:ring-red-200 transition shadow-sm font-mono text-sm text-center font-bold">
                                 </div>
                                 <p class="text-[11px] text-gray-400 mt-1">Batas jarak maksimal peserta magang untuk absen.</p>
                             </div>
@@ -161,8 +161,8 @@
             </div>
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 text-xl border border-teal-100">
+                <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center text-teal-600 dark:text-teal-400 text-xl border border-teal-100 dark:border-teal-900/50">
                         <i class="fas fa-file-signature"></i>
                     </div>
                     <div>
@@ -173,9 +173,9 @@
 
                 <div class="p-8">
                     
-                    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-8 flex items-start gap-3">
-                        <i class="fas fa-info-circle text-teal-600 mt-0.5"></i>
-                        <p class="text-sm text-teal-800 leading-relaxed">
+                    <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/50 rounded-xl p-4 mb-8 flex items-start gap-3">
+                        <i class="fas fa-info-circle text-teal-600 dark:text-teal-400 mt-0.5"></i>
+                        <p class="text-sm text-teal-800 dark:text-teal-300 leading-relaxed">
                             Data pejabat di bawah ini akan otomatis muncul pada bagian tanda tangan dokumen resmi (Sertifikat & Transkrip). 
                             Pastikan data <strong>Jabatan, Nama, NIP</strong>, dan <strong>Scan Tanda Tangan</strong> sudah benar.
                         </p>
@@ -191,19 +191,19 @@
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Jabatan</label>
                                     <input type="text" name="jabatan_pejabat" value="{{ old('jabatan_pejabat', $instansi->jabatan_pejabat) }}"
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
                                         placeholder="Contoh: Kepala Dinas Kominfo">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Pejabat</label>
                                     <input type="text" name="nama_pejabat" value="{{ old('nama_pejabat', $instansi->nama_pejabat) }}"
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm font-bold"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm font-bold"
                                         placeholder="Nama Lengkap beserta gelar">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">NIP</label>
                                     <input type="text" name="nip_pejabat" value="{{ old('nip_pejabat', $instansi->nip_pejabat) }}"
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm font-mono"
+                                        class="w-full rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm font-mono"
                                         placeholder="19xxxxxxxx xxx x xxx">
                                 </div>
                             </div>
@@ -225,7 +225,7 @@
                                 </div>
 
                                 <input type="file" id="ttd_kepala_input" name="ttd_kepala" accept="image/png" onchange="previewTtd(this)"
-                                    class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer border border-gray-300 dark:border-gray-600 rounded-lg p-1 bg-white dark:bg-gray-800">
+                                    class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/40 file:text-teal-700 dark:file:text-teal-400 hover:file:bg-teal-100 cursor-pointer border border-gray-300 dark:border-gray-600 rounded-lg p-1 bg-white dark:bg-gray-800">
                                 <p class="text-[10px] text-gray-400 mt-2 ml-1">
                                     *Format wajib <strong>PNG Transparan</strong> agar hasil cetak rapi.
                                 </p>
@@ -242,9 +242,9 @@
                 </div>
             </div>
 
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-8 border border-dashed border-gray-300 dark:border-gray-600 text-center">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Preview Tampilan di Dokumen</h4>
-                <div class="inline-block bg-white dark:bg-gray-800 p-8 shadow-lg max-w-sm w-full mx-auto relative rotate-1 hover:rotate-0 transition duration-500 transform">
+            <div class="bg-gray-100 dark:bg-gray-900 rounded-2xl p-8 border border-dashed border-gray-300 dark:border-gray-700 text-center">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Preview Tampilan di Dokumen</h4>
+                <div class="inline-block bg-white dark:bg-gray-800 p-8 shadow-lg max-w-sm w-full mx-auto relative rotate-1 hover:rotate-0 transition duration-500 transform border border-gray-200 dark:border-gray-700">
                     <div class="text-left space-y-1">
                         <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Mengetahui,</p>
                         <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $instansi->jabatan_pejabat ?? '[Jabatan Kosong]' }}</p>
@@ -252,13 +252,13 @@
                     
                     <div class="h-24 flex items-center justify-start my-2 relative">
                         <img id="doc-preview-ttd" src="{{ $instansi->ttd_kepala ? asset('storage/' . $instansi->ttd_kepala) : '' }}" class="h-20 object-contain {{ $instansi->ttd_kepala ? '' : 'hidden' }}">
-                        <div id="doc-no-ttd" class="w-full h-full border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-xs text-gray-300 italic rounded {{ $instansi->ttd_kepala ? 'hidden' : '' }}">
+                        <div id="doc-no-ttd" class="w-full h-full border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-xs text-gray-300 dark:text-gray-500 italic rounded {{ $instansi->ttd_kepala ? 'hidden' : '' }}">
                             Area Tanda Tangan
                         </div>
                     </div>
 
                     <div class="text-left">
-                        <p class="text-sm font-bold text-gray-800 dark:text-gray-200 border-b border-black inline-block pb-0.5 mb-1">
+                        <p class="text-sm font-bold text-gray-800 dark:text-gray-200 border-b border-black dark:border-gray-600 inline-block pb-0.5 mb-1">
                             {{ $instansi->nama_pejabat ?? '[Nama Pejabat Kosong]' }}
                         </p>
                         <p class="text-xs text-gray-600 dark:text-gray-400">NIP. {{ $instansi->nip_pejabat ?? '-' }}</p>

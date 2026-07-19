@@ -12,7 +12,7 @@ class DailyLogPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->role === 'admin_kota') {
+        if ($user->hasPortalRole('admin_kota')) {
             return true;
         }
 
@@ -40,7 +40,8 @@ class DailyLogPolicy
      */
     public function update(User $user, DailyLog $dailyLog): bool
     {
-        return $user->role === 'peserta' &&
+        return $user->hasPortalRole('peserta') &&
+            $user->hasPortalPermission('create-logbook') &&
             $dailyLog->application &&
             $user->id === $dailyLog->application->user_id &&
             $dailyLog->status_validasi === 'pending';

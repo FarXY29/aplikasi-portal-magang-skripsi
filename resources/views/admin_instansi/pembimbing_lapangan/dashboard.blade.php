@@ -86,12 +86,12 @@
                                         </div>
                                         <div>
                                             @if($mhs->status == 'diterima')
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 border border-green-200">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800/40">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
                                                     Sedang Magang
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/40">
                                                     <i class="fas fa-check-circle mr-1.5"></i> Selesai
                                                 </span>
                                             @endif
@@ -101,7 +101,7 @@
 
                                 <td class="px-6 py-4 text-right">
                                     @if($mhs->status == 'diterima')
-                                        <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200 transform hover:-translate-y-0.5">
+                                        <a href="{{ route('pembimbing_lapangan.logbook', $mhs->id) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200/50 transform hover:-translate-y-0.5">
                                             <i class="fas fa-book-reader mr-2"></i> Periksa Logbook
                                         </a>
                                     @else

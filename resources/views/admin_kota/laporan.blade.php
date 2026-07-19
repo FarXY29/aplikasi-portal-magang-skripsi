@@ -19,7 +19,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
+
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
@@ -100,7 +100,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                                 <i class="fas fa-search text-xs"></i>
                             </span>
-                            <input type="text" name="search" value="{{ request('search') }}" 
+                            <input type="text" name="search" value="{{ request('search') }}"
                                 placeholder="Cari nama dinas / badan pemerintahan..."
                                 class="w-full pl-9 border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 shadow-sm">
                         </div>
@@ -123,9 +123,9 @@
                             <i class="fas fa-filter"></i> Filter
                         </button>
                         @if(request()->anyFilled(['search', 'sort']))
-                            <a href="{{ route('admin.laporan') }}" class="inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
-                                Reset
-                            </a>
+                        <a href="{{ route('admin.laporan') }}" class="inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
+                            Reset
+                        </a>
                         @endif
                     </div>
                 </form>
@@ -212,7 +212,7 @@
                     </table>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </x-app-layout>

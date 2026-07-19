@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="flex justify-between items-center print:hidden">
-                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-650 transition">
+                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-700 transition">
                     <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </div>
@@ -40,7 +40,7 @@
             {{-- 6 Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-650 flex items-center justify-center mx-auto mb-2 border border-teal-100">
+                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center mx-auto mb-2 border border-teal-100">
                         <i class="fas fa-users text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total'] }}</p>
@@ -50,28 +50,28 @@
                     <div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-2 border border-green-100">
                         <i class="fas fa-check-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-green-755">{{ $stats['sangat_baik'] }}</p>
+                    <p class="text-xl font-black text-green-800">{{ $stats['sangat_baik'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Sangat Baik</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100">
                         <i class="fas fa-thumbs-up text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-blue-750">{{ $stats['baik'] }}</p>
+                    <p class="text-xl font-black text-blue-800">{{ $stats['baik'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Baik</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center mx-auto mb-2 border border-yellow-100">
                         <i class="fas fa-info-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-yellow-650" style="color: #d97706;">{{ $stats['cukup'] }}</p>
+                    <p class="text-xl font-black text-yellow-700" style="color: #d97706;">{{ $stats['cukup'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Cukup</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
                     <div class="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-2 border border-red-100">
                         <i class="fas fa-times-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-red-750">{{ $stats['kurang'] }}</p>
+                    <p class="text-xl font-black text-red-800">{{ $stats['kurang'] }}</p>
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Kurang</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center bg-gradient-to-br from-teal-50/50 to-indigo-50/30">
@@ -145,7 +145,7 @@
                         <div class="text-center mb-2">
                             <p class="font-bold text-gray-800 dark:text-gray-200 text-sm truncate max-w-[180px]">{{ $p2['nama'] }}</p>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate max-w-[180px] font-semibold">{{ $p2['asal_instansi'] }}</p>
-                            <p class="text-[9px] text-teal-650 bg-teal-50 px-2 py-0.5 rounded-full inline-block font-bold mt-1">{{ $p2['instansi'] }}</p>
+                            <p class="text-[9px] text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full inline-block font-bold mt-1">{{ $p2['instansi'] }}</p>
                         </div>
                         <div class="w-full bg-gradient-to-t from-gray-100 to-gray-200/50 rounded-t-2xl pt-8 pb-4 text-center border-t border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-center items-center h-28">
                             <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">SKOR AKHIR</span>
@@ -170,11 +170,11 @@
                         </div>
                         <div class="text-center mb-2">
                             <p class="font-black text-gray-950 text-base truncate max-w-[200px]">{{ $p1['nama'] }}</p>
-                            <p class="text-xs text-gray-650 truncate max-w-[200px] font-bold">{{ $p1['asal_instansi'] }}</p>
-                            <p class="text-[10px] text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full inline-block font-extrabold mt-1 border border-teal-150">{{ $p1['instansi'] }}</p>
+                            <p class="text-xs text-gray-700 truncate max-w-[200px] font-bold">{{ $p1['asal_instansi'] }}</p>
+                            <p class="text-[10px] text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full inline-block font-extrabold mt-1 border border-teal-200">{{ $p1['instansi'] }}</p>
                         </div>
                         <div class="w-full bg-gradient-to-t from-yellow-50 to-yellow-100 rounded-t-2xl pt-10 pb-6 text-center border-t-2 border-yellow-300 shadow flex flex-col justify-center items-center h-36">
-                            <span class="text-xs font-black text-yellow-750 uppercase tracking-wider">SKOR AKHIR</span>
+                            <span class="text-xs font-black text-yellow-800 uppercase tracking-wider">SKOR AKHIR</span>
                             <span class="text-3xl font-black text-yellow-700 mt-1">{{ $p1['rata_rata'] }}</span>
                             <span class="text-[10px] font-black text-yellow-600 mt-1 uppercase">{{ $p1['predikat'] }}</span>
                         </div>
@@ -199,7 +199,7 @@
                         <div class="w-full bg-gradient-to-t from-orange-50/50 to-orange-100/30 rounded-t-2xl pt-8 pb-4 text-center border-t border-orange-200 shadow-sm flex flex-col justify-center items-center h-24">
                             <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">SKOR AKHIR</span>
                             <span class="text-xl font-black text-amber-700 mt-1">{{ $p3['rata_rata'] }}</span>
-                            <span class="text-[9px] font-extrabold text-orange-655 mt-1 uppercase">{{ $p3['predikat'] }}</span>
+                            <span class="text-[9px] font-extrabold text-orange-700 mt-1 uppercase">{{ $p3['predikat'] }}</span>
                         </div>
                     </div>
                     @endif
@@ -372,7 +372,7 @@
                                             </div>
                                         </td>
                                         <td class="px-5 py-4 text-center">
-                                            <span class="text-base font-black text-teal-650 bg-teal-50 px-2.5 py-0.5 rounded-full">{{ $res['rata_rata'] }}</span>
+                                            <span class="text-base font-black text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full">{{ $res['rata_rata'] }}</span>
                                         </td>
                                         <td class="px-5 py-4 text-center">
                                             @php
@@ -380,7 +380,7 @@
                                                     'Sangat Baik' => 'bg-green-100 text-green-700 border-green-200',
                                                     'Baik' => 'bg-blue-100 text-blue-700 border-blue-200',
                                                     'Cukup' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                                                    default => 'bg-gray-100 dark:bg-gray-800 text-gray-650 border-gray-200 dark:border-gray-700'
+                                                    default => 'bg-gray-100 dark:bg-gray-800 text-gray-700 border-gray-200 dark:border-gray-700'
                                                 };
                                             @endphp
                                             <span class="px-2.5 py-1 text-[9px] font-black uppercase rounded-full border {{ $badgeColor }}">
@@ -395,31 +395,31 @@
                                     {{-- Expanded detail row --}}
                                     <tr x-show="openRow === {{ $index }}" x-transition.opacity x-cloak>
                                         <td colspan="6" class="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-y border-gray-100 dark:border-gray-700">
-                                            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-250/60 p-5 shadow-sm">
-                                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-150 mb-4">
+                                            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-300/60 p-5 shadow-sm">
+                                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-200 mb-4">
                                                     <i class="fas fa-award text-teal-500"></i> Rincian Penilaian Kompetensi & Performa
                                                 </h4>
                                                 
                                                 @if($res['nilai_rata_rata'] !== null)
                                                     {{-- New Grading System --}}
                                                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Kerajinan</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['kerajinan'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Kedisiplinan</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['disiplin'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Adaptasi</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['adaptasi'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Kreatifitas</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['kreatifitas'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150 col-span-2 md:col-span-1">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 col-span-2 md:col-span-1">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Skill & Pengetahuan</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['skill'] }}</div>
                                                         </div>
@@ -431,15 +431,15 @@
                                                 @else
                                                     {{-- Old Grading System --}}
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Kompetensi Teknis</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['teknis'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Kedisiplinan</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['disiplin'] }}</div>
                                                         </div>
-                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-150">
+                                                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200">
                                                             <div class="text-[9px] font-bold text-gray-400 uppercase">Sikap & Perilaku</div>
                                                             <div class="text-xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $res['perilaku'] }}</div>
                                                         </div>

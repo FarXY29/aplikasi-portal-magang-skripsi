@@ -6,7 +6,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-emerald-600 leading-tight flex items-center gap-3 drop-shadow-sm">
-                <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center border border-teal-200">
+                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center border border-teal-200 dark:border-teal-800/50">
                     <i class="fas fa-edit text-teal-600 text-lg"></i>
                 </div>
                 {{ __('Edit Lowongan Magang') }}
@@ -14,7 +14,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12 bg-slate-50 min-h-screen relative overflow-hidden font-sans">
+    <div class="py-12 bg-slate-50 dark:bg-gray-900 min-h-screen relative overflow-hidden font-sans">
         <!-- Background Ornaments -->
         <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-teal-50 to-slate-50 z-0"></div>
         <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>

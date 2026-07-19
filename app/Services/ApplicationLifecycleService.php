@@ -12,7 +12,10 @@ class ApplicationLifecycleService
 {
     protected $generateCertificateNumberAction;
 
-    public function __construct(GenerateCertificateNumberAction $generateCertificateNumberAction)
+    public function __construct(
+        GenerateCertificateNumberAction $generateCertificateNumberAction,
+        private AuditLogService $auditLogService,
+    )
     {
         $this->generateCertificateNumberAction = $generateCertificateNumberAction;
     }
@@ -26,6 +29,10 @@ class ApplicationLifecycleService
             $this->generateCertificateNumberAction->execute($application);
             $application->status = 'selesai';
             $application->save();
+            $this->auditLogService->record('application.finished', $application, [
+                'applicant_user_id' => $application->user_id,
+                'automatic' => auth()->id() === null,
+            ]);
 
             Cache::forget('expired_internships_checked');
 
@@ -62,6 +69,10 @@ class ApplicationLifecycleService
                 'status' => 'diterima',
                 'tanggal_mulai' => $newStartDate->format('Y-m-d'),
                 'tanggal_selesai' => $newEndDate->format('Y-m-d'),
+            ]);
+            $this->auditLogService->record('application.promoted_from_waiting_list', $nextWaiting, [
+                'position_id' => $nextWaiting->internship_position_id,
+                'new_start_date' => $nextWaiting->tanggal_mulai,
             ]);
         }
 

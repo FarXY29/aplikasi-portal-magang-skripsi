@@ -4,8 +4,8 @@ namespace App\Http\Controllers\AdminInstansi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Application;
-use App\Services\AuditLogService;
 use App\Services\InternshipApplicationService;
+use App\Http\Requests\Internship\RejectApplicationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,12 +13,10 @@ use Illuminate\Support\Facades\Storage;
 class ApplicantController extends Controller
 {
     protected $applicationService;
-    protected $auditLogService;
 
-    public function __construct(InternshipApplicationService $applicationService, AuditLogService $auditLogService)
+    public function __construct(InternshipApplicationService $applicationService)
     {
         $this->applicationService = $applicationService;
-        $this->auditLogService = $auditLogService;
     }
 
     public function applicants(Request $request)
@@ -58,11 +56,18 @@ class ApplicantController extends Controller
         $app = Application::with('position')->findOrFail($id);
         $this->authorize('view', $app);
 
-        if (!$app->surat_pengantar_path || !Storage::disk('public')->exists($app->surat_pengantar_path)) {
+        if (! $app->surat_pengantar_path) {
             return back()->with('error', 'Berkas surat pengantar tidak ditemukan.');
         }
 
-        return Storage::disk('public')->response($app->surat_pengantar_path);
+        $disk = Storage::disk('private')->exists($app->surat_pengantar_path) ? 'private' : 'public';
+        if (! Storage::disk($disk)->exists($app->surat_pengantar_path)) {
+            return back()->with('error', 'Berkas surat pengantar tidak ditemukan.');
+        }
+
+        return Storage::disk($disk)->response($app->surat_pengantar_path, null, [
+            'Cache-Control' => 'private, no-store, max-age=0',
+        ]);
     }
 
     /**
@@ -71,6 +76,7 @@ class ApplicantController extends Controller
     public function acceptApplicant($id)
     {
         $app = Application::with('position', 'user')->findOrFail($id);
+        $this->authorize('manageActiveIntern', $app);
         
         if ($app->position->kuota <= 0) {
             return back()->with('error', 'Peringatan: Posisi ini memiliki kapasitas 0 (Ditutup).');
@@ -78,10 +84,6 @@ class ApplicantController extends Controller
 
         try {
             $this->applicationService->acceptApplicant($app);
-            $this->auditLogService->record('application.accepted', $app, [
-                'applicant_user_id' => $app->user_id,
-                'position_id' => $app->internship_position_id,
-            ]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -89,17 +91,12 @@ class ApplicantController extends Controller
         return back()->with('success', 'Peserta diterima! Jadwal telah dikunci sesuai pengajuan, dan email pemberitahuan telah dikirim.');
     }
 
-    public function rejectApplicant($id)
+    public function rejectApplicant(RejectApplicationRequest $request, $id)
     {
         $app = Application::with('position.instansi', 'user')->findOrFail($id);
+        $this->authorize('manageActiveIntern', $app);
         
-        $this->applicationService->rejectApplicant($app, request('alasan'));
-        $this->auditLogService->record('application.rejected', $app, [
-            'applicant_user_id' => $app->user_id,
-            'position_id' => $app->internship_position_id,
-            'rejected_reason' => request('alasan'),
-        ]);
-
+        $this->applicationService->rejectApplicant($app, $request->validated('alasan'));
         return back()->with('success', 'Peserta ditolak dan catatan telah disimpan.');
     }
 }

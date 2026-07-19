@@ -143,7 +143,7 @@
                                             <form action="{{ route('dinas.pembimbing_lapangan.destroy', $pembimbing_lapangan->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 hover:bg-red-50 hover:border-red-200 transition shadow-sm" title="Hapus Akun">
+                                                <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-200 dark:hover:border-red-900/50 transition shadow-sm" title="Hapus Akun">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>

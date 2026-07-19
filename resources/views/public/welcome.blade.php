@@ -87,7 +87,7 @@
                              </div>
                          @else
                              <div class="flex items-center gap-3">
-                                 <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs sm:text-sm font-bold transition-all rounded-2xl hover:-translate-y-0.5" :class="scrolled ? 'text-slate-600 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-gray-800 hover:text-slate-900 dark:hover:text-white' : 'text-white hover:bg-white dark:hover:bg-gray-800/10'">
+                                 <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs sm:text-sm font-bold transition-all rounded-2xl hover:-translate-y-0.5" :class="scrolled ? 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-gray-800 hover:text-slate-900 dark:hover:text-white' : 'text-white hover:bg-white dark:hover:bg-gray-800/10'">
                                      Masuk
                                  </a>
                                  @if (Route::has('register'))
@@ -159,7 +159,7 @@
                          @else
                              <div class="flex flex-col gap-3.5">
                                  <div class="grid grid-cols-2 gap-3.5">
-                                     <a href="{{ route('login') }}" class="flex items-center justify-center px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-gray-800 rounded-2xl hover:bg-slate-200 dark:hover:bg-gray-750 active:scale-[0.98] transition">
+                                     <a href="{{ route('login') }}" class="flex items-center justify-center px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-gray-800 rounded-2xl hover:bg-slate-200 dark:hover:bg-gray-800 active:scale-[0.98] transition">
                                          Masuk
                                      </a>
                                      @if (Route::has('register'))

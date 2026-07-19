@@ -68,11 +68,11 @@
                                     <div class="flex items-center gap-3">
                                         <div class="flex-shrink-0 h-10 w-10">
                                             @if($statusValue == 'selesai')
-                                                <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-200" title="Alumni">
+                                                <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-900/50" title="Alumni">
                                                     <i class="fas fa-graduation-cap"></i>
                                                 </div>
                                             @else
-                                                <div class="h-10 w-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 font-bold border border-teal-100">
+                                                <div class="h-10 w-10 rounded-full bg-teal-50 dark:bg-teal-950/30 flex items-center justify-center text-teal-600 dark:text-teal-400 font-bold border border-teal-100 dark:border-teal-900/50">
                                                     {{ strtoupper(substr($intern->user->name, 0, 1)) }}
                                                 </div>
                                             @endif
@@ -167,11 +167,11 @@
 
                                             @if($statusValue != 'selesai')
                                                 @if($sisa > 0)
-                                                    <span class="text-[10px] text-teal-600 font-bold mt-1 bg-teal-50 w-fit px-1.5 py-0.5 rounded">
+                                                    <span class="text-[10px] text-teal-600 dark:text-teal-400 font-bold mt-1 bg-teal-50 dark:bg-teal-950/30 w-fit px-1.5 py-0.5 rounded">
                                                         <i class="fas fa-hourglass-half mr-1"></i> Sisa {{ ceil($sisa) }} hari
                                                     </span>
                                                 @else
-                                                    <span class="text-[10px] text-red-500 font-bold mt-1 bg-red-50 w-fit px-1.5 py-0.5 rounded">
+                                                    <span class="text-[10px] text-red-500 dark:text-red-400 font-bold mt-1 bg-red-50 dark:bg-red-950/30 w-fit px-1.5 py-0.5 rounded">
                                                         <i class="fas fa-flag-checkered mr-1"></i> Waktu Habis
                                                     </span>
                                                 @endif
@@ -196,25 +196,25 @@
                                         </div>
 
                                         @if($intern->nilai_rata_rata)
-                                            <a href="{{ route('dinas.sertifikat.create', $intern->id) }}" 
-                                               class="group flex items-center gap-2 px-3 py-2 bg-teal-50 text-teal-700 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition shadow-sm"
-                                               title="Terbitkan Sertifikat Kelulusan">
-                                                <i class="fas fa-certificate text-teal-500 group-hover:text-white"></i>
-                                                <span class="text-xs font-bold hidden xl:inline">Sertifikat</span>
-                                            </a>
-                                        @elseif($statusValue == 'diterima')
-                                            <form action="{{ route('dinas.peserta.selesai', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nPeserta ini BELUM DINILAI oleh pembimbing_lapangan.\nJika Anda meluluskan sekarang, peserta TIDAK AKAN MENDAPAT NILAI di sertifikat.\n\nLanjutkan?', onConfirm: () => $el.submit() })">
-                                                @csrf
-                                                <button type="submit" class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition shadow-sm font-bold border border-blue-100" title="Luluskan Peserta (Tanpa Sertifikat)">
-                                                    <i class="fas fa-check-double"></i>
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('dinas.peserta.keluarkan', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nApakah Anda yakin ingin mengeluarkan peserta ini dari tempat magang? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
-                                                @csrf
-                                                <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition shadow-sm font-bold border border-red-100" title="Keluarkan Peserta">
-                                                    <i class="fas fa-user-times"></i>
-                                                </button>
-                                            </form>
+                                             <a href="{{ route('dinas.sertifikat.create', $intern->id) }}" 
+                                                class="group flex items-center gap-2 px-3 py-2 bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-900/50 rounded-lg hover:bg-teal-600 hover:text-white hover:border-teal-600 transition shadow-sm"
+                                                title="Terbitkan Sertifikat Kelulusan">
+                                                 <i class="fas fa-certificate text-teal-500 group-hover:text-white"></i>
+                                                 <span class="text-xs font-bold hidden xl:inline">Sertifikat</span>
+                                             </a>
+                                         @elseif($statusValue == 'diterima')
+                                             <form action="{{ route('dinas.peserta.selesai', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nPeserta ini BELUM DINILAI oleh pembimbing_lapangan.\nJika Anda meluluskan sekarang, peserta TIDAK AKAN MENDAPAT NILAI di sertifikat.\n\nLanjutkan?', onConfirm: () => $el.submit() })">
+                                                 @csrf
+                                                 <button type="submit" class="p-2 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-600 hover:text-white transition shadow-sm font-bold border border-blue-100 dark:border-blue-900/50" title="Luluskan Peserta (Tanpa Sertifikat)">
+                                                     <i class="fas fa-check-double"></i>
+                                                 </button>
+                                             </form>
+                                             <form action="{{ route('dinas.peserta.keluarkan', $intern->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'PERINGATAN!\n\nApakah Anda yakin ingin mengeluarkan peserta ini dari tempat magang? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
+                                                 @csrf
+                                                 <button type="submit" class="p-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-600 hover:text-white transition shadow-sm font-bold border border-red-100 dark:border-red-900/50" title="Keluarkan Peserta">
+                                                     <i class="fas fa-user-times"></i>
+                                                 </button>
+                                             </form>
                                         @else
                                             <span class="text-[10px] text-gray-400 italic px-2">Menunggu Nilai</span>
                                         @endif

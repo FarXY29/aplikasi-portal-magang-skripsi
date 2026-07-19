@@ -7,6 +7,9 @@ use App\Models\Application;
 use App\Models\DailyLog;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Internship\ValidateDailyLogRequest;
+use App\Http\Requests\Internship\ValidateAttendanceRequest;
+use App\Services\AuditLogService;
 
 class PembimbingLapanganController extends Controller
 {
@@ -59,15 +62,17 @@ class PembimbingLapanganController extends Controller
         return view('pembimbing_lapangan.logbook', compact('app', 'logs', 'filterType', 'selectedDate'));
     }
 
-    public function validateLogbook(Request $request, $id)
+    public function validateLogbook(ValidateDailyLogRequest $request, $id, AuditLogService $auditLogService)
     {
         $log = DailyLog::with('application')->findOrFail($id);
         $this->authorize('validateRecords', $log->application);
 
         $log->update([
-            'status_validasi' => $request->status,
-            'komentar_pembimbing_lapangan' => $request->komentar
+            'status_validasi' => $request->validated('status'),
+            'komentar_pembimbing_lapangan' => $request->validated('komentar')
         ]);
+
+        $auditLogService->record('daily_log.validated', $log, ['status_validasi' => $request->validated('status')]);
 
         return back()->with('success', 'Logbook divalidasi.');
     }
@@ -179,20 +184,17 @@ class PembimbingLapanganController extends Controller
     /**
      * PROSES VALIDASI IZIN/SAKIT
      */
-    public function validateAttendance(Request $request, $id)
+    public function validateAttendance(ValidateAttendanceRequest $request, $id, AuditLogService $auditLogService)
     {
-        $request->validate([
-            'status_validasi' => 'required|in:approved,rejected',
-            'pembimbing_lapangan_note' => 'nullable|string'
-        ]);
-
         $attendance = Attendance::with('application')->findOrFail($id);
         $this->authorize('validateRecords', $attendance->application);
 
         $attendance->update([
-            'validation_status' => $request->status_validasi,
-            'pembimbing_lapangan_note' => $request->pembimbing_lapangan_note
+            'validation_status' => $request->validated('status_validasi'),
+            'pembimbing_lapangan_note' => $request->validated('pembimbing_lapangan_note')
         ]);
+
+        $auditLogService->record('attendance.validated', $attendance, ['validation_status' => $request->validated('status_validasi')]);
 
         return back()->with('success', 'Status izin/sakit berhasil diperbarui.');
     }

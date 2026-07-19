@@ -32,7 +32,7 @@
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tepat Waktu</p>
                         <p class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mt-1">{{ $stats['tepat_waktu'] ?? 0 }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center text-green-600 dark:text-green-400">
                         <i class="fas fa-check"></i>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Terlambat</p>
                         <p class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mt-1">{{ $stats['terlambat'] ?? 0 }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
                         <i class="fas fa-clock"></i>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Izin / Sakit</p>
                         <p class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mt-1">{{ $stats['izin'] ?? 0 }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                         <i class="fas fa-file-medical"></i>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Alpha</p>
                         <p class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mt-1">{{ $stats['alpha'] ?? 0 }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+                    <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center text-red-600 dark:text-red-400">
                         <i class="fas fa-times-circle"></i>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                     <form action="" method="GET" class="flex items-center gap-2">
                         <div class="relative">
                             <i class="fas fa-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
-                            <select name="bulan" onchange="this.form.submit()" class="pl-8 pr-8 py-2 text-sm border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm cursor-pointer">
+                            <select name="bulan" onchange="this.form.submit()" class="pl-8 pr-8 py-2 text-sm border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm cursor-pointer">
                                 <option value="">Semua Periode</option>
                                 <option value="01" {{ request('bulan') == '01' ? 'selected' : '' }}>Januari</option>
                                 <option value="02" {{ request('bulan') == '02' ? 'selected' : '' }}>Februari</option>
@@ -170,7 +170,7 @@
                                     </div>
                                     
                                     @if($log->proof_file)
-                                        <a href="{{ Storage::url($log->proof_file) }}" target="_blank" class="text-xs text-teal-600 hover:text-teal-800 hover:underline flex items-center mt-1">
+                                        <a href="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}" target="_blank" class="text-xs text-teal-600 hover:text-teal-800 hover:underline flex items-center mt-1">
                                             <i class="fas fa-paperclip mr-1"></i> Lihat Bukti
                                         </a>
                                     @endif

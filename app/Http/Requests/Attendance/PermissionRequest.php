@@ -16,7 +16,7 @@ class PermissionRequest extends FormRequest
         return [
             'status' => ['required', 'in:izin,sakit'],
             'description' => ['required', 'string', 'max:255'],
-            'proof_file' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'proof_file' => ['required', 'image', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096'],
         ];
     }
 

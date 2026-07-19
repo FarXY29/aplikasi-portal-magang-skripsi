@@ -47,15 +47,8 @@ class PembimbingSekolahController extends Controller
      */
     public function logbook(Request $request, $id)
     {
-        $pembimbing = Auth::user();
-
-        // Cari aplikasi
         $app = Application::with('user', 'position.instansi')->findOrFail($id);
-
-        // Keamanan: pastikan peserta telah memilih pembimbing ini secara spesifik
-        if ($app->user->pembimbing_sekolah_id !== $pembimbing->id) {
-            return back()->with('error', 'Anda tidak memiliki akses ke logbook mahasiswa ini karena tidak dipilih sebagai pembimbing.');
-        }
+        $this->authorize('view', $app);
 
         // Filter logbook
         $filterType = $request->input('filter_type', 'semua');
@@ -83,15 +76,8 @@ class PembimbingSekolahController extends Controller
      */
     public function absensi(Request $request, $id)
     {
-        $pembimbing = Auth::user();
-
-        // Cari aplikasi
         $app = Application::with('user', 'position.instansi')->findOrFail($id);
-
-        // Keamanan: pastikan peserta telah memilih pembimbing ini secara spesifik
-        if ($app->user->pembimbing_sekolah_id !== $pembimbing->id) {
-            return back()->with('error', 'Anda tidak memiliki akses ke absensi mahasiswa ini karena tidak dipilih sebagai pembimbing.');
-        }
+        $this->authorize('view', $app);
 
         // Filter absensi
         $filterType = $request->input('filter_type', 'semua');

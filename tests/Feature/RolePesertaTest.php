@@ -26,4 +26,49 @@ class RolePesertaTest extends TestCase
         // Usually redirects or 403
         $response->assertStatus(403);
     }
+
+    public function test_peserta_can_download_id_card_and_loa_when_accepted()
+    {
+        $user = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '1234567890123456',
+            'asal_instansi' => 'Universitas Indonesia',
+        ]);
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Pendidikan',
+            'kode_unit_kerja' => 'DISDIK-01',
+            'alamat' => 'Jakarta',
+            'jam_mulai_masuk' => '08:00',
+            'jam_mulai_pulang' => '16:00',
+            'max_total_quota' => 10,
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'Frontend Developer',
+            'kuota' => 2,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => now()->toDateString(),
+            'tanggal_selesai' => now()->addMonths(3)->toDateString(),
+        ]);
+
+        // Test download LoA
+        $responseLoa = $this->actingAs($user)->get(route('peserta.loa.download', $app->id));
+        $responseLoa->assertStatus(200);
+        $this->assertTrue(str_contains($responseLoa->headers->get('Content-Disposition'), 'LoA_'));
+
+        // Test download ID Card
+        $responseIdCard = $this->actingAs($user)->get(route('peserta.id_card.download', $app->id));
+        $responseIdCard->assertStatus(200);
+        $this->assertTrue(str_contains($responseIdCard->headers->get('Content-Disposition'), 'ID_Card_'));
+    }
 }

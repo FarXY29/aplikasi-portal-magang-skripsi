@@ -4,7 +4,7 @@
 
             {{-- Back Button & Download Buttons (Matches other reports) --}}
             <div class="flex justify-between items-center print:hidden">
-                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-650 transition">
+                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-700 transition">
                     <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
                         <i class="fas fa-arrow-left text-xs"></i>
                     </div>
@@ -361,7 +361,7 @@
                                         <div class="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5 bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700/60">
                                             <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
                                             <span>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }}</span>
-                                            <span class="text-gray-400 dark:text-gray-650">➜</span>
+                                            <span class="text-gray-400 dark:text-gray-700">➜</span>
                                             <span>{{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}</span>
                                         </div>
                                         @php

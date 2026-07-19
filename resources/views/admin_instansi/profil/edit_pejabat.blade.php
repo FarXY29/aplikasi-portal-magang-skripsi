@@ -8,13 +8,13 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r shadow-sm">
+            <div class="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-4 mb-6 rounded-r shadow-sm">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <i class="fas fa-info-circle text-blue-500"></i>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm text-blue-700">
+                        <p class="text-sm text-blue-700 dark:text-blue-300">
                             Data yang Anda isi di sini akan otomatis muncul pada bagian <strong>"Mengetahui" (Tanda Tangan Kiri)</strong> di Transkrip Nilai dan Sertifikat Magang.
                         </p>
                     </div>

@@ -22,51 +22,51 @@
             {{-- Statistik Ringkasan --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3 border border-blue-100">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_peserta'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Total Peserta</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-3 border border-green-100">
+                    <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-3 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-user-clock"></i>
                     </div>
-                    <p class="text-2xl font-black text-green-700">{{ $stats['aktif'] }}</p>
+                    <p class="text-2xl font-black text-green-700 dark:text-green-400">{{ $stats['aktif'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Peserta Aktif</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3 border border-indigo-100">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-flag-checkered"></i>
                     </div>
-                    <p class="text-2xl font-black text-indigo-700">{{ $stats['selesai'] }}</p>
+                    <p class="text-2xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['selesai'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Selesai / Lulus</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-3 border border-teal-100">
+                    <div class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-900/50">
                         <i class="fas fa-calendar-check"></i>
                     </div>
-                    <p class="text-2xl font-black text-teal-700">{{ $stats['avg_kehadiran'] }}%</p>
+                    <p class="text-2xl font-black text-teal-700 dark:text-teal-400">{{ $stats['avg_kehadiran'] }}%</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Avg Kehadiran</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-3 border border-purple-100">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-3 border border-purple-100 dark:border-purple-900/50">
                         <i class="fas fa-clipboard-list"></i>
                     </div>
-                    <p class="text-2xl font-black text-purple-700">{{ $stats['avg_logbook'] }}%</p>
+                    <p class="text-2xl font-black text-purple-700 dark:text-purple-400">{{ $stats['avg_logbook'] }}%</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Avg Logbook</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-650 flex items-center justify-center mx-auto mb-3 border border-orange-100" style="color: #d97706; background-color: #fef3c7;">
+                    <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-900/50">
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-2xl font-black text-gray-800 dark:text-gray-200" style="color: #d97706;">{{ $stats['avg_nilai'] > 0 ? $stats['avg_nilai'] : '-' }}</p>
+                    <p class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ $stats['avg_nilai'] > 0 ? $stats['avg_nilai'] : '-' }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Avg Nilai Lulus</p>
                 </div>
             </div>
 
             {{-- Highlight Banner --}}
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-650 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/20 flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/20 flex flex-col sm:flex-row items-center gap-4">
                 <div class="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -117,11 +117,11 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50" x-data="{ openRow: null }">
                             @forelse($kinerja as $app)
-                            <tr class="hover:bg-blue-50/20 transition cursor-pointer" @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
+                            <tr class="hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition cursor-pointer" @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
                                 <td class="px-5 py-4 text-xs text-gray-400 text-center font-bold">{{ $loop->iteration }}</td>
                                 <td class="px-5 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-black border border-blue-100 flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black border border-blue-100 dark:border-blue-900/50 flex-shrink-0">
                                             {{ strtoupper(substr($app->user->name, 0, 1)) }}
                                         </div>
                                         <div>
@@ -129,11 +129,11 @@
                                             <div class="flex flex-wrap items-center gap-x-2 text-[10px] text-gray-400 font-semibold mt-0.5">
                                                 <span>{{ $app->user->asal_instansi ?? '-' }}</span>
                                                 <span class="text-gray-300">•</span>
-                                                @if($app->status == 'diterima')
-                                                    <span class="inline-flex px-1.5 py-0.5 rounded text-[8px] font-black bg-green-100 text-green-700 uppercase">Aktif</span>
-                                                @elseif($app->status == 'selesai')
-                                                    <span class="inline-flex px-1.5 py-0.5 rounded text-[8px] font-black bg-blue-100 text-blue-700 uppercase">Selesai</span>
-                                                @endif
+                                                @if($app->status?->value == 'diterima')
+                                                     <span class="inline-flex px-1.5 py-0.5 rounded text-[8px] font-black bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 uppercase">Aktif</span>
+                                                 @elseif($app->status?->value == 'selesai')
+                                                     <span class="inline-flex px-1.5 py-0.5 rounded text-[8px] font-black bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 uppercase">Selesai</span>
+                                                 @endif
                                             </div>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@
                                 <td class="px-5 py-4 text-center">
                                     @php
                                         $attRate = $app->attendance_rate;
-                                        $attColor = $attRate >= 80 ? 'text-green-600 bg-green-50' : ($attRate >= 50 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50');
+                                        $attColor = $attRate >= 80 ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30' : ($attRate >= 50 ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/30' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30');
                                     @endphp
                                     <span class="inline-block px-2 py-0.5 rounded-full text-xs font-black {{ $attColor }}">
                                         {{ round($attRate, 1) }}%
@@ -154,7 +154,7 @@
                                 <td class="px-5 py-4 text-center">
                                     @php
                                         $logRate = $app->log_rate;
-                                        $logColor = $logRate >= 80 ? 'text-green-600 bg-green-50' : ($logRate >= 50 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50');
+                                        $logColor = $logRate >= 80 ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30' : ($logRate >= 50 ? 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/30' : 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30');
                                     @endphp
                                     <span class="inline-block px-2 py-0.5 rounded-full text-xs font-black {{ $logColor }}">
                                         {{ round($logRate, 1) }}%
@@ -181,7 +181,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                                         
                                         {{-- Detail Absensi --}}
-                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-150 p-4 shadow-sm space-y-3">
+                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm space-y-3">
                                             <h4 class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
                                                 <i class="fas fa-calendar-alt text-teal-500"></i> Rincian Absensi
                                             </h4>
@@ -205,13 +205,13 @@
                                                 <div class="flex justify-between border-t pt-1.5 border-gray-100 dark:border-gray-700 mt-1 font-bold">
                                                     <span>Izin/Sakit Pending:</span>
                                                     @php $pendAtt = $app->attendances->where('validation_status', 'pending')->count(); @endphp
-                                                    <span class="{{ $pendAtt > 0 ? 'text-red-650' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendAtt }} hari</span>
+                                                    <span class="{{ $pendAtt > 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendAtt }} hari</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {{-- Detail Logbook --}}
-                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-150 p-4 shadow-sm space-y-3">
+                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm space-y-3">
                                             <h4 class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
                                                 <i class="fas fa-book text-purple-500"></i> Kepatuhan Logbook
                                             </h4>
@@ -222,27 +222,27 @@
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Disetujui Pembimbing:</span>
-                                                    <span class="font-bold text-green-600">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</span>
+                                                    <span class="font-bold text-green-600 dark:text-green-400">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Ditolak / Perlu Revisi:</span>
-                                                    <span class="font-bold text-red-600">{{ $app->logs->where('status_validasi', 'revisi')->count() }} entri</span>
+                                                    <span class="font-bold text-red-600 dark:text-red-400">{{ $app->logs->where('status_validasi', 'revisi')->count() }} entri</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Belum Divalidasi:</span>
                                                     @php $pendLogs = $app->logs->where('status_validasi', 'pending')->count(); @endphp
-                                                    <span class="font-bold {{ $pendLogs > 0 ? 'text-red-650' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendLogs }} entri</span>
+                                                    <span class="font-bold {{ $pendLogs > 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendLogs }} entri</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {{-- Detail Penilaian Akhir --}}
-                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-150 p-4 shadow-sm space-y-3">
+                                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm space-y-3">
                                             <h4 class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
                                                 <i class="fas fa-award text-orange-500"></i> Penilaian Akhir & Sertifikat
                                             </h4>
                                             
-                                            @if($app->status === 'selesai')
+                                            @if($app->status?->value === 'selesai')
                                                 <div class="space-y-2 text-xs">
                                                     <div class="grid grid-cols-2 gap-x-2 gap-y-1 bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-[10px]">
                                                         <div>Kerajinan: <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_kerajinan ?? '-' }}</span></div>
@@ -260,7 +260,7 @@
                                                         @if($app->nomor_sertifikat)
                                                         <div class="flex justify-between">
                                                             <span>Sertifikat:</span>
-                                                            <span class="font-mono text-gray-800 dark:text-gray-200 font-bold bg-yellow-50 px-1 rounded border border-yellow-250 text-[9px]">{{ $app->nomor_sertifikat }}</span>
+                                                            <span class="font-mono text-gray-900 dark:text-gray-200 font-bold bg-yellow-50 dark:bg-yellow-950/30 px-1 rounded border border-yellow-300 dark:border-yellow-900/50 text-[9px]">{{ $app->nomor_sertifikat }}</span>
                                                         </div>
                                                         @endif
                                                         <div class="flex justify-between">
@@ -270,7 +270,7 @@
                                                     </div>
                                                     
                                                     @if($app->catatan_pembimbing_lapangan)
-                                                    <div class="text-[9px] text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-150 italic mt-2">
+                                                    <div class="text-[9px] text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-200 dark:border-gray-700 italic mt-2">
                                                         <span class="font-bold text-gray-400 text-[8px] uppercase block not-italic mb-0.5">Catatan Pembimbing:</span>
                                                         "{{ $app->catatan_pembimbing_lapangan }}"
                                                     </div>

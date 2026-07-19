@@ -147,8 +147,8 @@
                                         <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-3 uppercase tracking-wide border-b border-gray-100 dark:border-gray-700 pb-2">
                                             Dokumentasi
                                         </h4>
-                                        <div class="relative group w-full md:w-1/2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer" onclick="openImageModal('{{ Storage::url($log->bukti_foto_path) }}')">
-                                            <img src="{{ Storage::url($log->bukti_foto_path) }}" 
+                                        <div class="relative group w-full md:w-1/2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer" onclick="openImageModal('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                            <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" 
                                                  alt="Bukti Kegiatan" 
                                                  class="w-full h-auto object-cover transform transition duration-500 group-hover:scale-105">
                                             <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none">

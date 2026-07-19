@@ -22,45 +22,45 @@
             {{-- Statistik Ringkasan --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-3 border border-purple-100">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-3 border border-purple-100 dark:border-purple-900/50">
                         <i class="fas fa-book"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_jurnal'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Total Jurnal</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-3 border border-green-100">
+                    <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-3 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <p class="text-2xl font-black text-green-700">{{ $stats['disetujui'] }}</p>
+                    <p class="text-2xl font-black text-green-800 dark:text-green-400">{{ $stats['disetujui'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Disetujui</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center mx-auto mb-3 border border-yellow-100">
+                    <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-900/50">
                         <i class="fas fa-hourglass-half"></i>
                     </div>
-                    <p class="text-2xl font-black text-yellow-600" style="color: #d97706;">{{ $stats['pending'] }}</p>
+                    <p class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ $stats['pending'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Pending</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-3 border border-red-100">
+                    <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-3 border border-red-100 dark:border-red-900/50">
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
-                    <p class="text-2xl font-black text-red-700">{{ $stats['revisi'] }}</p>
+                    <p class="text-2xl font-black text-red-700 dark:text-red-400">{{ $stats['revisi'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Revisi</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3 border border-blue-100">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-user-friends"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_peserta_aktif'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Peserta Aktif</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3 border border-indigo-100">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-tasks"></i>
                     </div>
-                    <p class="text-2xl font-black text-indigo-700" style="color: #4f46e5;">{{ $stats['rasio_validasi'] }}%</p>
+                    <p class="text-2xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['rasio_validasi'] }}%</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Rasio Validasi</p>
                 </div>
             </div>
@@ -90,13 +90,13 @@
 
                     @if($jurnal->count() > 0)
                         <div class="flex gap-2">
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md border border-white/20" title="Download PDF">
+                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 rounded-xl hover:bg-teal-50 dark:hover:bg-teal-950/20 transition text-sm font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                                 <i class="fas fa-file-pdf text-red-500"></i> PDF
                             </a>
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md border border-white/20" title="Download Excel">
+                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 rounded-xl hover:bg-teal-50 dark:hover:bg-teal-950/20 transition text-sm font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
                                 <i class="fas fa-file-excel text-green-600"></i> Excel
                             </a>
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md border border-white/20" title="Download CSV">
+                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 rounded-xl hover:bg-teal-50 dark:hover:bg-teal-950/20 transition text-sm font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
                                 <i class="fas fa-file-csv text-blue-600"></i> CSV
                             </a>
                         </div>
@@ -157,12 +157,12 @@
 
                                 <td class="px-5 py-4 text-center">
                                     @if($log->bukti_foto_path)
-                                        <a href="{{ asset('storage/' . $log->bukti_foto_path) }}" target="_blank" class="inline-block relative group" title="Lihat Bukti Foto">
-                                            <img src="{{ asset('storage/' . $log->bukti_foto_path) }}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700 hover:scale-110 transition shadow-sm">
+                                        <a href="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" target="_blank" class="inline-block relative group" title="Lihat Bukti Foto">
+                                            <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700 hover:scale-110 transition shadow-sm">
                                             <span class="absolute -bottom-1 -right-1 bg-purple-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[8px] shadow-sm"><i class="fas fa-search-plus"></i></span>
                                         </a>
                                     @else
-                                        <span class="inline-block p-1 bg-gray-50 dark:bg-gray-900 border border-gray-150 rounded text-gray-400" title="Tidak ada bukti foto">
+                                        <span class="inline-block p-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 rounded text-gray-400" title="Tidak ada bukti foto">
                                             <i class="fas fa-image-slash text-xs"></i>
                                         </span>
                                     @endif
@@ -188,7 +188,7 @@
                                     @if($log->application->pembimbing_lapangan)
                                         <div class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $log->application->pembimbing_lapangan->name }}</div>
                                         @if($log->komentar_pembimbing_lapangan)
-                                            <div class="mt-1 bg-gray-50 dark:bg-gray-900 text-[10px] text-gray-600 dark:text-gray-400 p-2 rounded-lg border border-gray-150 italic relative max-w-xs">
+                                            <div class="mt-1 bg-gray-50 dark:bg-gray-900 text-[10px] text-gray-600 dark:text-gray-400 p-2 rounded-lg border border-gray-200 italic relative max-w-xs">
                                                 <span class="font-bold text-gray-400 text-[8px] uppercase block not-italic mb-0.5">Catatan Pembimbing:</span>
                                                 "{{ $log->komentar_pembimbing_lapangan }}"
                                             </div>

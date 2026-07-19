@@ -161,7 +161,7 @@ class ReportController extends Controller
                     ];
                 })->values();
 
-                $pl->mahasiswa_lulus = $pl->bimbingan->where('status', 'selesai')->map(function($app) use (&$total_nilai, &$count_nilai) {
+                $pl->mahasiswa_lulus = $pl->bimbingan->where('status.value', 'selesai')->map(function($app) use (&$total_nilai, &$count_nilai) {
                     $grade = 0;
                     if ($app->nilai_rata_rata) {
                         $grade = (float) $app->nilai_rata_rata;
@@ -223,15 +223,15 @@ class ReportController extends Controller
             return empty($app->user->asal_instansi) ? 'Lainnya / Tidak Diketahui' : $app->user->asal_instansi;
         })
         ->map(function($group) {
-            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
-            $selesai = $group->where('status', 'selesai');
+            $diterima = $group->whereIn('status.value', ['diterima', 'selesai']);
+            $selesai = $group->where('status.value', 'selesai');
             return [
                 'total_pelamar' => $group->count(),
                 'diterima' => $diterima->count(),
                 'selesai' => $selesai->count(),
-                'ditolak' => $group->where('status', 'ditolak')->count(),
-                'pending' => $group->where('status', 'pending')->count(),
-                'dibatalkan' => $group->whereIn('status', ['dibatalkan', 'dikeluarkan'])->count(),
+                'ditolak' => $group->where('status.value', 'ditolak')->count(),
+                'pending' => $group->where('status.value', 'pending')->count(),
+                'dibatalkan' => $group->whereIn('status.value', ['dibatalkan', 'dikeluarkan'])->count(),
                 'acceptance_rate' => $group->count() > 0 ? round(($diterima->count() / $group->count()) * 100) : 0,
                 'jurusan' => $group->groupBy(function($app) {
                     return $app->user->major ?? 'Tidak Diketahui';
@@ -266,7 +266,7 @@ class ReportController extends Controller
             return empty($app->user->major) ? 'Tidak Diketahui' : $app->user->major;
         })
         ->map(function($group) {
-            $diterima = $group->whereIn('status', ['diterima', 'selesai']);
+            $diterima = $group->whereIn('status.value', ['diterima', 'selesai']);
             return [
                 'total' => $group->count(),
                 'diterima' => $diterima->count(),

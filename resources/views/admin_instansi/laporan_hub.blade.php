@@ -13,10 +13,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 <!-- Laporan Peserta -->
-                <a href="{{ route('dinas.laporan.rekap') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-teal-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                <a href="{{ route('dinas.laporan.rekap') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-teal-300 dark:hover:border-teal-700/85 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-teal-50 dark:bg-teal-950/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
-                        <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
                             <i class="fas fa-users"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Laporan Peserta</h3>
@@ -25,10 +25,10 @@
                 </a>
 
                 <!-- Kinerja Mahasiswa -->
-                <a href="{{ route('dinas.laporan.kinerja_mahasiswa') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-purple-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                <a href="{{ route('dinas.laporan.kinerja_mahasiswa') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-purple-300 dark:hover:border-purple-700/85 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-purple-950/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
-                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                             <i class="fas fa-chart-bar"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Kinerja Mahasiswa</h3>
@@ -37,10 +37,10 @@
                 </a>
 
                 <!-- Beban & Kinerja Pembimbing -->
-                <a href="{{ route('dinas.laporan.beban_pembimbing') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-blue-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                <a href="{{ route('dinas.laporan.beban_pembimbing') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700/85 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-950/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
-                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Kinerja Pembimbing</h3>
@@ -49,10 +49,10 @@
                 </a>
 
                 <!-- Demografi Kampus / Asal Instansi -->
-                <a href="{{ route('dinas.laporan.demografi_kampus') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-orange-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                <a href="{{ route('dinas.laporan.demografi_kampus') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-orange-300 dark:hover:border-orange-700/85 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 dark:bg-orange-950/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
-                        <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
                             <i class="fas fa-university"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Demografi Kampus</h3>
@@ -61,10 +61,10 @@
                 </a>
 
                 <!-- Jurnal Harian (Baru) -->
-                <a href="{{ route('dinas.laporan.jurnal_harian') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-purple-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                <a href="{{ route('dinas.laporan.jurnal_harian') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-purple-300 dark:hover:border-purple-700/85 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 dark:bg-purple-950/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
-                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                             <i class="fas fa-book-open"></i>
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Jurnal & Aktivitas Harian</h3>

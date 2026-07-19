@@ -113,7 +113,7 @@
                     <td class="text-center">{{ round($app->attendance_rate, 1) }}%</td>
                     <td class="text-center">{{ round($app->log_rate, 1) }}%</td>
                     <td class="text-center">
-                        {{ $app->status == 'diterima' ? 'Aktif' : 'Selesai' }}
+                        {{ $app->status?->value == 'diterima' ? 'Aktif' : 'Selesai' }}
                     </td>
                     <td class="text-center font-bold">
                         {{ $app->avg_nilai > 0 ? round($app->avg_nilai, 1) : '-' }}
@@ -190,7 +190,7 @@
                                 <div class="detail-title" style="color: #ea580c; border-bottom: 1px solid #ffedd5; padding-bottom: 2px;">
                                     Penilaian &amp; Sertifikat
                                 </div>
-                                @if($app->status === 'selesai')
+                                @if($app->status?->value === 'selesai')
                                     <div style="font-size: 7px; background-color: #f9fafb; padding: 4px; border: 1px solid #e5e7eb; border-radius: 3px; line-height: 1.2;">
                                         <div style="margin-bottom: 2px;">
                                             Kerajinan: <strong>{{ $app->nilai_kerajinan ?? '-' }}</strong> &nbsp;|&nbsp; 

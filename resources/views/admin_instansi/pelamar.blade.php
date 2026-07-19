@@ -45,11 +45,11 @@
                 <!-- Form Filter Multi-Kriteria -->
                 <x-ui.filter-bar :action="route('dinas.pelamar')" :resetUrl="request()->hasAny(['search', 'posisi_id', 'status']) ? route('dinas.pelamar') : null">
                     <div class="flex-grow min-w-[200px]">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, no. surat..." class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, no. surat..." class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
                     </div>
 
                     <div class="min-w-[150px]">
-                        <select name="posisi_id" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600 dark:text-gray-400">
+                        <select name="posisi_id" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900">
                             <option value="">-- Semua Posisi --</option>
                             @foreach($positions as $pos)
                                 <option value="{{ $pos->id }}" {{ request('posisi_id') == $pos->id ? 'selected' : '' }}>
@@ -60,7 +60,7 @@
                     </div>
 
                     <div class="min-w-[150px]">
-                        <select name="status" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600 dark:text-gray-400">
+                        <select name="status" class="w-full text-xs rounded-xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900">
                             <option value="semua" {{ request('status') == 'semua' || !request()->has('status') ? 'selected' : '' }}>Semua Status</option>
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu (Waiting List)</option>
@@ -102,7 +102,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center text-teal-700 font-bold border border-teal-300 shadow-sm">
+                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-950/40 dark:to-teal-900/40 flex items-center justify-center text-teal-700 dark:text-teal-400 font-bold border border-teal-300 dark:border-teal-800 shadow-sm">
                                                 {{ strtoupper(substr($app->user->name, 0, 1)) }}
                                             </div>
                                         </div>
@@ -113,7 +113,7 @@
                                                 <span class="flex items-center"><i class="fas fa-phone-alt mr-1.5 w-3 text-gray-400"></i> {{ $app->user->phone ?? '-' }}</span>
                                                 <span class="flex items-center"><i class="fas fa-university mr-1.5 w-3 text-gray-400"></i> {{ $app->user->university?->name ?? $app->user->school?->name ?? $app->user->asal_instansi ?? '-' }}</span>
                                                 @if($app->letter_number)
-                                                    <span class="flex items-center font-medium text-teal-700"><i class="fas fa-file-signature mr-1.5 w-3"></i> No. Surat: {{ $app->letter_number }}</span>
+                                                    <span class="flex items-center font-medium text-teal-700 dark:text-teal-400"><i class="fas fa-file-signature mr-1.5 w-3"></i> No. Surat: {{ $app->letter_number }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -128,7 +128,7 @@
                                         
                                         @if($app->is_automatic_placement)
                                             <div class="mb-1.5">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 gap-1">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-900 gap-1">
                                                     <i class="fas fa-magic text-[8px]"></i> Penempatan Otomatis
                                                 </span>
                                             </div>
@@ -141,7 +141,7 @@
                                                 <i class="fas fa-arrow-right mx-1.5 text-gray-300 text-[10px]"></i>
                                                 <span>{{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}</span>
                                             </div>
-                                            <div class="text-[10px] text-teal-600 font-semibold mt-0.5 ml-1">
+                                            <div class="text-[10px] text-teal-600 dark:text-teal-400 font-semibold mt-0.5 ml-1">
                                                 Durasi: {{ \Carbon\Carbon::parse($app->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($app->tanggal_selesai)) }} Hari
                                             </div>
                                         @else
@@ -150,11 +150,11 @@
 
                                         <div class="mt-1">
                                             @if($app->position->kuota > 0)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800/40">
                                                     Sisa Kuota: {{ $app->position->kuota }}
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-800/40">
                                                     Kuota Penuh (0)
                                                 </span>
                                             @endif
@@ -172,14 +172,14 @@
                                          <i class="{{ $statusIcon }}"></i> {{ $statusLabel }}
                                      </span>
 
-                                    @if($app->status == 'diterima')
+                                    @if($app->status?->value == 'diterima')
                                         <div class="mt-2 text-[10px] text-gray-500 dark:text-gray-400 font-medium">
                                             Pembimbing Lapangan: <span class="text-gray-700 dark:text-gray-300">{{ $app->pembimbing_lapangan->name ?? 'Belum Ada' }}</span>
                                         </div>
                                     @endif
 
-                                    @if($app->rejected_reason && in_array($app->status, ['ditolak', 'dibatalkan']))
-                                        <div class="mt-1 text-[10px] text-red-600 bg-red-50 p-1.5 rounded max-w-[180px] mx-auto truncate" title="{{ $app->rejected_reason }}">
+                                    @if($app->rejected_reason && in_array($app->status?->value, ['ditolak', 'dibatalkan']))
+                                        <div class="mt-1 text-[10px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 p-1.5 rounded max-w-[180px] mx-auto truncate" title="{{ $app->rejected_reason }}">
                                             Catatan: {{ $app->rejected_reason }}
                                         </div>
                                     @endif
@@ -198,7 +198,7 @@
                                         @if($canAct)
                                             {{-- Label konteks jika bukan pending --}}
                                             @if(($app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status) === 'menunggu')
-                                                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full mb-0.5">
+                                                <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 px-2 py-0.5 rounded-full mb-0.5">
                                                     <i class="fas fa-clock mr-1"></i>Dalam Waiting List
                                                 </span>
                                             @endif
@@ -217,7 +217,7 @@
                                                     </button>
                                                 @endif
 
-                                                <button type="button" @click="openReject('{{ route('dinas.pelamar.tolak', $app->id) }}', '{{ $app->user->name }}')" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-600 border border-red-200 text-xs font-bold rounded-lg hover:bg-red-50 active:scale-95 transition shadow-sm" title="Tolak Peserta">
+                                                <button type="button" @click="openReject('{{ route('dinas.pelamar.tolak', $app->id) }}', '{{ $app->user->name }}')" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/40 text-xs font-bold rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 active:scale-95 transition shadow-sm" title="Tolak Peserta">
                                                     <i class="fas fa-times mr-1"></i> Tolak
                                                 </button>
                                             </div>
@@ -225,7 +225,7 @@
 
                                         <!-- Tombol In-Browser PDF Viewer -->
                                         @if($app->surat_pengantar_path)
-                                            <button type="button" @click="openPdf('{{ route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) }}', 'Surat Pengantar - {{ $app->user->name }}')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline flex items-center cursor-pointer bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100 transition">
+                                            <button type="button" @click="openPdf('{{ route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) }}', 'Surat Pengantar - {{ $app->user->name }}')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline flex items-center cursor-pointer bg-indigo-50 dark:bg-indigo-950/30 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/50 transition">
                                                 <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> Lihat Surat
                                             </button>
                                         @else
@@ -298,7 +298,7 @@
                         @csrf
                         <div class="p-6">
                             <div class="flex items-center gap-3 mb-4 text-red-600">
-                                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center font-bold text-lg">
+                                <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center font-bold text-lg">
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </div>
                                 <div>
@@ -309,7 +309,7 @@
 
                             <div class="mb-4">
                                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Alasan Penolakan / Catatan untuk Peserta <span class="text-red-500">*</span></label>
-                                <textarea name="alasan" rows="3" required placeholder="Misal: Kuota periode tersebut sudah penuh, atau berkas surat pengantar tidak sesuai..." class="w-full text-xs rounded-xl border border-gray-300 dark:border-gray-600 focus:ring-red-500 focus:border-red-500 p-3"></textarea>
+                                <textarea name="alasan" rows="3" required placeholder="Misal: Kuota periode tersebut sudah penuh, atau berkas surat pengantar tidak sesuai..." class="w-full text-xs rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-red-500 focus:border-red-500 p-3"></textarea>
                                 <p class="text-[10px] text-gray-400 mt-1">Alasan ini akan dikirimkan ke email peserta dan tercatat di sistem.</p>
                             </div>
 

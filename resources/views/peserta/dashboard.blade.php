@@ -84,13 +84,13 @@
                     <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-gradient-to-r from-teal-50/50 via-white to-teal-50/20">
                         
                         <div class="w-full md:w-auto text-center md:text-left">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-100 text-blue-800 border-blue-200' : ($activeApp->display_status 'belum mulai' 'bg-indigo-100 text-indigo-800 border-indigo-200' 'bg-teal-100 text-teal-800 border-teal-200') }} mb-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-100 text-blue-800 border-blue-200' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-teal-100 text-teal-800 border-teal-200') }} mb-2">
                                 <i class="fas fa-check-circle mr-1"></i> Status: {{ $activeApp->display_status == 'selesai' ? 'Telah Selesai' : ($activeApp->display_status == 'belum mulai' ? 'Belum Mulai' : 'Sedang Magang Aktif') }}
                             </span>
                             <h3 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-1">Halo, {{ Auth::user()->name }}!</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir.' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan untuk mengisi logbook dan melakukan absensi setiap hari kerja.') }}</p>
                             
-                            <div class="inline-flex flex-col sm:flex-row gap-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-150">
+                            <div class="inline-flex flex-col sm:flex-row gap-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
                                     Jam Masuk: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_masuk)->format('H:i') }} WIB
@@ -130,7 +130,7 @@
 
                             @elseif($attendanceToday->status == 'hadir' && empty($attendanceToday->clock_out))
                                 <div class="flex flex-col items-center gap-3 w-full sm:w-auto">
-                                    <div class="text-xs font-bold text-teal-700 bg-teal-50 px-4 py-2 rounded-lg border border-teal-150">
+                                    <div class="text-xs font-bold text-teal-700 bg-teal-50 px-4 py-2 rounded-lg border border-teal-200">
                                         <i class="fas fa-check-circle mr-1"></i> Datang: {{ \Carbon\Carbon::parse($attendanceToday->clock_in)->format('H:i') }}
                                     </div>
                                     <form id="form-absen-pulang" action="{{ route('peserta.absen.pulang') }}" method="POST" class="w-full sm:w-auto">

@@ -9,7 +9,7 @@ class InstansiPolicy
 {
     public function before(User $user, string $ability): ?bool
     {
-        return $user->role === 'admin_kota' ? true : null;
+        return $user->hasPortalRole('admin_kota') ? true : null;
     }
 
     public function view(User $user, Instansi $instansi): bool

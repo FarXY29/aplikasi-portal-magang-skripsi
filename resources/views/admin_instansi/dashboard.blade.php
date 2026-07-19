@@ -18,16 +18,16 @@
                 $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
             @endphp
             @if(!empty($globalAnnouncement))
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 p-6 rounded-r-2xl shadow-sm border border-amber-100 flex gap-4 items-start relative overflow-hidden mb-6">
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-amber-500 p-6 rounded-r-2xl shadow-sm border border-amber-100 dark:border-amber-900/50 flex gap-4 items-start relative overflow-hidden mb-6">
                     <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-amber-500 pointer-events-none">
                         <i class="fas fa-bullhorn text-9xl"></i>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-inner">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/45 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-inner">
                         <i class="fas fa-bullhorn text-lg"></i>
                     </div>
                     <div class="flex-grow">
-                        <h4 class="text-sm font-extrabold text-amber-800 uppercase tracking-wider mb-1">Pengumuman Kota Banjarmasin</h4>
-                        <div class="text-sm text-amber-950 font-semibold leading-relaxed prose prose-amber max-w-none">
+                        <h4 class="text-sm font-extrabold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-1">Pengumuman Kota Banjarmasin</h4>
+                        <div class="text-sm text-amber-950 dark:text-amber-300 font-semibold leading-relaxed prose prose-amber dark:prose-invert max-w-none">
                             {!! nl2br(e($globalAnnouncement)) !!}
                         </div>
                     </div>
@@ -35,7 +35,7 @@
             @endif
 
             <div class="relative bg-gradient-to-r from-teal-600 to-teal-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-teal-100 mb-6 sm:mb-10 overflow-hidden text-white">
-                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white dark:bg-gray-800 opacity-10 rounded-full blur-3xl"></div>
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white dark:bg-gray-800/10 opacity-10 rounded-full blur-3xl"></div>
                 <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-teal-400 opacity-20 rounded-full blur-2xl"></div>
 
                 <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
@@ -80,8 +80,8 @@
                 if ($lastMonth > 0) {
                     $growth = round(($selisih / $lastMonth) * 100, 1);
                     $trendIcon = $growth >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-                    $trendColor = $growth >= 0 ? 'text-green-500' : 'text-red-500';
-                    $trendBg = $growth >= 0 ? 'bg-green-50' : 'bg-red-50';
+                    $trendColor = $growth >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
+                    $trendBg = $growth >= 0 ? 'bg-green-50 dark:bg-green-950/20' : 'bg-red-50 dark:bg-red-950/20';
                 } else {
                     $growth = $currentMonth > 0 ? 100 : 0;
                     $trendIcon = 'fa-minus';
@@ -129,10 +129,10 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Statistik jumlah pelamar baru.</p>
                         </div>
                         
-                        <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-xl flex text-xs font-bold w-full sm:w-auto justify-between sm:justify-start">
-                            <button onclick="updateChart(3)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm" id="btn-3">3 Bln</button>
-                            <button onclick="updateChart(6)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm" id="btn-6">6 Bln</button>
-                            <button onclick="updateChart(12)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm text-teal-600" id="btn-12">1 Thn</button>
+                        <div class="bg-gray-200 dark:bg-gray-900 p-1 rounded-xl flex text-xs font-bold w-full sm:w-auto justify-between sm:justify-start">
+                            <button onclick="updateChart(3)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm" id="btn-3">3 Bln</button>
+                            <button onclick="updateChart(6)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm" id="btn-6">6 Bln</button>
+                            <button onclick="updateChart(12)" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white dark:bg-gray-700 shadow-sm text-teal-700 dark:text-teal-400" id="btn-12">1 Thn</button>
                         </div>
                     </div>
 
@@ -154,7 +154,7 @@
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col">
-                    <div class="mb-4 pb-4 border-b border-gray-50">
+                    <div class="mb-4 pb-4 border-b border-gray-50 dark:border-gray-700">
                         <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Asal Peserta</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Institusi pengirim terbanyak.</p>
                     </div>
@@ -179,7 +179,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                                    <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-2 py-1 rounded-md">
                                         {{ $inst->total_peserta }}
                                     </span>
                                 </div>
@@ -251,9 +251,9 @@
 
             window.updateChart = function(range) {
                 document.querySelectorAll('[id^="btn-"]').forEach(btn => {
-                    btn.className = "px-3 py-1.5 rounded-md transition hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm";
+                    btn.className = "flex-1 sm:flex-initial px-3 py-2 rounded-lg transition hover:bg-white dark:hover:bg-gray-700 hover:shadow-sm";
                 });
-                document.getElementById('btn-' + range).className = "px-3 py-1.5 rounded-md bg-white dark:bg-gray-800 shadow-sm text-teal-600 font-bold";
+                document.getElementById('btn-' + range).className = "flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white dark:bg-gray-700 shadow-sm text-teal-700 dark:text-teal-400 font-bold";
 
                 const newLabels = allLabels.slice(-range);
                 const newData = allData.slice(-range);

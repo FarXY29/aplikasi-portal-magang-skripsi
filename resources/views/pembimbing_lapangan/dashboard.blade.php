@@ -24,7 +24,7 @@
                     </div>
                     <div class="flex-grow">
                         <h4 class="text-sm font-extrabold text-amber-800 uppercase tracking-wider mb-1">Pengumuman Kota Banjarmasin</h4>
-                        <div class="text-sm text-amber-955 font-semibold leading-relaxed prose prose-amber max-w-none">
+                        <div class="text-sm text-amber-950 font-semibold leading-relaxed prose prose-amber max-w-none">
                             {!! nl2br(e($globalAnnouncement)) !!}
                         </div>
                     </div>

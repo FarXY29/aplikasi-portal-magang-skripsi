@@ -75,7 +75,7 @@ class RoleAndPermissionSeeder extends Seeder
         $roleAdminInstansi->syncPermissions([
             'create-lowongan', 'edit-lowongan', 'delete-lowongan', 'view-lowongan',
             'verify-lamaran', 'shortlist-lamaran', 'approve-lamaran', 'reject-lamaran',
-            'verify-attendance', 'view-grading', 'generate-certificate', 'verify-certificate',
+            'verify-attendance', 'batch-approve-logbook', 'view-grading', 'generate-certificate', 'verify-certificate',
             'view-executive-report', 'export-reports',
         ]);
 

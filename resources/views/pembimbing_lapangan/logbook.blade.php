@@ -75,7 +75,7 @@
                                 <input type="hidden" name="date" value="{{ $selectedDate }}">
                             @else
                                 <input type="date" name="date" value="{{ $selectedDate }}" onchange="this.form.submit()" 
-                                    class="border-gray-255 rounded-xl text-xs shadow-sm focus:border-teal-500 focus:ring-teal-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition py-1.5 px-3">
+                                    class="border-gray-300 rounded-xl text-xs shadow-sm focus:border-teal-500 focus:ring-teal-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition py-1.5 px-3">
                             @endif
                         </div>
                     @endif
@@ -219,8 +219,8 @@
                                         <div class="w-full lg:w-1/3 flex-shrink-0">
                                             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Dokumentasi</h4>
                                             @if($log->bukti_foto_path)
-                                                <div class="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 cursor-zoom-in" onclick="openImageModal('{{ Storage::url($log->bukti_foto_path) }}')">
-                                                    <img src="{{ Storage::url($log->bukti_foto_path) }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500">
+                                                <div class="relative group rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 cursor-zoom-in" onclick="openImageModal('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500">
                                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition"></div>
                                                 </div>
                                                 <p class="text-[10px] text-gray-400 mt-2 text-center">Klik gambar untuk memperbesar</p>

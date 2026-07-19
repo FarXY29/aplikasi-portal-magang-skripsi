@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationAcceptedMail;
 use App\Mail\ApplicationRejectedMail;
+use App\Services\AuditLogService;
 
 class InternshipApplicationService
 {
+    public function __construct(private AuditLogService $auditLogService)
+    {
+    }
+
     /**
      * Check how many accepted/active interns overlap with the requested date range.
      */
@@ -106,6 +111,11 @@ class InternshipApplicationService
             // Log mail failure gracefully without aborting database update
         }
 
+        $this->auditLogService->record('application.accepted', $application, [
+            'applicant_user_id' => $application->user_id,
+            'position_id' => $application->internship_position_id,
+        ]);
+
         return true;
     }
 
@@ -134,6 +144,12 @@ class InternshipApplicationService
             // Log mail failure gracefully without aborting database update
         }
 
+        $this->auditLogService->record('application.rejected', $application, [
+            'applicant_user_id' => $application->user_id,
+            'position_id' => $application->internship_position_id,
+            'rejected_reason' => $alasan,
+        ]);
+
         return true;
     }
 
@@ -153,6 +169,12 @@ class InternshipApplicationService
         if ($oldStatus === 'diterima') {
             $this->autoReallocateQuota($application->internship_position_id);
         }
+
+        $this->auditLogService->record('application.cancelled', $application, [
+            'previous_status' => $oldStatus instanceof \BackedEnum ? $oldStatus->value : $oldStatus,
+            'new_status' => $status,
+            'reason' => $alasan,
+        ]);
 
         return true;
     }
@@ -206,6 +228,9 @@ class InternshipApplicationService
                 }
 
                 $candidate->update(['status' => 'pending']);
+                $this->auditLogService->record('application.promoted_from_waiting_list', $candidate, [
+                    'position_id' => $position->id,
+                ]);
                 $promotedCount++;
             }
 

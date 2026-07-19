@@ -74,7 +74,7 @@
                                         <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2" title="{{ $loker->deskripsi }}">
                                             {{ $loker->deskripsi }}
                                         </p>
-                                        <div class="flex items-center gap-1 text-[10px] text-teal-600 bg-teal-50 px-2 py-1 rounded w-fit font-medium">
+                                        <div class="flex items-center gap-1 text-[10px] text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/30 px-2 py-1 rounded w-fit font-medium">
                                             <i class="fas fa-graduation-cap"></i> {{ Str::limit($loker->required_major, 30) }}
                                         </div>
                                     </div>
@@ -103,11 +103,11 @@
 
                                 <td class="px-5 py-4 whitespace-nowrap text-center">
                                     @if($loker->status == 'buka')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800/40">
                                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></span> Buka
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/40">
                                             Tutup
                                         </span>
                                     @endif

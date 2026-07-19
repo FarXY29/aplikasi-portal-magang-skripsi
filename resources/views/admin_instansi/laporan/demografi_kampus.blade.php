@@ -43,24 +43,24 @@
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Total Pelamar</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-3 border border-green-100">
+                    <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-3 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <p class="text-2xl font-black text-green-700">{{ $stats['total_diterima'] }}</p>
+                    <p class="text-2xl font-black text-green-700 dark:text-green-400">{{ $stats['total_diterima'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Diterima</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3 border border-emerald-100">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-100 dark:border-emerald-900/50">
                         <i class="fas fa-flag-checkered"></i>
                     </div>
-                    <p class="text-2xl font-black text-emerald-700">{{ $stats['total_selesai'] }}</p>
+                    <p class="text-2xl font-black text-emerald-700 dark:text-emerald-400">{{ $stats['total_selesai'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Lulus / Selesai</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-3 border border-red-100">
+                    <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-3 border border-red-100 dark:border-red-900/50">
                         <i class="fas fa-user-times"></i>
                     </div>
-                    <p class="text-2xl font-black text-red-700">{{ $stats['total_ditolak'] }}</p>
+                    <p class="text-2xl font-black text-red-700 dark:text-red-400">{{ $stats['total_ditolak'] }}</p>
                     <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-1">Ditolak</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
@@ -182,7 +182,7 @@
                                                 @foreach($data['posisi'] as $posisi => $count)
                                                 <div class="flex items-center justify-between">
                                                     <span class="text-xs text-gray-700 dark:text-gray-300 font-medium truncate mr-2">{{ $posisi }}</span>
-                                                    <span class="text-xs font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex-shrink-0">{{ $count }}</span>
+                                                    <span class="text-xs font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded-full flex-shrink-0">{{ $count }}</span>
                                                 </div>
                                                 @endforeach
                                             </div>
@@ -193,8 +193,8 @@
                                             @if($data['peserta_aktif']->count() > 0)
                                             <div class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
                                                 @foreach($data['peserta_aktif'] as $peserta)
-                                                <div class="flex items-start gap-2 p-2 bg-green-50/50 rounded-lg border border-green-100/50">
-                                                    <div class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
+                                                <div class="flex items-start gap-2 p-2 bg-green-50/50 dark:bg-green-950/20 rounded-lg border border-green-100/50 dark:border-green-900/30">
+                                                    <div class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
                                                         {{ strtoupper(substr($peserta['nama'], 0, 1)) }}
                                                     </div>
                                                     <div class="min-w-0">
@@ -206,7 +206,7 @@
                                                         </p>
                                                         @endif
                                                     </div>
-                                                    <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 {{ $peserta['status'] === 'selesai' ? 'bg-emerald-100 text-emerald-700' : 'bg-green-100 text-green-700' }}">
+                                                    <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 {{ $peserta['status'] === 'selesai' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' }}">
                                                         {{ $peserta['status'] === 'selesai' ? 'Lulus' : 'Aktif' }}
                                                     </span>
                                                 </div>

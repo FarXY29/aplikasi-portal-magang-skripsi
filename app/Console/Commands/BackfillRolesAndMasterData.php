@@ -35,8 +35,7 @@ class BackfillRolesAndMasterData extends Command
         $roleCount = 0;
 
         foreach ($users as $user) {
-            if ($user->role && Role::where('name', $user->role)->exists()) {
-                $user->assignRole($user->role);
+            if ($user->syncPrimaryRole()) {
                 $roleCount++;
             }
         }

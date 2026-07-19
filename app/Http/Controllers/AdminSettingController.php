@@ -2,75 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\RequestDatabaseBackupRequest;
+use App\Http\Requests\Admin\UpdateSystemSettingsRequest;
+use App\Jobs\CreateDatabaseBackup;
+use App\Models\DatabaseBackup;
 use App\Models\Setting;
+use App\Services\AuditLogService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class AdminSettingController extends Controller
 {
     public function index()
     {
-        // Ambil semua setting dan ubah jadi array key => value
         $settings = Setting::all()->pluck('value', 'key');
-        
-        return view('admin_kota.settings.index', compact('settings'));
+        $backups = DatabaseBackup::query()
+            ->where('requested_by', auth()->id())
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $backups->each(function (DatabaseBackup $backup): void {
+            $backup->download_url = $backup->status === 'completed' && $backup->expires_at?->isFuture()
+                ? URL::temporarySignedRoute('admin.settings.backups.download', $backup->expires_at, ['backup' => $backup])
+                : null;
+        });
+
+        return view('admin_kota.settings.index', compact('settings', 'backups'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateSystemSettingsRequest $request, AuditLogService $auditLogService)
     {
-        // 1. Simpan Nama Aplikasi
-        Setting::updateOrCreate(
-            ['key' => 'app_name'],
-            ['value' => $request->input('app_name')]
-        );
+        $validated = $request->validated();
+        foreach (['app_name', 'announcement', 'pejabat_name', 'pejabat_nip', 'pejabat_jabatan'] as $key) {
+            Setting::updateOrCreate(['key' => $key], ['value' => $validated[$key] ?? null]);
+        }
 
-        // 2. Simpan Pengumuman
-        Setting::updateOrCreate(
-            ['key' => 'announcement'],
-            ['value' => $request->input('announcement')]
-        );
-
-        // 3. Simpan Data Pejabat (Nama & NIP)
-        Setting::updateOrCreate(['key' => 'pejabat_name'], ['value' => $request->input('pejabat_name')]);
-        Setting::updateOrCreate(['key' => 'pejabat_nip'], ['value' => $request->input('pejabat_nip')]);
-        Setting::updateOrCreate(['key' => 'pejabat_jabatan'], ['value' => $request->input('pejabat_jabatan')]);
-
-        // 4. Handle Upload Tanda Tangan
         if ($request->hasFile('ttd_image')) {
-            // Hapus file lama jika ada
             $oldImage = Setting::where('key', 'ttd_image')->value('value');
             if ($oldImage && Storage::disk('public')->exists($oldImage)) {
                 Storage::disk('public')->delete($oldImage);
             }
 
-            // Simpan file baru
             $path = $request->file('ttd_image')->store('settings', 'public');
-            
-            Setting::updateOrCreate(
-                ['key' => 'ttd_image'],
-                ['value' => $path]
-            );
+            Setting::updateOrCreate(['key' => 'ttd_image'], ['value' => $path]);
         }
+
+        $auditLogService->record('system_settings.updated', null, [
+            'updated_keys' => array_keys($validated),
+        ]);
 
         return back()->with('success', 'Pengaturan sistem berhasil diperbarui.');
     }
 
-    public function backupDatabase()
+    public function requestBackup(RequestDatabaseBackupRequest $request, AuditLogService $auditLogService)
     {
-        try {
-            $filename = 'backup_' . env('DB_DATABASE') . '_' . date('Y-m-d_H-i-s') . '.sql';
-            $path = storage_path('app/public/backups/');
-            
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
-            }
-            
-            $dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:host=' . env('DB_HOST') . ';dbname=' . env('DB_DATABASE'), env('DB_USERNAME'), env('DB_PASSWORD'));
-            $dump->start($path . $filename);
-            
-            return response()->download($path . $filename)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal melakukan backup database: ' . $e->getMessage());
-        }
+        $database = Str::slug((string) config('database.connections.'.config('database.default').'.database'), '_');
+        $backup = DatabaseBackup::create([
+            'requested_by' => $request->user()->id,
+            'filename' => "backup_{$database}_".now()->format('Ymd_His').'.sql',
+            'status' => 'queued',
+        ]);
+
+        CreateDatabaseBackup::dispatch($backup);
+        $auditLogService->record('database_backup.requested', $backup, ['filename' => $backup->filename]);
+
+        return back()->with('success', 'Backup telah dimasukkan ke antrean. Halaman ini menampilkan tautan unduh setelah proses selesai.');
+    }
+
+    public function downloadBackup(Request $request, DatabaseBackup $backup)
+    {
+        abort_unless($backup->requested_by === $request->user()->id, 403);
+        abort_unless($backup->status === 'completed' && $backup->expires_at?->isFuture(), 404);
+        abort_unless($backup->stored_path && Storage::disk('private')->exists($backup->stored_path), 404);
+
+        return Storage::disk('private')->download($backup->stored_path, $backup->filename, [
+            'Cache-Control' => 'private, no-store, max-age=0',
+        ]);
     }
 }

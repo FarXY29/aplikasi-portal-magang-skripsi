@@ -18,7 +18,7 @@
 <body class="bg-gray-100 dark:bg-gray-800 flex items-center justify-center min-h-screen p-4">
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-        @if($app->status === 'selesai')
+        @if($app->status?->value === 'selesai')
         <div class="bg-green-600 p-6 text-center">
             <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 shadow">
                 <i class="fas fa-certificate text-3xl text-green-600"></i>
@@ -45,7 +45,7 @@
                 <p class="text-xs font-mono bg-gray-100 dark:bg-gray-800 inline-block px-2 py-1 mt-1 rounded text-gray-600 dark:text-gray-400">NIK/NIM: {{ $app->user->nik ?? '-' }}</p>
             </div>
 
-            @if($app->status === 'selesai')
+            @if($app->status?->value === 'selesai')
             <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
                     <p class="text-gray-500 dark:text-gray-400 text-xs">Nomor Sertifikat</p>

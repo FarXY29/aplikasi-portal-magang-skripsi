@@ -50,6 +50,8 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
+        $user->syncPrimaryRole();
+
         event(new Registered($user));
 
         // Jika role peserta atau pembimbing, jangan langsung diloginkan.

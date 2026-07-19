@@ -57,8 +57,8 @@
                             
                             @if($log->bukti_foto_path)
                                 <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" 
-                                     onclick="openImageModal('{{ Storage::url($log->bukti_foto_path) }}')">
-                                    <img src="{{ Storage::url($log->bukti_foto_path) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+                                     onclick="openImageModal('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                                         <span class="text-white text-xs font-bold flex items-center gap-1"><i class="fas fa-search-plus"></i> Zoom</span>
                                     </div>
@@ -125,7 +125,7 @@
                                     </button>
                                     
                                     <button type="submit" name="status" value="revisi" 
-                                        class="flex items-center justify-center w-full py-2 bg-white dark:bg-gray-800 text-red-600 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-50 transition shadow-sm hover:shadow-md transform active:scale-95">
+                                        class="flex items-center justify-center w-full py-2 bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-lg text-xs font-bold hover:bg-red-50 dark:hover:bg-red-950/20 transition shadow-sm hover:shadow-md transform active:scale-95">
                                         <i class="fas fa-undo mr-1.5"></i> Revisi
                                     </button>
                                 </div>

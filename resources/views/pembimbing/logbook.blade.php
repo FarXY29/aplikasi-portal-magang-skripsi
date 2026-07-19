@@ -167,7 +167,7 @@
                                             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Dokumentasi</h4>
                                             @if($log->bukti_foto_path)
                                                 <div class="relative rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
-                                                    <img src="{{ Storage::url($log->bukti_foto_path) }}" class="w-full h-48 object-cover">
+                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-48 object-cover">
                                                 </div>
                                             @else
                                                 <div class="w-full h-40 bg-gray-50 dark:bg-gray-900 rounded-xl flex flex-col items-center justify-center text-gray-400 text-xs border-2 border-dashed border-gray-200 dark:border-gray-700">

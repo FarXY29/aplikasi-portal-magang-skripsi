@@ -61,12 +61,12 @@
                                 </label>
                                 @if($filterType === 'bulanan')
                                     <input type="month" name="month" value="{{ \Carbon\Carbon::parse($selectedDate)->format('Y-m') }}" 
-                                        class="w-full border-gray-250 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition"
+                                        class="w-full border-gray-300 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition"
                                         onchange="this.form.date.value = this.value + '-01'; this.form.submit();">
                                     <input type="hidden" name="date" value="{{ $selectedDate }}">
                                 @else
                                     <input type="date" name="date" value="{{ $selectedDate }}" 
-                                        class="w-full border-gray-255 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition">
+                                        class="w-full border-gray-300 rounded-xl text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 transition">
                                     @if($filterType === 'mingguan')
                                         <p class="text-[10px] text-gray-400 mt-1.5">*Mengambil 1 minggu dari tanggal tersebut.</p>
                                     @endif
@@ -274,7 +274,7 @@
                                             </div>
                                             
                                             <div class="flex justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-2 mb-4 border border-gray-200 dark:border-gray-700">
-                                                <img src="{{ asset('storage/' . $row->proof_file) }}" class="max-h-[60vh] rounded shadow-sm hover:scale-105 transition duration-300" alt="Bukti">
+                                                <img src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($row->proof_file)]) }}" class="max-h-[60vh] rounded shadow-sm hover:scale-105 transition duration-300" alt="Bukti">
                                             </div>
                                             
                                             <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">

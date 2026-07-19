@@ -29,7 +29,10 @@ class ProfileUpdateRequest extends FormRequest
             $rules['nik'] = ['nullable', 'string', 'max:20'];
             $rules['asal_instansi'] = ['nullable', 'string', 'max:255'];
             $rules['major'] = ['nullable', 'string', 'max:255'];
-            $rules['pembimbing_sekolah_id'] = ['nullable', 'exists:users,id']; // Validasi Pembimbing
+            $rules['pembimbing_sekolah_id'] = [
+                'nullable',
+                Rule::exists(User::class, 'id')->where('role', 'pembimbing'),
+            ];
         }
 
         // 3. Add Logic for Pembimbing Sekolah
