@@ -1,16 +1,16 @@
 <x-guest-layout>
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 text-center">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100 text-center">
                     <h2 class="text-2xl font-bold mb-4 text-teal-700">Scan QR Code Verifikasi</h2>
-                    <p class="mb-6 text-gray-600">Arahkan kamera ke QR Code pada ID Card atau Sertifikat peserta untuk melakukan verifikasi data magang.</p>
+                    <p class="mb-6 text-gray-600 dark:text-gray-400">Arahkan kamera ke QR Code pada ID Card atau Sertifikat peserta untuk melakukan verifikasi data magang.</p>
                     
                     <!-- QR Reader Container -->
                     <div id="qr-reader" class="mx-auto border-2 border-dashed border-teal-300 rounded-lg overflow-hidden" style="width:100%; max-width:500px;"></div>
                     <div id="qr-reader-results" class="mt-4 font-bold text-lg text-teal-600 h-8"></div>
 
-                    <div class="mt-6 text-sm text-gray-500 pt-6 border-t border-gray-100">
+                    <div class="mt-6 text-sm text-gray-500 dark:text-gray-400 pt-6 border-t border-gray-100 dark:border-gray-700">
                         <p>Atau gunakan fitur pencarian manual jika kamera tidak tersedia.</p>
                         <form action="{{ route('certificate.search') }}" method="POST" class="mt-3 flex justify-center gap-2 max-w-sm mx-auto">
                             @csrf
