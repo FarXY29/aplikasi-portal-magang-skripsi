@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-700">
-                    <table class="min-w-full divide-y divide-gray-100">
+                    <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
                                 <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
@@ -46,7 +46,7 @@
                                 <th scope="col" class="px-5 py-3.5 text-left text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Catatan/Validasi</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse($attendances as $absen)
                                 <tr class="table-row hover:bg-gray-50 dark:hover:bg-gray-900/60 group transition duration-150">
                                     <td class="px-5 py-4 whitespace-nowrap">
@@ -54,13 +54,13 @@
                                     </td>
                                     <td class="px-5 py-4 whitespace-nowrap">
                                         @if($absen->status == 'hadir')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200">Hadir</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400 border border-green-200 dark:border-green-900/50">Hadir</span>
                                         @elseif($absen->status == 'izin')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">Izin</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-900/50">Izin</span>
                                         @elseif($absen->status == 'sakit')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">Sakit</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 dark:bg-orange-950/30 text-orange-800 dark:text-orange-400 border border-orange-200 dark:border-orange-900/50">Sakit</span>
                                         @else
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200">Alpa</span>
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-900/50">Alpa</span>
                                         @endif
                                     </td>
                                     <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-medium">

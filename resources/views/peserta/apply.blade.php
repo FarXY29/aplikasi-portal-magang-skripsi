@@ -33,10 +33,10 @@
                         </div>
                         <div class="p-6">
                             <div class="flex flex-wrap gap-2 mb-6">
-                                <span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-lg text-xs font-bold border border-teal-100 flex items-center">
+                                <span class="px-3 py-1 bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 rounded-lg text-xs font-bold border border-teal-100 dark:border-teal-900/50 flex items-center">
                                     <i class="fas fa-graduation-cap mr-1.5"></i> {{ $position->required_major }}
                                 </span>
-                                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100 flex items-center">
+                                <span class="px-3 py-1 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 rounded-lg text-xs font-bold border border-blue-100 dark:border-blue-900/50 flex items-center">
                                     <i class="fas fa-users mr-1.5"></i> Kuota: {{ $position->kuota }}
                                 </span>
                             </div>
@@ -46,9 +46,9 @@
                                 {!! $position->deskripsi !!}
                             </div>
 
-                            <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4 flex gap-3">
+                            <div class="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-100 dark:border-yellow-900/50 rounded-xl p-4 flex gap-3">
                                 <i class="fas fa-lightbulb text-yellow-500 mt-0.5"></i>
-                                <p class="text-xs text-yellow-800">
+                                <p class="text-xs text-yellow-800 dark:text-yellow-400">
                                     Pastikan tanggal magang yang Anda ajukan sesuai dengan ketentuan kampus dan ketersediaan kuota instansi.
                                 </p>
                             </div>
@@ -66,7 +66,7 @@
 
                         <div class="p-8">
                             @if(session('error'))
-                                <div class="mb-6 bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-xl flex items-start gap-3">
+                                <div class="mb-6 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl flex items-start gap-3">
                                     <i class="fas fa-exclamation-circle mt-0.5"></i>
                                     <div>
                                         <p class="font-bold text-sm">Gagal Mengirim Lamaran</p>
@@ -161,7 +161,7 @@
 
             if (startDate && endDate) {
                 if (new Date(endDate) < new Date(startDate)) {
-                    showResult('error', 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.', 'bg-red-50 border-red-200 text-red-700');
+                    showResult('error', 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.', 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400');
                     submitBtn.disabled = true;
                     return;
                 }
@@ -201,10 +201,10 @@
                             <div class="mt-3 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <p class="font-bold mb-2">Opsi yang tersedia:</p>
                                 <div class="flex flex-col gap-2">
-                                    <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-md text-xs font-bold border border-yellow-300 transition">
+                                    <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 dark:bg-yellow-950/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-400 rounded-md text-xs font-bold border border-yellow-300 dark:border-yellow-900 transition">
                                         <i class="fas fa-clock mr-1"></i> Daftar & Masuk Daftar Tunggu (Otomatis diterima saat ada yg selesai)
                                     </button>
-                                    <button type="button" onclick="setStartDate('${data.suggestion_date}')" class="text-left w-full px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-md text-xs font-bold border border-teal-200 transition">
+                                    <button type="button" onclick="setStartDate('${data.suggestion_date}')" class="text-left w-full px-3 py-2 bg-teal-50 dark:bg-teal-950/30 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-400 rounded-md text-xs font-bold border border-teal-200 dark:border-teal-900 transition">
                                         <i class="fas fa-calendar-check mr-1"></i> Ganti Tanggal Mulai ke ${data.suggestion_text}
                                     </button>
                                 </div>
@@ -213,7 +213,7 @@
                     } else {
                         errorMessage += `
                             <div class="mt-3 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-md text-xs font-bold border border-yellow-300 transition">
+                                <button type="button" onclick="setWaitingList()" class="text-left w-full px-3 py-2 bg-yellow-100 dark:bg-yellow-950/30 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 text-yellow-800 dark:text-yellow-400 rounded-md text-xs font-bold border border-yellow-300 dark:border-yellow-900 transition">
                                     <i class="fas fa-clock mr-1"></i> Daftar & Masuk Daftar Tunggu (Otomatis diterima saat ada yg selesai)
                                 </button>
                             </div>
@@ -227,7 +227,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                showResult('error', 'Terjadi kesalahan sistem. Coba lagi nanti.', 'bg-red-50 border-red-200 text-red-700');
+                showResult('error', 'Terjadi kesalahan sistem. Coba lagi nanti.', 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400');
             });
         }
 
@@ -282,7 +282,7 @@
             submitBtn.innerHTML = '<i class="fas fa-clipboard-list"></i> Kirim sebagai Daftar Tunggu';
             
             // Tampilkan info tambahan
-            showResult('success', 'Anda memilih untuk masuk Daftar Tunggu. Silakan klik tombol kirim di bawah.', 'bg-yellow-50 border-yellow-200 text-yellow-800');
+            showResult('success', 'Anda memilih untuk masuk Daftar Tunggu. Silakan klik tombol kirim di bawah.', 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-900/50 text-yellow-800 dark:text-yellow-400');
         };
 
         startInput.addEventListener('change', validateDates);

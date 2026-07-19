@@ -36,7 +36,7 @@
                         </div>
                         <div class="p-6 space-y-4">
                             <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                                <div class="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
                                     <i class="fas fa-university"></i>
                                 </div>
                                 <div>
@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                                     <i class="fas fa-balance-scale"></i>
                                 </div>
                                 <div>
@@ -56,7 +56,7 @@
                             </div>
 
                             <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                                <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
                                     <i class="fas fa-check-double"></i>
                                 </div>
                                 <div>
@@ -65,9 +65,9 @@
                                 </div>
                             </div>
 
-                            <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 flex gap-3 mt-4">
+                            <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/50 rounded-xl p-4 flex gap-3 mt-4">
                                 <i class="fas fa-info-circle text-teal-600 mt-0.5"></i>
-                                <p class="text-[11px] text-teal-800 leading-relaxed">
+                                <p class="text-[11px] text-teal-800 dark:text-teal-400 leading-relaxed">
                                     Jalur ini membantu dinas yang sedang kekurangan tenaga magang dan menjamin peluang diterimanya pendaftaran Anda lebih besar karena didistribusikan ke dinas dengan kuota longgar.
                                 </p>
                             </div>
@@ -86,7 +86,7 @@
 
                         <div class="p-8">
                             @if(session('error'))
-                                <div class="mb-6 bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-xl flex items-start gap-3">
+                                <div class="mb-6 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl flex items-start gap-3">
                                     <i class="fas fa-exclamation-circle mt-0.5"></i>
                                     <div>
                                         <p class="font-bold text-sm">Gagal Melakukan Pendaftaran</p>

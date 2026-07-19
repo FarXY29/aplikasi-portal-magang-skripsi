@@ -47,7 +47,7 @@
                         @php
                             $appStatus = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status;
                         @endphp
-                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4 {{ $appStatus == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300' : ($appStatus == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300' : ($appStatus == 'menunggu' ? 'bg-orange-50/50 border-orange-100' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-teal-200')) }}"
+                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-5 rounded-xl border transition hover:shadow-md cursor-pointer gap-4 {{ $appStatus == 'diterima' ? 'bg-teal-50/50 border-teal-100 hover:border-teal-300 dark:bg-teal-950/20 dark:border-teal-900/50 dark:hover:border-teal-700' : ($appStatus == 'selesai' ? 'bg-blue-50/50 border-blue-100 hover:border-blue-300 dark:bg-blue-950/20 dark:border-blue-900/50 dark:hover:border-blue-700' : ($appStatus == 'menunggu' ? 'bg-orange-50/50 border-orange-100 dark:bg-orange-950/20 dark:border-orange-900/50' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-teal-200 dark:hover:border-teal-800')) }}"
                             x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                             
                             <div class="w-full lg:flex-1 min-w-0">
@@ -55,12 +55,12 @@
                                     <h4 class="font-bold text-gray-900 dark:text-gray-100 text-lg leading-tight">{{ $app->position->instansi->nama_dinas }}</h4>
                                     @php
                                         $badges = [
-                                            'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'menunggu' => 'bg-orange-100 text-orange-800',
-                                            'diterima' => 'bg-green-100 text-green-800',
-                                            'belum mulai' => 'bg-indigo-100 text-indigo-800',
-                                            'selesai' => 'bg-blue-100 text-blue-800',
-                                            'ditolak' => 'bg-red-100 text-red-800'
+                                            'pending' => 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400',
+                                            'menunggu' => 'bg-orange-100 dark:bg-orange-950/30 text-orange-800 dark:text-orange-400',
+                                            'diterima' => 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400',
+                                            'belum mulai' => 'bg-indigo-100 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-400',
+                                            'selesai' => 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400',
+                                            'ditolak' => 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400'
                                         ];
                                     @endphp
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase whitespace-nowrap {{ $badges[$app->display_status] ?? 'bg-gray-100 dark:bg-gray-800' }}">
@@ -179,11 +179,11 @@
                                 </div>
 
                                 @if($app->catatan_pembimbing_lapangan)
-                                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-5 rounded-xl shadow-sm mb-6">
-                                        <h3 class="font-bold text-amber-800 text-sm flex items-center gap-2 mb-3">
+                                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-900 p-5 rounded-xl shadow-sm mb-6">
+                                        <h3 class="font-bold text-amber-800 dark:text-amber-400 text-sm flex items-center gap-2 mb-3">
                                             <i class="fas fa-lightbulb text-amber-500"></i> Pesan & Saran dari Pembimbing Lapangan
                                         </h3>
-                                        <p class="text-sm text-amber-900 italic font-medium leading-relaxed">"{{ $app->catatan_pembimbing_lapangan }}"</p>
+                                        <p class="text-sm text-amber-900 dark:text-amber-300 italic font-medium leading-relaxed">"{{ $app->catatan_pembimbing_lapangan }}"</p>
                                     </div>
                                 @endif
 
@@ -228,7 +228,7 @@
                             description="Tidak ada lamaran magang yang ditemukan atau sesuai dengan filter pencarian Anda."
                             icon="fa-inbox">
                             @if(request('status') || request('start_date') || request('end_date'))
-                                <a href="{{ route('peserta.dashboard') }}" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition">Reset Filter</a>
+                                <a href="{{ route('peserta.dashboard') }}" class="px-4 py-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-xl text-xs font-bold transition">Reset Filter</a>
                             @else
                                 <a href="{{ route('home') }}" class="px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-xl text-xs font-bold transition shadow-sm">Cari Lowongan Magang &rarr;</a>
                             @endif

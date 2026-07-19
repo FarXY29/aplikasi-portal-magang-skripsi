@@ -3,7 +3,7 @@
                         <div>
                             <div class="flex justify-between items-center mb-4">
                                 <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Progress Magang</h4>
-                                <span class="p-2 bg-teal-50 rounded-xl text-teal-600"><i class="fas fa-calendar-alt"></i></span>
+                                <span class="p-2 bg-teal-50 dark:bg-teal-950/30 rounded-xl text-teal-600 dark:text-teal-400"><i class="fas fa-calendar-alt"></i></span>
                             </div>
                             <div class="text-2xl font-black text-gray-900 dark:text-gray-100 mb-1">
                                 {{ $stats['elapsed_days'] }} <span class="text-sm font-normal text-gray-500 dark:text-gray-400">dari {{ $stats['total_days'] }} Hari</span>
@@ -15,7 +15,7 @@
                                 <span>Persentase</span>
                                 <span>{{ $stats['progress_percent'] }}%</span>
                             </div>
-                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+                            <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                                 <div class="bg-teal-600 h-2 rounded-full transition-all duration-500" style="width: {{ $stats['progress_percent'] }}%"></div>
                             </div>
                         </div>

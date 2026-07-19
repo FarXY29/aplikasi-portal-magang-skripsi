@@ -162,7 +162,7 @@ class ApplicationController extends Controller
             return response()->json([
                 'status' => 'available',
                 'message' => "Kuota Tersedia! (Terisi: {$bentrokCount} dari {$kapasitasMaksimal} kursi)",
-                'class' => 'text-green-600 bg-green-50 border-green-200'
+                'class' => 'text-green-600 bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900/50 dark:text-green-400'
             ]);
         } else {
             $lastParticipant = $conflictingAppsQuery->orderBy('tanggal_selesai', 'desc')->first();
@@ -186,7 +186,7 @@ class ApplicationController extends Controller
             return response()->json([
                 'status' => 'full',
                 'message' => $suggestionMessage,
-                'class' => 'text-red-600 bg-red-50 border-red-200',
+                'class' => 'text-red-600 bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900/50 dark:text-red-400',
                 'suggestion_date' => $suggestionDate, 
                 'suggestion_text' => $suggestionDateText
             ]);
