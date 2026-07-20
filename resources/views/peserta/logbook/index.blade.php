@@ -59,6 +59,49 @@
     </x-ui.alert>
 @endif
 
+            {{-- Premium Statistics Grid --}}
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 print:hidden">
+                <div class="stat-summary-card stagger-1 flex items-center gap-4 hover:border-teal-500 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <i class="fas fa-book text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number text-gray-800 dark:text-gray-200">{{ $activeApp->logs()->count() }}</div>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Jurnal</div>
+                    </div>
+                </div>
+
+                <div class="stat-summary-card stagger-2 flex items-center gap-4 hover:border-green-500 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <i class="fas fa-check-circle text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number text-green-600 dark:text-green-400">{{ $activeApp->logs()->where('status_validasi', 'disetujui')->count() }}</div>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Disetujui</div>
+                    </div>
+                </div>
+
+                <div class="stat-summary-card stagger-3 flex items-center gap-4 hover:border-yellow-500 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <i class="fas fa-clock text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number text-yellow-600 dark:text-yellow-400">{{ $activeApp->logs()->where('status_validasi', 'pending')->count() }}</div>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pending</div>
+                    </div>
+                </div>
+
+                <div class="stat-summary-card stagger-4 flex items-center gap-4 hover:border-red-500 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+                        <i class="fas fa-exclamation-circle text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="stat-number text-red-600 dark:text-red-400">{{ $activeApp->logs()->where('status_validasi', 'revisi')->count() }}</div>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Perlu Revisi</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
                 
                 <!-- Left Column: Form -->
