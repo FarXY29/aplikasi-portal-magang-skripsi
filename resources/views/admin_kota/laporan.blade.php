@@ -22,69 +22,69 @@
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-2 border border-teal-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-900/40 shadow-xs">
                         <i class="fas fa-building text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total_instansi'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Instansi</p>
+                    <p class="text-2xl font-black text-gray-800 dark:text-gray-100 tracking-tight">{{ $stats['total_instansi'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Instansi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-900/40 shadow-xs">
                         <i class="fas fa-briefcase text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-blue-700">{{ $stats['total_lowongan'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Lowongan Aktif</p>
+                    <p class="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tight">{{ $stats['total_lowongan'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Lowongan Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 border border-indigo-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-900/40 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-indigo-700">{{ $stats['total_pelamar'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Pelamar</p>
+                    <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">{{ $stats['total_pelamar'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Pelamar</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-2 border border-green-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-3 border border-green-100 dark:border-green-900/40 shadow-xs">
                         <i class="fas fa-user-check text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-green-700">{{ $stats['total_diterima'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Diterima / Lulus</p>
+                    <p class="text-2xl font-black text-green-600 dark:text-green-400 tracking-tight">{{ $stats['total_diterima'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Diterima / Lulus</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2 border border-amber-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-900/40 shadow-xs">
                         <i class="fas fa-percentage text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-amber-700">{{ $stats['avg_seleksi_rate'] }}%</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Seleksi Kota</p>
+                    <p class="text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">{{ $stats['avg_seleksi_rate'] }}%</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Seleksi Kota</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-2 border border-rose-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-100 dark:border-rose-900/40 shadow-xs">
                         <i class="fas fa-award text-xs"></i>
                     </div>
-                    <p class="text-[10px] font-extrabold text-rose-700 truncate w-full px-1" title="{{ $stats['fav_dinas'] }}">{{ $stats['fav_dinas'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1.5">Instansi Favorit</p>
+                    <p class="text-xs font-extrabold text-rose-600 truncate w-full px-1" title="{{ $stats['fav_dinas'] }}">{{ $stats['fav_dinas'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-2">Instansi Favorit</p>
                 </div>
             </div>
 
-            {{-- Highlight Banner --}}
-            <div class="bg-gradient-to-r from-teal-700 to-emerald-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-700/20 flex flex-col sm:flex-row items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+            {{-- Highlight Banner (Modern Glassmorphic Visual Layout) --}}
+            <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-700 rounded-3xl p-6 text-white shadow-lg border border-teal-600/20 flex flex-col sm:flex-row items-center gap-6">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-3xl flex-shrink-0 border border-white/20 shadow-md">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                <div class="text-center sm:text-left flex-grow">
-                    <p class="text-xs font-bold uppercase tracking-wider text-teal-100">Statistik Rekapitulasi Program Magang Kota</p>
-                    <p class="text-xl font-black mt-0.5">Maju Bersama {{ $stats['total_instansi'] }} Instansi Pemerintahan</p>
-                    <p class="text-sm text-teal-50 font-medium">Tingkat seleksi kelulusan peserta kota berada pada kisaran {{ $stats['avg_seleksi_rate'] }}%.</p>
+                <div class="text-center sm:text-left flex-grow space-y-1">
+                    <p class="text-[10px] font-extrabold uppercase tracking-widest text-teal-200">Statistik Rekapitulasi Program Magang Kota</p>
+                    <h2 class="text-xl font-extrabold mt-0.5 tracking-tight">Maju Bersama {{ $stats['total_instansi'] }} Instansi Pemerintahan</h2>
+                    <p class="text-xs text-teal-50 font-medium">Tingkat seleksi kelulusan peserta kota berada pada kisaran {{ $stats['avg_seleksi_rate'] }}%.</p>
                 </div>
                 @if($laporan->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download PDF">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-900 rounded-xl hover:bg-teal-50 transition text-xs font-extrabold shadow-sm hover:shadow active:scale-95" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download Excel">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-900 rounded-xl hover:bg-teal-50 transition text-xs font-extrabold shadow-sm hover:shadow active:scale-95" title="Download Excel">
                         <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 rounded-xl hover:bg-teal-50 transition text-sm font-bold shadow-md" title="Download CSV">
+                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white text-teal-900 rounded-xl hover:bg-teal-50 transition text-xs font-extrabold shadow-sm hover:shadow active:scale-95" title="Download CSV">
                         <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>
