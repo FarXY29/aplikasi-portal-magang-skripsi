@@ -159,11 +159,14 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_cannot_submit_logbook_outside_internship_period()
     {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
         $user = User::factory()->create([
             'role' => 'peserta',
             'nik' => '1234567890123456',
             'asal_instansi' => 'Universitas Indonesia',
         ]);
+        $user->assignRole('peserta');
 
         $instansi = \App\Models\Instansi::create([
             'nama_dinas' => 'Dinas Test',

@@ -121,12 +121,21 @@
                                     <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center gap-2">
                                         <i class="fas fa-file-contract"></i> Surat Balasan
                                     </a>
-                                    <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
-                                        <i class="fas fa-certificate"></i> Sertifikat
-                                    </a>
-                                    <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition shadow-sm flex items-center gap-2">
-                                        <i class="fas fa-file-alt"></i> Transkrip
-                                    </a>
+                                    @if(empty($app->saran_peserta))
+                                        <button type="button" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-sm font-bold cursor-not-allowed flex items-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
+                                            <i class="fas fa-lock"></i> Sertifikat (Kunci)
+                                        </button>
+                                        <button type="button" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-sm font-bold cursor-not-allowed flex items-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
+                                            <i class="fas fa-lock"></i> Transkrip (Kunci)
+                                        </button>
+                                    @else
+                                        <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
+                                            <i class="fas fa-certificate"></i> Sertifikat
+                                        </a>
+                                        <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition shadow-sm flex items-center gap-2">
+                                            <i class="fas fa-file-alt"></i> Transkrip
+                                        </a>
+                                    @endif
                                     
 
                                 @endif

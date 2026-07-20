@@ -40,6 +40,75 @@
     </x-ui.alert>
 @endif
 
+            @php
+                $profileComplete = !empty(Auth::user()->nik) && !empty(Auth::user()->asal_instansi);
+                $hasApplications = $myApplications->count() > 0;
+                
+                // Determine current active stage
+                $currentStage = 1;
+                if (!$profileComplete) {
+                    $currentStage = 1; // Lengkapi Profil
+                } elseif ($profileComplete && !$hasApplications) {
+                    $currentStage = 2; // Cari & Lamar Lowongan
+                } elseif ($hasApplications && !$activeApp) {
+                    $currentStage = 3; // Menunggu Seleksi
+                } elseif ($activeApp && $activeApp->display_status === 'belum mulai') {
+                    $currentStage = 3; // Menunggu Mulai
+                } elseif ($activeApp && $activeApp->status?->value === 'diterima') {
+                    $currentStage = 4; // Aktif Magang
+                } elseif ($activeApp && $activeApp->status?->value === 'selesai' && empty($activeApp->saran_peserta)) {
+                    $currentStage = 5; // Beri Evaluasi / Saran
+                } else {
+                    $currentStage = 6; // Selesai / Cetak Sertifikat
+                }
+                
+                $stages = [
+                    1 => ['name' => 'Profil', 'desc' => 'Lengkapi NIK & Instansi', 'icon' => 'fa-user-edit'],
+                    2 => ['name' => 'Lamar', 'desc' => 'Pilih & Lamar Lowongan', 'icon' => 'fa-search'],
+                    3 => ['name' => 'Seleksi', 'desc' => 'Proses Peninjauan', 'icon' => 'fa-file-signature'],
+                    4 => ['name' => 'Magang', 'desc' => 'Absen & Logbook', 'icon' => 'fa-briefcase'],
+                    5 => ['name' => 'Evaluasi', 'desc' => 'Saran & Kuesioner', 'icon' => 'fa-comment-alt'],
+                    6 => ['name' => 'Sertifikat', 'desc' => 'Unduh Sertifikat', 'icon' => 'fa-award'],
+                ];
+            @endphp
+
+            {{-- Horizontal Visual Progress Stepper --}}
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700/60 overflow-hidden mb-6">
+                <h3 class="text-sm font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+                    <i class="fas fa-route text-teal-500"></i> Alur Perjalanan Magang Anda
+                </h3>
+                <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-y-6 gap-x-2">
+                    @foreach($stages as $index => $stage)
+                        <div class="flex items-center gap-3 md:flex-col md:text-center md:flex-1 relative">
+                            {{-- Connector Line --}}
+                            @if($index < 6)
+                                <div class="hidden md:block absolute top-5 left-1/2 right-[-50%] h-[3px] {{ $currentStage > $index ? 'bg-teal-500' : 'bg-gray-200 dark:bg-gray-700' }} -z-0"></div>
+                            @endif
+
+                            {{-- Circle Badge --}}
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 font-bold transition duration-300 relative z-10
+                                {{ $currentStage > $index 
+                                    ? 'bg-teal-500 border-teal-500 text-white shadow-md shadow-teal-500/20' 
+                                    : ($currentStage == $index 
+                                        ? 'bg-white dark:bg-gray-800 border-teal-500 text-teal-600 dark:text-teal-400 shadow-md shadow-teal-500/10 ring-4 ring-teal-50 dark:ring-teal-950/20' 
+                                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400') }}">
+                                @if($currentStage > $index)
+                                    <i class="fas fa-check text-xs"></i>
+                                @else
+                                    <i class="fas {{ $stage['icon'] }} text-xs"></i>
+                                @endif
+                            </div>
+
+                            {{-- Text --}}
+                            <div class="md:mt-2">
+                                <h4 class="text-xs font-black {{ $currentStage == $index ? 'text-teal-600 dark:text-teal-400' : ($currentStage > $index ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400') }}">{{ $stage['name'] }}</h4>
+                                <p class="text-[10px] text-gray-400 font-semibold mt-0.5 leading-tight md:max-w-[120px] md:mx-auto">{{ $stage['desc'] }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             @if(session('error'))
     <x-ui.alert type="error" class="mb-4">
         {{ session('error') }}
@@ -183,6 +252,42 @@
                     </div>
                     @include('peserta.dashboard._gps-widget')
                 </div>
+
+                {{-- Card Input Saran / Evaluasi (Gating Certificate Download) --}}
+                @if($activeApp && $activeApp->status?->value === 'selesai' && empty($activeApp->saran_peserta))
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/20 dark:to-blue-950/20 rounded-3xl p-6 md:p-8 border border-indigo-100 dark:border-indigo-900/50 shadow-md">
+                        <div class="flex flex-col md:flex-row gap-6 items-start justify-between">
+                            <div class="flex gap-4 items-start">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 border border-indigo-200/50 shadow-inner">
+                                    <i class="fas fa-comment-alt text-xl"></i>
+                                </div>
+                                <div class="space-y-1">
+                                    <h3 class="text-gray-900 dark:text-gray-100 font-extrabold text-lg md:text-xl tracking-tight flex items-center gap-2">
+                                        Isi Evaluasi & Saran Magang
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-white shadow-sm">
+                                            WAJIB
+                                        </span>
+                                    </h3>
+                                    <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm font-semibold leading-relaxed max-w-3xl">
+                                        Selamat! Masa magang Anda telah selesai. Mohon berikan saran dan evaluasi konstruktif untuk **{{ $activeApp->position->instansi->nama_dinas }}**. Evaluasi Anda bersifat **anonim** dan wajib diisi sebelum mengunduh Sertifikat & Transkrip Nilai Anda.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('peserta.saran.store', $activeApp->id) }}" method="POST" class="mt-6 space-y-4">
+                            @csrf
+                            <div>
+                                <textarea name="saran_peserta" rows="4" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-2xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm font-medium" placeholder="Tuliskan evaluasi, kritik, atau saran perbaikan untuk instansi tempat magang Anda..."></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-extrabold text-sm shadow-md shadow-indigo-600/20 active:scale-95 transition-all flex items-center gap-2">
+                                    <i class="fas fa-paper-plane"></i> Kirim Evaluasi & Buka Sertifikat
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                @endif
 
                 <!-- 2. Grid Dashboard Stats & Detail Magang -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
