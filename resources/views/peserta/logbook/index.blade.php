@@ -1,12 +1,17 @@
 <x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
+        @vite('resources/css/peserta.css')
         <style>
             .glass-effect {
                 background: rgba(255, 255, 255, 0.85);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
                 border-bottom: 1px solid rgba(243, 244, 246, 1);
+            }
+            .dark .glass-effect {
+                background: rgba(31, 41, 55, 0.85);
+                border-bottom: 1px solid rgba(55, 65, 81, 0.5);
             }
         </style>
     @endpush
@@ -49,7 +54,7 @@
                 <!-- Left Column: Form -->
                 <div class="xl:col-span-4">
                     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-8">
-                        <div class="p-6 border-b border-gray-50 bg-gradient-to-r from-teal-50 to-emerald-50">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-950/20 dark:to-emerald-950/20">
                             <h3 class="font-extrabold text-gray-800 dark:text-gray-200 flex items-center gap-2 text-lg">
                                 <i class="fas fa-pen-nib text-teal-600"></i> Tulis Jurnal Baru
                             </h3>
@@ -64,12 +69,12 @@
 
                                 <div class="mb-5">
                                     <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Deskripsi Kegiatan</label>
-                                    <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm transition-shadow hover:shadow-md resize-none" placeholder="Apa yang Anda kerjakan hari ini?" required></textarea>
+                                    <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm transition-shadow hover:shadow-md resize-none" placeholder="Apa yang Anda kerjakan hari ini?" required></textarea>
                                 </div>
 
                                 <div class="mb-5">
                                     <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Dokumentasi (Foto)</label>
-                                    <div class="relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 hover:border-teal-400 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
+                                    <div class="relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 dark:hover:bg-teal-950/20 hover:border-teal-400 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
                                         <!-- Image Preview Container -->
                                         <div id="image-preview" class="absolute inset-0 z-10 hidden bg-black">
                                             <img id="preview-img" src="" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
@@ -94,7 +99,7 @@
                                     </button>
                                 </div>
 
-                                <div class="mb-6 bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                                <div class="mb-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/40 dark:to-gray-900/40 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
                                     <div class="absolute top-0 right-0 -mt-2 -mr-2 text-gray-200 opacity-50">
                                         <i class="fas fa-map-marked-alt text-6xl"></i>
                                     </div>
@@ -130,16 +135,16 @@
                                 
                                 <!-- Status Filters -->
                                 <div class="flex flex-wrap gap-2">
-                                    <button @click="filter = 'semua'" :class="filter === 'semua' ? 'bg-gray-800 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200'" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2">
-                                        Semua <span class="bg-white dark:bg-gray-800/20 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->count() }}</span>
+                                    <button @click="filter = 'semua'" :class="filter === 'semua' ? 'bg-gray-800 text-white shadow-md dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2">
+                                        Semua <span class="bg-white/20 dark:bg-gray-700/50 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->count() }}</span>
                                     </button>
-                                    <button @click="filter = 'pending'" :class="filter === 'pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'pending'" :class="filter === 'pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
                                         Pending
                                     </button>
-                                    <button @click="filter = 'disetujui'" :class="filter === 'disetujui' ? 'bg-green-500 text-white shadow-md' : 'bg-green-50 text-green-700 hover:bg-green-100'" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'disetujui'" :class="filter === 'disetujui' ? 'bg-green-500 text-white shadow-md' : 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
                                         Disetujui
                                     </button>
-                                    <button @click="filter = 'revisi'" :class="filter === 'revisi' ? 'bg-red-500 text-white shadow-md' : 'bg-red-50 text-red-700 hover:bg-red-100'" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'revisi'" :class="filter === 'revisi' ? 'bg-red-500 text-white shadow-md' : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
                                         Revisi
                                     </button>
                                 </div>
@@ -157,35 +162,43 @@
                                     <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-check mr-1"></i> Filter Bulan</label>
                                     <input type="month" x-model="filterBulan" class="text-xs font-bold text-gray-600 dark:text-gray-400 rounded-xl border-gray-200 dark:border-gray-700 shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer">
                                 </div>
-                                <div class="ml-auto flex-1 sm:flex-none flex justify-end">
-                                    <button @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-100 px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-sm">
+                                <div class="ml-auto flex-1 sm:flex-none flex justify-end gap-2">
+                                    <button @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-100 dark:border-red-900/50 px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-sm">
                                         <i class="fas fa-times-circle"></i> Reset Filter
                                     </button>
+                                    <a href="{{ route('peserta.logbook.print') }}" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2">
+                                        <i class="fas fa-print"></i> Cetak Rekap
+                                    </a>
                                 </div>
-                                <a href="{{ route('peserta.logbook.print') }}" target="_blank" class="px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-900 transition shadow-sm flex items-center gap-2">
-                <i class="fas fa-print"></i> Cetak Rekap Logbook
-            </a>
                             </div>
                         </div>
 
                         <!-- Card Grid -->
                         <div class="p-6 bg-gray-50 dark:bg-gray-900/30 flex-1 overflow-y-auto">
                             @if($logs->isEmpty())
-                                <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
-                                    <div class="w-32 h-32 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                                        <i class="fas fa-folder-open text-4xl text-gray-300"></i>
+                                <div class="flex flex-col items-center justify-center h-full text-gray-400 py-16">
+                                    <div class="empty-state-svg mb-5">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="20" y="15" width="80" height="90" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+                                            <rect x="32" y="35" width="56" height="5" rx="2.5" fill="#cbd5e1"/>
+                                            <rect x="32" y="48" width="40" height="5" rx="2.5" fill="#cbd5e1"/>
+                                            <rect x="32" y="61" width="50" height="5" rx="2.5" fill="#cbd5e1"/>
+                                            <rect x="32" y="74" width="30" height="5" rx="2.5" fill="#e2e8f0"/>
+                                            <circle cx="60" cy="22" r="8" fill="#14b8a6" opacity="0.2"/>
+                                            <path d="M56 22 L59 25 L64 19" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                     </div>
-                                    <p class="font-bold text-gray-500 dark:text-gray-400 text-lg">Belum ada jurnal</p>
-                                    <p class="text-sm mt-1 text-center max-w-sm font-medium">Mulai tulis aktivitas pertama Anda menggunakan form di sebelah kiri.</p>
+                                    <p class="font-bold text-gray-600 dark:text-gray-400 text-xl">Belum ada jurnal</p>
+                                    <p class="text-sm mt-2 text-center max-w-sm font-medium text-gray-400">Mulai tulis aktivitas pertama Anda menggunakan form di sebelah kiri. Jurnal harian adalah bukti produktivitas Anda!</p>
                                 </div>
                             @else
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     @foreach($logs as $log)
                                         @php
                                             $badges = [
-                                                'pending' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800', 'icon' => 'fa-clock', 'border' => 'border-yellow-200'],
-                                                'disetujui' => ['bg' => 'bg-green-100', 'text' => 'text-green-800', 'icon' => 'fa-check-circle', 'border' => 'border-green-200'],
-                                                'revisi' => ['bg' => 'bg-red-100', 'text' => 'text-red-800', 'icon' => 'fa-exclamation-circle', 'border' => 'border-red-200'],
+                                                'pending' => ['bg' => 'bg-yellow-100 dark:bg-yellow-950/30', 'text' => 'text-yellow-800 dark:text-yellow-400', 'icon' => 'fa-clock', 'border' => 'border-yellow-200 dark:border-yellow-900/50'],
+                                                'disetujui' => ['bg' => 'bg-green-100 dark:bg-green-950/30', 'text' => 'text-green-800 dark:text-green-400', 'icon' => 'fa-check-circle', 'border' => 'border-green-200 dark:border-green-900/50'],
+                                                'revisi' => ['bg' => 'bg-red-100 dark:bg-red-950/30', 'text' => 'text-red-800 dark:text-red-400', 'icon' => 'fa-exclamation-circle', 'border' => 'border-red-200 dark:border-red-900/50'],
                                             ];
                                             $status = $badges[$log->status_validasi] ?? $badges['pending'];
                                         @endphp
@@ -193,7 +206,7 @@
                                         <div x-show="matchFilter('{{ $log->status_validasi }}', '{{ \Carbon\Carbon::parse($log->tanggal)->format('Y-m-d') }}')" 
                                              x-transition.opacity.duration.300ms
                                              x-data="{ showRevisiModal: false }"
-                                             class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group">
+                                             class="logbook-card status-{{ $log->status_validasi }} bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group">
                                             
                                             <!-- Status Ribbon -->
                                             <div class="absolute top-4 right-4 z-10">
@@ -211,7 +224,7 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="h-16 w-full bg-gradient-to-r from-gray-100 to-gray-50 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                                                <div class="h-16 w-full bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800/55 dark:to-gray-900/55 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
                                                     <span class="text-gray-400 text-xs font-bold uppercase tracking-widest"><i class="fas fa-image mr-1"></i> Tanpa Foto</span>
                                                 </div>
                                             @endif
@@ -219,7 +232,7 @@
                                             <!-- Content -->
                                             <div class="p-6 flex-1 flex flex-col">
                                                 <div class="flex items-center gap-3 mb-4">
-                                                    <div class="w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center shadow-inner border border-teal-100">
+                                                    <div class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shadow-inner border border-teal-100 dark:border-teal-900/50">
                                                         <i class="fas fa-calendar-alt text-sm"></i>
                                                     </div>
                                                     <div>
@@ -231,15 +244,15 @@
                                                 <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line flex-1">{{ $log->kegiatan }}</p>
                                                 
                                                 @if($log->komentar_pembimbing_lapangan)
-                                                    <div class="mt-5 bg-red-50/50 border border-red-100 rounded-2xl p-4 relative overflow-hidden">
-                                                        <div class="absolute top-0 left-0 w-1.5 h-full bg-red-400"></div>
+                                                    <div class="mt-5 bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-4 relative overflow-hidden">
+                                                        <div class="absolute top-0 left-0 w-1.5 h-full bg-red-400 dark:bg-red-500"></div>
                                                         <div class="flex gap-3">
                                                             <div class="mt-0.5">
-                                                                <i class="fas fa-comment-dots text-red-500 text-lg"></i>
+                                                                <i class="fas fa-comment-dots text-red-500 dark:text-red-400 text-lg"></i>
                                                             </div>
                                                             <div>
-                                                                <span class="block text-[10px] font-black text-red-800 uppercase tracking-wider mb-1">Catatan Pembimbing</span>
-                                                                <p class="text-xs font-medium text-red-700 leading-relaxed">{{ $log->komentar_pembimbing_lapangan }}</p>
+                                                                <span class="block text-[10px] font-black text-red-800 dark:text-red-400 uppercase tracking-wider mb-1">Catatan Pembimbing</span>
+                                                                <p class="text-xs font-medium text-red-700 dark:text-red-300 leading-relaxed">{{ $log->komentar_pembimbing_lapangan }}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -248,7 +261,7 @@
                                                 <!-- Revisi Button & Modal -->
                                                 @if($log->status_validasi === 'revisi')
                                                     <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
-                                                        <button @click="showRevisiModal = true" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-50 text-red-600 border border-red-200 rounded-2xl text-xs font-extrabold hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm group/btn hover:shadow-md hover:shadow-red-600/20">
+                                                        <button @click="showRevisiModal = true" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-2xl text-xs font-extrabold hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white hover:border-red-600 transition-all shadow-sm group/btn hover:shadow-md hover:shadow-red-600/20">
                                                             <i class="fas fa-edit mr-2 group-hover/btn:animate-bounce"></i> PERBAIKI JURNAL INI
                                                         </button>
                                                     </div>
@@ -264,8 +277,8 @@
                                                                     @method('PUT')
                                                                     <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-6">
                                                                         <div class="flex items-center gap-4 mb-6 pb-5 border-b border-gray-100 dark:border-gray-700">
-                                                                            <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 shadow-inner">
-                                                                                <i class="fas fa-edit text-red-600 text-xl"></i>
+                                                                            <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-950/40 shadow-inner">
+                                                                                <i class="fas fa-edit text-red-600 dark:text-red-400 text-xl"></i>
                                                                             </div>
                                                                             <div>
                                                                                 <h3 class="text-xl font-black text-gray-900 dark:text-gray-100" id="modal-title">
@@ -277,11 +290,11 @@
                                                                         <div class="space-y-5">
                                                                             <div>
                                                                                 <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-red-500">*</span></label>
-                                                                                <textarea name="kegiatan" rows="4" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm resize-none" required>{{ $log->kegiatan }}</textarea>
+                                                                                <textarea name="kegiatan" rows="4" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm resize-none" required>{{ $log->kegiatan }}</textarea>
                                                                             </div>
                                                                             <div>
                                                                                 <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Ganti Foto (Opsional)</label>
-                                                                                <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gray-100 dark:file:bg-gray-800 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-200 cursor-pointer border border-gray-200 dark:border-gray-700 rounded-xl transition">
+                                                                                <input type="file" name="foto" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gray-100 dark:file:bg-gray-800 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-200 cursor-pointer border border-gray-200 dark:border-gray-700 rounded-xl transition bg-white dark:bg-gray-900">
                                                                                 <p class="text-[10px] text-gray-400 mt-2 font-bold">Abaikan jika tidak ada perubahan dokumentasi.</p>
                                                                             </div>
                                                                         </div>

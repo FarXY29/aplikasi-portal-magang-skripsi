@@ -1,4 +1,7 @@
 <x-app-layout>
+    @push('head')
+        @vite('resources/css/peserta.css')
+    @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
@@ -45,17 +48,23 @@
 
             {{-- Notifikasi H-7 Magang Berakhir --}}
             @if(isset($daysRemaining) && $daysRemaining >= 0 && $daysRemaining <= 7)
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm border border-blue-100 dark:border-blue-900 flex gap-4 items-start relative overflow-hidden animate-pulse">
+                <div class="notification-banner bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm border border-blue-100 dark:border-blue-900 flex gap-4 items-start relative overflow-hidden">
                     <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-blue-500 pointer-events-none">
                         <i class="fas fa-stopwatch text-9xl"></i>
                     </div>
                     <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-inner">
-                        <i class="fas fa-info-circle text-lg"></i>
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
                     </div>
                     <div class="flex-grow">
-                        <h4 class="text-sm font-extrabold text-blue-800 dark:text-blue-400 uppercase tracking-wider mb-1">Peringatan Berakhirnya Magang</h4>
+                        <h4 class="text-sm font-extrabold text-blue-800 dark:text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+                            Peringatan Berakhirnya Magang
+                            <span class="countdown-badge-pulse inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-red-600 text-white shadow-md">
+                                <i class="fas fa-clock"></i>
+                                {{ $daysRemaining == 0 ? 'HARI INI' : $daysRemaining . ' HARI LAGI' }}
+                            </span>
+                        </h4>
                         <p class="text-sm text-blue-900 dark:text-blue-300 font-semibold leading-relaxed">
-                            Masa magang Anda akan berakhir dalam <span class="text-red-600 dark:text-red-400 text-base">{{ $daysRemaining == 0 ? 'hari ini' : $daysRemaining . ' hari lagi' }}</span>. Harap segera melengkapi semua logbook, absensi harian, dan memastikan penilaian dari pembimbing lapangan telah diselesaikan sebelum tanggal tersebut.
+                            Harap segera melengkapi semua logbook, absensi harian, dan memastikan penilaian dari pembimbing lapangan telah diselesaikan sebelum tanggal berakhir.
                         </p>
                     </div>
                 </div>
@@ -80,25 +89,34 @@
 
             @if($activeApp && in_array($activeApp->status?->value, ['diterima', 'selesai']))
                 <!-- 1. Banner Sambutan & Absen Harian -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6">
-                    <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 bg-gradient-to-r from-teal-50/50 via-white to-teal-50/20 dark:from-teal-950/20 dark:via-gray-800 dark:to-teal-950/10">
+                <div class="welcome-banner bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6">
+                    <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
                         
-                        <div class="w-full md:w-auto text-center md:text-left">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-100 text-blue-800 border-blue-200' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-teal-100 text-teal-800 border-teal-200') }} mb-2">
-                                <i class="fas fa-check-circle mr-1"></i> Status: {{ $activeApp->display_status == 'selesai' ? 'Telah Selesai' : ($activeApp->display_status == 'belum mulai' ? 'Belum Mulai' : 'Sedang Magang Aktif') }}
-                            </span>
-                            <h3 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-1">Halo, {{ Auth::user()->name }}!</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir.' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan untuk mengisi logbook dan melakukan absensi setiap hari kerja.') }}</p>
+                        <div class="w-full md:w-auto text-center md:text-left animate-fade-in-up">
+                            <div class="flex flex-col md:flex-row items-center md:items-start gap-4 mb-4">
+                                {{-- Avatar Inisial --}}
+                                <div class="welcome-banner-avatar">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-100 text-blue-800 border border-blue-200' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' : 'bg-teal-100 text-teal-800 border border-teal-200') }} mb-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $activeApp->display_status == 'selesai' ? 'bg-blue-500' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-500' : 'bg-teal-500') }} mr-1.5 animate-ping-slow"></span>
+                                        {{ $activeApp->display_status == 'selesai' ? 'Telah Selesai' : ($activeApp->display_status == 'belum mulai' ? 'Belum Mulai' : 'Sedang Magang Aktif') }}
+                                    </span>
+                                    <h3 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100">Halo, {{ Auth::user()->name }}! 👋</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir. Selamat!' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan mengisi logbook dan absensi setiap hari kerja.') }}</p>
+                                </div>
+                            </div>
                             
-                            <div class="inline-flex flex-col sm:flex-row gap-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="inline-flex flex-col sm:flex-row gap-3 text-xs font-bold text-gray-600 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                                    Jam Masuk: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_masuk)->format('H:i') }} WIB
+                                    <span class="gps-ping-dot bg-green-500"></span>
+                                    Masuk: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_masuk)->format('H:i') }} WIB
                                 </div>
                                 <div class="hidden sm:block border-l border-gray-300 dark:border-gray-600 h-4 self-center"></div>
                                 <div class="flex items-center gap-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                                    Jam Pulang: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_pulang)->format('H:i') }} WIB
+                                    <span class="gps-ping-dot bg-red-500"></span>
+                                    Pulang: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_pulang)->format('H:i') }} WIB
                                 </div>
                             </div>
                         </div>
@@ -118,7 +136,7 @@
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-masuk">
                                         <input type="hidden" name="longitude" id="lng-masuk">
-                                        <button type="submit" onclick="submitAttendanceWithGPS(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk')" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-black shadow-lg shadow-teal-600/25 transition active:scale-95 flex items-center gap-2 text-sm">
+                                        <button type="submit" id="btn-absen-masuk" onclick="handleAbsenClick(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk')" class="btn-ripple w-full sm:w-auto justify-center px-6 py-3.5 bg-gradient-to-r from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 text-white rounded-2xl font-black shadow-lg shadow-teal-600/30 transition active:scale-95 flex items-center gap-2 text-sm">
                                             <i class="fas fa-fingerprint text-base"></i> Absen Datang
                                         </button>
                                     </form>
@@ -137,7 +155,7 @@
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-pulang">
                                         <input type="hidden" name="longitude" id="lng-pulang">
-                                        <button type="submit" onclick="submitAttendanceWithGPS(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang')" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-black shadow-lg shadow-red-500/25 transition active:scale-95 flex items-center gap-2 text-sm">
+                                        <button type="submit" id="btn-absen-pulang" onclick="handleAbsenClick(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang')" class="btn-ripple w-full sm:w-auto justify-center px-6 py-3.5 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white rounded-2xl font-black shadow-lg shadow-red-500/30 transition active:scale-95 flex items-center gap-2 text-sm">
                                             <i class="fas fa-sign-out-alt text-base"></i> Absen Pulang
                                         </button>
                                     </form>
@@ -341,15 +359,27 @@
     document.addEventListener("DOMContentLoaded", autoDetectGPS);
     window.addEventListener("turbo:load", autoDetectGPS);
 
-    function submitAttendanceWithGPS(event, formId, latId, lngId) {
+    // Fungsi ripple effect
+    function addRipple(btn, event) {
+        const circle = document.createElement('span');
+        circle.classList.add('ripple-circle');
+        const rect = btn.getBoundingClientRect();
+        circle.style.left = (event.clientX - rect.left) + 'px';
+        circle.style.top  = (event.clientY - rect.top) + 'px';
+        btn.appendChild(circle);
+        setTimeout(() => circle.remove(), 650);
+    }
+
+    function handleAbsenClick(event, formId, latId, lngId, btnId) {
         event.preventDefault();
-        const btn = event.currentTarget;
+        const btn = document.getElementById(btnId);
+        addRipple(btn, event);
         const originalHtml = btn.innerHTML;
         const form = document.getElementById(formId);
         const latVal = document.getElementById(latId)?.value;
         const lngVal = document.getElementById(lngId)?.value;
 
-        if (latVal && lngVal && latVal !== "" && lngVal !== "") {
+        if (latVal && lngVal && latVal !== '' && lngVal !== '') {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengirim Absensi...</span>';
             btn.disabled = true;
             btn.classList.add('opacity-75', 'cursor-not-allowed');
@@ -362,7 +392,7 @@
             return;
         }
 
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Memeriksa GPS & Radius...</span>';
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Mendeteksi GPS...</span>';
         btn.disabled = true;
         btn.classList.add('opacity-75', 'cursor-not-allowed');
 
@@ -370,26 +400,19 @@
             function(position) {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
-
                 document.getElementById(latId).value = lat.toFixed(6);
                 document.getElementById(lngId).value = lng.toFixed(6);
-
-                btn.innerHTML = '<i class="fas fa-check"></i> <span>Lokasi Terverifikasi!</span>';
-                
-                setTimeout(() => {
-                    form.submit();
-                }, 500);
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Lokasi Terkunci! Mengirim...</span>';
+                setTimeout(() => form.submit(), 400);
             },
             function(error) {
                 btn.innerHTML = originalHtml;
                 btn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
-
-                let msg = 'Gagal mengambil lokasi GPS Anda. Untuk absensi, wajib mengaktifkan GPS/Lokasi.';
-                if (error.code === 1) msg = 'Akses Lokasi (GPS) ditolak! Silakan izinkan akses lokasi pada browser/HP Anda untuk melakukan absensi.';
-                else if (error.code === 2) msg = 'Sinyal GPS tidak ditemukan atau tidak akurat. Pastikan GPS HP Anda aktif.';
-                else if (error.code === 3) msg = 'Waktu permintaan lokasi habis (timeout). Silakan coba tekan tombol absen lagi.';
-                
+                let msg = 'Gagal mengambil lokasi GPS Anda.';
+                if (error.code === 1) msg = 'Akses Lokasi (GPS) ditolak! Izinkan akses lokasi pada browser Anda.';
+                else if (error.code === 2) msg = 'Sinyal GPS tidak ditemukan. Pastikan GPS aktif.';
+                else if (error.code === 3) msg = 'Waktu permintaan lokasi habis. Silakan coba lagi.';
                 alert(msg);
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }

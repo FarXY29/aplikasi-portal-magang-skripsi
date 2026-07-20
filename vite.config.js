@@ -60,6 +60,7 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: [
                     'resources/css/app.css',
+                    'resources/css/peserta.css',
                     'resources/js/app.js',
                 ],
                 refresh: true,

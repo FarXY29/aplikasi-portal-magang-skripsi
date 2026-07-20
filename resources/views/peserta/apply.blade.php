@@ -1,6 +1,7 @@
 <x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
+        @vite('resources/css/peserta.css')
     @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -25,7 +26,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <div class="lg:col-span-1 space-y-6">
+                <div class="lg:col-span-1 space-y-6 form-sticky-sidebar">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                         <div class="bg-gradient-to-br from-teal-600 to-teal-800 p-6 text-white">
                             <h3 class="font-bold text-lg leading-tight opacity-90">{{ $position->instansi->nama_dinas }}</h3>
@@ -80,35 +81,44 @@
                                 <input type="hidden" name="is_waiting_list" id="is_waiting_list" value="0">
 
                                 <div class="mb-8">
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Upload Surat Pengantar (PDF)</label>
-                                    <div class="flex items-center justify-center w-full">
-                                        <label for="surat" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition group">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 group-hover:text-teal-500 transition mb-2"></i>
-                                                <p class="mb-1 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold text-teal-600">Klik untuk upload</span> atau drag & drop</p>
-                                                <p class="text-xs text-gray-400">PDF (Maks. 2MB)</p>
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Upload Surat Pengantar <span class="text-red-500">*</span></label>
+                                    <label for="surat" class="upload-zone flex-col group">
+                                        <div id="upload-empty" class="flex flex-col items-center justify-center py-6">
+                                            <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
+                                                <i class="fas fa-file-pdf text-2xl text-teal-500 upload-icon"></i>
                                             </div>
-                                            <input id="surat" name="surat" type="file" class="hidden" accept=".pdf" required />
-                                        </label>
-                                    </div>
-                                    <p id="file-name" class="text-xs text-teal-600 mt-2 font-bold hidden"></p> 
-                                    @error('surat') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                            <p class="text-sm text-gray-600 dark:text-gray-400 text-center"><span class="font-bold text-teal-600">Klik untuk upload</span> atau drag & drop</p>
+                                            <p class="text-xs text-gray-400 mt-1">PDF saja (Maks. 2MB)</p>
+                                        </div>
+                                        <div id="upload-preview" class="hidden flex-col items-center py-4 gap-2">
+                                            <i class="fas fa-file-pdf text-3xl text-teal-600"></i>
+                                            <span id="file-name-chip" class="upload-success-chip"><i class="fas fa-check"></i> <span id="file-name-text"></span></span>
+                                            <span class="text-xs text-gray-400">Klik untuk ganti file</span>
+                                        </div>
+                                        <input id="surat" name="surat" type="file" class="hidden" accept=".pdf" required />
+                                    </label>
+                                    @error('surat') <p class="text-red-500 text-xs mt-2 font-bold"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p> @enderror
                                 </div>
 
                                 <div class="mb-6">
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Rencana Periode Magang</label>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
-                                        <div>
-                                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Tanggal Mulai</label>
-                                            <input type="date" id="tanggal_mulai" name="tanggal_mulai" 
-                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
-                                                min="{{ date('Y-m-d') }}" required>
+                                    <div class="date-timeline-wrapper">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="fas fa-play-circle text-teal-500 mr-1"></i>Tanggal Mulai</label>
+                                                <input type="date" id="tanggal_mulai" name="tanggal_mulai" 
+                                                    class="w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
+                                                    min="{{ date('Y-m-d') }}" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="fas fa-stop-circle text-red-500 mr-1"></i>Tanggal Selesai</label>
+                                                <input type="date" id="tanggal_selesai" name="tanggal_selesai" 
+                                                    class="w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
+                                                    min="{{ date('Y-m-d') }}" required>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Tanggal Selesai</label>
-                                            <input type="date" id="tanggal_selesai" name="tanggal_selesai" 
-                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm text-sm"
-                                                min="{{ date('Y-m-d') }}" required>
+                                        <div id="duration-badge-wrap" class="mt-3 hidden">
+                                            <span id="duration-badge" class="date-duration-badge"><i class="fas fa-clock"></i> <span id="duration-text"></span></span>
                                         </div>
                                     </div>
                                 </div>
@@ -120,7 +130,7 @@
                                     <a href="{{ route('home') }}" class="px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition text-sm">
                                         Batal
                                     </a>
-                                    <button type="submit" id="submitBtn" class="px-8 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 transition transform active:scale-95 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <button type="submit" id="submitBtn" class="btn-ripple px-8 py-3 bg-gradient-to-r from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 text-white rounded-xl font-bold shadow-lg shadow-teal-200 dark:shadow-teal-900/30 transition transform active:scale-95 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <i class="fas fa-paper-plane"></i> Kirim Lamaran
                                     </button>
                                 </div>
@@ -137,25 +147,64 @@
     <script>
     document.addEventListener('turbo:load', function() {
         const startInput = document.getElementById('tanggal_mulai');
-        const endInput = document.getElementById('tanggal_selesai');
-        const resultDiv = document.getElementById('availability-result');
-        const submitBtn = document.getElementById('submitBtn');
-        const fileInput = document.getElementById('surat');
-        const fileNameDisplay = document.getElementById('file-name');
-        
+        const endInput   = document.getElementById('tanggal_selesai');
+        const resultDiv  = document.getElementById('availability-result');
+        const submitBtn  = document.getElementById('submitBtn');
+        const fileInput  = document.getElementById('surat');
+        const uploadEmpty   = document.getElementById('upload-empty');
+        const uploadPreview = document.getElementById('upload-preview');
+        const fileNameText  = document.getElementById('file-name-text');
+        const durationWrap  = document.getElementById('duration-badge-wrap');
+        const durationText  = document.getElementById('duration-text');
         const positionId = "{{ $position->id }}"; 
 
-        // File Upload Preview
+        // Premium File Upload Preview
         fileInput.addEventListener('change', function(){
             if(this.files && this.files.length > 0){
-                fileNameDisplay.textContent = 'File terpilih: ' + this.files[0].name;
-                fileNameDisplay.classList.remove('hidden');
+                fileNameText.textContent = this.files[0].name;
+                uploadEmpty.classList.add('hidden');
+                uploadPreview.classList.remove('hidden');
+                uploadPreview.classList.add('flex');
             }
         });
+
+        // Drag & Drop
+        const uploadZone = fileInput.closest('label');
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            if(e.dataTransfer.files[0]?.type === 'application/pdf') {
+                fileInput.files = e.dataTransfer.files;
+                fileNameText.textContent = e.dataTransfer.files[0].name;
+                uploadEmpty.classList.add('hidden');
+                uploadPreview.classList.remove('hidden');
+                uploadPreview.classList.add('flex');
+            }
+        });
+
+        // Duration Calculator
+        function updateDuration() {
+            const s = startInput.value, e = endInput.value;
+            if(startInput.value) endInput.min = startInput.value;
+            if(s && e) {
+                const days = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
+                if(days > 0) {
+                    durationText.textContent = days + ' hari (' + Math.round(days/7) + ' minggu)';
+                    durationWrap.classList.remove('hidden');
+                } else {
+                    durationWrap.classList.add('hidden');
+                }
+            } else {
+                durationWrap.classList.add('hidden');
+            }
+        }
 
         function validateDates() {
             const startDate = startInput.value;
             const endDate = endInput.value;
+            updateDuration();
 
             if(startDate) endInput.min = startDate;
 
@@ -234,12 +283,11 @@
         // Helper: Tampilkan Alert
         function showResult(type, messageHtml, cssClass) {
             let icon = '';
-            if(type === 'loading') icon = '<i class="fas fa-spinner fa-spin mr-2"></i>';
+            if(type === 'loading') icon = '<i class="fas fa-circle-notch fa-spin mr-2"></i>';
             else if(type === 'success') icon = '<i class="fas fa-check-circle mr-2 text-green-600"></i>';
             else icon = '<i class="fas fa-times-circle mr-2 text-red-600"></i>';
 
-            resultDiv.className = `p-4 rounded-xl border ${cssClass}`;
-            // Menggunakan innerHTML agar tombol/link saran bisa dirender
+            resultDiv.className = `p-4 rounded-xl border availability-result-enter ${cssClass}`;
             resultDiv.innerHTML = `
                 <div class="flex items-start">
                     <div class="mt-0.5">${icon}</div>
@@ -285,8 +333,17 @@
             showResult('success', 'Anda memilih untuk masuk Daftar Tunggu. Silakan klik tombol kirim di bawah.', 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-900/50 text-yellow-800 dark:text-yellow-400');
         };
 
+        // Submit with loading state
+        document.getElementById('applyForm').addEventListener('submit', function(e) {
+            if(!submitBtn.disabled) {
+                submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mengirim Lamaran...';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            }
+        });
+
         startInput.addEventListener('change', validateDates);
         endInput.addEventListener('change', validateDates);
     });
-</script>
+    </script>
 </x-app-layout>
