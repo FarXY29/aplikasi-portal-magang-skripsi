@@ -216,16 +216,8 @@
 
         var map = L.map('map').setView([initLat, initLng], 15);
         
-        var isDarkMode = document.documentElement.classList.contains('dark');
-        var tileUrl = isDarkMode 
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var tileAttribution = isDarkMode
-            ? '© OpenStreetMap contributors, © CartoDB'
-            : '© OpenStreetMap contributors';
-
-        L.tileLayer(tileUrl, {
-            attribution: tileAttribution,
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
             maxZoom: 19
         }).addTo(map);
 
