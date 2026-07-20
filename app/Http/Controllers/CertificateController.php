@@ -89,39 +89,49 @@ class CertificateController extends Controller
     /**
      * Simpan Data & Generate PDF
      */
-    public function store(Request $request, $applicationId)
+    public function store(Request $request, $applicationId, \App\Services\CertificateService $certificateService)
     {
+        $app = Application::with('position.instansi')->findOrFail($applicationId);
+
+        // Proteksi Lintas Instansi
+        if (auth()->user()->role === 'admin_instansi' && auth()->user()->instansi_id !== $app->position->instansi_id) {
+            abort(403, 'Akses ditolak. Anda tidak berwenang mengelola data instansi lain.');
+        }
+
         $request->validate([
-            'nomor_sertifikat' => 'required|string|max:100|unique:applications,nomor_sertifikat,' . $applicationId,
+            'nomor_sertifikat' => 'required|string|max:100|unique:certificates,nomor_sertifikat',
             'tanggal_sertifikat' => 'required|date',
         ]);
 
-        $app = Application::findOrFail($applicationId);
+        // Gunakan CertificateService sebagai satu-satunya jalur resmi
+        $certificate = $certificateService->generateCertificate($app);
 
-        // 1. Simpan Data Legalitas Sertifikat
-        $app->update([
+        // Update nomor dan tanggal terbit custom
+        $certificate->update([
             'nomor_sertifikat' => $request->nomor_sertifikat,
-            // Jika kolom tanggal_sertifikat belum ada di DB, pastikan buat migrationnya atau gunakan updated_at
-            'updated_at' => $request->tanggal_sertifikat . ' ' . now()->format('H:i:s'), 
-            'token_verifikasi' => $app->token_verifikasi ?? Str::random(32), // Generate token jika belum ada
-            'status' => 'selesai' // Finalisasi status
+            'published_at' => $request->tanggal_sertifikat
         ]);
 
-        // 2. Siapkan Data untuk View PDF
+        $app->update([
+            'nomor_sertifikat' => $request->nomor_sertifikat,
+            'token_verifikasi' => $certificate->token_verifikasi,
+            'status' => 'selesai'
+        ]);
+
+        // Siapkan Data untuk View PDF
         $data = [
             'app' => $app,
             'user' => $app->user,
             'instansi' => $app->position->instansi,
             'position' => $app->position,
             'tanggal' => Carbon::parse($request->tanggal_sertifikat)->translatedFormat('d F Y'),
-            'qr_code' => route('certificate.verify', $app->token_verifikasi) // URL untuk QR Code
+            'qr_code' => route('certificate.verify', $certificate->token_verifikasi)
         ];
 
-        // 3. Generate PDF
-        $pdf = Pdf::loadView('pdf.sertifikat', $data);
+        // Generate PDF menggunakan view yang benar
+        $pdf = Pdf::loadView('pdf.peserta.sertifikat', $data);
         $pdf->setPaper('a4', 'landscape');
 
-        // Stream PDF ke browser (Preview)
         return $pdf->stream('Sertifikat-' . Str::slug($app->user->name) . '.pdf');
     }
 }
