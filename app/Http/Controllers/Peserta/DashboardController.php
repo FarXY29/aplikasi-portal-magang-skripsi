@@ -128,6 +128,10 @@ class DashboardController extends Controller
             return redirect()->route('profile.edit')->with('error', 'Mohon lengkapi NIK dan Asal Instansi sebelum download sertifikat.');
         }
 
+        if (empty($finishedApp->saran_peserta)) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Mohon isi saran dan evaluasi terlebih dahulu sebelum mengunduh sertifikat.');
+        }
+
         $pdf = Pdf::loadView('pdf.peserta.sertifikat', ['app' => $finishedApp]);
         $pdf->setPaper('a4', 'landscape');
         return $pdf->stream('Sertifikat-Magang-'.$user->name.'.pdf');
@@ -183,6 +187,10 @@ class DashboardController extends Controller
 
         if ($app->status?->value !== 'selesai' || !$app->nilai_rata_rata) {
             return back()->with('error', 'Transkrip belum tersedia. Tunggu penilaian dari pembimbing_lapangan.');
+        }
+
+        if (empty($app->saran_peserta)) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Mohon isi saran dan evaluasi terlebih dahulu sebelum mengunduh transkrip nilai.');
         }
 
         $pdf = Pdf::loadView('pdf.peserta.transkrip_nilai', compact('app'));
