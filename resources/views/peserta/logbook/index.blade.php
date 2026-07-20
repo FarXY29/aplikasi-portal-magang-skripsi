@@ -154,16 +154,16 @@
                                 
                                 <!-- Status Filters -->
                                 <div class="flex flex-wrap gap-2">
-                                    <button @click="filter = 'semua'" :class="filter === 'semua' ? 'bg-gray-800 text-white shadow-md dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2">
+                                    <button @click="filter = 'semua'" :class="filter === 'semua' ? 'bg-gray-800 text-white shadow-md dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
                                         Semua <span class="bg-white/20 dark:bg-gray-700/50 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->count() }}</span>
                                     </button>
-                                    <button @click="filter = 'pending'" :class="filter === 'pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'pending'" :class="filter === 'pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95">
                                         Pending
                                     </button>
-                                    <button @click="filter = 'disetujui'" :class="filter === 'disetujui' ? 'bg-green-500 text-white shadow-md' : 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'disetujui'" :class="filter === 'disetujui' ? 'bg-green-500 text-white shadow-md' : 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95">
                                         Disetujui
                                     </button>
-                                    <button @click="filter = 'revisi'" :class="filter === 'revisi' ? 'bg-red-500 text-white shadow-md' : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+                                    <button @click="filter = 'revisi'" :class="filter === 'revisi' ? 'bg-red-500 text-white shadow-md' : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'" class="filter-pill px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95">
                                         Revisi
                                     </button>
                                 </div>
