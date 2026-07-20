@@ -124,8 +124,20 @@ class InstansiController extends Controller
     public function destroy($id)
     {
         $instansi = Instansi::findOrFail($id);
+
+        // 1. Cek lowongan aktif
+        $activePositions = $instansi->positions()->where('internship_positions.status', 'buka')->exists();
+        // 2. Cek peserta aktif / pending / waiting list
+        $activeInterns = $instansi->applications()->whereIn('applications.status', ['diterima', 'pending', 'menunggu'])->exists();
+
+        if ($activePositions || $activeInterns) {
+            return back()->with('error', 'Instansi tidak dapat dihapus karena masih memiliki lowongan aktif atau peserta magang aktif/pending.');
+        }
+
+        // Soft Delete
         User::where('instansi_id', $instansi->id)->delete();
         $instansi->delete();
+
         return back()->with('success', 'Data INSTANSI dan Akun Admin terkait telah dihapus.');
     }
 }

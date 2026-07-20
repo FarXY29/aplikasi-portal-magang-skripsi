@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Instansi extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Kita harus mendaftarkan kolom mana saja yang boleh diisi (Mass Assignment)
     protected $fillable = [

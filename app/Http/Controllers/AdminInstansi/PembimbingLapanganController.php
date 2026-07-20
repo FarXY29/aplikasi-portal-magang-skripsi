@@ -65,6 +65,15 @@ class PembimbingLapanganController extends Controller
     public function destroyPembimbingLapangan($id)
     {
         $user = User::where('id', $id)->where('instansi_id', Auth::user()->instansi_id)->firstOrFail();
+
+        $activeBimbingan = \App\Models\Application::where('pembimbing_lapangan_id', $user->id)
+            ->whereIn('status', ['diterima', 'pending'])
+            ->exists();
+
+        if ($activeBimbingan) {
+            return back()->with('error', 'Pembimbing lapangan tidak dapat dihapus karena masih membimbing peserta aktif/pending.');
+        }
+
         $user->delete();
         return back()->with('success', 'Akun pembimbing_lapangan dihapus.');
     }
