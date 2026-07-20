@@ -79,23 +79,27 @@
 
                                 <div class="mb-5">
                                     <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Deskripsi Kegiatan</label>
-                                    <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm transition-shadow hover:shadow-md resize-none" placeholder="Apa yang Anda kerjakan hari ini?" required></textarea>
+                                    <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-sm shadow-sm transition-shadow hover:shadow-md resize-none" placeholder="Apa yang Anda kerjakan hari ini?" required maxlength="2000"></textarea>
+                                    <div class="flex justify-between items-center mt-1.5 px-1">
+                                        <span class="text-[10px] text-gray-400 dark:text-gray-500 font-bold">Maksimal 2000 karakter</span>
+                                        <span id="char-counter" class="text-[10px] text-gray-400 dark:text-gray-500 font-bold">0 / 2000</span>
+                                    </div>
                                 </div>
 
                                 <div class="mb-5">
                                     <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Dokumentasi (Foto)</label>
-                                    <div class="relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 dark:hover:bg-teal-950/20 hover:border-teal-400 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
+                                    <div class="upload-zone relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 dark:hover:bg-teal-950/20 hover:border-teal-400 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
                                         <!-- Image Preview Container -->
                                         <div id="image-preview" class="absolute inset-0 z-10 hidden bg-black">
                                             <img id="preview-img" src="" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
                                             <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <span class="text-white text-xs font-bold bg-black/50 px-3 py-1 rounded-full"><i class="fas fa-camera"></i> Ganti Foto</span>
+                                                <span class="text-white text-xs font-bold bg-black/50 px-3 py-1 rounded-full"><i class="fas fa-camera mr-1"></i> Ganti Foto</span>
                                             </div>
                                         </div>
                                         
                                         <!-- Default Empty State -->
                                         <div id="empty-state" class="flex flex-col items-center justify-center z-0">
-                                            <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                            <div class="upload-icon w-12 h-12 bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                                 <i class="fas fa-cloud-upload-alt text-teal-500 text-xl"></i>
                                             </div>
                                             <p class="text-xs font-bold text-gray-600 dark:text-gray-400">Klik untuk upload foto</p>
@@ -110,7 +114,7 @@
                                 </div>
 
                                 <div class="mb-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/40 dark:to-gray-900/40 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
-                                    <div class="absolute top-0 right-0 -mt-2 -mr-2 text-gray-200 opacity-50">
+                                    <div class="absolute top-0 right-0 -mt-2 -mr-2 text-gray-200 opacity-50 dark:opacity-10">
                                         <i class="fas fa-map-marked-alt text-6xl"></i>
                                     </div>
                                     <p class="text-[10px] font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 relative z-10">Verifikasi Lokasi GPS</p>
@@ -119,6 +123,11 @@
                                     </div>
                                     <div id="coords-display" class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 hidden font-mono relative z-10 bg-white dark:bg-gray-800/60 inline-block px-2 py-1 rounded-md">
                                         Lat: <span id="show-lat"></span>, Lng: <span id="show-lng"></span>
+                                    </div>
+                                    
+                                    <div class="mt-3 pt-3 border-t border-gray-200/60 dark:border-gray-700/60 text-xs text-gray-500 dark:text-gray-400 font-bold relative z-10 flex flex-col gap-1.5">
+                                        <span class="flex items-center gap-1.5"><i class="fas fa-building text-teal-500 text-xs"></i> Kantor: {{ $activeApp->position->instansi->nama_dinas }}</span>
+                                        <span class="flex items-center gap-1.5"><i class="fas fa-compress-arrows-alt text-teal-500 text-xs"></i> Radius Maksimal: {{ $activeApp->position->instansi->radius_absen ?? 100 }} meter</span>
                                     </div>
                                 </div>
 
@@ -497,6 +506,23 @@
         function showErrorMsg(msg, extraHtml = '') {
             statusDiv.innerHTML = `<div class="flex flex-col"><span class="text-red-500 flex items-center font-bold text-xs"><i class="fas fa-exclamation-triangle mr-1.5"></i> ${msg}</span>${extraHtml}</div>`;
             btnSubmit.disabled = true;
+        }
+
+        const textarea = document.getElementsByName("kegiatan")[0];
+        const counter = document.getElementById("char-counter");
+
+        if (textarea && counter) {
+            textarea.addEventListener("input", function() {
+                const len = textarea.value.length;
+                counter.innerText = `${len} / 2000`;
+                if (len >= 1800) {
+                    counter.className = "text-[10px] text-red-500 font-bold animate-pulse";
+                } else if (len >= 1500) {
+                    counter.className = "text-[10px] text-orange-500 font-bold";
+                } else {
+                    counter.className = "text-[10px] text-gray-400 dark:text-gray-500 font-bold";
+                }
+            });
         }
 
         requestLocation();
