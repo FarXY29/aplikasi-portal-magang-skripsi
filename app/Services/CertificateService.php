@@ -29,7 +29,7 @@ class CertificateService
         $signature_mock = hash('sha256', $application->id . $token . time());
         
         // 3. Generate QR Code
-        $url_verifikasi = route('verify.certificate', ['token' => $token]);
+        $url_verifikasi = route('certificate.verify', ['token' => $token]);
         
         // Pastikan folder public/qrcodes ada
         if (!Storage::disk('public')->exists('qrcodes')) {

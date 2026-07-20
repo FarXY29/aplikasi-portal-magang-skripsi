@@ -40,8 +40,16 @@ class LogbookController extends Controller
         
         if (!$app) return back()->with('error', 'Akses ditolak.');
 
-        if ($app->display_status === 'belum mulai') {
-            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') . '.');
+        $today = \Carbon\Carbon::today();
+        $startDate = \Carbon\Carbon::parse($app->tanggal_mulai)->startOfDay();
+        $endDate = \Carbon\Carbon::parse($app->tanggal_selesai)->endOfDay();
+
+        if ($today->lt($startDate)) {
+            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.');
+        }
+
+        if ($today->gt($endDate)) {
+            return back()->with('error', 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.');
         }
 
         // 2. LOGIKA GEOTAGGING (Cek Jarak & Radius)

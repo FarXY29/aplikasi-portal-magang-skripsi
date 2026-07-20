@@ -61,8 +61,16 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda tidak memiliki status magang aktif untuk melakukan absensi.');
         }
 
-        if ($application->display_status === 'belum mulai') {
-            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . \Carbon\Carbon::parse($application->tanggal_mulai)->translatedFormat('d F Y') . '.');
+        $today = Carbon::today();
+        $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
+        $endDate = Carbon::parse($application->tanggal_selesai)->endOfDay();
+
+        if ($today->lt($startDate)) {
+            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.');
+        }
+
+        if ($today->gt($endDate)) {
+            return back()->with('error', 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.');
         }
 
         // 2. CEK JADWAL MASUK (DINAMIS DARI DB)
@@ -145,8 +153,16 @@ class AttendanceController extends Controller
             return back()->with('error', 'Status magang tidak aktif.');
         }
 
-        if ($application->display_status === 'belum mulai') {
+        $today = Carbon::today();
+        $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
+        $endDate = Carbon::parse($application->tanggal_selesai)->endOfDay();
+
+        if ($today->lt($startDate)) {
             return back()->with('error', 'Masa magang Anda belum dimulai.');
+        }
+
+        if ($today->gt($endDate)) {
+            return back()->with('error', 'Masa magang Anda telah berakhir.');
         }
 
         // 2. CEK JADWAL PULANG (DINAMIS DARI DB)
@@ -222,8 +238,16 @@ class AttendanceController extends Controller
             return back()->with('error', 'Status magang tidak aktif.');
         }
 
-        if ($application->display_status === 'belum mulai') {
+        $today = Carbon::today();
+        $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
+        $endDate = Carbon::parse($application->tanggal_selesai)->endOfDay();
+
+        if ($today->lt($startDate)) {
             return back()->with('error', 'Masa magang Anda belum dimulai.');
+        }
+
+        if ($today->gt($endDate)) {
+            return back()->with('error', 'Masa magang Anda telah berakhir.');
         }
 
         // 2. Cek Duplikasi
