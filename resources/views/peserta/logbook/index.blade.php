@@ -225,11 +225,15 @@
                                         <div x-show="matchFilter('{{ $log->status_validasi }}', '{{ \Carbon\Carbon::parse($log->tanggal)->format('Y-m-d') }}')" 
                                              x-transition.opacity.duration.300ms
                                              x-data="{ showRevisiModal: false }"
-                                             class="logbook-card status-{{ $log->status_validasi }} bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group">
+                                             class="logbook-card status-{{ $log->status_validasi }} rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group
+                                                    @if($log->status_validasi === 'disetujui') bg-gradient-to-br from-white to-green-50/20 dark:from-gray-800 dark:to-green-950/5
+                                                    @elseif($log->status_validasi === 'revisi') bg-gradient-to-br from-white to-red-50/20 dark:from-gray-800 dark:to-red-950/5
+                                                    @else bg-gradient-to-br from-white to-yellow-50/20 dark:from-gray-800 dark:to-yellow-950/5
+                                                    @endif">
                                             
                                             <!-- Status Ribbon -->
                                             <div class="absolute top-4 right-4 z-10">
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm {{ $status['bg'] }} $status['text'] $status['border'] border">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm {{ $status['bg'] }} {{ $status['text'] }} {{ $status['border'] }} border">
                                                     <i class="fas {{ $status['icon'] }} mr-1.5"></i> {{ $log->status_validasi }}
                                                 </span>
                                             </div>
@@ -250,28 +254,34 @@
 
                                             <!-- Content -->
                                             <div class="p-6 flex-1 flex flex-col">
-                                                <div class="flex items-center gap-3 mb-4">
-                                                    <div class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shadow-inner border border-teal-100 dark:border-teal-900/50">
-                                                        <i class="fas fa-calendar-alt text-sm"></i>
+                                                <div class="flex justify-between items-center gap-3 mb-4 border-b border-gray-50 dark:border-gray-700/60 pb-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shadow-inner border border-teal-100 dark:border-teal-900/50">
+                                                            <i class="fas fa-calendar-alt text-sm"></i>
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider">{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('l') }}</p>
+                                                            <p class="text-[11px] font-bold text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d M Y') }}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p class="text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider">{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('l') }}</p>
-                                                        <p class="text-[11px] font-bold text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d M Y') }}</p>
+                                                    <div class="text-right">
+                                                        <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 block uppercase"><i class="far fa-clock mr-1"></i> Waktu Input</span>
+                                                        <span class="text-xs font-black text-teal-600 dark:text-teal-400">{{ \Carbon\Carbon::parse($log->created_at)->timezone('Asia/Makassar')->format('H:i') }} WITA</span>
                                                     </div>
                                                 </div>
                                                 
                                                 <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line flex-1">{{ $log->kegiatan }}</p>
                                                 
-                                                @if($log->komentar_pembimbing_lapangan)
-                                                    <div class="mt-5 bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl p-4 relative overflow-hidden">
-                                                        <div class="absolute top-0 left-0 w-1.5 h-full bg-red-400 dark:bg-red-500"></div>
-                                                        <div class="flex gap-3">
-                                                            <div class="mt-0.5">
-                                                                <i class="fas fa-comment-dots text-red-500 dark:text-red-400 text-lg"></i>
+                                                @if($log->status_validasi === 'revisi' && $log->komentar_pembimbing_lapangan)
+                                                    <div class="mt-5 bg-red-50/70 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 rounded-2xl p-4 relative overflow-hidden">
+                                                        <div class="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>
+                                                        <div class="flex gap-3 relative z-10">
+                                                            <div class="w-8 h-8 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0">
+                                                                <i class="fas fa-quote-left text-xs"></i>
                                                             </div>
-                                                            <div>
-                                                                <span class="block text-[10px] font-black text-red-800 dark:text-red-400 uppercase tracking-wider mb-1">Catatan Pembimbing</span>
-                                                                <p class="text-xs font-medium text-red-700 dark:text-red-300 leading-relaxed">{{ $log->komentar_pembimbing_lapangan }}</p>
+                                                            <div class="flex-1">
+                                                                <span class="block text-[10px] font-black text-red-800 dark:text-red-400 uppercase tracking-wider mb-1">Catatan Revisi Pembimbing</span>
+                                                                <p class="text-xs font-semibold text-red-700 dark:text-red-300 leading-relaxed">{{ $log->komentar_pembimbing_lapangan }}</p>
                                                             </div>
                                                         </div>
                                                     </div>
