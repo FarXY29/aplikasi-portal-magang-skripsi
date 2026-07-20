@@ -55,6 +55,21 @@ class DatabaseSeeder extends Seeder
             'Badan Perencanaan Pembangunan Daerah, Penelitian dan Pengembangan',
             'Badan Keuangan Daerah',
             'Badan Kepegawaian Daerah, Pendidikan dan Pelatihan',
+            'Dinas Ketahanan Pangan, Pertanian dan Perikanan',
+            'Dinas Lingkungan Hidup',
+            'Dinas Perpustakaan dan Kearsipan',
+            'Dinas Pemadam Kebakaran dan Penyelamatan',
+            'Dinas Pemberdayaan Perempuan dan Perlindungan Anak',
+            'Dinas Pengendalian Penduduk dan Keluarga Berencana',
+            'Satuan Polisi Pamong Praja',
+            'Badan Penanggulangan Bencana Daerah',
+            'Badan Kesatuan Bangsa dan Politik',
+            'Rumah Sakit Umum Daerah Sultan Suriansyah',
+            'Inspektorat Kota Banjarmasin',
+            'Badan Pengelola Keuangan, Pendapatan dan Aset Daerah',
+            'Sekretariat Daerah Kota Banjarmasin',
+            'Sekretariat DPRD Kota Banjarmasin',
+            'Dinas Kearsipan dan Perpustakaan Daerah'
         ];
 
         $instansis = [];
@@ -138,9 +153,9 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Buat Pembimbing Akademik / Sekolah (10 orang)
+        // Buat Pembimbing Akademik / Sekolah (30 orang)
         $pembimbingSekolahList = [];
-        for ($k = 1; $k <= 10; $k++) {
+        for ($k = 1; $k <= 30; $k++) {
             $isUniv = $faker->boolean();
             $univ = $isUniv && $univList->isNotEmpty() ? $univList->random() : null;
             $school = !$isUniv && $schoolList->isNotEmpty() ? $schoolList->random() : null;
@@ -162,8 +177,8 @@ class DatabaseSeeder extends Seeder
         // 3. Buat Akun Peserta & Lamaran
         $institusiList = ['Universitas Lambung Mangkurat', 'Politeknik Negeri Banjarmasin', 'Universitas Islam Kalimantan', 'SMKN 1 Banjarmasin', 'SMKN 2 Banjarmasin'];
         
-        // Buat 60 Peserta
-        for ($i = 1; $i <= 60; $i++) {
+        // Buat 250 Peserta
+        for ($i = 1; $i <= 250; $i++) {
             $pembimbingSekolah = $faker->randomElement($pembimbingSekolahList);
             $univId = $pembimbingSekolah->university_id;
             $schoolId = $pembimbingSekolah->school_id;
