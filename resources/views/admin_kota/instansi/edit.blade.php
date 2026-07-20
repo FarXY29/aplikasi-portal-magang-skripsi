@@ -19,7 +19,7 @@
                     @method('PUT')
                     
                     <div class="flex items-center gap-3 mb-8 pb-4 border-b border-gray-100 dark:border-gray-700">
-                        <div class="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 text-xl border border-teal-100">
+                        <div class="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-950/40 flex items-center justify-center text-teal-600 dark:text-teal-400 text-xl border border-teal-100 dark:border-teal-900/50">
                             <i class="fas fa-building"></i>
                         </div>
                         <div>
@@ -38,7 +38,7 @@
                                         <i class="fas fa-landmark"></i>
                                     </span>
                                     <input type="text" name="nama_dinas" value="{{ old('nama_dinas', $instansi->nama_dinas) }}" 
-                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
                                 </div>
                                 @error('nama_dinas') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
@@ -50,7 +50,7 @@
                                         <i class="fas fa-barcode"></i>
                                     </span>
                                     <input type="text" name="kode_unit_kerja" value="{{ old('kode_unit_kerja', $instansi->kode_unit_kerja) }}"
-                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
                                 </div>
                                 @error('kode_unit_kerja') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
@@ -59,7 +59,7 @@
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Alamat Kantor</label>
                                 <div class="relative">
                                     <textarea name="alamat" rows="4"
-                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" 
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" 
                                         required>{{ old('alamat', $instansi->alamat) }}</textarea>
                                     <span class="absolute top-3 left-3 text-gray-400 pointer-events-none">
                                         <i class="fas fa-map-marker-alt"></i>
@@ -93,7 +93,7 @@
 
                                     <div class="flex-grow">
                                         <input type="file" name="ttd_kepala" accept="image/png, image/jpeg"
-                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer focus:outline-none border border-gray-300 dark:border-gray-600 rounded-lg">
+                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/30 file:text-teal-700 dark:file:text-teal-400 hover:file:bg-teal-100 cursor-pointer focus:outline-none border border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-lg">
                                         <p class="text-xs text-gray-400 mt-2 italic">Biarkan kosong jika tidak ingin mengubah tanda tangan.</p>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
                                                 <i class="fas fa-envelope"></i>
                                             </span>
                                             <input type="email" name="email_admin" value="{{ old('email_admin', $adminUser->email ?? '') }}" 
-                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
                                         </div>
                                         @error('email_admin') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
@@ -123,7 +123,7 @@
                                                 <i class="fas fa-lock"></i>
                                             </span>
                                             <input type="password" name="password_admin" placeholder="Kosongkan jika tidak diubah"
-                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm">
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm">
                                         </div>
                                         @error('password_admin') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
@@ -134,31 +134,31 @@
                     </div>
 
                     <!-- Geotagging Map (Full Width) -->
-                    <div class="mt-8 bg-blue-50/50 p-5 rounded-xl border border-blue-100">
+                    <div class="mt-8 bg-blue-50/50 dark:bg-blue-950/20 p-5 rounded-xl border border-blue-100 dark:border-blue-900/50">
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex justify-between">
                             <span>Titik Koordinat & Radius Absensi (Geotagging)</span>
-                            <span class="text-xs text-blue-600 font-normal"><i class="fas fa-mouse-pointer mr-1"></i> Klik map untuk ubah pin</span>
+                            <span class="text-xs text-blue-600 dark:text-blue-400 font-normal"><i class="fas fa-mouse-pointer mr-1"></i> Klik map untuk ubah pin</span>
                         </label>
                         
                         <div class="mb-4">
-                            <div id="map" class="border border-blue-200 shadow-inner" style="height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
+                            <div id="map" class="border border-blue-200 dark:border-blue-900/50 shadow-inner" style="height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LAT</span>
                                 <input type="text" name="latitude" id="latitude" value="{{ old('latitude', $instansi->latitude) }}"
-                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
                             </div>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LNG</span>
                                 <input type="text" name="longitude" id="longitude" value="{{ old('longitude', $instansi->longitude) }}"
-                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
                             </div>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold"><i class="fas fa-circle-notch"></i></span>
                                 <input type="number" name="radius_absen" id="radius_absen" value="{{ old('radius_absen', $instansi->radius_absen ?? 50) }}"
-                                    class="w-full pl-10 pr-12 py-2 rounded-lg border-gray-300 dark:border-gray-600 focus:border-teal-500 focus:ring-teal-200 text-sm" 
+                                    class="w-full pl-10 pr-12 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" 
                                     placeholder="50" min="10" required>
                                 <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs font-bold pointer-events-none">Meter</span>
                             </div>
@@ -172,7 +172,7 @@
                         <a href="{{ route('admin.instansi.index') }}" class="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition shadow-sm">
                             Batal
                         </a>
-                        <button type="submit" class="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 transition transform active:scale-95 flex items-center">
+                        <button type="submit" class="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 dark:shadow-teal-950/30 transition transform active:scale-95 flex items-center">
                             <i class="fas fa-save mr-2"></i> Simpan Perubahan
                         </button>
                     </div>
@@ -216,8 +216,16 @@
 
         var map = L.map('map').setView([initLat, initLng], 15);
         
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
+        var isDarkMode = document.documentElement.classList.contains('dark');
+        var tileUrl = isDarkMode 
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var tileAttribution = isDarkMode
+            ? '© OpenStreetMap contributors, © CartoDB'
+            : '© OpenStreetMap contributors';
+
+        L.tileLayer(tileUrl, {
+            attribution: tileAttribution,
             maxZoom: 19
         }).addTo(map);
 
