@@ -49,6 +49,16 @@
     </x-ui.alert>
 @endif
 
+            @if($errors->any())
+    <x-ui.alert type="error" class="mb-4">
+        <ul class="list-disc list-inside">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </x-ui.alert>
+@endif
+
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
                 
                 <!-- Left Column: Form -->
@@ -420,6 +430,24 @@
         const showLng = document.getElementById("show-lng");
 
         function requestLocation() {
+            const isLocal = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' || 
+                            window.location.hostname.startsWith('192.168.') || 
+                            window.location.hostname.startsWith('10.');
+
+            if (isLocal) {
+                const mockLat = {{ $activeApp->position->instansi->latitude ?? -3.316694 }};
+                const mockLng = {{ $activeApp->position->instansi->longitude ?? 114.590111 }};
+                successLocation({
+                    coords: {
+                        latitude: mockLat,
+                        longitude: mockLng
+                    }
+                });
+                statusDiv.innerHTML = '<span class="text-green-600 flex items-center font-extrabold"><i class="fas fa-check-circle mr-1.5 text-lg shadow-green-500/50 drop-shadow"></i> Lokasi Terkunci (Mock Local)</span>';
+                return;
+            }
+
             if (navigator.geolocation) {
                 const options = {
                     enableHighAccuracy: false, 

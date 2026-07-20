@@ -376,6 +376,41 @@
         const desc = document.getElementById('gps-desc');
         const badge = document.getElementById('gps-badge');
 
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' || 
+                        window.location.hostname.startsWith('192.168.') || 
+                        window.location.hostname.startsWith('10.');
+
+        if (isLocal) {
+            const lat = officeLat;
+            const lng = officeLng;
+
+            const latMasuk = document.getElementById('lat-masuk');
+            const lngMasuk = document.getElementById('lng-masuk');
+            const latPulang = document.getElementById('lat-pulang');
+            const lngPulang = document.getElementById('lng-pulang');
+
+            if (latMasuk && lngMasuk) {
+                latMasuk.value = lat.toFixed(6);
+                lngMasuk.value = lng.toFixed(6);
+            }
+            if (latPulang && lngPulang) {
+                latPulang.value = lat.toFixed(6);
+                lngPulang.value = lng.toFixed(6);
+            }
+
+            banner.className = "px-6 py-4 bg-green-50/80 dark:bg-green-950/20 border-t border-green-200/60 dark:border-green-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+            iconWrapper.className = "w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center text-lg shadow-md shadow-green-500/20";
+            iconWrapper.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
+            title.className = "text-xs font-extrabold text-green-900 dark:text-green-300 uppercase tracking-wider";
+            title.innerText = "Lokasi Terverifikasi (Mock Local)";
+            desc.className = "text-xs text-green-700 dark:text-green-400 font-medium";
+            desc.innerText = `Jarak Anda: 0 meter dari kantor (Batas maksimal ${radius}m). Anda siap melakukan absensi!`;
+            badge.className = "px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-green-700 dark:text-green-400 text-xs font-extrabold shadow-sm border border-green-200/60 dark:border-green-900/50 flex items-center gap-1.5";
+            badge.innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Siap Absen';
+            return;
+        }
+
         if (!navigator.geolocation) {
             banner.className = "px-6 py-4 bg-red-50/60 dark:bg-red-950/20 border-t border-red-100 dark:border-red-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
             iconWrapper.className = "w-10 h-10 rounded-xl bg-red-500 text-white flex items-center justify-center text-lg shadow-md shadow-red-500/20";
