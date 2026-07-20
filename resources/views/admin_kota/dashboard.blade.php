@@ -36,59 +36,57 @@
     <div class="space-y-5 md:space-y-6 font-[Inter]">
 
         {{-- ══════════════════════════════════════════════════════════ --}}
-        {{-- ROW 1: HERO BANNER + SERTIFIKAT CARD (SOLID COLOR, NO GRADIENT) --}}
+        {{-- ROW 1: HERO BANNER + EXECUTIVE REPORTS CARD --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-5">
-            
-            {{-- Hero Welcome Banner (Solid Teal #0f766e) --}}
-            <div class="xl:col-span-2 relative overflow-hidden rounded-2xl md:rounded-3xl bg-teal-700 text-white shadow-lg min-h-[155px] md:min-h-[175px]" style="background-color: #0f766e;">
-                {{-- Decorative circles --}}
-                <div class="absolute top-0 right-0 -mt-14 -mr-14 w-48 h-48 bg-white/[0.06] rounded-full pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-36 h-36 bg-white/[0.06] rounded-full pointer-events-none"></div>
-
-                <div class="relative z-10 p-5 md:p-7 flex items-center justify-between gap-4 h-full">
-                    <div class="space-y-2.5 md:space-y-3">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 rounded-full text-[11px] font-bold border border-white/20">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 md:gap-6">
+            {{-- Hero Welcome Banner (Premium Teal/Emerald Gradient with Glassmorphism highlights) --}}
+            <div class="xl:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-800 to-emerald-700 text-white shadow-xl min-h-[175px] border border-teal-600/30">
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-52 h-52 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-xl pointer-events-none"></div>
+                <div class="relative z-10 p-6 md:p-8 flex items-center justify-between gap-6 h-full">
+                    <div class="space-y-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-extrabold uppercase tracking-widest border border-white/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             {{ now()->translatedFormat('l, d F Y') }}
                         </span>
-                        <h1 class="text-xl md:text-2xl lg:text-3xl font-black leading-tight text-white">
+                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold leading-tight text-white tracking-tight">
                             Selamat Datang, <br class="md:hidden">Super Admin! 👋
                         </h1>
-                        <p class="text-teal-100 text-xs md:text-sm font-medium leading-relaxed max-w-lg">
+                        <p class="text-teal-100 text-xs md:text-sm font-medium leading-relaxed max-w-xl">
                             Pantau performa dan statistik dari 
-                            <span class="font-black text-white bg-white/15 px-2 py-0.5 rounded-md">{{ $totalInstansi }}</span> 
-                            instansi di lingkungan Pemerintah Kota Banjarmasin.
+                            <span class="font-black text-white bg-white/20 px-2 py-0.5 rounded-md">{{ $totalInstansi }}</span> 
+                            instansi di lingkungan Pemerintah Kota Banjarmasin secara real-time.
                         </p>
                     </div>
                     <div class="hidden md:block shrink-0">
-                        <div class="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-4xl lg:text-5xl shadow-lg">
+                        <div class="w-24 h-24 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center text-5xl shadow-lg transform rotate-3 hover:rotate-0 transition duration-300">
                             👑
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Pusat Laporan Eksekutif Card (Solid Blue #1e40af) --}}
-            <div class="xl:col-span-1 relative overflow-hidden rounded-2xl md:rounded-3xl bg-blue-800 text-white shadow-lg flex flex-col justify-center" style="background-color: #1e40af;">
-                <div class="relative z-10 p-5 md:p-6 space-y-3.5">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-                            <i class="fas fa-chart-pie text-sm"></i>
+            {{-- Executive Summary & Quick Navigation Card (Premium Royal Blue Gradient) --}}
+            <div class="xl:col-span-1 relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-900 to-indigo-800 text-white shadow-xl flex flex-col justify-between border border-blue-700/30">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="relative z-10 p-6 space-y-4 flex-1 flex flex-col justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 shadow-sm">
+                            <i class="fas fa-chart-pie text-base"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-black leading-tight text-white">Pusat Laporan Eksekutif</h3>
-                            <p class="text-blue-100 text-[10px] font-medium">Rekap & Analisis Data Keseluruhan</p>
+                            <h3 class="text-base font-black leading-tight text-white tracking-tight">Laporan Eksekutif</h3>
+                            <p class="text-blue-200 text-[10px] font-bold uppercase tracking-wider">Rekap & Analisis Data Kota</p>
                         </div>
                     </div>
                     
-                    <div class="space-y-2">
-                        <a href="{{ route('admin.laporan.hub') }}" class="w-full py-2 px-3.5 bg-white text-blue-900 hover:bg-blue-50 font-black rounded-xl transition-all text-xs flex items-center justify-between shadow-xs active:scale-[0.98]">
+                    <div class="space-y-2 mt-4">
+                        <a href="{{ route('admin.laporan.hub') }}" class="w-full py-2.5 px-4 bg-white text-blue-900 hover:bg-blue-50 font-extrabold rounded-xl transition-all text-xs flex items-center justify-between shadow-md hover:shadow-lg active:scale-[0.98]">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-layer-group text-blue-600"></i>
-                                <span>Buka Laporan Hub</span>
+                                <span>Buka Pusat Laporan</span>
                             </span>
-                            <i class="fas fa-arrow-right text-[10px] text-blue-400"></i>
+                            <i class="fas fa-arrow-right text-[10px] text-blue-600"></i>
                         </a>
 
                         <div class="grid grid-cols-2 gap-2">
@@ -103,7 +101,6 @@
                         </div>
                     </div>
                 </div>
-                <i class="fas fa-file-invoice absolute -bottom-5 -right-3 text-7xl text-white opacity-[0.06] transform -rotate-12 pointer-events-none"></i>
             </div>
         </div>
 
