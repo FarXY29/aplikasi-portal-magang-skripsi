@@ -61,7 +61,7 @@ class DashboardController extends Controller
             $jamKerja = $activeApp->position->instansi;
 
             $logsCount = $activeApp->logs()->count();
-            $logsValidated = $activeApp->logs()->where('status_validasi', 'valid')->count();
+            $logsValidated = $activeApp->logs()->where('status_validasi', 'disetujui')->count();
 
             $attendances = Attendance::where('application_id', $activeApp->id)->get();
             $attendanceStats = [

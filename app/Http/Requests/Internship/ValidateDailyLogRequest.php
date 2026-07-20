@@ -15,7 +15,7 @@ class ValidateDailyLogRequest extends FormRequest
     {
         return [
             'status' => ['required', 'in:disetujui,ditolak,revisi'],
-            'komentar' => ['nullable', 'string', 'max:2000'],
+            'komentar' => ['required_if:status,revisi,ditolak', 'nullable', 'string', 'max:2000'],
         ];
     }
 }

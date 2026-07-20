@@ -82,7 +82,7 @@ class PembimbingLapanganController extends Controller
         $request->validate([
             'log_ids' => 'required|array',
             'status' => 'required|in:disetujui,ditolak',
-            'komentar' => 'nullable|string'
+            'komentar' => 'required_if:status,ditolak|nullable|string'
         ]);
 
         $logs = DailyLog::whereIn('id', $request->log_ids)->with('application')->get();
