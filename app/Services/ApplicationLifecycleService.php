@@ -50,29 +50,16 @@ class ApplicationLifecycleService
         $nextWaiting = Application::where('internship_position_id', $completedApp->internship_position_id)
             ->where('status', 'menunggu')
             ->orderBy('created_at', 'asc')
+            ->lockForUpdate()
             ->first();
 
         if ($nextWaiting) {
-            $startDate = Carbon::parse($nextWaiting->tanggal_mulai);
-            $endDate = Carbon::parse($nextWaiting->tanggal_selesai);
-            $durationDays = $startDate->diffInDays($endDate);
-
-            $newStartDate = Carbon::parse($completedApp->tanggal_selesai)->addDay();
-
-            if ($newStartDate->isPast()) {
-                $newStartDate = Carbon::tomorrow();
-            }
-
-            $newEndDate = $newStartDate->copy()->addDays($durationDays);
-
             $nextWaiting->update([
-                'status' => 'diterima',
-                'tanggal_mulai' => $newStartDate->format('Y-m-d'),
-                'tanggal_selesai' => $newEndDate->format('Y-m-d'),
+                'status' => 'pending',
             ]);
             $this->auditLogService->record('application.promoted_from_waiting_list', $nextWaiting, [
                 'position_id' => $nextWaiting->internship_position_id,
-                'new_start_date' => $nextWaiting->tanggal_mulai,
+                'status' => 'pending'
             ]);
         }
 
