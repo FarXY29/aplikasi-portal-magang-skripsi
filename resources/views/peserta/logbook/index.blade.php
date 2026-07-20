@@ -268,7 +268,15 @@
                                         <div x-show="matchFilter('{{ $log->status_validasi }}', '{{ \Carbon\Carbon::parse($log->tanggal)->format('Y-m-d') }}')" 
                                              x-transition.opacity.duration.300ms
                                              x-data="{ showRevisiModal: false }"
-                                             class="logbook-card status-{{ $log->status_validasi }} rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group
+                                             @click="openDetail({
+                                                 tanggal: '{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('l, d M Y') }}',
+                                                 waktu: '{{ \Carbon\Carbon::parse($log->created_at)->timezone('Asia/Makassar')->format('H:i') }} WITA',
+                                                 kegiatan: `{{ e($log->kegiatan) }}`,
+                                                 status_validasi: '{{ $log->status_validasi }}',
+                                                 komentar_pembimbing_lapangan: `{{ e($log->komentar_pembimbing_lapangan) }}`,
+                                                 bukti_foto_path: '{{ $log->bukti_foto_path ? route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) : '' }}'
+                                             })"
+                                             class="cursor-pointer logbook-card status-{{ $log->status_validasi }} rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col relative group
                                                     @if($log->status_validasi === 'disetujui') bg-gradient-to-br from-white to-green-50/20 dark:from-gray-800 dark:to-green-950/5
                                                     @elseif($log->status_validasi === 'revisi') bg-gradient-to-br from-white to-red-50/20 dark:from-gray-800 dark:to-red-950/5
                                                     @else bg-gradient-to-br from-white to-yellow-50/20 dark:from-gray-800 dark:to-yellow-950/5
@@ -283,7 +291,7 @@
 
                                             <!-- Image Header -->
                                             @if($log->bukti_foto_path)
-                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-800 relative cursor-pointer overflow-hidden" @click="openGallery('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-800 relative cursor-pointer overflow-hidden" @click.stop="openGallery('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
                                                     <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-white dark:bg-gray-800/20 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
@@ -333,13 +341,13 @@
                                                 <!-- Revisi Button & Modal -->
                                                 @if($log->status_validasi === 'revisi')
                                                     <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
-                                                        <button @click="showRevisiModal = true" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-2xl text-xs font-extrabold hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white hover:border-red-600 transition-all shadow-sm group/btn hover:shadow-md hover:shadow-red-600/20">
+                                                        <button @click.stop="showRevisiModal = true" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-2xl text-xs font-extrabold hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white hover:border-red-600 transition-all shadow-sm group/btn hover:shadow-md hover:shadow-red-600/20">
                                                             <i class="fas fa-edit mr-2 group-hover/btn:animate-bounce"></i> PERBAIKI JURNAL INI
                                                         </button>
                                                     </div>
 
                                                     <!-- Modal Revisi -->
-                                                    <div x-show="showRevisiModal" class="fixed inset-0 z-[100] overflow-y-auto text-left" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                                    <div x-show="showRevisiModal" @click.stop class="fixed inset-0 z-[100] overflow-y-auto text-left" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                                                         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                                                             <div x-show="showRevisiModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="showRevisiModal = false" aria-hidden="true"></div>
                                                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -411,6 +419,97 @@
                 </div>
             </div>
         </div>
+
+        <!-- Detail Logbook Modal -->
+        <div x-show="detailOpen" class="fixed inset-0 z-[150] overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <div x-show="detailOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity" @click="detailOpen = false" aria-hidden="true"></div>
+                
+                <div x-show="detailOpen" x-transition.scale.duration.300ms class="relative z-10 w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl text-left transform transition-all flex flex-col md:flex-row max-h-[85vh] border border-gray-100 dark:border-gray-700">
+                    <!-- Modal Close Button -->
+                    <button @click="detailOpen = false" class="absolute top-4 right-4 z-20 w-10 h-10 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-300 rounded-full flex items-center justify-center transition shadow-sm border border-gray-200/50 dark:border-gray-600/50">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <!-- Left panel: Photo (if exists) -->
+                    <div class="md:w-1/2 bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative overflow-hidden border-r border-gray-100 dark:border-gray-700 max-h-[40vh] md:max-h-full">
+                        <template x-if="selectedLog.bukti_foto_path">
+                            <div class="w-full h-full relative group">
+                                <img :src="selectedLog.bukti_foto_path" class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-zoom-in" @click.stop="openGallery(selectedLog.bukti_foto_path)">
+                                    <span class="text-white text-xs font-bold bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="!selectedLog.bukti_foto_path">
+                            <div class="p-8 text-center text-gray-400 dark:text-gray-600 flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <span class="text-xs font-black uppercase tracking-wider">Tidak Ada Lampiran Foto</span>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Right panel: Details -->
+                    <div class="md:w-1/2 p-8 flex flex-col justify-between overflow-y-auto max-h-[45vh] md:max-h-full">
+                        <div>
+                            <!-- Header metadata -->
+                            <div class="flex items-center justify-between gap-3 mb-6 border-b border-gray-100 dark:border-gray-700/60 pb-4">
+                                <div>
+                                    <span class="text-[10px] font-black text-teal-600 dark:text-teal-400 uppercase tracking-widest block mb-1"><i class="far fa-calendar-alt mr-1"></i> Tanggal Jurnal</span>
+                                    <h4 class="text-base font-extrabold text-gray-800 dark:text-gray-100" x-text="selectedLog.tanggal"></h4>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1"><i class="far fa-clock mr-1"></i> Waktu Input</span>
+                                    <span class="text-xs font-black text-gray-700 dark:text-gray-300" x-text="selectedLog.waktu"></span>
+                                </div>
+                            </div>
+
+                            <!-- Validation Status Badge -->
+                            <div class="mb-6">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-2">Status Validasi</span>
+                                <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border shadow-sm"
+                                    :class="{
+                                        'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/50': selectedLog.status_validasi === 'disetujui',
+                                        'bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-900/50': selectedLog.status_validasi === 'pending',
+                                        'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/50': selectedLog.status_validasi === 'revisi'
+                                    }">
+                                    <i class="fas mr-2" :class="{
+                                        'fa-check-circle': selectedLog.status_validasi === 'disetujui',
+                                        'fa-clock': selectedLog.status_validasi === 'pending',
+                                        'fa-exclamation-circle': selectedLog.status_validasi === 'revisi'
+                                    }"></i>
+                                    <span x-text="selectedLog.status_validasi"></span>
+                                </span>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-6">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-2">Deskripsi Kegiatan</span>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line bg-gray-50/50 dark:bg-gray-900/30 border border-gray-100/80 dark:border-gray-700/60 p-4 rounded-2xl" x-text="selectedLog.kegiatan"></p>
+                            </div>
+
+                            <!-- Revisions / Comments -->
+                            <template x-if="selectedLog.status_validasi === 'revisi' && selectedLog.komentar_pembimbing_lapangan">
+                                <div class="bg-red-50/70 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 rounded-2xl p-4 relative overflow-hidden">
+                                    <div class="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>
+                                    <div class="flex gap-3 relative z-10">
+                                        <div class="w-8 h-8 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-quote-left text-xs"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <span class="block text-[10px] font-black text-red-800 dark:text-red-400 uppercase tracking-wider mb-1">Catatan Revisi Pembimbing</span>
+                                            <p class="text-xs font-semibold text-red-700 dark:text-red-300 leading-relaxed" x-text="selectedLog.komentar_pembimbing_lapangan"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -456,6 +555,19 @@
             filterBulan: '',
             galleryOpen: false,
             galleryImage: '',
+            detailOpen: false,
+            selectedLog: {
+                tanggal: '',
+                waktu: '',
+                kegiatan: '',
+                status_validasi: '',
+                komentar_pembimbing_lapangan: '',
+                bukti_foto_path: ''
+            },
+            openDetail(log) {
+                this.selectedLog = log;
+                this.detailOpen = true;
+            },
             openGallery(imgUrl) {
                 this.galleryImage = imgUrl;
                 this.galleryOpen = true;
