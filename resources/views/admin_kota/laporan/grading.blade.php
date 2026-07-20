@@ -39,83 +39,83 @@
 
             {{-- 6 Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center mx-auto mb-2 border border-teal-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-900/40 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ $stats['total'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Total Dinilai</p>
+                    <p class="text-2xl font-black text-gray-800 dark:text-gray-100 tracking-tight">{{ $stats['total'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Dinilai</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center mx-auto mb-2 border border-green-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-3 border border-green-100 dark:border-green-900/40 shadow-xs">
                         <i class="fas fa-check-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-green-800">{{ $stats['sangat_baik'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Sangat Baik</p>
+                    <p class="text-2xl font-black text-green-700 dark:text-green-400 tracking-tight">{{ $stats['sangat_baik'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Sangat Baik</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2 border border-blue-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-900/40 shadow-xs">
                         <i class="fas fa-thumbs-up text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-blue-800">{{ $stats['baik'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Baik</p>
+                    <p class="text-2xl font-black text-blue-700 dark:text-blue-400 tracking-tight">{{ $stats['baik'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Baik</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center mx-auto mb-2 border border-yellow-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 flex items-center justify-center mx-auto mb-3 border border-yellow-100 dark:border-yellow-900/40 shadow-xs">
                         <i class="fas fa-info-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-yellow-700" style="color: #d97706;">{{ $stats['cukup'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Cukup</p>
+                    <p class="text-2xl font-black text-yellow-600 dark:text-yellow-400 tracking-tight">{{ $stats['cukup'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Cukup</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
-                    <div class="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-2 border border-red-100">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition">
+                    <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-3 border border-red-100 dark:border-red-900/40 shadow-xs">
                         <i class="fas fa-times-circle text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-red-800">{{ $stats['kurang'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Kurang</p>
+                    <p class="text-2xl font-black text-red-600 dark:text-red-400 tracking-tight">{{ $stats['kurang'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Kurang</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 text-center bg-gradient-to-br from-teal-50/50 to-indigo-50/30">
-                    <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center mx-auto mb-2 shadow-sm shadow-teal-200">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/60 text-center hover:shadow-md transition bg-gradient-to-br from-teal-500/5 to-indigo-500/5">
+                    <div class="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-3 shadow-sm shadow-teal-200">
                         <i class="fas fa-star text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-teal-700">{{ $stats['avg_nilai'] }}</p>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Rerata Nilai</p>
+                    <p class="text-2xl font-black text-teal-700 dark:text-teal-400 tracking-tight">{{ $stats['avg_nilai'] }}</p>
+                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Rerata Nilai</p>
                 </div>
             </div>
 
             {{-- 3-Component Rerata Mini Panel --}}
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700/60 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <div class="flex justify-between items-center mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fas fa-laptop-code text-blue-500"></i> Rerata Teknis
                         </span>
                         <span class="text-sm font-black text-gray-800 dark:text-gray-200">{{ $statsGlobal['avg_teknis'] }}/100</span>
                     </div>
-                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
+                    <div class="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
                         <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_teknis'] }}%"></div>
                     </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fas fa-clock text-purple-500"></i> Rerata Kedisiplinan
+                            <i class="fas fa-calendar-check text-green-500"></i> Rerata Disiplin
                         </span>
                         <span class="text-sm font-black text-gray-800 dark:text-gray-200">{{ $statsGlobal['avg_disiplin'] }}/100</span>
                     </div>
-                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_disiplin'] }}%"></div>
+                    <div class="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_disiplin'] }}%"></div>
                     </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fas fa-user-check text-emerald-500"></i> Rerata Perilaku / Soft Skill
+                            <i class="fas fa-user-friends text-purple-500"></i> Rerata Perilaku
                         </span>
                         <span class="text-sm font-black text-gray-800 dark:text-gray-200">{{ $statsGlobal['avg_perilaku'] }}/100</span>
                     </div>
-                    <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
-                        <div class="bg-emerald-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_perilaku'] }}%"></div>
+                    <div class="w-full bg-gray-100 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_perilaku'] }}%"></div>
                     </div>
                 </div>
             </div>
