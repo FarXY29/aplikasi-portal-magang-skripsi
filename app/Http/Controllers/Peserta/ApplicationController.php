@@ -53,6 +53,36 @@ class ApplicationController extends Controller
     {
         $user = Auth::user();
 
+        // 1. Validasi Lowongan Terlebih Dahulu
+        $position = InternshipPosition::find($id);
+        if (!$position) {
+            return redirect()->back()->with('error', 'Lowongan tidak ditemukan.');
+        }
+
+        if ($position->status !== 'buka') {
+            return redirect()->back()->with('error', 'Pendaftaran lowongan ini telah ditutup.');
+        }
+
+        if ($position->batas_daftar && Carbon::now()->startOfDay()->gt(Carbon::parse($position->batas_daftar)->startOfDay())) {
+            return redirect()->back()->with('error', 'Batas waktu pendaftaran untuk lowongan ini telah berakhir.');
+        }
+
+        // 2. Validasi Jurusan
+        $syaratJurusan = strtolower($position->required_major);
+        $jurusanPelamar = strtolower($user->major);
+        if (!str_contains($syaratJurusan, 'semua jurusan') && !str_contains($syaratJurusan, $jurusanPelamar)) {
+            return redirect()->back()->with('error', "Posisi ini khusus jurusan: {$position->required_major}.");
+        }
+
+        // 3. Cek magang aktif
+        $hasActiveInternship = Application::where('user_id', $user->id)
+            ->where('status', 'diterima')
+            ->exists();
+
+        if ($hasActiveInternship) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak dapat mengajukan lowongan baru karena masih terdaftar dalam magang aktif.');
+        }
+
         $reqStart = $request->tanggal_mulai;
         $reqEnd   = $request->tanggal_selesai;
 
@@ -211,6 +241,15 @@ class ApplicationController extends Controller
     public function storeAutomaticApplication(Request $request)
     {
         $user = Auth::user();
+
+        // Cek magang aktif
+        $hasActiveInternship = Application::where('user_id', $user->id)
+            ->where('status', 'diterima')
+            ->exists();
+
+        if ($hasActiveInternship) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak dapat mengajukan lowongan baru karena masih terdaftar dalam magang aktif.');
+        }
 
         $request->validate([
             'surat' => 'required|mimes:pdf|max:2048',
