@@ -33,4 +33,38 @@ class ExampleTest extends TestCase
         $response->assertSee('Cari Posisi');
         $response->assertSee('search-form', false);
     }
+
+    public function test_landing_page_has_bento_stats_and_smart_allocation(): void
+    {
+        $response = $this->get('/');
+        $response->assertSee('Instansi Pemerintah');
+        $response->assertSee('Posisi Aktif');
+        $response->assertSee('Alumni Magang');
+    }
+
+    public function test_landing_page_has_alur_magang_steps(): void
+    {
+        $response = $this->get('/');
+        $response->assertSee('Buat Akun');
+        $response->assertSee('Pilih Lowongan');
+        $response->assertSee('Slot Periode');
+        $response->assertSee('Mulai Magang');
+    }
+
+    public function test_landing_page_has_vacancy_filters_and_interactive_drawer(): void
+    {
+        $response = $this->get('/');
+        $response->assertSee('lowongan');
+        $response->assertSee('instansi_id');
+        $response->assertSee('jurusan');
+        $response->assertSee('filter-form', false);
+    }
+
+    public function test_landing_page_has_faq_and_footer_redesign(): void
+    {
+        $response = $this->get('/');
+        $response->assertSee('Pertanyaan Populer');
+        $response->assertSee('SiMagang Kota Banjarmasin');
+        $response->assertSee('diskominfotik.banjarmasinkota.go.id');
+    }
 }

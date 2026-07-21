@@ -63,7 +63,7 @@
                         <option value="admin_kota" {{ request('role') == 'admin_kota' ? 'selected' : '' }}>Super Admin</option>
                         <option value="admin_instansi" {{ request('role') == 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
                         <option value="pembimbing_lapangan" {{ request('role') == 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan</option>
-                        <option value="pembimbing" {{ request('role') == 'pembimbing' ? 'selected' : '' }}>Pembimbing Sekolah</option>
+                        <option value="pembimbing" {{ request('role') == 'pembimbing' ? 'selected' : '' }}>Pembimbing Akademik</option>
                         <option value="peserta" {{ request('role') == 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
                     </select>
                 </div>
