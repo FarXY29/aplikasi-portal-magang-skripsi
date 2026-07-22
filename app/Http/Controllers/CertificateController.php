@@ -83,7 +83,7 @@ class CertificateController extends Controller
         $kodeDinas = $app->position->instansi->kode_instansi ?? strtoupper(Str::slug($app->position->instansi->nama_dinas));
         $autoNumber = sprintf("%03d/MAGANG/%s/%s", $count, $kodeDinas, date('Y'));
 
-        return view('dinas.sertifikat.create', compact('app', 'autoNumber'));
+        return view('admin_instansi.sertifikat.create', compact('app', 'autoNumber'));
     }
 
     /**
@@ -91,6 +91,14 @@ class CertificateController extends Controller
      */
     public function store(Request $request, $applicationId)
     {
+        $nomorSertifikat = $request->input('nomor_sertifikat') ?? $request->input('certificate_number');
+        $tanggalSertifikat = $request->input('tanggal_sertifikat') ?? $request->input('certificate_date');
+
+        $request->merge([
+            'nomor_sertifikat' => $nomorSertifikat,
+            'tanggal_sertifikat' => $tanggalSertifikat,
+        ]);
+
         $request->validate([
             'nomor_sertifikat' => 'required|string|max:100|unique:applications,nomor_sertifikat,' . $applicationId,
             'tanggal_sertifikat' => 'required|date',
@@ -118,7 +126,7 @@ class CertificateController extends Controller
         ];
 
         // 3. Generate PDF
-        $pdf = Pdf::loadView('pdf.sertifikat', $data);
+        $pdf = Pdf::loadView('pdf.peserta.sertifikat', $data);
         $pdf->setPaper('a4', 'landscape');
 
         // Stream PDF ke browser (Preview)

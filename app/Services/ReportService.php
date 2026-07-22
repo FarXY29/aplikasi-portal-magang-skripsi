@@ -93,11 +93,18 @@ class ReportService
     /**
      * Get Durasi Magang Report Data (Admin Kota)
      */
-    public function getDurasiMagangData()
+    public function getDurasiMagangData(?Request $request = null)
     {
-        return Instansi::with(['applications' => function($q) {
+        $query = Instansi::with(['applications' => function($q) {
             $q->whereIn('applications.status', ['diterima', 'selesai'])->whereNotNull('tanggal_mulai')->whereNotNull('tanggal_selesai');
-        }])->get()->map(function($instansi) {
+        }]);
+
+        if ($request && ($request->filled('q') || $request->filled('search'))) {
+            $search = $request->input('q') ?: $request->input('search');
+            $query->where('nama_dinas', 'like', '%' . $search . '%');
+        }
+
+        return $query->get()->map(function($instansi) {
             $totalHari = 0;
             $count = 0;
 
@@ -118,24 +125,36 @@ class ReportService
     /**
      * Get Demografi Jurusan Report Data (Admin Kota)
      */
-    public function getDemografiJurusanData()
+    public function getDemografiJurusanData(?Request $request = null)
     {
-        return InternshipPosition::select('required_major', DB::raw('count(*) as total_lowongan'), DB::raw('sum(kuota) as total_kuota'))
-            ->groupBy('required_major')
-            ->orderBy('total_kuota', 'desc')
-            ->get();
+        $query = InternshipPosition::select('required_major', DB::raw('count(*) as total_lowongan'), DB::raw('sum(kuota) as total_kuota'))
+            ->groupBy('required_major');
+
+        if ($request && ($request->filled('q') || $request->filled('search'))) {
+            $search = $request->input('q') ?: $request->input('search');
+            $query->where('required_major', 'like', '%' . $search . '%');
+        }
+
+        return $query->orderBy('total_kuota', 'desc')->get();
     }
 
     /**
      * Get Penyerapan Kuota Report Data (Admin Kota)
      */
-    public function getPenyerapanKuotaData()
+    public function getPenyerapanKuotaData(?Request $request = null)
     {
-        return Instansi::with(['positions' => function($q) {
+        $query = Instansi::with(['positions' => function($q) {
             $q->withCount(['applications as diterima' => function($query) {
                 $query->whereIn('applications.status', ['diterima', 'selesai']);
             }]);
-        }])->get()->map(function($instansi) {
+        }]);
+
+        if ($request && ($request->filled('q') || $request->filled('search'))) {
+            $search = $request->input('q') ?: $request->input('search');
+            $query->where('nama_dinas', 'like', '%' . $search . '%');
+        }
+
+        $instansis = $query->get()->map(function($instansi) {
             $totalKuota = $instansi->positions->sum('kuota');
             $totalTerserap = $instansi->positions->sum('diterima');
             
@@ -144,7 +163,19 @@ class ReportService
             $instansi->persentase_penyerapan = $totalKuota > 0 ? ($totalTerserap / $totalKuota) * 100 : 0;
             
             return $instansi;
-        })->sortByDesc('persentase_penyerapan');
+        });
+
+        if ($request && $request->filled('status_keterisian')) {
+            $status = $request->status_keterisian;
+            $instansis = $instansis->filter(function($instansi) use ($status) {
+                if ($status === 'optimal') return $instansi->persentase_penyerapan >= 80;
+                if ($status === 'cukup') return $instansi->persentase_penyerapan >= 50 && $instansi->persentase_penyerapan < 80;
+                if ($status === 'rendah') return $instansi->persentase_penyerapan < 50;
+                return true;
+            });
+        }
+
+        return $instansis->sortByDesc('persentase_penyerapan')->values();
     }
 
     /**
@@ -200,17 +231,23 @@ class ReportService
             return $app;
         });
 
-        if ($request->has('instansi_id') && $request->instansi_id != '') {
+        if ($request->filled('q')) {
+            $gradedData = $gradedData->filter(function($app) use ($request) {
+                return str_contains(strtolower($app->user->name ?? ''), strtolower($request->q));
+            });
+        }
+        if ($request->filled('instansi_id')) {
             $gradedData = $gradedData->filter(function($app) use ($request) {
                 return $app->position->instansi_id == $request->instansi_id;
             });
         }
-        if ($request->has('asal_instansi') && $request->asal_instansi != '') {
-            $gradedData = $gradedData->filter(function($app) use ($request) {
-                return str_contains(strtolower($app->user->asal_instansi ?? ''), strtolower($request->asal_instansi));
+        $campus = $request->input('instansi') ?: $request->input('asal_instansi');
+        if (!empty($campus)) {
+            $gradedData = $gradedData->filter(function($app) use ($campus) {
+                return str_contains(strtolower($app->user->asal_instansi ?? ''), strtolower($campus));
             });
         }
-        if ($request->has('predikat') && $request->predikat != '') {
+        if ($request->filled('predikat')) {
             $gradedData = $gradedData->filter(function($app) use ($request) {
                 return strtolower($app->computed_predikat) == strtolower($request->predikat);
             });

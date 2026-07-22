@@ -24,9 +24,9 @@ enum ValidationStatus: string
     public function badgeClass(): string
     {
         return match($this) {
-            self::Pending => 'bg-amber-50 text-amber-700 border-amber-200/80',
-            self::Approved, self::Valid, self::Disetujui, self::DisetujuiPermanen => 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-            self::Rejected, self::Revisi => 'bg-rose-50 text-rose-700 border-rose-200/80',
+            self::Pending => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60',
+            self::Approved, self::Valid, self::Disetujui, self::DisetujuiPermanen => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60',
+            self::Rejected, self::Revisi => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200/80 dark:border-rose-800/60',
         };
     }
 }

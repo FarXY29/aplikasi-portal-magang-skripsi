@@ -162,9 +162,9 @@ class ReportController extends Controller
     /**
      * Laporan Durasi Magang
      */
-    public function laporanDurasiMagang()
+    public function laporanDurasiMagang(Request $request)
     {
-        $instansis = $this->reportService->getDurasiMagangData();
+        $instansis = $this->reportService->getDurasiMagangData($request);
         return view('admin_kota.laporan.durasi_magang', compact('instansis'));
     }
 
@@ -173,16 +173,16 @@ class ReportController extends Controller
      */
     public function printDurasiMagang(Request $request)
     {
-        $data = $this->reportService->getDurasiMagangData();
-        return $this->exportData('pdf.admin_kota.durasi_magang', ['instansis' => $data], 'Laporan-Durasi-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
+        $data = $this->reportService->getDurasiMagangData($request);
+        return $this->exportData('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
     /**
      * Laporan Demografi Jurusan
      */
-    public function laporanDemografiJurusan()
+    public function laporanDemografiJurusan(Request $request)
     {
-        $jurusans = $this->reportService->getDemografiJurusanData();
+        $jurusans = $this->reportService->getDemografiJurusanData($request);
         return view('admin_kota.laporan.demografi_jurusan', compact('jurusans'));
     }
 
@@ -191,7 +191,7 @@ class ReportController extends Controller
      */
     public function printDemografiJurusan(Request $request)
     {
-        $data = $this->reportService->getDemografiJurusanData();
+        $data = $this->reportService->getDemografiJurusanData($request);
         return $this->exportData('pdf.admin_kota.demografi_jurusan', [
             'jurusans' => $data,
             'request' => $request
@@ -201,9 +201,9 @@ class ReportController extends Controller
     /**
      * Laporan Penyerapan Kuota
      */
-    public function laporanPenyerapanKuota()
+    public function laporanPenyerapanKuota(Request $request)
     {
-        $penyerapan = $this->reportService->getPenyerapanKuotaData();
+        $penyerapan = $this->reportService->getPenyerapanKuotaData($request);
         return view('admin_kota.laporan.penyerapan_kuota', compact('penyerapan'));
     }
 
@@ -212,7 +212,7 @@ class ReportController extends Controller
      */
     public function printPenyerapanKuota(Request $request)
     {
-        $data = $this->reportService->getPenyerapanKuotaData();
+        $data = $this->reportService->getPenyerapanKuotaData($request);
         return $this->exportData('pdf.admin_kota.penyerapan_kuota', [
             'penyerapan' => $data,
             'request' => $request
