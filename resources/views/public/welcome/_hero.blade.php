@@ -6,13 +6,13 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 w-full flex flex-col items-center">
         <!-- Top Tag Badge -->
-        <span class="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-teal-900/60 border border-teal-500/35 backdrop-blur-md text-teal-200 text-xs font-extrabold tracking-wider uppercase mb-6 sm:mb-8 shadow-sm">
+        <span class="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-teal-900/60 border border-teal-500/35 backdrop-blur-md text-teal-200 text-xs font-extrabold tracking-wider uppercase mb-6 sm:mb-8 shadow-xs">
             <span class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse"></span>
             Portal Resmi Magang Kota Banjarmasin
         </span>
 
         <!-- Main Heading -->
-        <h1 class="text-3xl sm:text-5xl md:text-6xl font-black mb-4 sm:mb-6 leading-[1.2] sm:leading-[1.15] drop-shadow-sm tracking-tight font-display">
+        <h1 class="text-3xl sm:text-5xl md:text-6xl font-black mb-4 sm:mb-6 leading-[1.2] sm:leading-[1.15] drop-shadow-xs tracking-tight font-display">
             Bangun Karir & Pengalaman Mulia <br class="hidden sm:inline"/> Bersama <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-emerald-100 to-white">Pemerintah Kota Banjarmasin</span>
         </h1>
 
@@ -24,14 +24,14 @@
         <!-- Dynamic Global Search Dock -->
         <div class="w-full max-w-2xl px-2 sm:px-0">
             <form action="{{ route('home') }}#lowongan" method="GET" class="relative w-full" id="search-form">
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center p-2.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/20 gap-2 sm:gap-0 transform transition-transform duration-300 focus-within:scale-[1.01] w-full">
-                    <div class="flex items-center flex-grow pl-4 sm:pl-5 text-slate-400">
-                        <i class="fas fa-search text-lg text-teal-600 shrink-0"></i>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center p-2.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/20 dark:border-gray-700/60 gap-2 sm:gap-0 transform transition-transform duration-300 focus-within:scale-[1.01] w-full">
+                    <div class="flex items-center flex-grow pl-4 sm:pl-5 text-slate-400 dark:text-gray-400">
+                        <i class="fas fa-search text-lg text-teal-600 dark:text-teal-400 shrink-0"></i>
                         <input type="text" name="search" value="{{ request('search') }}" 
-                            class="w-full py-3.5 px-4 text-slate-800 dark:text-slate-100 bg-transparent text-sm sm:text-base font-semibold placeholder-slate-400 focus:outline-none border-none ring-0 focus:ring-0" 
+                            class="w-full py-3.5 px-4 text-slate-800 dark:text-gray-100 bg-transparent text-sm sm:text-base font-semibold placeholder-slate-400 dark:placeholder-gray-400 focus:outline-none border-none ring-0 focus:ring-0" 
                             placeholder="Cari posisi magang atau nama instansi...">
                     </div>
-                    <button type="submit" class="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold py-3.5 px-8 rounded-full transition-all duration-300 shadow-md shadow-teal-700/20 hover:shadow-lg active:scale-98 text-sm flex items-center justify-center gap-2 shrink-0">
+                    <button type="submit" class="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold py-3.5 px-8 rounded-full transition-all duration-300 shadow-md shadow-teal-700/20 hover:shadow-lg active:scale-98 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shrink-0">
                         <span>Cari Posisi</span>
                         <i class="fas fa-arrow-right text-xs"></i>
                     </button>
