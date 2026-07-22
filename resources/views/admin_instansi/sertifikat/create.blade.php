@@ -1,16 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Penerbitan Sertifikat Kelulusan') }}
-        </h2>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
+                    <i class="fas fa-certificate text-teal-600 dark:text-teal-400 text-lg"></i>
+                </div>
+                {{ __('Penerbitan Sertifikat Kelulusan') }}
+            </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
+        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            <div class="mb-6">
-                <a href="{{ route('dinas.peserta.index') }}" class="inline-flex items-center text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-teal-600 transition">
-                    <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Peserta
+            <div>
+                <a href="{{ route('dinas.peserta.index') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-xs">
+                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
+                    </div>
+                    Kembali ke Daftar Peserta
                 </a>
             </div>
 
@@ -18,112 +26,116 @@
                 
                 <div class="lg:col-span-2 space-y-6">
                     
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex items-start gap-6">
+                    {{-- Profil Peserta --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
                         <div class="flex-shrink-0">
                             @if($app->user->profile_photo_path)
-                                <img src="{{ Storage::url($app->user->profile_photo_path) }}" class="w-24 h-24 rounded-full object-cover border-4 border-teal-50 dark:border-teal-900/50">
+                                <img src="{{ Storage::url($app->user->profile_photo_path) }}" class="w-24 h-24 rounded-full object-cover border-4 border-teal-50 dark:border-teal-950/60 shadow-xs">
                             @else
-                                <div class="w-24 h-24 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center text-teal-600 dark:text-teal-400 text-3xl font-bold border-4 border-teal-50 dark:border-teal-900/50">
-                                    {{ substr($app->user->name, 0, 1) }}
+                                <div class="w-24 h-24 rounded-full bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center text-teal-600 dark:text-teal-300 text-3xl font-black border-4 border-teal-100 dark:border-teal-900/60 shadow-xs">
+                                    {{ strtoupper(substr($app->user->name, 0, 1)) }}
                                 </div>
                             @endif
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ $app->user->name }}</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ $app->user->email }}</p>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300">
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">{{ $app->user->name }}</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2 truncate">{{ $app->user->email }}</p>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800/60">
                                 {{ $app->position->judul_posisi }}
                             </span>
-                            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                                <i class="far fa-calendar-alt mr-2 text-teal-500"></i>
-                                {{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} - 
+                            <div class="mt-4 text-xs text-gray-600 dark:text-gray-400 font-semibold flex items-center justify-center sm:justify-start gap-2">
+                                <i class="far fa-calendar-alt text-teal-500"></i>
+                                {{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} — 
                                 {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                        <div class="p-4 border-b border-gray-50 dark:border-gray-700 bg-teal-50/30 dark:bg-teal-950/20 flex justify-between items-center">
-                            <h4 class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <i class="fas fa-clipboard-check text-teal-600"></i> Verifikasi Nilai Akhir
+                    {{-- Verifikasi Nilai --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div class="p-5 border-b border-gray-100 dark:border-gray-700 bg-teal-50/50 dark:bg-teal-950/30 flex justify-between items-center">
+                            <h4 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2 text-sm">
+                                <i class="fas fa-clipboard-check text-teal-600 dark:text-teal-400"></i> Verifikasi Nilai Akhir
                             </h4>
-                            <div class="text-2xl font-black text-teal-600">
-                                {{ $app->nilai_rata_rata }}
-                                <span class="text-xs font-medium text-gray-400">/100</span>
+                            <div class="text-2xl font-black text-teal-600 dark:text-teal-400">
+                                {{ round($app->nilai_rata_rata ?? $app->avg_nilai ?? 0, 1) }}
+                                <span class="text-xs font-medium text-gray-400 dark:text-gray-500">/100</span>
                             </div>
                         </div>
-                        <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex justify-between">
+                        <div class="p-6 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-medium">
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Kerajinan</span>
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_kerajinan }}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_kerajinan ?? '-' }}</span>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex justify-between">
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Disiplin</span>
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_disiplin }}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_disiplin ?? '-' }}</span>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex justify-between">
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Adaptasi</span>
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_adaptasi }}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_adaptasi ?? '-' }}</span>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex justify-between">
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Kreatifitas</span>
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_kreatifitas }}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_kreatifitas ?? '-' }}</span>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg flex justify-between">
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex justify-between col-span-1 md:col-span-2">
                                     <span class="text-gray-600 dark:text-gray-400">Skill dan Pengetahuan</span>
-                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_skill_pengetahuan }}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->nilai_skill_pengetahuan ?? '-' }}</span>
                                 </div>
                             </div>
                             
-                            <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl border border-yellow-100 dark:border-yellow-900/40 text-xs text-yellow-800 dark:text-yellow-300 flex gap-2">
-                                <i class="fas fa-info-circle mt-0.5"></i>
-                                <p>Pastikan semua nilai di atas sudah benar sebelum menerbitkan sertifikat. Sertifikat yang sudah diterbitkan tidak dapat diubah nilainya.</p>
+                            <div class="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-900/60 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+                                <i class="fas fa-info-circle text-amber-600 dark:text-amber-400 mt-0.5 text-sm"></i>
+                                <p class="leading-relaxed">Pastikan semua nilai di atas sudah benar sebelum menerbitkan sertifikat. Sertifikat yang sudah diterbitkan akan menggunakan nilai ini secara permanen.</p>
                             </div>
                         </div>
                     </div>
 
                 </div>
 
+                {{-- Form Legalisasi Sertifikat --}}
                 <div class="lg:col-span-1">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-teal-100 dark:border-teal-900/50 sticky top-8">
-                        <div class="bg-teal-600 p-5 rounded-t-2xl text-white">
-                            <h3 class="font-bold text-lg">Penerbitan Sertifikat</h3>
-                            <p class="text-teal-100 text-xs mt-1">Isi data legalitas sertifikat di bawah ini.</p>
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-8">
+                        <div class="bg-gradient-to-r from-teal-600 to-teal-700 p-5 text-white">
+                            <h3 class="font-bold text-base flex items-center gap-2">
+                                <i class="fas fa-file-signature"></i> Legalisasi Sertifikat
+                            </h3>
+                            <p class="text-teal-100 text-xs mt-1">Isi nomor registrasi dan tanggal penerbitan.</p>
                         </div>
                         
                         <div class="p-6">
-                            <form action="{{ route('dinas.sertifikat.store', $app->id) }}" method="POST" target="_blank">
+                            <form action="{{ route('dinas.sertifikat.store', $app->id) }}" method="POST" target="_blank" class="space-y-5">
                                 @csrf
                                 
-                                <div class="mb-5">
-                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Nomor Sertifikat</label>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Nomor Sertifikat</label>
                                     <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-barcode text-gray-400"></i>
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                                            <i class="fas fa-barcode text-sm"></i>
                                         </div>
-                                        <input type="text" name="certificate_number" value="{{ old('certificate_number', $app->certificate_number ?? $autoNumber) }}" required
-                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-sm font-medium"
-                                            placeholder="Contoh: 001/SRT/2024">
+                                        <input type="text" name="nomor_sertifikat" value="{{ old('nomor_sertifikat', $app->nomor_sertifikat ?? $autoNumber) }}" required
+                                            class="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-xs font-bold"
+                                            placeholder="Contoh: 001/MAGANG/DINAS/2026">
                                     </div>
-                                    <p class="text-[10px] text-gray-400 mt-1">*Nomor ini akan tercetak di sertifikat.</p>
+                                    <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">*Nomor ini akan tercetak secara sah di sertifikat.</p>
                                 </div>
 
-                                <div class="mb-6">
-                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Tanggal Terbit</label>
-                                    <input type="date" name="certificate_date" value="{{ old('certificate_date', date('Y-m-d')) }}" required
-                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-sm">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Tanggal Terbit</label>
+                                    <input type="date" name="tanggal_sertifikat" value="{{ old('tanggal_sertifikat', date('Y-m-d')) }}" required
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 text-xs font-bold [color-scheme:dark]">
                                 </div>
 
-                                <hr class="border-gray-100 dark:border-gray-700 mb-6">
+                                <hr class="border-gray-100 dark:border-gray-700">
 
-                                <button type="submit" class="w-full group bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-teal-200 transition transform active:scale-95 flex items-center justify-center gap-2">
-                                    <i class="fas fa-file-pdf text-lg group-hover:animate-bounce"></i>
-                                    <span>Simpan & Generate PDF</span>
-                                </button>
+                                <x-primary-button class="w-full justify-center py-3 text-xs">
+                                    <i class="fas fa-file-pdf mr-2 text-sm"></i> Simpan & Generate PDF
+                                </x-primary-button>
                                 
-                                <p class="text-center text-xs text-gray-400 mt-4">
-                                    File PDF akan otomatis terunduh / terbuka di tab baru.
+                                <p class="text-center text-[11px] text-gray-400 dark:text-gray-500">
+                                    File PDF akan otomatis terbuka di tab baru.
                                 </p>
                             </form>
                         </div>

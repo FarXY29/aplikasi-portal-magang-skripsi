@@ -5,9 +5,9 @@
 
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-emerald-600 leading-tight flex items-center gap-3 drop-shadow-sm">
+            <h2 class="font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-emerald-600 dark:from-teal-400 dark:to-emerald-300 leading-tight flex items-center gap-3 drop-shadow-sm">
                 <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center border border-teal-200 dark:border-teal-800/50">
-                    <i class="fas fa-plus text-teal-600 text-lg"></i>
+                    <i class="fas fa-plus text-teal-600 dark:text-teal-400 text-lg"></i>
                 </div>
                 {{ __('Buat Lowongan Baru') }}
             </h2>
@@ -17,15 +17,15 @@
     <div class="py-12 bg-slate-50 dark:bg-gray-900 min-h-screen relative overflow-hidden font-sans">
         <!-- Background Ornaments -->
         <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-teal-50 dark:from-teal-950/20 to-slate-50 dark:to-gray-900 z-0"></div>
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute top-24 -left-24 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200 dark:bg-emerald-900/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute top-24 -left-24 w-72 h-72 bg-teal-300 dark:bg-teal-900/30 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 relative z-10">
             
             <div class="mb-8">
                 <a href="{{ route('dinas.lowongan.index') }}" class="inline-flex items-center text-sm font-bold text-slate-500 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 transition-all group bg-white dark:bg-gray-800/60 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 dark:border-gray-700 shadow-sm hover:shadow-md">
                     <div class="w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 flex items-center justify-center mr-3 group-hover:border-teal-400 dark:group-hover:border-teal-600 group-hover:bg-teal-50 dark:group-hover:bg-teal-950/30 transition-colors">
-                        <i class="fas fa-arrow-left text-xs text-slate-400 group-hover:text-teal-600"></i>
+                        <i class="fas fa-arrow-left text-xs text-slate-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
                     </div>
                     Kembali ke Daftar Lowongan
                 </a>
@@ -35,9 +35,9 @@
                 
                 <div class="relative overflow-hidden bg-gradient-to-r from-teal-600 to-emerald-500 p-8 text-white">
                     <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white dark:bg-gray-800 rounded-full opacity-10 blur-2xl"></div>
-                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-teal-900 rounded-full opacity-10 blur-xl"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-teal-900 dark:bg-teal-950 rounded-full opacity-10 blur-xl"></div>
                     <div class="relative z-10 flex items-center gap-5">
-                        <div class="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800/20 backdrop-blur-md flex items-center justify-center text-white text-2xl border border-white/30 shadow-inner">
+                        <div class="w-16 h-16 rounded-2xl bg-white/20 dark:bg-gray-800/30 backdrop-blur-md flex items-center justify-center text-white text-2xl border border-white/30 shadow-inner">
                             <i class="fas fa-briefcase"></i>
                         </div>
                         <div>
@@ -55,7 +55,7 @@
                             <!-- Section 1: Informasi Utama -->
                             <div>
                                 <div class="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100 dark:border-gray-700">
-                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 font-bold text-sm">1</span>
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 font-bold text-sm">1</span>
                                     <h4 class="text-md font-bold text-slate-800 dark:text-gray-200 tracking-wide uppercase">Informasi Posisi Magang</h4>
                                 </div>
 
@@ -63,11 +63,11 @@
                                     <!-- Nama Posisi / Jabatan Magang -->
                                     <div class="relative group">
                                         <label for="judul_posisi" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                            <i class="fas fa-briefcase text-teal-500"></i> Nama Posisi / Jabatan Magang <span class="text-red-500" title="Wajib diisi">*</span>
+                                            <i class="fas fa-briefcase text-teal-500 dark:text-teal-400"></i> Nama Posisi / Jabatan Magang <span class="text-red-500" title="Wajib diisi">*</span>
                                         </label>
                                         <div class="relative transition-all duration-300 group-focus-within:drop-shadow-sm">
                                             <input type="text" name="judul_posisi" id="judul_posisi" value="{{ old('judul_posisi') }}" 
-                                                class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('judul_posisi') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-bold text-slate-800 dark:text-gray-100 text-lg placeholder-slate-400 dark:placeholder-gray-600"
+                                                class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('judul_posisi') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-bold text-slate-800 dark:text-gray-100 text-lg placeholder-slate-400 dark:placeholder-gray-500"
                                                 placeholder="Contoh: Programmer Web, Staff Administrasi, Desainer Grafis" required>
                                             @error('judul_posisi')
                                                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
@@ -85,11 +85,11 @@
                                         <!-- Syarat Jurusan -->
                                         <div class="relative group">
                                             <label for="required_major" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                                <i class="fas fa-graduation-cap text-teal-500"></i> Kualifikasi Jurusan
+                                                <i class="fas fa-graduation-cap text-teal-500 dark:text-teal-400"></i> Kualifikasi Jurusan
                                             </label>
                                             <div class="relative transition-all duration-300 group-focus-within:drop-shadow-sm">
                                                 <input type="text" name="required_major" id="required_major" value="{{ old('required_major') }}" 
-                                                    class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('required_major') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-medium text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-600"
+                                                    class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('required_major') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-medium text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="Contoh: Teknik Informatika, DKV, Akuntansi">
                                                 @error('required_major')
                                                     <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
@@ -106,7 +106,7 @@
                                         <!-- Kuota Penerimaan -->
                                         <div class="relative group">
                                             <label for="kuota" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                                <i class="fas fa-users text-emerald-500"></i> Kuota Penerimaan <span class="text-red-500" title="Wajib diisi">*</span>
+                                                <i class="fas fa-users text-emerald-500 dark:text-emerald-400"></i> Kuota Penerimaan <span class="text-red-500" title="Wajib diisi">*</span>
                                             </label>
                                             <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                                 <input type="number" name="kuota" id="kuota" value="{{ old('kuota', 1) }}" min="1" 
@@ -129,7 +129,7 @@
                             <!-- Section 2: Jadwal & Deskripsi -->
                             <div>
                                 <div class="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100 dark:border-gray-700">
-                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 font-bold text-sm">2</span>
+                                    <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 font-bold text-sm">2</span>
                                     <h4 class="text-md font-bold text-slate-800 dark:text-gray-200 tracking-wide uppercase">Jadwal & Deskripsi Pekerjaan</h4>
                                 </div>
 
@@ -137,11 +137,11 @@
                                     <!-- Batas Akhir Pendaftaran -->
                                     <div class="relative group">
                                         <label for="batas_daftar" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                            <i class="far fa-calendar-alt text-indigo-500"></i> Batas Akhir Pendaftaran
+                                            <i class="far fa-calendar-alt text-indigo-500 dark:text-indigo-400"></i> Batas Akhir Pendaftaran
                                         </label>
                                         <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md md:w-1/2">
                                             <input type="date" name="batas_daftar" id="batas_daftar" value="{{ old('batas_daftar') }}" 
-                                                class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('batas_daftar') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-slate-800 dark:text-gray-100"
+                                                class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('batas_daftar') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-slate-800 dark:text-gray-100 [color-scheme:light] dark:[color-scheme:dark]"
                                                 min="{{ date('Y-m-d') }}">
                                             @error('batas_daftar')
                                                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
@@ -158,10 +158,10 @@
                                     <!-- Deskripsi Pekerjaan -->
                                     <div class="relative group">
                                         <label for="editor" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                            <i class="fas fa-file-alt text-teal-600"></i> Deskripsi Pekerjaan & Persyaratan Detail
+                                            <i class="fas fa-file-alt text-teal-600 dark:text-teal-400"></i> Deskripsi Pekerjaan & Persyaratan Detail
                                         </label>
                                         <div class="rounded-2xl overflow-hidden border @error('deskripsi') border-red-400 focus-within:ring-red-500/10 focus-within:border-red-500 @else border-slate-200 dark:border-gray-700 focus-within:ring-teal-500/10 focus-within:border-teal-500 @enderror shadow-sm focus-within:ring-4 transition-all duration-300 bg-white dark:bg-gray-800">
-                                            <textarea id="editor" name="deskripsi" class="w-full border-0 focus:ring-0">{{ old('deskripsi') }}</textarea>
+                                            <textarea id="editor" name="deskripsi" class="w-full border-0 focus:ring-0 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100">{{ old('deskripsi') }}</textarea>
                                         </div>
                                         <p class="text-xs text-slate-400 dark:text-gray-500 mt-2 ml-1 font-medium"><i class="fas fa-info-circle mr-1"></i> Jabarkan ruang lingkup kerja, tugas, serta kompetensi khusus yang dibutuhkan.</p>
                                         @error('deskripsi') 
@@ -205,7 +205,6 @@
         }
 
         /* ── CKEditor 5 Dark Theme via CSS Variables ── */
-        /* CKEditor 5 is built on CSS custom properties — override them globally in .dark */
         .dark {
             /* Base */
             --ck-color-base-background:       #1f2937;  /* gray-800 */
@@ -271,14 +270,14 @@
             --ck-color-tooltip-background: #374151;
             --ck-color-tooltip-text:       #f3f4f6;
 
-            /* Table (just in case) */
+            /* Table */
             --ck-color-table-focused-cell-background: rgba(20,184,166,0.1);
 
             /* Separator */
             --ck-color-toolbar-separator: #374151;
         }
 
-        /* Editable area background & text (needs explicit bg since it renders in its own scrollable div) */
+        /* Editable area background & text */
         .dark .ck-editor__editable_inline,
         .dark .ck.ck-editor__editable:not(.ck-editor__nested-editable) {
             background: #111827 !important;  /* gray-900 */
