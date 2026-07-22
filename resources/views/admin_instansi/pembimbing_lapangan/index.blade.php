@@ -2,38 +2,39 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-chalkboard-teacher text-teal-600"></i>
+                <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400"></i>
                 {{ __('Kelola Pembimbing Lapangan') }}
             </h2>
             <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Total Pembimbing Lapangan: <span class="font-bold text-teal-600">{{ $pembimbing_lapangan->count() }}</span>
+                Total Pembimbing Lapangan: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $pembimbing_lapangan->count() }}</span>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="flex justify-between items-center mb-6 print:hidden">
-                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs"></i>
+                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
+                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
                     </div>
                     Kembali ke Dashboard
                 </a>
             </div>
 
             @if(session('success'))
-    <x-ui.alert type="success" class="mb-4">
-        {{ session('success') }}
-    </x-ui.alert>
-@endif
+                <x-ui.alert type="success" class="mb-4">
+                    {{ session('success') }}
+                </x-ui.alert>
+            @endif
 
             <div class="flex flex-col lg:flex-row gap-8 items-start">
                 
+                <!-- Form Tambah Pembimbing -->
                 <div class="w-full lg:w-1/3 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-8">
-                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-700">
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50">
                             <i class="fas fa-user-plus"></i>
                         </div>
                         <div>
@@ -48,64 +49,65 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5 ml-1">Nama Pegawai</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                                     <i class="fas fa-user"></i>
                                 </span>
-                                <input type="text" name="name" class="w-full pl-9 pr-4 py-2.5 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="Nama Lengkap" required>
+                                <input type="text" name="name" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="Nama Lengkap" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5 ml-1">NIP (Nomor Induk Pegawai)</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                                     <i class="fas fa-id-card"></i>
                                 </span>
-                                <input type="text" name="nip" class="w-full pl-9 pr-4 py-2.5 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="19xxxxxxxx xxx x xxx">
+                                <input type="text" name="nip" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="19xxxxxxxx xxx x xxx">
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5 ml-1">Email Login</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                                     <i class="fas fa-envelope"></i>
                                 </span>
-                                <input type="email" name="email" class="w-full pl-9 pr-4 py-2.5 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="email@instansi.go.id" required>
+                                <input type="email" name="email" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="email@instansi.go.id" required>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1.5 ml-1">Password</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                                     <i class="fas fa-lock"></i>
                                 </span>
-                                <input type="password" name="password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="Minimal 8 karakter" required>
+                                <input type="password" name="password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" placeholder="Minimal 8 karakter" required>
                             </div>
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition transform active:scale-95 flex items-center justify-center gap-2">
                                 <i class="fas fa-save"></i> Simpan Akun
                             </button>
                         </div>
                     </form>
                 </div>
 
+                <!-- Daftar Pembimbing -->
                 <div class="w-full lg:w-2/3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
-                    <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
+                    <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-gray-800 dark:text-gray-200">Daftar Pembimbing</h3>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kelola data pembimbing lapangan yang terdaftar.</p>
                         </div>
-                        <div class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm text-gray-400">
+                        <div class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm text-gray-400 dark:text-gray-500">
                             <i class="fas fa-list"></i>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-100">
+                        <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Profil Pegawai</th>
@@ -113,9 +115,9 @@
                                     <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50 bg-white dark:bg-gray-800">
+                            <tbody class="divide-y divide-gray-50 dark:divide-gray-700/60 bg-white dark:bg-gray-800">
                                 @forelse($pembimbing_lapangan as $pembimbing_lapangan)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition group">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition group">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
                                             <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
@@ -123,7 +125,7 @@
                                             </div>
                                             <div>
                                                 <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $pembimbing_lapangan->name }}</div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-1.5 rounded w-fit mt-0.5">
+                                                <div class="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-900 px-1.5 rounded w-fit mt-0.5 border border-transparent dark:border-gray-700">
                                                     NIP: {{ $pembimbing_lapangan->nik ?? '-' }}
                                                 </div>
                                             </div>
@@ -131,19 +133,19 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         <div class="flex items-center gap-2">
-                                            <i class="far fa-envelope text-gray-400"></i> {{ $pembimbing_lapangan->email }}
+                                            <i class="far fa-envelope text-gray-400 dark:text-gray-500"></i> {{ $pembimbing_lapangan->email }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-                                            <a href="{{ route('dinas.pembimbing_lapangan.edit', $pembimbing_lapangan->id) }}" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition shadow-sm" title="Edit Data">
+                                            <a href="{{ route('dinas.pembimbing_lapangan.edit', $pembimbing_lapangan->id) }}" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 hover:border-indigo-200 dark:hover:border-indigo-800/50 transition shadow-sm" title="Edit Data">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             
                                             <form action="{{ route('dinas.pembimbing_lapangan.destroy', $pembimbing_lapangan->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-200 dark:hover:border-red-900/50 transition shadow-sm" title="Hapus Akun">
+                                                <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-200 dark:hover:border-red-900/50 transition shadow-sm" title="Hapus Akun">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
@@ -153,12 +155,12 @@
                                 @empty
                                 <tr>
                                     <td colspan="3" class="px-6 py-12 text-center">
-                                        <div class="flex flex-col items-center justify-center text-gray-400">
-                                            <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
-                                                <i class="fas fa-user-slash text-2xl text-gray-300"></i>
+                                        <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                                            <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-transparent dark:border-gray-700">
+                                                <i class="fas fa-user-slash text-2xl text-gray-300 dark:text-gray-600"></i>
                                             </div>
-                                            <p class="text-sm font-medium">Belum ada pembimbing_lapangan yang ditambahkan.</p>
-                                            <p class="text-xs mt-1">Silakan tambah pembimbing_lapangan melalui formulir di samping.</p>
+                                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Belum ada pembimbing lapangan yang ditambahkan.</p>
+                                            <p class="text-xs mt-1 text-gray-400 dark:text-gray-500">Silakan tambah pembimbing lapangan melalui formulir di samping.</p>
                                         </div>
                                     </td>
                                 </tr>

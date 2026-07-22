@@ -73,4 +73,9 @@ class Application extends Model
         }
         return $statusValue;
     }
+
+    public function getStatusValueAttribute(): string
+    {
+        return $this->status instanceof \App\Enums\ApplicationStatus ? $this->status->value : (string) $this->status;
+    }
 }

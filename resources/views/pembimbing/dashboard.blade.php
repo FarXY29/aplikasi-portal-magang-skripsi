@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             <i class="fas fa-chalkboard-teacher text-teal-600 mr-2"></i>
-            {{ __('Dashboard Pembimbing Sekolah') }}
+            {{ __('Dashboard Pembimbing Akademik') }}
         </h2>
     </x-slot>
 

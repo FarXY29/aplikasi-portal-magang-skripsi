@@ -110,7 +110,7 @@ class PembimbingLapanganController extends Controller
         return view('pembimbing_lapangan.grading', compact('app'));
     }
 
-    public function storeGrade(Request $request, $id)
+    public function storeGrade(Request $request, $id, \App\Services\ApplicationLifecycleService $lifecycleService)
     {
         $app = Application::findOrFail($id);
         $this->authorize('grade', $app);
@@ -118,27 +118,31 @@ class PembimbingLapanganController extends Controller
         $request->validate([
             'nilai_disiplin' => 'required|numeric|min:0|max:100',
             'nilai_kinerja' => 'required|numeric|min:0|max:100',
-            'catatan_pembimbing_lapangan' => 'required|string'
+            'catatan_pembimbing_lapangan' => 'nullable|string'
         ]);
 
         // Hitung Predikat & Nilai Akhir Otomatis
         $disiplin = $request->nilai_disiplin;
         $kinerja = $request->nilai_kinerja;
-        $nilai_akhir = ($disiplin * 0.40) + ($kinerja * 0.60);
+        $nilai_akhir = round(($disiplin * 0.40) + ($kinerja * 0.60), 2);
         
-        $predikat = 'E';
+        $predikat = 'D (Kurang)';
         if ($nilai_akhir >= 85) $predikat = 'A (Sangat Baik)';
         elseif ($nilai_akhir >= 75) $predikat = 'B (Baik)';
         elseif ($nilai_akhir >= 60) $predikat = 'C (Cukup)';
-        elseif ($nilai_akhir >= 50) $predikat = 'D (Kurang)';
 
         $app->update([
             'nilai_disiplin' => $disiplin,
             'nilai_kinerja' => $kinerja,
             'nilai_angka' => $nilai_akhir,
+            'nilai_rata_rata' => $nilai_akhir,
             'predikat' => $predikat,
             'catatan_pembimbing_lapangan' => $request->catatan_pembimbing_lapangan
         ]);
+
+        if ($app->status_value !== 'selesai') {
+            $lifecycleService->markAsFinished($app);
+        }
 
         return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Nilai berhasil disimpan.');
     }
@@ -204,7 +208,7 @@ class PembimbingLapanganController extends Controller
         $app = Application::findOrFail($id);
         $this->authorize('grade', $app);
 
-        // 1. Validasi 10 Input
+        // 1. Validasi Input
         $validated = $request->validate([
             'nilai_kerajinan' => 'required|numeric|min:0|max:100',
             'nilai_disiplin' => 'required|numeric|min:0|max:100',
@@ -219,14 +223,23 @@ class PembimbingLapanganController extends Controller
         $total = $request->nilai_kerajinan + $request->nilai_disiplin + $request->nilai_adaptasi + 
                 $request->nilai_kreatifitas + $request->nilai_skill_pengetahuan;
         
-        $rataRata = $total / 5;
+        $rataRata = round($total / 5, 2);
+
+        $predikat = 'D (Kurang)';
+        if ($rataRata >= 90) $predikat = 'A (Sangat Baik)';
+        elseif ($rataRata >= 80) $predikat = 'B (Baik)';
+        elseif ($rataRata >= 70) $predikat = 'C (Cukup)';
 
         // 3. Simpan ke Database
         $app->update(array_merge($validated, [
             'nilai_rata_rata' => $rataRata,
+            'nilai_angka' => $rataRata,
+            'predikat' => $predikat,
         ]));
 
-        $lifecycleService->markAsFinished($app);
+        if ($app->status_value !== 'selesai') {
+            $lifecycleService->markAsFinished($app);
+        }
 
         return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Penilaian berhasil disimpan!');
     }
