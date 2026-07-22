@@ -1,29 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sertifikat Magang</title>
+    <meta charset="utf-8">
+    <title>Sertifikat Magang - {{ $app->user->name }}</title>
     <style>
-        /* 1. Atur Margin Halaman di sini (Area Cetak Aman) */
+        /* 1. Margin Halaman A4 Landscape (Full Edge-to-Edge Background) */
         @page {
             size: A4 landscape;
-            margin: 0; /* Menghapus margin agar background bisa penuh edge-to-edge */
+            margin: 0;
         }
 
-        /* 2. Reset Body agar tidak ada spasi tambahan */
+        /* 2. Reset Body */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            font-family: "Times New Roman", serif;
-            color: #333;
+            font-family: "Times New Roman", Times, serif;
+            color: #1e293b;
             background-image: url('{{ public_path("images/certificate_frame.png") }}');
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        /* 3. Container Utama (Isi Konten) */
+        /* 3. Container Utama (Mengisi area & terdistribusi seimbang dari atas ke bawah) */
         .container {
             position: absolute;
             top: 0;
@@ -31,63 +32,85 @@
             right: 0;
             bottom: 0;
             box-sizing: border-box; 
-            padding: 55px 120px; /* Memberikan ruang ekstra dari border */
+            padding: 68px 110px 55px 110px;
             text-align: center;
         }
 
-        /* 4. Typography &amp; Spacing (Diperpadat &amp; Lebih Premium) */
+        /* 4. Kop Instansi */
         .header-text {
-            font-size: 18pt;
+            font-size: 19pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 2px;
-            color: #0F766E; /* Dark Teal matching the frame */
+            letter-spacing: 2px;
+            color: #0F766E; /* Dark Teal */
+            margin-top: 0px;
+            margin-bottom: 4px;
             line-height: 1.2;
-            margin-top: 15px;
         }
 
         .sub-header-text {
-            font-size: 13pt;
-            font-weight: normal;
+            font-size: 13.5pt;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            color: #475569;
+            letter-spacing: 1.5px;
+            color: #334155;
+            margin-bottom: 12px;
         }
 
+        .divider-line {
+            width: 50%;
+            height: 2px;
+            background-color: #0F766E;
+            margin: 0 auto 14px auto;
+        }
+
+        /* 5. Judul Sertifikat & Nomor */
         .title {
             font-size: 32pt;
             font-weight: bold;
             text-transform: uppercase;
-            color: #0F766E; /* Dark Teal */
-            margin: 10px 0 2px 0;
-            font-family: "Helvetica", sans-serif;
-            letter-spacing: 2px;
+            color: #0F766E;
+            margin: 8px 0 4px 0;
+            font-family: "Helvetica", "Arial", sans-serif;
+            letter-spacing: 3px;
         }
 
         .nomor-surat {
-            font-size: 10pt;
-            margin-bottom: 15px;
+            font-size: 11pt;
+            margin-bottom: 18px;
             color: #475569;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
 
-        .content-text {
-            font-size: 12pt;
-            margin: 4px 0;
-            color: #1e293b;
+        /* 6. Isi Teks & Nama Peserta */
+        .content-subtitle {
+            font-size: 12.5pt;
+            font-style: italic;
+            margin: 6px 0;
+            color: #475569;
+        }
+
+        .candidate-wrapper {
+            margin: 12px 0 16px 0;
         }
 
         .candidate-name {
-            font-size: 26pt;
+            font-size: 27pt;
             font-weight: bold;
-            margin: 12px 0;
-            color: #1a202c;
+            color: #0f172a;
             text-transform: uppercase;
-            font-family: "Times New Roman", serif;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 3px;
+        }
+
+        .content-text {
+            font-size: 12.5pt;
+            margin: 8px 0;
+            color: #1e293b;
+            line-height: 1.4;
         }
 
         .predikat-label {
@@ -99,24 +122,54 @@
         .duration-text {
             font-size: 11.5pt;
             font-style: italic;
-            margin-bottom: 20px;
+            margin-top: 6px;
+            margin-bottom: 32px;
             color: #475569;
         }
 
-        /* 5. Layout Tanda Tangan */
+        /* 7. Layout Tabel Tanda Tangan & QR Code */
         .signature-section {
             width: 100%;
-            margin-top: 5px;
-            border-collapse: collapse; /* Menggunakan tabel agar lebih stabil */
+            margin-top: 25px;
+            border-collapse: collapse;
         }
+
         .signature-section td {
             vertical-align: top;
             text-align: center;
             font-size: 10.5pt;
             color: #1e293b;
+            line-height: 1.35;
         }
+
         .sign-space {
-            height: 60px; /* Ruang tanda tangan pas */
+            height: 52px;
+        }
+
+        .sign-name {
+            font-weight: bold;
+            display: inline-block;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 1px;
+            margin-bottom: 2px;
+        }
+
+        .qr-box {
+            display: inline-block;
+            padding: 5px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .qr-label {
+            font-size: 7.5pt;
+            font-weight: bold;
+            color: #64748b;
+            display: block;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -124,18 +177,25 @@
 
     <div class="container">
         
+        {{-- Kop Dinas --}}
         <div class="header-text">PEMERINTAH KOTA BANJARMASIN</div>
         <div class="sub-header-text">{{ $app->position->instansi->nama_dinas }}</div>
+        <div class="divider-line"></div>
         
+        {{-- Judul & Nomor Sertifikat --}}
         <div class="title">SERTIFIKAT MAGANG</div>
         <div class="nomor-surat">
             Nomor: {{ $app->nomor_sertifikat ?? 'Draft' }}
         </div>
 
-        <p class="content-text">Diberikan apresiasi setinggi-tingginya kepada:</p>
+        {{-- Penerima Sertifikat --}}
+        <p class="content-subtitle">Diberikan apresiasi setinggi-tingginya kepada:</p>
 
-        <div class="candidate-name"><u>{{ $app->user->name }}</u></div>
+        <div class="candidate-wrapper">
+            <span class="candidate-name">{{ $app->user->name }}</span>
+        </div>
         
+        {{-- Keterangan Kelulusan --}}
         <p class="content-text">
             Telah menyelesaikan program Praktek Kerja Lapangan (PKL) / Magang dengan hasil evaluasi
             <span class="predikat-label">
@@ -152,54 +212,53 @@
             $instansi = $app->position->instansi; 
         @endphp
 
+        {{-- Tabel Tanda Tangan & QR Code --}}
         <table class="signature-section">
             <tr>
-                {{-- Kolom Kiri: Kepala Dinas / Pejabat --}}
-                <td style="width: 40%;">
+                {{-- Left: Pejabat / Kepala Dinas --}}
+                <td style="width: 38%;">
                     Mengetahui,<br>
                     <span style="font-weight: bold;">{{ $instansi->jabatan_pejabat ?? 'Kepala Dinas' }}</span>
                     
-                    <br><br>
-                    
-                    {{-- Tanda Tangan Kepala Dinas --}}
                     @if($instansi->ttd_kepala && file_exists(public_path('storage/' . $instansi->ttd_kepala)))
-                        <img src="{{ public_path('storage/' . $instansi->ttd_kepala) }}" style="height: 55px; width: auto; display: block; margin: 0 auto;">
+                        <div style="margin: 4px 0;">
+                            <img src="{{ public_path('storage/' . $instansi->ttd_kepala) }}" style="height: 52px; width: auto; display: block; margin: 0 auto;">
+                        </div>
                     @else
                         <div class="sign-space"></div>
                     @endif
 
-                    <span style="font-weight: bold; text-decoration: underline;">
+                    <span class="sign-name">
                         {{ $instansi->nama_pejabat ?? '................................' }}
                     </span><br>
-                    NIP. {{ $instansi->nip_pejabat ?? '....................' }}
+                    <span style="font-size: 9.5pt; color: #475569;">NIP. {{ $instansi->nip_pejabat ?? '....................' }}</span>
                 </td>
 
-                {{-- Kolom Tengah: Scan Validasi QR Code --}}
-                <td style="width: 20%; vertical-align: middle; text-align: center; padding-top: 15px;">
-                    <div style="display: inline-block; padding: 6px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                        <img src="data:image/svg+xml;base64, {{ base64_encode(QrCode::format('svg')->size(70)->generate(route('certificate.verify', $app->token_verifikasi ?? 'invalid'))) }}" style="display: block; margin: 0 auto;">
+                {{-- Center: QR Code Scan Validasi --}}
+                <td style="width: 24%; vertical-align: top; padding-top: 5px;">
+                    <div class="qr-box">
+                        <img src="data:image/svg+xml;base64, {{ base64_encode(QrCode::format('svg')->size(65)->generate(route('certificate.verify', $app->token_verifikasi ?? 'invalid'))) }}" style="display: block; margin: 0 auto; width: 65px; height: 65px;">
                     </div>
-                    <span style="font-size: 7.5pt; font-weight: bold; color: #64748b; display: block; margin-top: 6px; letter-spacing: 0.5px;">Scan Validasi</span>
+                    <span class="qr-label">Scan Validasi</span>
                 </td>
 
-                {{-- Kolom Kanan: Pembimbing Lapangan --}}
-                <td style="width: 40%;">
+                {{-- Right: Pembimbing Lapangan --}}
+                <td style="width: 38%;">
                     Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>
-                    Pembimbing Lapangan
+                    <span style="font-weight: bold;">Pembimbing Lapangan</span>
                     
-                    <br><br>
-
-                    {{-- Tanda Tangan Pembimbing Lapangan --}}
                     @if($app->pembimbing_lapangan && $app->pembimbing_lapangan->signature && file_exists(public_path('storage/' . $app->pembimbing_lapangan->signature)))
-                        <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 55px; width: auto; display: block; margin: 0 auto;">
+                        <div style="margin: 4px 0;">
+                            <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 52px; width: auto; display: block; margin: 0 auto;">
+                        </div>
                     @else
                         <div class="sign-space"></div>
                     @endif
 
-                    <span style="font-weight: bold; text-decoration: underline;">
+                    <span class="sign-name">
                         {{ $app->pembimbing_lapangan->name ?? '................................' }}
                     </span><br>
-                    NIP/NIK. {{ $app->pembimbing_lapangan->nomor_induk ?? '-' }}
+                    <span style="font-size: 9.5pt; color: #475569;">NIP/NIK. {{ $app->pembimbing_lapangan->nomor_induk ?? '-' }}</span>
                 </td>
             </tr>
         </table>
