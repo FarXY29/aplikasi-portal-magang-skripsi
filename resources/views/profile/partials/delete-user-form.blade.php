@@ -1,6 +1,6 @@
 <section>
-    <div class="border-b border-red-100 pb-5 mb-6">
-        <h3 class="font-semibold text-lg text-red-600 flex items-center gap-2">
+    <div class="border-b border-red-100 dark:border-red-900/40 pb-5 mb-6">
+        <h3 class="font-semibold text-lg text-red-600 dark:text-red-400 flex items-center gap-2">
             <i class="fas fa-exclamation-triangle text-red-500"></i>
             {{ __('Hapus Akun Permanen') }}
         </h3>
@@ -9,7 +9,7 @@
         </p>
     </div>
 
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 p-5 rounded-xl bg-red-50/60 border border-red-200/60">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 p-5 rounded-xl bg-red-50/60 dark:bg-red-950/30 border border-red-200/60 dark:border-red-900/40">
         <div class="space-y-1 max-w-xl">
             <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
                 <span>{{ __('Tindakan Tidak Dapat Dibatalkan') }}</span>
@@ -31,19 +31,19 @@
     </div>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6 sm:p-7">
+        <form method="post" action="{{ route('profile.destroy') }}" class="p-6 sm:p-7 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
             @csrf
             @method('delete')
 
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                     <i class="fas fa-exclamation-triangle text-lg"></i>
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                         {{ __('Apakah Anda yakin ingin menghapus akun ini?') }}
                     </h2>
-                    <p class="text-xs text-red-600 font-medium">Tindakan ini permanen dan tidak dapat dipulihkan.</p>
+                    <p class="text-xs text-red-600 dark:text-red-400 font-medium">Tindakan ini permanen dan tidak dapat dipulihkan.</p>
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
                     id="delete_password"
                     name="password"
                     type="password"
-                    class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-red-600 focus:ring-3 focus:ring-red-600/15"
+                    class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-red-600 focus:ring-3 focus:ring-red-600/15"
                     placeholder="{{ __('Masukkan password Anda') }}"
                 />
 
@@ -67,7 +67,7 @@
             </div>
 
             <div class="mt-7 pt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-3">
-                <button type="button" x-on:click="$dispatch('close')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-2xs hover:bg-gray-50 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300 h-9 px-4 py-2 cursor-pointer">
+                <button type="button" x-on:click="$dispatch('close')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xs hover:bg-gray-50 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300 h-9 px-4 py-2 cursor-pointer">
                     {{ __('Batal') }}
                 </button>
 
