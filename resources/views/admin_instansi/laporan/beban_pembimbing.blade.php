@@ -96,13 +96,24 @@
             @endif
 
             {{-- Tabel Evaluasi Pembimbing --}}
-            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                        <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400"></i>
-                        Evaluasi Beban Kerja & Kinerja Pembimbing Lapangan
-                    </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Klik baris pembimbing untuk melihat detail data bimbingan aktif, riwayat lulusan, kepatuhan validasi logbook, serta absensi.</p>
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden" x-data="{ openRow: null, searchQuery: '' }">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/50 dark:bg-gray-900/50">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400"></i>
+                            Evaluasi Beban Kerja &amp; Kinerja Pembimbing Lapangan
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Klik baris pembimbing untuk melihat detail data bimbingan aktif, riwayat lulusan, kepatuhan validasi logbook, serta absensi.</p>
+                    </div>
+
+                    {{-- Search Input Filter --}}
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+                            <i class="fas fa-search text-xs"></i>
+                        </span>
+                        <input type="text" x-model="searchQuery" placeholder="Cari nama/NIP pembimbing..."
+                            class="w-full pl-9 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-xl text-xs font-bold focus:ring-teal-500 focus:border-teal-500 shadow-xs">
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -118,9 +129,11 @@
                                 <th class="px-5 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12"></th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm" x-data="{ openRow: null }">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
                             @forelse($beban as $pl)
-                            <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-900/20 transition cursor-pointer" @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
+                            <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-900/20 transition cursor-pointer"
+                                x-show="!searchQuery || '{{ strtolower($pl->name . ' ' . $pl->nik . ' ' . $pl->email) }}'.includes(searchQuery.toLowerCase())"
+                                @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
                                 <td class="px-5 py-4 text-xs text-gray-400 dark:text-gray-500 text-center font-bold">{{ $loop->iteration }}</td>
                                 <td class="px-5 py-4">
                                     <div class="flex items-center gap-3">

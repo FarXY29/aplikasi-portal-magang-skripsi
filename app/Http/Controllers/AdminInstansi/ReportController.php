@@ -62,18 +62,22 @@ class ReportController extends Controller
         return $this->exportData('pdf.admin_instansi.rekap_peserta', compact('applications', 'instansi', 'request', 'stats'), 'Laporan-Rekap-Peserta', 'a4', 'landscape', $request->query('format', 'pdf'));
     }
 
-    public function laporanKinerjaMahasiswa()
+    public function laporanKinerjaPeserta()
     {
         $instansiId = Auth::user()->instansi_id;
-        $data = $this->reportService->getKinerjaMahasiswaData($instansiId);
-        return view('admin_instansi.laporan.kinerja_mahasiswa', $data);
+        $data = $this->reportService->getKinerjaPesertaData($instansiId);
+        return view('admin_instansi.laporan.kinerja_peserta', $data);
     }
 
-    public function printKinerjaMahasiswa(Request $request)
+    public function printKinerjaPeserta(Request $request)
     {
-        $instansiId = Auth::user()->instansi_id;
-        $data = $this->reportService->getKinerjaMahasiswaData($instansiId);
-        return $this->exportData('pdf.admin_instansi.kinerja_mahasiswa', $data, 'Laporan-Kinerja-Mahasiswa', 'a4', 'landscape', $request->query('format', 'pdf'));
+        $user = Auth::user();
+        $instansi = $user->instansi;
+        $instansiId = $user->instansi_id;
+        $data = $this->reportService->getKinerjaPesertaData($instansiId);
+        $data['request'] = $request;
+        $data['instansi'] = $instansi;
+        return $this->exportData('pdf.admin_instansi.kinerja_peserta', $data, 'Laporan-Kinerja-Peserta', 'a4', 'landscape', $request->query('format', 'pdf'));
     }
 
     public function laporanBebanPembimbing()

@@ -19,6 +19,15 @@ class InternshipPosition extends Model
         'status',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($position) {
+            $position->applications()->get()->each->delete();
+        });
+    }
+
     public function instansi()
     {
         return $this->belongsTo(Instansi::class);

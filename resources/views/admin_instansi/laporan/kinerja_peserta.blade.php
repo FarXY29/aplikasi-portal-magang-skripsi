@@ -5,7 +5,7 @@
                 <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center border border-blue-200 dark:border-blue-800/60">
                     <i class="fas fa-chart-line text-blue-600 dark:text-blue-400 text-lg"></i>
                 </div>
-                {{ __('Laporan Kinerja Mahasiswa') }}
+                {{ __('Laporan Kinerja Peserta') }}
             </h2>
         </div>
     </x-slot>
@@ -80,13 +80,13 @@
                 </div>
                 @if($kinerja->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('dinas.laporan.kinerja_mahasiswa.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
+                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
                     </a>
-                    <a href="{{ route('dinas.laporan.kinerja_mahasiswa.print', ['format' => 'excel']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
+                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'excel']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
                         <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
                     </a>
-                    <a href="{{ route('dinas.laporan.kinerja_mahasiswa.print', ['format' => 'csv']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
+                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'csv']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
                         <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>

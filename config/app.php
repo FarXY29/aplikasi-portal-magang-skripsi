@@ -156,6 +156,7 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
+        App\EnvKit\EnvKitDebugServiceProvider::class,
         /*
          * Package Service Providers...
          */

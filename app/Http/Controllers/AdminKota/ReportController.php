@@ -241,7 +241,10 @@ class ReportController extends Controller
         
         $allApps = $allInstansis->flatMap->positions->flatMap->applications;
         $totalPelamar = $allApps->count();
-        $totalDiterima = $allApps->whereIn('status', ['diterima', 'selesai'])->count();
+        $totalDiterima = $allApps->filter(function($app) {
+            $st = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string) $app->status;
+            return in_array($st, ['diterima', 'selesai']);
+        })->count();
         
         $avgSeleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
         
@@ -267,7 +270,10 @@ class ReportController extends Controller
             $applications = $positions->flatMap->applications;
             
             $totalPelamar = $applications->count();
-            $totalDiterima = $applications->whereIn('status', ['diterima', 'selesai'])->count();
+            $totalDiterima = $applications->filter(function($app) {
+                $st = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string) $app->status;
+                return in_array($st, ['diterima', 'selesai']);
+            })->count();
             $totalPosisi = $positions->count();
             
             $seleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;

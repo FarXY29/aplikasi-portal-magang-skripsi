@@ -119,7 +119,7 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         
-                                        <form action="{{ route('dinas.lowongan.destroy', $loker->id) }}" method="POST" onsubmit="return confirm('Hapus lowongan ini? Data tidak dapat dikembalikan.')">
+                                        <form action="{{ route('dinas.lowongan.destroy', $loker->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus lowongan ini? Data tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition shadow-xs" title="Hapus Lowongan">

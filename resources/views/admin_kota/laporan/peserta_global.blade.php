@@ -1,441 +1,254 @@
 <x-app-layout>
-    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans" x-data="{ quickSearch: '', showFilters: true }">
+    <x-slot name="header">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
+                    <i class="fas fa-users-cog text-teal-600 dark:text-teal-400 text-lg"></i>
+                </div>
+                {{ __('Rekapitulasi Global Peserta Magang') }}
+            </h2>
+            <div class="flex items-center gap-2">
+                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
+                    <a href="{{ route('admin.laporan.peserta_global') }}" class="px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
+                        <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
+                    </a>
+                @endif
+                @if($stats['total'] > 0)
+                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                        <i class="fas fa-file-pdf text-rose-500"></i> PDF
+                    </a>
+                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                        <i class="fas fa-file-excel text-emerald-500"></i> Excel
+                    </a>
+                @endif
+            </div>
+        </div>
+    </x-slot>
+
+    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{ quickSearch: '' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Back Button & Download Buttons (Matches other reports) --}}
+            {{-- Back Navigation --}}
             <div class="flex justify-between items-center print:hidden">
-                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-700 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs"></i>
+                <a href="{{ route('admin.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-xs">
+                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
                     </div>
                     Kembali ke Pusat Laporan
                 </a>
-                
-                <div class="flex gap-2">
-                    @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
-                        <a href="{{ route('admin.laporan.peserta_global') }}" class="inline-flex items-center px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl font-bold text-xs transition gap-1.5 border border-rose-200/60 shadow-sm">
-                            <i class="fas fa-redo-alt text-[10px]"></i> <span class="hidden sm:inline">Reset Filter</span>
-                        </a>
-                    @endif
-
-                    @if($stats['total'] > 0)
-                        <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-teal-700 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 rounded-xl font-bold text-xs transition shadow-sm gap-2" title="Download PDF">
-                            <i class="fas fa-file-pdf text-red-500"></i> <span class="hidden sm:inline">PDF</span>
-                        </a>
-                        <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-teal-700 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 rounded-xl font-bold text-xs transition shadow-sm gap-2" title="Download Excel">
-                            <i class="fas fa-file-excel text-green-600"></i> <span class="hidden sm:inline">Excel</span>
-                        </a>
-                        <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-teal-700 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 rounded-xl font-bold text-xs transition shadow-sm gap-2" title="Download CSV">
-                            <i class="fas fa-file-csv text-blue-600"></i> <span class="hidden sm:inline">CSV</span>
-                        </a>
-                    @endif
-                </div>
             </div>
 
-            {{-- Title Area --}}
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-2xl font-black text-gray-900 dark:text-gray-100 flex items-center gap-2.5">
-                        {{ __('Rekapitulasi Global Peserta Magang') }}
-                    </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Daftar keseluruhan peserta magang di lingkungan Pemerintah Kota Banjarmasin.</p>
-                </div>
-            </div>
-
-            <!-- 1. EXECUTIVE KPI CARDS -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <!-- Total Pendaftar -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-teal-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-teal-50/60 dark:bg-teal-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Total Pendaftar</span>
-                            <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-sm border border-teal-100 shadow-sm group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-users"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-gray-900 dark:text-gray-100 tracking-tight">{{ number_format($stats['total']) }}</p>
-                        <p class="text-[11px] font-semibold text-teal-600 mt-1">Seluruh pelamar</p>
+            <!-- Ringkasan Statistik Utama -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Peserta</p>
+                        <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ number_format($stats['total']) }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-100 dark:border-teal-800/60 flex items-center justify-center text-teal-600 dark:text-teal-400 text-base shadow-xs">
+                        <i class="fas fa-users"></i>
                     </div>
                 </div>
 
-                <!-- Status Aktif -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-emerald-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-50/60 dark:bg-emerald-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Aktif Magang</span>
-                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm border border-emerald-100 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-user-clock"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-emerald-600 tracking-tight">{{ number_format($stats['aktif']) }}</p>
-                        <p class="text-[11px] font-semibold text-emerald-600 mt-1 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Sedang berjalan
-                        </p>
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Aktif Magang</p>
+                        <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono">{{ number_format($stats['aktif']) }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-base shadow-xs">
+                        <i class="fas fa-user-check"></i>
                     </div>
                 </div>
 
-                <!-- Selesai / Lulus -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-blue-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-50/60 dark:bg-blue-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Selesai / Lulus</span>
-                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-100 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-blue-600 tracking-tight">{{ number_format($stats['selesai']) }}</p>
-                        <p class="text-[11px] font-semibold text-blue-600 mt-1">Alumni peserta</p>
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Selesai Magang</p>
+                        <p class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1 font-mono">{{ number_format($stats['selesai']) }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800/60 flex items-center justify-center text-blue-600 dark:text-blue-400 text-base shadow-xs">
+                        <i class="fas fa-graduation-cap"></i>
                     </div>
                 </div>
 
-                <!-- Pending -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-amber-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-amber-50/60 dark:bg-amber-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Proses Pending</span>
-                            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm border border-amber-100 shadow-sm group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-hourglass-half"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-amber-600 tracking-tight">{{ number_format($stats['pending']) }}</p>
-                        <p class="text-[11px] font-semibold text-amber-600 mt-1">Menunggu seleksi</p>
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pending / Menunggu</p>
+                        <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1 font-mono">{{ number_format($stats['pending']) }}</p>
                     </div>
-                </div>
-
-                <!-- Dinas Terlibat -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-indigo-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-indigo-50/60 dark:bg-indigo-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Dinas Terlibat</span>
-                            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm border border-indigo-100 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-building"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-indigo-600 tracking-tight">{{ number_format($stats['total_dinas']) }}</p>
-                        <p class="text-[11px] font-semibold text-indigo-600 mt-1">Instansi penempatan</p>
-                    </div>
-                </div>
-
-                <!-- Kampus Mitra -->
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700/80 relative overflow-hidden group hover:shadow-md hover:border-rose-300/80 transition-all duration-300">
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-50/60 dark:bg-rose-900/20 rounded-full group-hover:scale-125 transition-transform"></div>
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Kampus Mitra</span>
-                            <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm border border-rose-100 shadow-sm group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                                <i class="fas fa-university"></i>
-                            </div>
-                        </div>
-                        <p class="text-2xl font-black text-rose-600 tracking-tight">{{ number_format($stats['total_kampus']) }}</p>
-                        <p class="text-[11px] font-semibold text-rose-600 mt-1">Perguruan tinggi / SMK</p>
+                    <div class="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-100 dark:border-amber-800/60 flex items-center justify-center text-amber-600 dark:text-amber-400 text-base shadow-xs">
+                        <i class="fas fa-clock"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. FILTER & SEARCH TOOLBAR CARD -->
-            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700/80">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-base font-bold border border-teal-100">
-                            <i class="fas fa-sliders-h"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-base text-gray-900 dark:text-gray-100">Filter Data & Kustomisasi Laporan</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Saring peserta berdasarkan kampus, dinas tujuan, posisi, status, dan periode waktu magang.</p>
-                        </div>
-                    </div>
-
-                    <button type="button" @click="showFilters = !showFilters" 
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition border border-gray-200 dark:border-gray-700/80">
-                        <i class="fas transition-transform duration-200" :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                        <span x-text="showFilters ? 'Sembunyikan Panel Filter' : 'Tampilkan Panel Filter'"></span>
-                    </button>
-                </div>
-
-                <div x-show="showFilters" x-collapse x-cloak class="pt-6">
-                    <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <!-- Toolbar Filter Data -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700">
+                <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         
                         <!-- Filter Kampus -->
                         <div>
-                            <label class="block text-xs font-extrabold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">Asal Kampus / Sekolah</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
-                                    <i class="fas fa-university text-xs"></i>
-                                </span>
-                                <select name="instansi" class="w-full pl-9 pr-8 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                                    <option value="">Semua Kampus Mitra</option>
-                                    @foreach($listInstansi as $instansi)
-                                        <option value="{{ $instansi }}" {{ request('instansi') == $instansi ? 'selected' : '' }}>
-                                            {{ Str::limit($instansi, 32) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Asal Sekolah / Kampus</label>
+                            <select name="instansi" class="w-full py-2.5 px-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 shadow-xs [color-scheme:dark]">
+                                <option value="">Semua Sekolah / Kampus</option>
+                                @foreach($listInstansi as $instansi)
+                                    <option value="{{ $instansi }}" {{ request('instansi') == $instansi ? 'selected' : '' }}>
+                                        {{ Str::limit($instansi, 35) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <!-- Filter Dinas -->
                         <div>
-                            <label class="block text-xs font-extrabold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">Dinas Penempatan</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
-                                    <i class="fas fa-building text-xs"></i>
-                                </span>
-                                <select name="instansi_id" class="w-full pl-9 pr-8 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                                    <option value="">Semua Lokasi Dinas</option>
-                                    @foreach($listDinas as $dinas)
-                                        <option value="{{ $dinas->id }}" {{ request('instansi_id') == $dinas->id ? 'selected' : '' }}>
-                                            {{ Str::limit($dinas->nama_dinas, 32) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Filter Posisi -->
-                        <div>
-                            <label class="block text-xs font-extrabold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">Kata Kunci Posisi</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
-                                    <i class="fas fa-briefcase text-xs"></i>
-                                </span>
-                                <input type="text" name="posisi" value="{{ request('posisi') }}" 
-                                    placeholder="Contoh: Programmer, Staf..."
-                                    class="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                            </div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Dinas Penempatan</label>
+                            <select name="instansi_id" class="w-full py-2.5 px-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 shadow-xs [color-scheme:dark]">
+                                <option value="">Semua Dinas Penempatan</option>
+                                @foreach($listDinas as $dinas)
+                                    <option value="{{ $dinas->id }}" {{ request('instansi_id') == $dinas->id ? 'selected' : '' }}>
+                                        {{ Str::limit($dinas->nama_dinas, 35) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <!-- Filter Status -->
                         <div>
-                            <label class="block text-xs font-extrabold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">Status Magang</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
-                                    <i class="fas fa-check-circle text-xs"></i>
-                                </span>
-                                <select name="status" class="w-full pl-9 pr-8 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                                    <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
-                                    <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>🟢 Aktif (Sedang Magang)</option>
-                                    <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>🔵 Selesai / Lulus</option>
-                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>🟡 Pending / Menunggu</option>
-                                    <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>🔴 Ditolak</option>
-                                </select>
-                            </div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Status Magang</label>
+                            <select name="status" class="w-full py-2.5 px-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 shadow-xs [color-scheme:dark]">
+                                <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
+                                <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Aktif Magang</option>
+                                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai Magang</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending / Menunggu</option>
+                                <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            </select>
                         </div>
 
-                        <!-- Filter Periode Magang -->
+                        <!-- Filter Kata Kunci Posisi -->
                         <div>
-                            <label class="block text-xs font-extrabold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5">Rentang Periode</label>
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" title="Dari Tanggal Mulai"
-                                    class="w-full px-2.5 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                                <input type="date" name="end_date" value="{{ request('end_date') }}" title="Sampai Tanggal Selesai"
-                                    class="w-full px-2.5 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 shadow-sm transition">
-                            </div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">Posisi Magang</label>
+                            <input type="text" name="posisi" value="{{ request('posisi') }}" placeholder="Cari posisi..."
+                                class="w-full py-2.5 px-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-teal-500 focus:border-teal-500 shadow-xs">
                         </div>
 
-                        <!-- Tombol Terapkan & Reset -->
-                        <div class="md:col-span-3 lg:col-span-5 flex flex-col sm:flex-row justify-end items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-700 mt-2">
-                            @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
-                                <a href="{{ route('admin.laporan.peserta_global') }}" class="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-rose-600 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 rounded-xl transition text-center">
-                                    <i class="fas fa-times mr-1"></i> Bersihkan Semua Filter
-                                </a>
-                            @endif
-                            <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-extrabold shadow-md shadow-teal-600/25 transition transform active:scale-95 flex items-center justify-center gap-2">
-                                <i class="fas fa-filter text-xs"></i> Terapkan Filter Data
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- 3. MAIN DATA TABLE CARD -->
-            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/80 overflow-hidden">
-                <!-- Table Header & Quick Client Search -->
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-gray-50 dark:bg-gray-900/50">
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <h3 class="text-lg font-black text-gray-900 dark:text-gray-100">Daftar Rincian Peserta Magang</h3>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-teal-100 text-teal-800 border border-teal-200/60 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900/50">
-                                {{ $stats['total'] }} Peserta Terpilih
-                            </span>
-                        </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Informasi lengkap peserta, instansi sekolah/kampus asal, dinas tujuan, posisi, serta durasi magang.</p>
                     </div>
 
-                    <!-- Client-Side Quick Filter -->
-                    <div class="w-full sm:w-72 relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 pointer-events-none">
+                    <div class="flex flex-col sm:flex-row justify-end items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
+                            <a href="{{ route('admin.laporan.peserta_global') }}" class="w-full sm:w-auto px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-rose-600 bg-gray-100 dark:bg-gray-900 rounded-xl transition text-center border border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-times mr-1"></i> Bersihkan Filter
+                            </a>
+                        @endif
+                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md transition uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fas fa-filter text-xs"></i> Terapkan Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabel Utama Data Peserta -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50 dark:bg-gray-900">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <i class="fas fa-list text-teal-600 dark:text-teal-400"></i> Daftar Peserta Magang
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Rekapitulasi informasi peserta magang secara menyeluruh.</p>
+                    </div>
+
+                    <!-- Client-Side Quick Search Bar -->
+                    <div class="w-full sm:w-64 relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500 pointer-events-none">
                             <i class="fas fa-search text-xs"></i>
                         </span>
-                        <input type="text" x-model="quickSearch" 
-                            placeholder="Cari nama / kampus / dinas..."
-                            class="w-full pl-9 pr-8 py-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition">
-                        <button type="button" x-show="quickSearch !== ''" @click="quickSearch = ''"
-                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-400">
+                        <input type="text" x-model="quickSearch" placeholder="Cari nama/sekolah..."
+                            class="w-full pl-9 pr-8 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition">
+                        <button type="button" x-show="quickSearch !== ''" @click="quickSearch = ''" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                             <i class="fas fa-times-circle text-xs"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Table Content -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-100 border-collapse">
-                        <thead class="bg-gray-50 dark:bg-gray-900/90 text-gray-500 dark:text-gray-400 text-[11px] uppercase tracking-wider font-extrabold sticky top-0 z-10 border-b border-gray-100 dark:border-gray-700">
+                    <table class="w-full divide-y divide-gray-100 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
-                                <th class="px-5 py-4 text-center w-12 whitespace-nowrap">No</th>
-                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[250px]">Peserta & Asal Kampus / Sekolah</th>
-                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[200px]">Penempatan Dinas & Posisi</th>
-                                <th class="px-6 py-4 text-left whitespace-nowrap min-w-[200px]">Periode & Durasi Magang</th>
-                                <th class="px-6 py-4 text-center w-36 whitespace-nowrap min-w-[150px]">Status Magang</th>
+                                <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">No</th>
+                                <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[180px]">Nama Peserta</th>
+                                <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[220px]">Asal Sekolah / Kampus</th>
+                                <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[220px]">Dinas & Posisi</th>
+                                <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-[190px]">Periode Magang</th>
+                                <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-28">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100/80 dark:divide-gray-700/50 text-sm">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
                             @forelse($allInterns as $data)
-                            <tr class="hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition duration-150 group"
+                            <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition duration-150"
                                 x-show="quickSearch === '' || 
                                         '{{ strtolower($data->user->name ?? '') }}'.includes(quickSearch.toLowerCase()) || 
                                         '{{ strtolower($data->user->asal_instansi ?? '') }}'.includes(quickSearch.toLowerCase()) || 
                                         '{{ strtolower($data->position->instansi->nama_dinas ?? '') }}'.includes(quickSearch.toLowerCase()) ||
                                         '{{ strtolower($data->position->judul_posisi ?? '') }}'.includes(quickSearch.toLowerCase())">
                                 
-                                <td class="px-5 py-5 align-top text-center text-gray-400 font-extrabold text-xs">
+                                <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-400 dark:text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
 
-                                <!-- Peserta & Kampus -->
-                                <td class="px-6 py-5 align-top">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-black text-xs shadow-md shadow-teal-600/15 flex-shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                                            {{ strtoupper(substr($data->user->name ?? 'P', 0, 2)) }}
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <p class="font-extrabold text-gray-900 dark:text-gray-100 text-sm tracking-tight leading-snug">{{ $data->user->name ?? 'User Tidak Ditemukan' }}</p>
-                                            
-                                            <div class="flex mt-1.5">
-                                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50/80 text-teal-800 border border-teal-100/80 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900/50 font-bold text-xs">
-                                                    <i class="fas fa-university text-teal-600 dark:text-teal-400 text-[10px]"></i>
-                                                    <span>{{ $data->user->asal_instansi ?? 'Tidak ada data kampus' }}</span>
-                                                </div>
-                                            </div>
+                                <td class="px-6 py-4 min-w-[180px] max-w-[240px]">
+                                    <div class="text-sm font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $data->user->name ?? '-' }}">{{ $data->user->name ?? '-' }}</div>
+                                    <div class="text-xs text-gray-400 dark:text-gray-500 font-medium truncate mt-0.5">{{ $data->user->email ?? '-' }}</div>
+                                </td>
 
-                                            <div class="flex flex-col gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 mt-2.5 font-medium">
-                                                <span class="flex items-center gap-1.5 whitespace-nowrap">
-                                                    <i class="far fa-envelope text-gray-400 dark:text-gray-500 w-3.5"></i> {{ $data->user->email ?? '-' }}
-                                                </span>
-                                                @if(!empty($data->user->phone))
-                                                <span class="flex items-center gap-1.5 whitespace-nowrap">
-                                                    <i class="fas fa-phone-alt text-gray-400 dark:text-gray-500 text-[9px] w-3.5 text-center"></i> {{ $data->user->phone }}
-                                                </span>
-                                                @endif
-                                            </div>
-                                        </div>
+                                <td class="px-6 py-4 min-w-[220px] max-w-[280px]">
+                                    <div class="inline-flex items-start gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 leading-snug">
+                                        <i class="fas fa-university text-[10px] mt-0.5 shrink-0"></i>
+                                        <span class="line-clamp-2" title="{{ $data->user->asal_instansi ?? '-' }}">{{ $data->user->asal_instansi ?? '-' }}</span>
                                     </div>
                                 </td>
 
-                                <!-- Penempatan Dinas & Posisi -->
-                                <td class="px-6 py-5 align-top">
-                                    <div class="flex flex-col items-start gap-2">
-                                        <span class="font-extrabold text-gray-900 dark:text-gray-100 text-xs flex items-start gap-1.5 leading-relaxed">
-                                            <i class="fas fa-building text-teal-600 dark:text-teal-400 text-xs mt-0.5 flex-shrink-0"></i>
-                                            <span>{{ $data->position->instansi->nama_dinas ?? '-' }}</span>
-                                        </span>
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold text-xs">
-                                            <i class="fas fa-briefcase text-gray-400 dark:text-gray-500 mr-1.5 text-[10px]"></i>
-                                            {{ $data->position->judul_posisi ?? '-' }}
-                                        </span>
-                                        @if($data->is_automatic_placement)
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200/60 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900/50 gap-1 mt-1.5 shadow-2xs">
-                                                <i class="fas fa-magic text-[9px] text-indigo-600 dark:text-indigo-400"></i> Penempatan Otomatis
-                                            </span>
-                                        @endif
-                                    </div>
+                                <td class="px-6 py-4 min-w-[220px] max-w-[280px]">
+                                    <div class="text-xs font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $data->position->instansi->nama_dinas ?? '-' }}">{{ $data->position->instansi->nama_dinas ?? '-' }}</div>
+                                    <div class="text-xs text-teal-600 dark:text-teal-400 font-medium mt-1 leading-snug line-clamp-2" title="{{ $data->position->judul_posisi ?? '-' }}">{{ $data->position->judul_posisi ?? '-' }}</div>
                                 </td>
 
-                                <!-- Periode & Durasi Magang -->
-                                <td class="px-6 py-5 align-top">
-                                    <div class="flex flex-col items-start gap-2">
-                                        <div class="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5 bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700/60">
-                                            <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
-                                            <span>{{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }}</span>
-                                            <span class="text-gray-400 dark:text-gray-700">➜</span>
-                                            <span>{{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}</span>
-                                        </div>
-                                        @php
-                                            $days = \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_selesai));
-                                        @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-teal-50 text-teal-700 border border-teal-200/80 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900/50">
-                                            <i class="fas fa-history mr-1 text-[9px] text-teal-600 dark:text-teal-400"></i> Durasi: {{ $days }} Hari
-                                        </span>
-                                    </div>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-xs font-bold text-gray-700 dark:text-gray-300">
+                                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl font-mono inline-block">
+                                        {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
+                                    </span>
                                 </td>
 
-                                <!-- Status Magang -->
-                                <td class="px-6 py-5 align-top text-center">
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @php
-                                        $statusConfig = [
-                                            'pending' => [
-                                                'class' => 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50',
-                                                'icon' => 'fas fa-clock text-amber-500 dark:text-amber-400',
-                                                'label' => 'Pending'
-                                            ],
-                                            'menunggu' => [
-                                                'class' => 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50',
-                                                'icon' => 'fas fa-clock text-amber-500 dark:text-amber-400',
-                                                'label' => 'Pending'
-                                            ],
-                                            'diterima' => [
-                                                'class' => 'bg-emerald-50 text-emerald-800 border-emerald-200 shadow-sm dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/50',
-                                                'icon' => 'dot-emerald',
-                                                'label' => 'Aktif Magang'
-                                            ],
-                                            'selesai' => [
-                                                'class' => 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/50',
-                                                'icon' => 'fas fa-check-circle text-blue-600 dark:text-blue-400',
-                                                'label' => 'Selesai / Lulus'
-                                            ],
-                                            'ditolak' => [
-                                                'class' => 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50',
-                                                'icon' => 'fas fa-times-circle text-rose-600 dark:text-rose-400',
-                                                'label' => 'Ditolak'
-                                            ],
-                                        ];
                                         $statusVal = $data->status instanceof \App\Enums\ApplicationStatus ? $data->status->value : $data->status;
-                                        $s = $statusConfig[$statusVal] ?? [
-                                            'class' => 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700',
-                                            'icon' => 'fas fa-info-circle text-gray-500 dark:text-gray-400',
-                                            'label' => ucfirst($statusVal)
-                                        ];
+                                        $badgeClass = match($statusVal) {
+                                            'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                            'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                            'pending', 'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                            'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                            default => 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700'
+                                        };
+                                        $label = match($statusVal) {
+                                            'diterima' => 'Aktif',
+                                            'selesai' => 'Selesai',
+                                            'pending', 'menunggu' => 'Pending',
+                                            'ditolak' => 'Ditolak',
+                                            default => ucfirst($statusVal)
+                                        };
                                     @endphp
-                                    <div class="flex justify-center">
-                                        <span class="px-3.5 py-1.5 inline-flex items-center gap-1.5 text-xs font-black rounded-full border {{ $s['class'] }}">
-                                            @if($s['icon'] === 'dot-emerald')
-                                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            @else
-                                                <i class="{{ $s['icon'] }} text-[11px]"></i>
-                                            @endif
-                                            <span>{{ $s['label'] }}</span>
-                                        </span>
-                                    </div>
+                                    <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $badgeClass }}">
+                                        {{ $label }}
+                                    </span>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-20 text-center">
-                                    <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
-                                        <div class="w-20 h-20 bg-teal-50 text-teal-600 rounded-3xl flex items-center justify-center mb-4 text-3xl shadow-sm border border-teal-100 dark:bg-teal-950/30 dark:text-teal-400 dark:border-teal-900/40">
-                                            <i class="fas fa-search"></i>
+                                <td colspan="6" class="px-6 py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
+                                            <i class="far fa-user-circle text-3xl"></i>
                                         </div>
-                                        <h4 class="text-gray-900 dark:text-gray-100 font-black text-lg">Tidak Ada Data Peserta</h4>
-                                        <p class="text-gray-500 dark:text-gray-400 text-xs mt-1 leading-relaxed">Belum ada data peserta magang yang sesuai dengan kriteria filter atau pencarian Anda saat ini.</p>
-                                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
-                                            <a href="{{ route('admin.laporan.peserta_global') }}" class="mt-5 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-extrabold shadow-md shadow-teal-600/20 transition">
-                                                <i class="fas fa-redo-alt mr-1.5"></i> Reset Semua Filter
-                                            </a>
-                                        @endif
+                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-sm">Tidak Ada Data Peserta</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Belum ada data peserta yang sesuai dengan filter pilihan Anda.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -444,36 +257,12 @@
                     </table>
                 </div>
 
-                <!-- Table Footer Summary -->
-                @if($stats['total'] > 0)
-                <div class="p-4 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center text-xs font-bold text-gray-500 dark:text-gray-400 gap-4">
-                    <div>
-                        @if($allInterns instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                            Menampilkan <span class="text-gray-900 dark:text-gray-100 font-black">{{ $allInterns->firstItem() ?? 0 }}</span> sampai <span class="text-gray-900 dark:text-gray-100 font-black">{{ $allInterns->lastItem() ?? 0 }}</span> dari <span class="text-gray-900 dark:text-gray-100 font-black">{{ $allInterns->total() }}</span> data peserta.
-                        @else
-                            Menampilkan <span class="text-gray-900 dark:text-gray-100 font-black">{{ $allInterns->count() }}</span> data peserta berdasarkan filter aktif.
-                        @endif
+                @if($allInterns instanceof \Illuminate\Pagination\LengthAwarePaginator && $allInterns->hasPages())
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                        {{ $allInterns->links() }}
                     </div>
-                    <div class="flex items-center gap-4 text-gray-400">
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Aktif
-                        </span>
-                        <span class="flex items-center gap-1.5">
-                            <i class="fas fa-check-circle text-blue-500 text-[10px]"></i> Selesai
-                        </span>
-                        <span class="flex items-center gap-1.5">
-                            <i class="fas fa-clock text-amber-500 text-[10px]"></i> Pending
-                        </span>
-                    </div>
-                </div>
                 @endif
             </div>
-
-            @if($allInterns instanceof \Illuminate\Pagination\LengthAwarePaginator && $allInterns->hasPages())
-                <div class="mt-6 flex justify-center print:hidden">
-                    {{ $allInterns->links() }}
-                </div>
-            @endif
 
         </div>
     </div>

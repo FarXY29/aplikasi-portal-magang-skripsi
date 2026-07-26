@@ -17,17 +17,28 @@ class CertificateController extends Controller
      */
 
     /**
-     * Halaman Publik Hasil Scan QR Code
+     * Halaman Publik Hasil Scan QR Code / Verifikasi Token
      */
     public function verify($token)
     {
-        // Gunakan 'with' untuk memuat relasi yang diperlukan di sertifikat
-        $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan', 'certificate']) 
-                ->where('token_verifikasi', $token)
-                ->whereIn('status', ['diterima', 'selesai'])
-                ->firstOrFail();
+        $token = trim($token);
 
-        return view('public.certificate.verify', compact('app'));
+        // Cari berdasarkan token_verifikasi di Applications atau di Certificates
+        $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan', 'certificate'])
+            ->where(function ($query) use ($token) {
+                $query->where('token_verifikasi', $token)
+                      ->orWhereHas('certificate', function ($q) use ($token) {
+                          $q->where('token_verifikasi', $token);
+                      });
+            })
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->first();
+
+        return view('public.certificate.verify', [
+            'app' => $app,
+            'searchedToken' => $token,
+            'isValid' => !is_null($app),
+        ]);
     }
 
     public function showScanner()
@@ -44,17 +55,33 @@ class CertificateController extends Controller
             'nomor_sertifikat' => 'required|string',
         ]);
 
-        $keyword = $request->input('nomor_sertifikat');
+        $keyword = trim($request->input('nomor_sertifikat'));
 
-        $app = Application::where('nomor_sertifikat', $keyword)
-                ->where('status', 'selesai')
+        // 1. Cari berdasarkan nomor_sertifikat atau token_verifikasi di Applications
+        $app = Application::where(function ($q) use ($keyword) {
+                    $q->where('nomor_sertifikat', $keyword)
+                      ->orWhere('token_verifikasi', $keyword);
+                })
+                ->whereIn('status', ['diterima', 'selesai'])
                 ->first();
 
+        // 2. Jika belum ditemukan, cari via tabel Certificate
         if (!$app) {
-            return back()->with('error', 'Sertifikat tidak ditemukan atau nomor salah.');
+            $certificate = \App\Models\Certificate::where('nomor_sertifikat', $keyword)
+                ->orWhere('token_verifikasi', $keyword)
+                ->first();
+
+            if ($certificate && $certificate->application) {
+                $app = $certificate->application;
+            }
         }
 
-        return redirect()->route('certificate.verify', $app->token_verifikasi);
+        if (!$app) {
+            return back()->with('error', 'Sertifikat atau data peserta tidak ditemukan. Pastikan Nomor Sertifikat atau Token yang dimasukkan sudah benar.')->withInput();
+        }
+
+        $targetToken = $app->token_verifikasi ?? ($app->certificate?->token_verifikasi ?? $keyword);
+        return redirect()->route('certificate.verify', $targetToken);
     }
 
     /**

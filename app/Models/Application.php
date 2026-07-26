@@ -49,8 +49,28 @@ class Application extends Model
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            if (empty($model->token_verifikasi)) {
+                $model->token_verifikasi = Str::random(32);
+            }
+        });
+
+        static::saving(function ($model) {
+            if (empty($model->token_verifikasi)) {
+                $model->token_verifikasi = Str::random(32);
+            }
+        });
+
         static::saved(function () {
             \Illuminate\Support\Facades\Cache::forget('expired_internships_checked');
+        });
+
+        static::deleting(function ($application) {
+            $application->logs()->delete();
+            $application->attendances()->delete();
+            if ($application->certificate) {
+                $application->certificate->delete();
+            }
         });
     }
 

@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\DailyLog;
 use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf; 
+use Carbon\Carbon;
 use App\Http\Requests\Logbook\StoreDailyLogRequest;
 use App\Http\Requests\Logbook\UpdateDailyLogRequest;
 use App\Services\AuditLogService;
@@ -15,10 +18,12 @@ class LogbookController extends Controller
 {
     public function index()
     {
-        // Ambil aplikasi magang yang statusnya 'diterima'
-        $activeApp = Application::where('user_id', Auth::id())
-                        ->where('status', 'diterima')
-                        ->first();
+        // Ambil aplikasi magang yang statusnya 'diterima' atau 'selesai'
+        $activeApp = Application::with('position.instansi')
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->latest('updated_at')
+            ->first();
 
         if (!$activeApp) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif.');
@@ -33,16 +38,20 @@ class LogbookController extends Controller
 
     public function store(StoreDailyLogRequest $request, AuditLogService $auditLogService)
     {
-        $user = Auth::user();
+        $user = $request->user();
         
         // Ambil Data Lamaran Aktif & Lokasi INSTANSI
-        $app = Application::with('position.instansi')->where('user_id', $user->id)->where('status', 'diterima')->first();
+        $app = Application::with('position.instansi')
+            ->where('user_id', $user->id)
+            ->where('status', 'diterima')
+            ->latest('updated_at')
+            ->first();
         
         if (!$app) return back()->with('error', 'Akses ditolak.');
 
-        $today = \Carbon\Carbon::today();
-        $startDate = \Carbon\Carbon::parse($app->tanggal_mulai)->startOfDay();
-        $endDate = \Carbon\Carbon::parse($app->tanggal_selesai)->endOfDay();
+        $today = Carbon::today();
+        $startDate = Carbon::parse($app->tanggal_mulai)->startOfDay();
+        $endDate = Carbon::parse($app->tanggal_selesai)->endOfDay();
 
         if ($today->lt($startDate)) {
             return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.');
@@ -53,12 +62,18 @@ class LogbookController extends Controller
         }
 
         // 2. LOGIKA GEOTAGGING (Cek Jarak & Radius)
-        $kantorLat = $app->position->instansi->latitude; // Pastikan tabel INSTANSI punya kolom latitude
-        $kantorLng = $app->position->instansi->longitude;
-        $radiusAbsen = $app->position->instansi->radius_absen ?? 100; // Radius dalam meter (default 100m)
+        $instansi = $app->position?->instansi;
+        $kantorLat = $instansi?->latitude;
+        $kantorLng = $instansi?->longitude;
+        $radiusAbsen = $instansi?->radius_absen ?? 100;
         
-        if ($kantorLat && $kantorLng) {
-            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
+        if ($kantorLat !== null && $kantorLng !== null) {
+            $jarakKm = $this->calculateDistance(
+                $request->validated('latitude'),
+                $request->validated('longitude'),
+                (float) $kantorLat,
+                (float) $kantorLng,
+            );
             $jarakMeter = $jarakKm * 1000;
             
             if ($jarakMeter > $radiusAbsen) {
@@ -76,7 +91,7 @@ class LogbookController extends Controller
         $log = DailyLog::create([
             'application_id' => $app->id,
             'tanggal' => now(),
-            'kegiatan' => $request->kegiatan,
+            'kegiatan' => $request->validated('kegiatan'),
             'bukti_foto_path' => $fotoPath,
             'status_validasi' => 'pending'
         ]);
@@ -101,19 +116,21 @@ class LogbookController extends Controller
         $fotoPath = $log->bukti_foto_path;
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            $disk = \Illuminate\Support\Facades\Storage::disk('private')->exists($fotoPath) ? 'private' : 'public';
-            if ($fotoPath && \Illuminate\Support\Facades\Storage::disk($disk)->exists($fotoPath)) {
-                \Illuminate\Support\Facades\Storage::disk($disk)->delete($fotoPath);
-            }
+            $oldFotoPath = $fotoPath;
             $fotoPath = $request->file('foto')->store('documents/logbook', 'private');
         }
 
         $log->update([
-            'kegiatan' => $request->kegiatan,
+            'kegiatan' => $request->validated('kegiatan'),
             'bukti_foto_path' => $fotoPath,
             'status_validasi' => 'pending',
             'komentar_pembimbing_lapangan' => null, // Reset komentar pembimbing_lapangan setelah revisi
         ]);
+
+        if (isset($oldFotoPath) && $oldFotoPath) {
+            $disk = Storage::disk('private')->exists($oldFotoPath) ? 'private' : 'public';
+            Storage::disk($disk)->delete($oldFotoPath);
+        }
 
         $auditLogService->record('daily_log.revised', $log, [
             'application_id' => $log->application_id,
@@ -123,7 +140,7 @@ class LogbookController extends Controller
         return back()->with('success', 'Logbook berhasil direvisi dan dikirim ulang untuk divalidasi!');
     }
 
-    // --- FITUR BARU: CETAK REKAP LOGBOOK ---
+    // --- CETAK REKAP LOGBOOK ---
     public function print()
     {
         $user = Auth::user();
@@ -132,6 +149,7 @@ class LogbookController extends Controller
         $app = Application::with(['position.instansi', 'pembimbing_lapangan'])
                 ->where('user_id', $user->id)
                 ->whereIn('status', ['diterima', 'selesai'])
+                ->latest('updated_at')
                 ->firstOrFail();
 
         // Ambil seluruh logbook, urutkan dari tanggal awal
@@ -144,11 +162,17 @@ class LogbookController extends Controller
         // Set ukuran kertas F4 atau A4 Landscape agar muat banyak
         $pdf->setPaper('a4', 'portrait');
 
-        return $pdf->stream('Rekap-Kegiatan-'.$user->name.'.pdf');
+        return response($pdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Rekap-Kegiatan-' . (Str::slug($user->name) ?: 'peserta') . '.pdf"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 
     // Fungsi Matematika Haversine (Menghitung Jarak 2 Titik Koordinat)
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2) 
+    private function calculateDistance(float $lat1, float $lon1, float $lat2, float $lon2): float
     {
         $earthRadius = 6371; // Radius bumi dalam KM
 

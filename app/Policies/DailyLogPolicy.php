@@ -44,6 +44,6 @@ class DailyLogPolicy
             $user->hasPortalPermission('create-logbook') &&
             $dailyLog->application &&
             $user->id === $dailyLog->application->user_id &&
-            $dailyLog->status_validasi === 'pending';
+            in_array($dailyLog->status_validasi, ['pending', 'revisi'], true);
     }
 }

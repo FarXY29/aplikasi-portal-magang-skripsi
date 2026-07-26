@@ -124,7 +124,6 @@ class InstansiController extends Controller
     public function destroy($id)
     {
         $instansi = Instansi::findOrFail($id);
-        User::where('instansi_id', $instansi->id)->delete();
         $instansi->delete();
         return back()->with('success', 'Data INSTANSI dan Akun Admin terkait telah dihapus.');
     }

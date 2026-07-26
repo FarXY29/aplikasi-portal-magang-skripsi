@@ -486,8 +486,13 @@ class ReportService
     }
 
     /**
-     * Get Kinerja Mahasiswa Data (Admin Instansi / Dinas)
+     * Get Kinerja Mahasiswa / Peserta Data (Admin Instansi / Dinas)
      */
+    public function getKinerjaPesertaData(int $instansiId)
+    {
+        return $this->getKinerjaMahasiswaData($instansiId);
+    }
+
     public function getKinerjaMahasiswaData(int $instansiId)
     {
         $kinerja = Application::whereHas('position', function($q) use ($instansiId) {

@@ -121,6 +121,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            Application::where('pembimbing_lapangan_id', $user->id)->update(['pembimbing_lapangan_id' => null]);
+            User::where('pembimbing_sekolah_id', $user->id)->update(['pembimbing_sekolah_id' => null]);
+
+            $user->applications()->get()->each(function ($application) {
+                $application->delete();
+            });
+        });
+    }
+
     /**
      * Role pada kolom legacy dipertahankan untuk redirect/dashboard hingga seluruh
      * data lama selesai dimigrasikan. Akses baru selalu mencoba role Spatie dahulu.
@@ -205,7 +219,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         if ($this->hasPortalRole(['peserta', 'pembimbing'])) {
-            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+            try {
+                $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
+            }
         }
     }
 }

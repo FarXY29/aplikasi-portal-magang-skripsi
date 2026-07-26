@@ -27,6 +27,16 @@ class Instansi extends Model
         'ttd_kepala', // Kolom Tanda Tangan Kepala Dinas
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($instansi) {
+            $instansi->users()->get()->each->delete();
+            $instansi->positions()->get()->each->delete();
+        });
+    }
+
     // Relasi: Satu INSTANSI punya banyak Posisi Magang
     public function positions()
     {

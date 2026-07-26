@@ -70,12 +70,21 @@
                         </table>
                     </div>
 
+                    @php
+                        $adminInstansi = Auth::user()?->instansi;
+                        $namaPejabat = $adminInstansi?->nama_pejabat ?? 'H. AHMAD SYARWANI, SE, M.T.';
+                        $jabatanPejabat = $adminInstansi?->jabatan_pejabat ?? 'Kepala Dinas Komunikasi, Informatika dan Statistik';
+                        $nipPejabat = $adminInstansi?->nip_pejabat ?? '19720315 199803 1 004';
+                    @endphp
                     <div class="hidden print:flex justify-end mt-16 break-inside-avoid">
-                        <div class="text-center w-64">
+                        <div class="text-center w-72">
                             <p class="mb-1">Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                            <p class="font-bold">Kepala Bakesbangpol</p>
-                            <div class="h-24"></div> <p class="font-bold underline">H. LUKMAN FADLUN, SH</p>
-                            <p class="text-sm">NIP. 19700101 200001 1 001</p>
+                            <p class="font-bold">{{ $jabatanPejabat }}</p>
+                            <div class="h-20"></div>
+                            <p class="font-bold underline">{{ $namaPejabat }}</p>
+                            @if(!empty($nipPejabat))
+                                <p class="text-sm">NIP. {{ $nipPejabat }}</p>
+                            @endif
                         </div>
                     </div>
 
