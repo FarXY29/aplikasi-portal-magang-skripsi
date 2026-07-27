@@ -43,6 +43,7 @@ class DailyLogPolicy
         return $user->hasPortalRole('peserta') &&
             $user->hasPortalPermission('create-logbook') &&
             $dailyLog->application &&
+            $dailyLog->application->status_value === 'diterima' &&
             $user->id === $dailyLog->application->user_id &&
             in_array($dailyLog->status_validasi, ['pending', 'revisi'], true);
     }

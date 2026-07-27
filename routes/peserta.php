@@ -11,7 +11,7 @@ Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')
     Route::get('/daftar/{id}', [PesertaApplicationController::class, 'showApplyForm'])->name('daftar.form');
     Route::post('/daftar/{id}', [PesertaApplicationController::class, 'storeApplication'])->name('daftar');
     Route::resource('logbook', LogbookController::class);
-    Route::get('/logbook-print', [LogbookController::class, 'print'])->name('logbook.print');
+    Route::get('/logbook-print/{id?}', [LogbookController::class, 'print'])->name('logbook.print');
     Route::get('/sertifikat', [PesertaDashboardController::class, 'downloadCertificate'])->name('sertifikat');
     Route::get('/download-nilai/{id}', [PesertaDashboardController::class, 'downloadTranskrip'])->name('download.nilai');
     Route::get('/loa/{id}', [PesertaDashboardController::class, 'downloadLoA'])->name('loa.download');

@@ -106,6 +106,9 @@
                                     <a href="{{ route('peserta.logbook.index') }}" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center gap-2">
                                         <i class="fas fa-book-open"></i> Logbook
                                     </a>
+                                    <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center gap-2">
+                                        <i class="fas fa-file-pdf"></i> Rekap Logbook
+                                    </a>
 
                                 @elseif($app->display_status == 'belum mulai')
                                     <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center gap-2">
@@ -120,6 +123,9 @@
                                     </a>
                                     <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center gap-2">
                                         <i class="fas fa-file-contract"></i> Surat Balasan
+                                    </a>
+                                    <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center gap-2">
+                                        <i class="fas fa-file-pdf"></i> Rekap Logbook
                                     </a>
                                     @if(empty($app->saran_peserta))
                                         <button type="button" class="w-full sm:w-auto justify-center px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">

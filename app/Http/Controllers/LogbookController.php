@@ -47,7 +47,7 @@ class LogbookController extends Controller
             ->latest('updated_at')
             ->first();
         
-        if (!$app) return back()->with('error', 'Akses ditolak.');
+        if (!$app) return back()->with('error', 'Status magang Anda telah selesai atau tidak aktif. Anda tidak dapat membuat atau menyimpan jurnal baru.');
 
         $today = Carbon::today();
         $startDate = Carbon::parse($app->tanggal_mulai)->startOfDay();
@@ -107,6 +107,10 @@ class LogbookController extends Controller
     public function update(UpdateDailyLogRequest $request, $id, AuditLogService $auditLogService)
     {
         $log = DailyLog::with('application')->findOrFail($id);
+        if ($log->application?->status_value === 'selesai' || $log->application?->status === 'selesai') {
+            return back()->with('error', 'Status magang Anda telah selesai. Logbook tidak dapat diubah lagi.');
+        }
+
         $this->authorize('update', $log);
 
         if ($log->status_validasi !== 'revisi') {
@@ -141,16 +145,19 @@ class LogbookController extends Controller
     }
 
     // --- CETAK REKAP LOGBOOK ---
-    public function print()
+    public function print($id = null)
     {
         $user = Auth::user();
         
-        // Ambil data lamaran yang statusnya diterima/selesai
-        $app = Application::with(['position.instansi', 'pembimbing_lapangan'])
+        $query = Application::with(['position.instansi', 'pembimbing_lapangan'])
                 ->where('user_id', $user->id)
-                ->whereIn('status', ['diterima', 'selesai'])
-                ->latest('updated_at')
-                ->firstOrFail();
+                ->whereIn('status', ['diterima', 'selesai']);
+
+        if ($id) {
+            $app = $query->where('id', $id)->firstOrFail();
+        } else {
+            $app = $query->latest('updated_at')->firstOrFail();
+        }
 
         // Ambil seluruh logbook, urutkan dari tanggal awal
         $logs = DailyLog::where('application_id', $app->id)
@@ -159,7 +166,7 @@ class LogbookController extends Controller
 
         $pdf = Pdf::loadView('pdf.peserta.logbook_rekap', compact('app', 'logs', 'user'));
         
-        // Set ukuran kertas F4 atau A4 Landscape agar muat banyak
+        // Set ukuran kertas A4 Portrait
         $pdf->setPaper('a4', 'portrait');
 
         return response($pdf->output(), 200, [
