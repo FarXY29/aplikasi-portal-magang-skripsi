@@ -21,6 +21,9 @@ class PembimbingLapanganController extends Controller
         $interns = Application::where('pembimbing_lapangan_id', $pembimbing_lapanganId)
                     ->whereIn('status', ['diterima', 'selesai'])
                     ->with(['user', 'position.instansi'])
+                    ->withCount(['logs as approved_logs_count' => function ($q) {
+                        $q->where('status_validasi', 'disetujui');
+                    }])
                     ->get();
 
         // 2. HITUNG LOGBOOK PENDING (Untuk Badge Logbook - Opsional jika sudah ada)
@@ -81,7 +84,7 @@ class PembimbingLapanganController extends Controller
     {
         $request->validate([
             'log_ids' => 'required|array',
-            'status' => 'required|in:disetujui,ditolak',
+            'status' => 'required|in:disetujui,revisi',
             'komentar' => 'nullable|string'
         ]);
 
@@ -216,7 +219,6 @@ class PembimbingLapanganController extends Controller
             'nilai_kreatifitas' => 'required|numeric|min:0|max:100',
             'nilai_skill_pengetahuan' => 'required|numeric|min:0|max:100',
             'catatan_pembimbing_lapangan' => 'nullable|string',
-            'saran_pembimbing' => 'nullable|string',
         ]);
 
         // 2. Hitung Rata-rata

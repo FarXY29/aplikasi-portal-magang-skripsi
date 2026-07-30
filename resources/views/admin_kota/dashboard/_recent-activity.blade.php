@@ -10,10 +10,9 @@
                 <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">Feed pelamar magang terbaru</p>
             </div>
         </div>
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-green-50 dark:bg-green-950/60 border border-green-100 dark:border-green-800">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            <span class="text-[10px] font-black text-green-700 dark:text-green-300">Live</span>
-        </div>
+        <a href="{{ route('admin.laporan.peserta_global', ['status' => 'semua']) }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800 text-[10px] font-black text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition">
+            Semua <i class="fas fa-arrow-right text-[9px]"></i>
+        </a>
     </div>
     
     <div class="divide-y divide-gray-100 dark:divide-gray-700/60">

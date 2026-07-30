@@ -439,6 +439,22 @@ class ReportService
             });
         }
 
+        if ($request->filled('q')) {
+            $term = $request->q;
+            $query->where(function ($q) use ($term) {
+                $q->whereHas('user', function ($sub) use ($term) {
+                    $sub->where('name', 'like', '%' . $term . '%')
+                        ->orWhere('email', 'like', '%' . $term . '%')
+                        ->orWhere('asal_instansi', 'like', '%' . $term . '%');
+                })->orWhereHas('position', function ($sub) use ($term) {
+                    $sub->where('judul_posisi', 'like', '%' . $term . '%')
+                        ->orWhereHas('instansi', function ($inst) use ($term) {
+                            $inst->where('nama_dinas', 'like', '%' . $term . '%');
+                        });
+                });
+            });
+        }
+
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $start = $request->start_date;
             $end = $request->end_date;

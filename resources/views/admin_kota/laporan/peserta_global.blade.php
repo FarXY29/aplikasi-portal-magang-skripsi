@@ -8,7 +8,7 @@
                 {{ __('Rekapitulasi Global Peserta Magang') }}
             </h2>
             <div class="flex items-center gap-2">
-                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
+                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi', 'q']))
                     <a href="{{ route('admin.laporan.peserta_global') }}" class="px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
                     </a>
@@ -84,6 +84,9 @@
             <!-- Toolbar Filter Data -->
             <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700">
                 <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" class="space-y-4">
+                    @if(request()->filled('q'))
+                        <input type="hidden" name="q" value="{{ request('q') }}">
+                    @endif
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         
                         <!-- Filter Kampus -->
@@ -133,8 +136,19 @@
 
                     </div>
 
+                    @if(request()->filled('q'))
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 bg-teal-50 dark:bg-teal-950/60 border border-teal-100 dark:border-teal-900/50 rounded-xl">
+                            <span class="text-xs font-bold text-teal-700 dark:text-teal-300 truncate">
+                                <i class="fas fa-search mr-1.5 text-[10px]"></i>Hasil pencarian: &ldquo;{{ request('q') }}&rdquo;
+                            </span>
+                            <a href="{{ route('admin.laporan.peserta_global', request()->except('q', 'page')) }}" class="text-[10px] font-black text-teal-600 dark:text-teal-400 hover:text-rose-600 dark:hover:text-rose-400 uppercase tracking-wider shrink-0 transition">
+                                Hapus <i class="fas fa-times ml-0.5"></i>
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="flex flex-col sm:flex-row justify-end items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi']))
+                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi', 'q']))
                             <a href="{{ route('admin.laporan.peserta_global') }}" class="w-full sm:w-auto px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-rose-600 bg-gray-100 dark:bg-gray-900 rounded-xl transition text-center border border-gray-200 dark:border-gray-700">
                                 <i class="fas fa-times mr-1"></i> Bersihkan Filter
                             </a>

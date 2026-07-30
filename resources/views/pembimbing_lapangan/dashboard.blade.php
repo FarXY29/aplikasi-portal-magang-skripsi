@@ -138,11 +138,8 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    @php
-                                        $validLogs = $mhs->logs->where('status_validasi', 'disetujui')->count();
-                                    @endphp
                                     <div class="inline-flex flex-col items-center">
-                                        <span class="text-lg font-black text-gray-800 dark:text-gray-200">{{ $validLogs }}</span>
+                                        <span class="text-lg font-black text-gray-800 dark:text-gray-200">{{ $mhs->approved_logs_count }}</span>
                                         <span class="text-[10px] text-gray-400 font-bold uppercase">Hari Valid</span>
                                     </div>
                                 </td>
@@ -169,7 +166,7 @@
                                             <i class="fas fa-book-open mr-1.5"></i> Logbook
                                         </a>
 
-                                        <a href="{{ route('pembimbing_lapangan.attendance.index', $mhs->id) }}" 
+                                        <a href="{{ route('pembimbing_lapangan.attendance.index') }}" 
                                            class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 text-xs font-bold hover:text-teal-600 dark:hover:text-teal-400 hover:border-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/30 transition shadow-sm" 
                                            title="Riwayat Absensi">
                                             <i class="fas fa-clock mr-1.5"></i> Absensi
@@ -244,10 +241,7 @@
                             </div>
                             <div class="pt-1 flex flex-col">
                                 <span class="text-[10px] text-gray-400 font-bold uppercase">Kehadiran Valid</span>
-                                @php
-                                    $validLogs = $mhs->logs->where('status_validasi', 'disetujui')->count();
-                                @endphp
-                                <span class="text-base font-black text-gray-800 dark:text-gray-200">{{ $validLogs }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400">Hari</span></span>
+                                <span class="text-base font-black text-gray-800 dark:text-gray-200">{{ $mhs->approved_logs_count }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400">Hari</span></span>
                             </div>
                             <div class="pt-1 flex flex-col border-l border-gray-200 dark:border-gray-700/60 pl-3">
                                 <span class="text-[10px] text-gray-400 font-bold uppercase">Nilai Akhir</span>
@@ -269,7 +263,7 @@
                                 <i class="fas fa-book-open text-indigo-500"></i> Cek Logbook
                             </a>
 
-                            <a href="{{ route('pembimbing_lapangan.attendance.index', $mhs->id) }}" 
+                            <a href="{{ route('pembimbing_lapangan.attendance.index') }}" 
                                class="w-full sm:flex-1 py-2.5 px-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 text-xs font-bold hover:bg-teal-50 dark:hover:bg-teal-950/30 hover:text-teal-600 transition shadow-sm flex items-center justify-center gap-2">
                                 <i class="fas fa-clock text-teal-500"></i> Cek Absensi
                             </a>
