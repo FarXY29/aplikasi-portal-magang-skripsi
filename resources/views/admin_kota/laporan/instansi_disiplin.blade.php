@@ -26,14 +26,14 @@
                 </a>
                 
                 @if($stats['total_instansi'] > 0)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download CSV">
+                    <a href="{{ route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
                         <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
@@ -231,7 +231,7 @@
                     </div>
 
                     {{-- Table Content --}}
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto">
+                    <div class="hidden md:block overflow-x-auto max-h-[650px] overflow-y-auto">
                         <table class="w-full divide-y divide-gray-100 dark:divide-gray-700 border-collapse">
                             <thead class="bg-gray-50 dark:bg-gray-900 sticky top-0 z-20">
                                 <tr>
@@ -389,6 +389,141 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile Card View (<md) --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($instansis as $index => $res)
+                        <div class="p-4 space-y-3.5 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition">
+                            {{-- header: rank icon + name + status badge --}}
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    @if($index == 0 && !request('q') && !request('disiplin_range') && $res->total_attendances > 0)
+                                        <div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-xs border border-amber-200 dark:border-amber-800/50 shrink-0">
+                                            <i class="fas fa-crown text-xs"></i>
+                                        </div>
+                                    @elseif($index == 1 && !request('q') && !request('disiplin_range') && $res->total_attendances > 0)
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center border border-gray-300 dark:border-gray-700 font-bold text-xs shrink-0">2</div>
+                                    @elseif($index == 2 && !request('q') && !request('disiplin_range') && $res->total_attendances > 0)
+                                        <div class="w-8 h-8 rounded-full bg-amber-100/60 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-800/50 font-bold text-xs shrink-0">3</div>
+                                    @else
+                                        <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500 flex items-center justify-center border border-gray-200 dark:border-gray-700 font-bold text-xs shrink-0">#{{ $index + 1 }}</div>
+                                    @endif
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-8 w-8 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-[10px] flex-shrink-0 flex items-center justify-center">
+                                                {{ strtoupper(substr($res->nama_dinas, 0, 2)) }}
+                                            </div>
+                                            <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $res->nama_dinas }}">{{ $res->nama_dinas }}</h4>
+                                        </div>
+                                        <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1 mt-1">
+                                            <i class="far fa-clock text-gray-400 dark:text-gray-500"></i> Jam Masuk: <span class="text-gray-700 dark:text-gray-300 font-bold font-mono">{{ $res->jam_mulai_masuk ?: '08:00:00' }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="shrink-0">
+                                    @if($res->tingkat_disiplin >= 90)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60">
+                                            <i class="fas fa-star text-[9px] mr-1"></i> Sangat Disiplin
+                                        </span>
+                                    @elseif($res->tingkat_disiplin >= 70)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60">
+                                            <i class="fas fa-thumbs-up text-[9px] mr-1"></i> Cukup Disiplin
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/60">
+                                            <i class="fas fa-exclamation-triangle text-[9px] mr-1"></i> Kurang Disiplin
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- detail box: mini grid stats --}}
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 space-y-3">
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div>
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Absensi</p>
+                                        <p class="text-sm font-black text-gray-900 dark:text-gray-100 font-mono mt-0.5">{{ $res->total_attendances }}</p>
+                                    </div>
+                                    <div class="border-x border-gray-200 dark:border-gray-700">
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pelanggaran</p>
+                                        @if($res->total_pelanggaran > 0)
+                                            <p class="text-sm font-black text-rose-600 dark:text-rose-400 font-mono mt-0.5">{{ $res->total_pelanggaran }}</p>
+                                        @else
+                                            <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5"><i class="fas fa-check-circle text-[10px]"></i> Nihil</p>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Detail</p>
+                                        <p class="text-[10px] font-bold text-gray-600 dark:text-gray-300 mt-0.5 leading-tight">
+                                            <span class="text-orange-600 dark:text-orange-400">{{ $res->total_terlambat }}</span> Telat<br>
+                                            <span class="text-rose-600 dark:text-rose-400">{{ $res->total_alpa }}</span> Alpa
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {{-- progress bar rate --}}
+                                @php
+                                    $barColor = 'bg-rose-500';
+                                    $textColor = 'text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/60';
+                                    if ($res->tingkat_disiplin >= 90) {
+                                        $barColor = 'bg-emerald-500';
+                                        $textColor = 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60';
+                                    } elseif ($res->tingkat_disiplin >= 70) {
+                                        $barColor = 'bg-blue-500';
+                                        $textColor = 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60';
+                                    }
+                                @endphp
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 bg-gray-100 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                                        <div class="{{ $barColor }} h-2 rounded-full" style="width: {{ $res->tingkat_disiplin }}%"></div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-black font-mono {{ $textColor }}">
+                                        {{ number_format($res->tingkat_disiplin, 1) }}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{-- expandable: pelanggar list inline --}}
+                            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden" x-data="{ showDetail: false }">
+                                <button type="button" @click="showDetail = !showDetail" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition">
+                                    <span class="flex items-center gap-2"><i class="fas fa-user-clock text-teal-600 dark:text-teal-400"></i> Peserta Pelanggaran</span>
+                                    <span class="text-[10px] text-gray-400 dark:text-gray-500">Hadir {{ $res->total_hadir }} | Sakit {{ $res->total_sakit }} | Izin {{ $res->total_izin }}</span>
+                                    <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" :class="showDetail ? 'rotate-180 text-teal-600 dark:text-teal-400' : ''"></i>
+                                </button>
+                                <div x-show="showDetail" x-transition.opacity x-cloak class="border-t border-gray-100 dark:border-gray-700 p-3 space-y-2">
+                                    @if(count($res->pelanggar_list) > 0)
+                                        @foreach($res->pelanggar_list as $p)
+                                        <div class="flex items-start justify-between gap-2 py-1.5 border-b border-gray-100 dark:border-gray-700/60 last:border-0">
+                                            <div class="min-w-0">
+                                                <p class="text-xs font-bold text-gray-900 dark:text-gray-100">{{ $p['nama'] }}</p>
+                                                <p class="text-[10px] text-gray-500 dark:text-gray-400">{{ $p['kampus'] }} · {{ $p['posisi'] }}</p>
+                                            </div>
+                                            <div class="flex gap-2 shrink-0 text-[10px] font-mono">
+                                                <span class="text-orange-600 dark:text-orange-400 font-bold">Telat {{ $p['terlambat'] }}x</span>
+                                                <span class="text-rose-600 dark:text-rose-400 font-bold">Alpa {{ $p['alpa'] }}x</span>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    @else
+                                        <div class="text-center py-3">
+                                            <i class="fas fa-check-circle text-emerald-500 dark:text-emerald-400 text-xl mb-1"></i>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Tidak Ada Pelanggaran</p>
+                                            <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Nihil telat & alpa.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-10 text-center text-gray-400 dark:text-gray-500">
+                            <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-900 border border-transparent dark:border-gray-700 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-search text-xl text-gray-300 dark:text-gray-600"></i>
+                            </div>
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400">Data tidak ditemukan.</p>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Coba sesuaikan filter pencarian Anda.</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

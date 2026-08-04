@@ -86,7 +86,9 @@
                                     <div class="relative">
                                         <input type="number" name="{{ $field }}" min="0" max="100" required
                                             class="score-input w-full pl-4 pr-12 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition font-bold font-mono text-lg shadow-xs [color-scheme:dark]"
-                                            placeholder="0" value="{{ old($field, $application->$field ?? '') }}">
+                                            placeholder="0" value="{{ old($field, $application->$field ?? '') }}"
+                                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                            oninput="this.setCustomValidity('')">
                                         <span class="absolute right-4 top-2.5 text-gray-400 dark:text-gray-500 text-xs font-bold font-mono">/ 100</span>
                                     </div>
                                 </div>

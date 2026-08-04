@@ -26,14 +26,14 @@
                 </a>
                 
                 @if($stats['total'] > 0)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download CSV">
+                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
                         <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
@@ -297,7 +297,8 @@
                         </form>
                     </div>
 
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto">
+                    {{-- Desktop Table View (>=md) --}}
+                    <div class="hidden md:block overflow-x-auto max-h-[650px] overflow-y-auto">
                         <table class="w-full divide-y divide-gray-100 dark:divide-gray-700 border-collapse">
                             <thead class="bg-gray-50 dark:bg-gray-900 sticky top-0 z-20">
                                 <tr>
@@ -447,6 +448,135 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile Card View (<md) --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($gradedList as $index => $res)
+                        <div class="p-4 space-y-3.5 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition" x-data="{ open: false }">
+                            {{-- Header: rank icon + peserta + predikat badge --}}
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="flex-shrink-0">
+                                        @if($index == 0 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                            <div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-xs border border-amber-200 dark:border-amber-800/50">
+                                                <i class="fas fa-crown text-xs"></i>
+                                            </div>
+                                        @elseif($index == 1 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                            <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center border border-gray-300 dark:border-gray-700 font-bold text-xs">2</div>
+                                        @elseif($index == 2 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                            <div class="w-8 h-8 rounded-full bg-amber-100/60 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-800/50 font-bold text-xs">3</div>
+                                        @else
+                                            <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500 flex items-center justify-center border border-gray-200 dark:border-gray-700 font-bold text-xs">#{{ $index + 1 }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $res['nama'] }}">{{ $res['nama'] }}</h4>
+                                        <p class="text-[11px] text-gray-500 dark:text-gray-400 font-semibold leading-snug line-clamp-2 mt-0.5" title="{{ $res['asal_instansi'] }}">
+                                            <i class="fas fa-university mr-1 text-gray-400 dark:text-gray-500"></i>{{ $res['asal_instansi'] }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="shrink-0">
+                                    @php
+                                        $badgeColorMobile = match($res['predikat']) {
+                                            'Sangat Baik' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                            'Baik' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                            'Cukup' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                            default => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60'
+                                        };
+                                    @endphp
+                                    <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full border {{ $badgeColorMobile }}">
+                                        {{ $res['predikat'] }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{-- Detail: dinas, posisi, skor akhir --}}
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 space-y-2.5">
+                                <div class="flex items-start gap-2 text-xs">
+                                    <i class="far fa-building text-gray-400 dark:text-gray-500 mt-0.5"></i>
+                                    <span class="font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $res['instansi'] }}">{{ $res['instansi'] }}</span>
+                                </div>
+                                <div class="flex items-start gap-2 text-[11px]">
+                                    <i class="fas fa-briefcase text-teal-500 dark:text-teal-400 mt-0.5"></i>
+                                    <span class="text-teal-600 dark:text-teal-400 font-medium leading-snug line-clamp-2" title="{{ $res['posisi'] }}">{{ $res['posisi'] }}</span>
+                                </div>
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <span class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Skor Akhir</span>
+                                    <span class="text-sm font-black text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 px-2.5 py-1 rounded-full inline-block font-mono">{{ $res['rata_rata'] }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Expandable detail (rincian penilaian) --}}
+                            <button type="button" @click="open = !open" class="w-full flex items-center justify-center gap-1.5 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                <span x-text="open ? 'Sembunyikan Rincian' : 'Lihat Rincian'"></span>
+                                <i class="fas fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180 text-teal-600 dark:text-teal-400' : ''"></i>
+                            </button>
+                            <div x-show="open" x-transition.opacity x-cloak class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-xs space-y-3">
+                                <h4 class="text-xs font-black text-gray-700 dark:text-gray-300 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
+                                    <i class="fas fa-award text-teal-600 dark:text-teal-400"></i> Rincian Penilaian
+                                </h4>
+                                @if($res['nilai_rata_rata'] !== null)
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Kerajinan</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['kerajinan'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Kedisiplinan</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['disiplin'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Adaptasi</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['adaptasi'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Kreatifitas</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['kreatifitas'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 col-span-2">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Skill & Pengetahuan</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['skill'] }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[10px] text-gray-400 dark:text-gray-500 italic">
+                                        <span>*Sistem Penilaian Utama (5 Aspek)</span>
+                                        <span>Rata-rata: <strong class="text-gray-800 dark:text-gray-200 font-mono">{{ $res['rata_rata'] }}</strong></span>
+                                    </div>
+                                @else
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Teknis</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['teknis'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Disiplin</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['disiplin'] }}</div>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700">
+                                            <div class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase">Perilaku</div>
+                                            <div class="text-base font-black text-gray-800 dark:text-gray-200 font-mono mt-0.5">{{ $res['perilaku'] }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[10px] text-gray-400 dark:text-gray-500 italic">
+                                        <span>*Sistem Penilaian Tambahan (3 Aspek)</span>
+                                        <span>Rata-rata: <strong class="text-gray-800 dark:text-gray-200 font-mono">{{ $res['rata_rata'] }}</strong></span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-10 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                                    <i class="fas fa-search text-2xl"></i>
+                                </div>
+                                <p class="text-gray-900 dark:text-gray-100 font-bold">Data tidak ditemukan</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Coba sesuaikan filter pencarian Anda.</p>
+                            </div>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

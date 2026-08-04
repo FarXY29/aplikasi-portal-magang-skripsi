@@ -26,7 +26,7 @@
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-red-600/20 text-white h-9 px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 shadow-xs shrink-0 cursor-pointer"
         >
             <i class="fas fa-trash-alt text-xs"></i>
-            <span>{{ __('Delete Account') }}</span>
+            <span>{{ __('Hapus Akun') }}</span>
         </button>
     </div>
 

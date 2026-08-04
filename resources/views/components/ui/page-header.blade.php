@@ -28,7 +28,7 @@
                 </ol>
             </nav>
         @endif
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-gray-100 sm:truncate sm:text-3xl sm:tracking-tight">
+        <h2 class="text-xl font-bold leading-7 text-gray-900 dark:text-gray-100 sm:truncate sm:text-2xl sm:tracking-tight lg:text-3xl">
             {{ $title }}
         </h2>
     </div>

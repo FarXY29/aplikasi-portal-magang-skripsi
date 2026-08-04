@@ -38,7 +38,9 @@
                                         <i class="fas fa-landmark"></i>
                                     </span>
                                     <input type="text" name="nama_dinas" value="{{ old('nama_dinas', $instansi->nama_dinas) }}" 
-                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('nama_dinas') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
@@ -50,7 +52,9 @@
                                         <i class="fas fa-barcode"></i>
                                     </span>
                                     <input type="text" name="kode_unit_kerja" value="{{ old('kode_unit_kerja', $instansi->kode_unit_kerja) }}"
-                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('kode_unit_kerja') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
@@ -60,7 +64,9 @@
                                 <div class="relative">
                                     <textarea name="alamat" rows="4"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" 
-                                        required>{{ old('alamat', $instansi->alamat) }}</textarea>
+                                        required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">{{ old('alamat', $instansi->alamat) }}</textarea>
                                     <span class="absolute top-3 left-3 text-gray-400 pointer-events-none">
                                         <i class="fas fa-map-marker-alt"></i>
                                     </span>
@@ -111,7 +117,9 @@
                                                 <i class="fas fa-envelope"></i>
                                             </span>
                                             <input type="email" name="email_admin" value="{{ old('email_admin', $adminUser->email ?? '') }}" 
-                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required>
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required
+                                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                oninput="this.setCustomValidity('')">
                                         </div>
                                         @error('email_admin') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
@@ -141,25 +149,31 @@
                         </label>
                         
                         <div class="mb-4">
-                            <div id="map" class="border border-blue-200 dark:border-blue-900/50 shadow-inner" style="height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
+                            <div id="map" class="border border-blue-200 dark:border-blue-900/50 shadow-inner h-[250px] sm:h-[350px] w-full" style="border-radius: 0.5rem; z-index: 1;"></div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LAT</span>
                                 <input type="text" name="latitude" id="latitude" value="{{ old('latitude', $instansi->latitude) }}"
-                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required
+                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                    oninput="this.setCustomValidity('')">
                             </div>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold pointer-events-none">LNG</span>
                                 <input type="text" name="longitude" id="longitude" value="{{ old('longitude', $instansi->longitude) }}"
-                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required>
+                                    class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" required
+                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                    oninput="this.setCustomValidity('')">
                             </div>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 text-xs font-bold"><i class="fas fa-circle-notch"></i></span>
                                 <input type="number" name="radius_absen" id="radius_absen" value="{{ old('radius_absen', $instansi->radius_absen ?? 50) }}"
                                     class="w-full pl-10 pr-12 py-2 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-200 text-sm" 
-                                    placeholder="50" min="10" required>
+                                    placeholder="50" min="10" required
+                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                    oninput="this.setCustomValidity('')">
                                 <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs font-bold pointer-events-none">Meter</span>
                             </div>
                         </div>
@@ -168,11 +182,11 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i> Area lingkaran pada peta menunjukkan batas peserta bisa melakukan absensi.</p>
                     </div>
 
-                    <div class="flex items-center justify-end space-x-3 mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('admin.instansi.index') }}" class="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition shadow-sm">
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:space-x-3 mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{{ route('admin.instansi.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition shadow-sm text-center">
                             Batal
                         </a>
-                        <button type="submit" class="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 dark:shadow-teal-950/30 transition transform active:scale-95 flex items-center">
+                        <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 dark:shadow-teal-950/30 transition transform active:scale-95 flex items-center justify-center">
                             <i class="fas fa-save mr-2"></i> Simpan Perubahan
                         </button>
                     </div>
@@ -186,7 +200,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <style>
     /* Ensure the map container has a defined height */
-    #map { height: 350px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
+    #map { height: 250px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
+    @media (min-width: 640px) { #map { height: 350px !important; } }
 </style>
 @endpush
 

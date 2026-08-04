@@ -77,7 +77,7 @@
                         $nipPejabat = $adminInstansi?->nip_pejabat ?? '19720315 199803 1 004';
                     @endphp
                     <div class="hidden print:flex justify-end mt-16 break-inside-avoid">
-                        <div class="text-center w-72">
+                        <div class="text-center w-full max-w-[18rem]">
                             <p class="mb-1">Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                             <p class="font-bold">{{ $jabatanPejabat }}</p>
                             <div class="h-20"></div>

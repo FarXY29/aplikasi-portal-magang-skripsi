@@ -48,6 +48,14 @@
 </head>
 <body class="bg-slate-50 dark:bg-gray-900 text-slate-600 dark:text-slate-400 flex flex-col min-h-screen overflow-x-hidden antialiased transition-colors duration-300">
 
+    @if (session('success'))
+        <div class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] w-full max-w-xl px-4">
+            <x-ui.alert type="success" :dismissible="true">
+                {{ session('success') }}
+            </x-ui.alert>
+        </div>
+    @endif
+
     @include('public.welcome._navbar')
     @include('public.welcome._hero')
     @include('public.welcome._stats')

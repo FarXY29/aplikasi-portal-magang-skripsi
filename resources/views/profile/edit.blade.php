@@ -30,6 +30,22 @@
                 </div>
             </div>
 
+            @if (session('status') === 'profile-updated')
+                <div class="mb-6 animate-fade-in">
+                    <x-ui.alert type="success" :dismissible="true">
+                        {{ __('Perubahan data berhasil disimpan.') }}
+                    </x-ui.alert>
+                </div>
+            @endif
+
+            @if (session('status') === 'password-updated')
+                <div class="mb-6 animate-fade-in">
+                    <x-ui.alert type="success" :dismissible="true">
+                        {{ __('Kata sandi Anda berhasil diperbarui.') }}
+                    </x-ui.alert>
+                </div>
+            @endif
+
             <!-- Cards Container -->
             <div class="space-y-6 animate-fade-in">
                 <!-- 1. Form Update Informasi Dasar -->

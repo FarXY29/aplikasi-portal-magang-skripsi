@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
+            <h2 class="font-extrabold text-xl md:text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-journal-whills text-teal-600 dark:text-teal-400"></i>
                 {{ __('Detail Logbook Peserta') }}
             </h2>
@@ -23,7 +23,7 @@
                         <i class="fas fa-arrow-left"></i>
                     </a>
                     <div>
-                        <h1 class="text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">{{ $user->name }}</h1>
+                        <h1 class="text-lg md:text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">{{ $user->name }}</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-0.5">
                             <i class="fas fa-building mr-1.5 text-gray-400 dark:text-gray-500"></i> 
                             {{ isset($app->position) ? $app->position->instansi->nama_dinas : 'Lokasi tidak ditemukan' }}
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 
-                <div class="flex gap-2.5 text-xs font-bold">
+                <div class="flex flex-wrap gap-2.5 text-xs font-bold">
                     <div class="px-3.5 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xs text-gray-600 dark:text-gray-300">
                         Total Log: <span class="text-teal-600 dark:text-teal-400 font-extrabold">{{ $logs->count() }}</span>
                     </div>
@@ -50,16 +50,16 @@
                     <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm">Peserta ini belum mengisi catatan kegiatan harian.</p>
                 </div>
             @else
-                <div class="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)]">
+                <div class="flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-200px)]">
                     
                     {{-- Left Sidebar List --}}
-                    <div class="lg:w-1/3 flex flex-col bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden h-full">
+                    <div class="lg:w-1/3 flex flex-col bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden lg:h-full">
                         <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
                             <h3 class="font-bold text-gray-800 dark:text-gray-200 text-sm uppercase tracking-wide">Riwayat Kegiatan</h3>
                             <span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">Terbaru diatas</span>
                         </div>
                         
-                        <div class="overflow-y-auto flex-1 custom-scrollbar p-3 space-y-2">
+                        <div class="overflow-y-auto flex-1 custom-scrollbar p-3 space-y-2 max-h-[400px] lg:max-h-none">
                             @foreach($logs as $log)
                                 <button 
                                     @click="activeLogId = {{ $log->id }}"
@@ -95,7 +95,7 @@
                     </div>
 
                     {{-- Right Main Detail Area --}}
-                    <div class="lg:w-2/3 bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden h-full flex flex-col relative">
+                    <div class="lg:w-2/3 bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden lg:h-full flex flex-col relative">
                         
                         <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10">
                             <h3 class="font-bold text-lg text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -112,7 +112,7 @@
                                      class="space-y-6">
                                     
                                     {{-- Info Bar --}}
-                                    <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                                         <div>
                                             <span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold tracking-wider">Tanggal Kegiatan</span>
                                             <p class="text-base md:text-lg font-extrabold text-gray-900 dark:text-gray-100 mt-0.5">{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('l, d F Y') }}</p>

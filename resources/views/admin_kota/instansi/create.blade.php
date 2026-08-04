@@ -45,7 +45,9 @@
                                     </div>
                                     <input type="text" name="nama_dinas" value="{{ old('nama_dinas') }}" 
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-sm text-sm" 
-                                        placeholder="Contoh: Dinas Komunikasi dan Informatika" required>
+                                        placeholder="Contoh: Dinas Komunikasi dan Informatika" required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('nama_dinas') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -58,7 +60,9 @@
                                     </div>
                                     <input type="text" name="kode_unit_kerja" value="{{ old('kode_unit_kerja') }}"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-sm text-sm" 
-                                        required>
+                                        required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('kode_unit_kerja') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -71,7 +75,9 @@
                                     </div>
                                     <textarea name="alamat" rows="1"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-sm text-sm" 
-                                        placeholder="Jl. RE Martadinata No..." required>{{ old('alamat') }}</textarea>
+                                        placeholder="Jl. RE Martadinata No..." required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">{{ old('alamat') }}</textarea>
                                 </div>
                                 @error('alamat') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -98,7 +104,7 @@
                                 </label>
                                 
                                 <div class="mb-4">
-                                    <div id="map" class="border border-blue-200 dark:border-blue-900/50 shadow-inner" style="height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1;"></div>
+                                    <div id="map" class="border border-blue-200 dark:border-blue-900/50 shadow-inner h-[250px] sm:h-[350px] w-full" style="border-radius: 0.5rem; z-index: 1;"></div>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -107,7 +113,9 @@
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 dark:text-gray-500 text-xs font-bold">LAT</span>
                                             <input type="text" name="latitude" id="latitude" value="{{ old('latitude') }}"
                                                 class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500/20 text-sm font-mono" 
-                                                placeholder="-3.319xxx" required>
+                                                placeholder="-3.319xxx" required
+                                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                oninput="this.setCustomValidity('')">
                                         </div>
                                     </div>
                                     <div>
@@ -115,7 +123,9 @@
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 dark:text-gray-500 text-xs font-bold">LNG</span>
                                             <input type="text" name="longitude" id="longitude" value="{{ old('longitude') }}"
                                                 class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500/20 text-sm font-mono" 
-                                                placeholder="114.590xxx" required>
+                                                placeholder="114.590xxx" required
+                                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                oninput="this.setCustomValidity('')">
                                         </div>
                                     </div>
                                     <div>
@@ -123,7 +133,9 @@
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 dark:text-gray-500 text-xs font-bold"><i class="fas fa-circle-notch"></i></span>
                                             <input type="number" name="radius_absen" id="radius_absen" value="{{ old('radius_absen', 50) }}"
                                                 class="w-full pl-10 pr-12 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500/20 text-sm font-mono" 
-                                                placeholder="50" min="10" required>
+                                                placeholder="50" min="10" required
+                                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                oninput="this.setCustomValidity('')">
                                             <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs font-bold pointer-events-none">Meter</span>
                                         </div>
                                     </div>
@@ -153,7 +165,9 @@
                                     </div>
                                     <input type="email" name="email_admin" value="{{ old('email_admin') }}"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-orange-500 focus:ring focus:ring-orange-500/20 transition shadow-sm text-sm" 
-                                        placeholder="admin.instansi@banjarmasin.go.id" required>
+                                        placeholder="admin.instansi@banjarmasin.go.id" required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('email_admin') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -166,18 +180,20 @@
                                     </div>
                                     <input type="password" name="password_admin"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-orange-500 focus:ring focus:ring-orange-500/20 transition shadow-sm text-sm" 
-                                        placeholder="Minimal 8 karakter" required>
+                                        placeholder="Minimal 8 karakter" required
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('password_admin') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('admin.instansi.index') }}" class="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm">
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:space-x-4 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{{ route('admin.instansi.index') }}" class="w-full sm:w-auto px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition text-sm text-center">
                             Batal
                         </a>
-                        <button type="submit" class="px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition transform active:scale-95 flex items-center text-sm">
+                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition transform active:scale-95 flex items-center justify-center text-sm">
                             <i class="fas fa-save mr-2"></i> Simpan Data
                         </button>
                     </div>
@@ -191,7 +207,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <style>
     /* Ensure the map container has a defined height */
-    #map { height: 350px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
+    #map { height: 250px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
+    @media (min-width: 640px) { #map { height: 350px !important; } }
 </style>
 @endpush
 

@@ -26,14 +26,14 @@
                 </a>
                 
                 @if($jurusans->count() > 0)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download CSV">
+                    <a href="{{ route('admin.laporan.demografi_jurusan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
                         <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
@@ -117,7 +117,7 @@
                     </div>
 
                     {{-- Table Content --}}
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto">
+                    <div class="hidden md:block overflow-x-auto max-h-[650px] overflow-y-auto">
                         <table class="w-full divide-y divide-gray-100 dark:divide-gray-700 border-collapse">
                             <thead class="bg-gray-50 dark:bg-gray-900 sticky top-0 z-20">
                                 <tr>
@@ -191,6 +191,65 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile Card View --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($jurusans as $index => $jurusan)
+                        <div class="p-4 space-y-3.5"
+                            x-show="!searchQuery || '{{ strtolower($jurusan->required_major) }}'.includes(searchQuery.toLowerCase())">
+                            {{-- Header: Rank + Jurusan name --}}
+                            <div class="flex items-center gap-3">
+                                @if($index == 0)
+                                    <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-xs border border-amber-200 dark:border-amber-800/50">
+                                        <i class="fas fa-crown text-xs"></i>
+                                    </div>
+                                @elseif($index == 1)
+                                    <div class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center flex-shrink-0 border border-gray-300 dark:border-gray-700 font-bold text-xs">2</div>
+                                @elseif($index == 2)
+                                    <div class="w-7 h-7 rounded-full bg-amber-100/60 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center flex-shrink-0 border border-amber-200 dark:border-amber-800/50 font-bold text-xs">3</div>
+                                @else
+                                    <span class="text-gray-400 dark:text-gray-500 font-bold text-xs flex-shrink-0">#{{ $index + 1 }}</span>
+                                @endif
+                                <div class="h-9 w-9 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $jurusan->required_major }}">{{ $jurusan->required_major }}</div>
+                                </div>
+                            </div>
+
+                            {{-- Detail box: counts + percentage + progress bar --}}
+                            <div class="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-3.5 space-y-3 border border-gray-100 dark:border-gray-700">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 rounded-full font-bold text-xs inline-block">
+                                        <strong class="font-mono">{{ $jurusan->total_lowongan }}</strong> Lowongan
+                                    </span>
+                                    <span class="font-black text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 px-3.5 py-1 rounded-full text-xs inline-block font-mono">
+                                        {{ $jurusan->total_kuota }} Kursi
+                                    </span>
+                                </div>
+                                @php
+                                    $percentage = round(($jurusan->total_kuota / $maxKuota) * 100);
+                                @endphp
+                                <div class="flex items-center gap-3">
+                                    <div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden border border-transparent dark:border-gray-700">
+                                        <div class="bg-gradient-to-r from-teal-500 to-indigo-500 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ $percentage }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-10 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                                    <i class="fas fa-search text-2xl"></i>
+                                </div>
+                                <p class="text-gray-900 dark:text-gray-100 font-bold">Data jurusan tidak ditemukan</p>
+                            </div>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

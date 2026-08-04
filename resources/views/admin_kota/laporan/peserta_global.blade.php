@@ -7,17 +7,17 @@
                 </div>
                 {{ __('Rekapitulasi Global Peserta Magang') }}
             </h2>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi', 'q']))
-                    <a href="{{ route('admin.laporan.peserta_global') }}" class="px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
+                    <a href="{{ route('admin.laporan.peserta_global') }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
                     </a>
                 @endif
                 @if($stats['total'] > 0)
-                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
                 @endif
@@ -183,7 +183,7 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full divide-y divide-gray-100 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
@@ -269,6 +269,85 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Mobile Card View (<md) --}}
+                <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse($allInterns as $data)
+                    <div class="p-4 space-y-3.5 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition"
+                        x-show="quickSearch === '' ||
+                                '{{ strtolower($data->user->name ?? '') }}'.includes(quickSearch.toLowerCase()) ||
+                                '{{ strtolower($data->user->asal_instansi ?? '') }}'.includes(quickSearch.toLowerCase()) ||
+                                '{{ strtolower($data->position->instansi->nama_dinas ?? '') }}'.includes(quickSearch.toLowerCase()) ||
+                                '{{ strtolower($data->position->judul_posisi ?? '') }}'.includes(quickSearch.toLowerCase())">
+
+                        {{-- header row: iteration + name + status badge --}}
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3 min-w-0">
+                                <span class="text-xs font-bold text-gray-400 dark:text-gray-500 shrink-0 pt-0.5">{{ $loop->iteration }}</span>
+                                <div class="min-w-0">
+                                    <div class="text-sm font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $data->user->name ?? '-' }}">{{ $data->user->name ?? '-' }}</div>
+                                    <div class="text-xs text-gray-400 dark:text-gray-500 font-medium truncate mt-0.5">{{ $data->user->email ?? '-' }}</div>
+                                </div>
+                            </div>
+                            @php
+                                $statusVal = $data->status instanceof \App\Enums\ApplicationStatus ? $data->status->value : $data->status;
+                                $badgeClass = match($statusVal) {
+                                    'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                    'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                    'pending', 'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                    'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                    default => 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700'
+                                };
+                                $label = match($statusVal) {
+                                    'diterima' => 'Aktif',
+                                    'selesai' => 'Selesai',
+                                    'pending', 'menunggu' => 'Pending',
+                                    'ditolak' => 'Ditolak',
+                                    default => ucfirst($statusVal)
+                                };
+                            @endphp
+                            <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $badgeClass }} shrink-0">
+                                {{ $label }}
+                            </span>
+                        </div>
+
+                        {{-- detail block: key-value mini grid --}}
+                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 space-y-2.5">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0 pt-0.5">Sekolah</span>
+                                <div class="inline-flex items-start gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 leading-snug">
+                                    <i class="fas fa-university text-[10px] mt-0.5 shrink-0"></i>
+                                    <span class="line-clamp-2" title="{{ $data->user->asal_instansi ?? '-' }}">{{ $data->user->asal_instansi ?? '-' }}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0 pt-0.5">Dinas</span>
+                                <span class="text-xs font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $data->position->instansi->nama_dinas ?? '-' }}">{{ $data->position->instansi->nama_dinas ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0 pt-0.5">Posisi</span>
+                                <span class="text-xs text-teal-600 dark:text-teal-400 font-medium leading-snug line-clamp-2" title="{{ $data->position->judul_posisi ?? '-' }}">{{ $data->position->judul_posisi ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0 pt-0.5">Periode</span>
+                                <span class="px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-[11px] inline-block font-bold text-gray-700 dark:text-gray-300">
+                                    {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-10 text-center">
+                        <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                            <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
+                                <i class="far fa-user-circle text-3xl"></i>
+                            </div>
+                            <p class="font-bold text-gray-700 dark:text-gray-300 text-sm">Tidak Ada Data Peserta</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Belum ada data peserta yang sesuai dengan filter pilihan Anda.</p>
+                        </div>
+                    </div>
+                    @endforelse
                 </div>
 
                 @if($allInterns instanceof \Illuminate\Pagination\LengthAwarePaginator && $allInterns->hasPages())

@@ -71,6 +71,8 @@
                                     </label>
                                     <input type="number" name="nilai_disiplin" min="0" max="100" required 
                                         x-model="disiplin"
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')"
                                         class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 transition shadow-xs text-base font-bold font-mono" 
                                         placeholder="0 - 100">
                                     <p class="text-[11px] text-gray-400 dark:text-gray-500">*Berdasarkan kedisiplinan dan absensi.</p>
@@ -84,6 +86,8 @@
                                     </label>
                                     <input type="number" name="nilai_kinerja" min="0" max="100" required 
                                         x-model="kinerja"
+                                        oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                        oninput="this.setCustomValidity('')"
                                         class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 transition shadow-xs text-base font-bold font-mono" 
                                         placeholder="0 - 100">
                                     <p class="text-[11px] text-gray-400 dark:text-gray-500">*Berdasarkan pencapaian tugas & jurnal.</p>

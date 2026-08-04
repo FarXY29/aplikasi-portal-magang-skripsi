@@ -77,6 +77,8 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Nama Lengkap</label>
                         <input id="name" name="name" type="text" required autofocus
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                             placeholder="Sesuai KTP/KTM" value="{{ old('name') }}">
                         <x-input-error :messages="$errors->get('name')" class="mt-1" />
@@ -84,6 +86,8 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Username</label>
                         <input id="username" name="username" type="text" required
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                             placeholder="Username unik" value="{{ old('username') }}">
                         <x-input-error :messages="$errors->get('username')" class="mt-1" />
@@ -94,6 +98,8 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Email</label>
                         <input id="email" name="email" type="email" required
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                             placeholder="Email aktif" value="{{ old('email') }}">
                         <x-input-error :messages="$errors->get('email')" class="mt-1" />
@@ -103,6 +109,8 @@
                         <div id="field-peserta" class="{{ old('role') == 'pembimbing' ? 'hidden' : 'block' }}">
                             <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Jurusan / Program Studi</label>
                             <input id="major" name="major" type="text"
+                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                oninput="this.setCustomValidity('')"
                                 class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                                 placeholder="Contoh: Teknik Informatika" value="{{ old('major') }}">
                             <x-input-error :messages="$errors->get('major')" class="mt-1" />
@@ -111,6 +119,8 @@
                         <div id="field-pembimbing" class="{{ old('role') == 'pembimbing' ? 'block' : 'hidden' }}">
                             <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Asal Sekolah / Kampus</label>
                             <input id="asal_instansi" name="asal_instansi" type="text"
+                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                oninput="this.setCustomValidity('')"
                                 class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                                 placeholder="Contoh: Univ. Lambung Mangkurat" value="{{ old('asal_instansi') }}">
                             <x-input-error :messages="$errors->get('asal_instansi')" class="mt-1" />
@@ -122,6 +132,8 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Password</label>
                         <input id="password" name="password" type="password" required autocomplete="new-password"
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                             placeholder="Min. 8 karakter">
                         <x-input-error :messages="$errors->get('password')" class="mt-1" />
@@ -129,6 +141,8 @@
                     <div>
                         <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Konfirmasi Password</label>
                         <input id="password_confirmation" name="password_confirmation" type="password" required
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
                             placeholder="Ulangi password">
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />

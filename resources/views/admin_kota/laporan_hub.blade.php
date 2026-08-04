@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="flex flex-col mb-8">
-                <h2 class="text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Pusat Laporan</h2>
+                <h2 class="text-2xl md:text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Pusat Laporan</h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-2xl">
                     Akses cepat ke seluruh modul laporan statistik dan analitik Pemerintah Kota Banjarmasin. 
                     Pilih modul laporan yang ingin Anda lihat di bawah ini.
@@ -25,7 +25,7 @@
                 </a>
 
                 <!-- Laporan Global Peserta -->
-                <a href="{{ route('admin.laporan.peserta_global') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:teal-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                <a href="{{ route('admin.laporan.peserta_global') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">

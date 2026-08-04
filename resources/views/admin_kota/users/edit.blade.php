@@ -33,13 +33,17 @@
 
                             <div>
                                 <x-input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
-                                <x-text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required />
+                                <x-text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required 
+                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                    oninput="this.setCustomValidity('')" />
                                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
                             </div>
 
                             <div>
                                 <x-input-label for="email" value="Email Login" class="mb-2 font-bold" />
-                                <x-text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required />
+                                <x-text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required 
+                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                    oninput="this.setCustomValidity('')" />
                                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 
@@ -119,11 +123,11 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end space-x-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('admin.users.index') }}" class="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm text-sm">
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:space-x-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{{ route('admin.users.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm text-sm text-center">
                             Batal
                         </a>
-                        <button type="submit" class="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition transform active:scale-95 flex items-center text-sm">
+                        <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition transform active:scale-95 flex items-center justify-center text-sm">
                             <i class="fas fa-save mr-2"></i> Perbarui Data
                         </button>
                     </div>

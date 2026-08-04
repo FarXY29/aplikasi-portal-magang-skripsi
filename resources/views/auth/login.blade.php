@@ -58,6 +58,8 @@
                             <i class="far fa-envelope text-gray-400 dark:text-gray-500 text-base"></i>
                         </div>
                         <input id="email" name="email" type="text" required autofocus
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full pl-11 pr-4 py-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 shadow-xs font-medium"
                             placeholder="email@contoh.com" :value="old('email')">
                     </div>
@@ -78,6 +80,8 @@
                             <i class="fas fa-lock text-gray-400 dark:text-gray-500 text-base"></i>
                         </div>
                         <input id="password" name="password" type="password" required autocomplete="current-password"
+                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                            oninput="this.setCustomValidity('')"
                             class="block w-full pl-11 pr-4 py-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 shadow-xs font-medium"
                             placeholder="••••••••">
                     </div>

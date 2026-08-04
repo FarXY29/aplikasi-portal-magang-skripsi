@@ -242,4 +242,163 @@ class RolePesertaTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('error');
     }
+
+    public function test_peserta_can_update_pending_logbook()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        $user = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '1234567890123456',
+            'asal_instansi' => 'Universitas Indonesia',
+        ]);
+        $user->assignRole('peserta');
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Test',
+            'kode_unit_kerja' => 'TEST-01',
+            'alamat' => 'Alamat Test',
+            'jam_mulai_masuk' => '07:30:00',
+            'jam_mulai_pulang' => '16:00:00',
+            'max_total_quota' => 10,
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'QA Engineer',
+            'kuota' => 2,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+        ]);
+
+        $log = \App\Models\DailyLog::create([
+            'application_id' => $app->id,
+            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'kegiatan' => 'Kegiatan awal',
+            'status_validasi' => 'pending',
+        ]);
+
+        $response = $this->actingAs($user)->put(route('peserta.logbook.update', $log->id), [
+            'kegiatan' => 'Kegiatan yang telah diupdate',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('daily_logs', [
+            'id' => $log->id,
+            'kegiatan' => 'Kegiatan yang telah diupdate',
+        ]);
+    }
+
+    public function test_peserta_can_delete_pending_logbook()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        $user = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '1234567890123456',
+            'asal_instansi' => 'Universitas Indonesia',
+        ]);
+        $user->assignRole('peserta');
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Test',
+            'kode_unit_kerja' => 'TEST-01',
+            'alamat' => 'Alamat Test',
+            'jam_mulai_masuk' => '07:30:00',
+            'jam_mulai_pulang' => '16:00:00',
+            'max_total_quota' => 10,
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'QA Engineer',
+            'kuota' => 2,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+        ]);
+
+        $log = \App\Models\DailyLog::create([
+            'application_id' => $app->id,
+            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'kegiatan' => 'Kegiatan awal',
+            'status_validasi' => 'pending',
+        ]);
+
+        $response = $this->actingAs($user)->delete(route('peserta.logbook.destroy', $log->id));
+
+        $response->assertSessionHas('success');
+        $this->assertDatabaseMissing('daily_logs', [
+            'id' => $log->id,
+        ]);
+    }
+
+    public function test_peserta_cannot_delete_approved_logbook()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        $user = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '1234567890123456',
+            'asal_instansi' => 'Universitas Indonesia',
+        ]);
+        $user->assignRole('peserta');
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Test',
+            'kode_unit_kerja' => 'TEST-01',
+            'alamat' => 'Alamat Test',
+            'jam_mulai_masuk' => '07:30:00',
+            'jam_mulai_pulang' => '16:00:00',
+            'max_total_quota' => 10,
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'QA Engineer',
+            'kuota' => 2,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+        ]);
+
+        $log = \App\Models\DailyLog::create([
+            'application_id' => $app->id,
+            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'kegiatan' => 'Kegiatan awal',
+            'status_validasi' => 'disetujui',
+        ]);
+
+        $response = $this->actingAs($user)->delete(route('peserta.logbook.destroy', $log->id));
+
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('daily_logs', [
+            'id' => $log->id,
+        ]);
+    }
 }

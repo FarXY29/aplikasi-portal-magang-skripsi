@@ -26,14 +26,14 @@
                 </a>
                 
                 @if($penyerapan->count() > 0)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download CSV">
+                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
                         <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
@@ -125,7 +125,7 @@
                     </div>
 
                     {{-- Table Content --}}
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto">
+                    <div class="hidden md:block overflow-x-auto max-h-[650px] overflow-y-auto">
                         <table class="w-full divide-y divide-gray-100 dark:divide-gray-700 border-collapse">
                             <thead class="bg-gray-50 dark:bg-gray-900 sticky top-0 z-20">
                                 <tr>
@@ -215,6 +215,69 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile Card-View --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($penyerapan as $index => $instansi)
+                            @php
+                                $rate = min(100, round($instansi->persentase_penyerapan, 1));
+                                $barBg = 'from-rose-500 to-orange-500';
+                                if ($rate >= 80) {
+                                    $barBg = 'from-teal-500 to-emerald-500';
+                                } elseif ($rate >= 50) {
+                                    $barBg = 'from-blue-500 to-indigo-500';
+                                }
+                            @endphp
+                            <div class="p-4 space-y-3.5" x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
+                                        {{ $index + 1 }}
+                                    </div>
+                                    <div class="h-9 w-9 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
+                                        {{ strtoupper(substr($instansi->nama_dinas, 0, 2)) }}
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $instansi->nama_dinas }}">{{ $instansi->nama_dinas }}</div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 grid grid-cols-3 gap-3">
+                                    <div class="text-center">
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Kuota</p>
+                                        <span class="font-mono font-black text-gray-800 dark:text-gray-100 text-sm">{{ $instansi->total_kuota }}</span>
+                                    </div>
+                                    <div class="text-center border-x border-gray-200 dark:border-gray-700">
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Terisi</p>
+                                        <span class="font-mono font-black text-emerald-600 dark:text-emerald-400 text-sm">{{ $instansi->total_terserap }}</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Rate</p>
+                                        <span class="font-mono font-black text-gray-800 dark:text-gray-100 text-sm">{{ $rate }}%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden border border-transparent dark:border-gray-700">
+                                        <div class="bg-gradient-to-r {{ $barBg }} h-2 rounded-full" style="width: {{ $rate }}%"></div>
+                                    </div>
+                                    @if($instansi->persentase_penyerapan >= 80)
+                                        <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap">Optimal</span>
+                                    @elseif($instansi->persentase_penyerapan >= 50)
+                                        <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 whitespace-nowrap">Cukup</span>
+                                    @else
+                                        <span class="px-2.5 py-1 text-[10px] font-black uppercase rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 whitespace-nowrap">Rendah</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="p-10 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                                        <i class="fas fa-search text-2xl"></i>
+                                    </div>
+                                    <p class="text-gray-900 dark:text-gray-100 font-bold">Data penyerapan tidak ditemukan</p>
+                                </div>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

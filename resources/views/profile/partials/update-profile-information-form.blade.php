@@ -2,7 +2,7 @@
     <div class="border-b border-gray-100 dark:border-gray-700 pb-5 mb-6">
         <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <i class="fas fa-user-circle text-teal-600 dark:text-teal-400"></i>
-            {{ __('Profile Information') }}
+            {{ __('Informasi Profil') }}
         </h3>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {{ __("Perbarui foto profil, informasi dasar akun, dan data akademik atau instansi Anda.") }}
@@ -31,7 +31,7 @@
                 <div class="flex flex-wrap items-center gap-3">
                     <label for="photo" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xs hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100 text-gray-700 dark:text-gray-300 h-9 px-4 py-2 cursor-pointer active:scale-95">
                         <i class="fas fa-camera text-teal-600 dark:text-teal-400 text-xs"></i>
-                        <span>Change Photo</span>
+                        <span>Ubah Foto</span>
                         <input id="photo" name="photo" type="file" onchange="previewPhoto(event)" class="sr-only" accept="image/*" />
                     </label>
                     @if ($user->photo)
@@ -49,7 +49,7 @@
             <!-- Nama -->
             <div class="space-y-1.5">
                 <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="name">
-                    <span>{{ __('Full Name') }}</span> <span class="text-red-500">*</span>
+                    <span>{{ __('Nama Lengkap') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="name" name="name" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
                 <x-input-error class="mt-1" :messages="$errors->get('name')" />
@@ -68,7 +68,7 @@
             <!-- Email -->
             <div class="space-y-1.5 md:col-span-2">
                 <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="email">
-                    <span>{{ __('Email Address') }}</span> <span class="text-red-500">*</span>
+                    <span>{{ __('Alamat Email') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="email" name="email" type="email" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('email', $user->email) }}" required autocomplete="username" />
                 <x-input-error class="mt-1" :messages="$errors->get('email')" />
@@ -230,7 +230,7 @@
 
             <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-teal-600/20 text-white h-9 px-5 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 active:scale-95 shadow-xs cursor-pointer">
                 <i class="fas fa-save text-xs"></i>
-                <span>{{ __('Save Changes') }}</span>
+                <span>{{ __('Simpan Perubahan') }}</span>
             </button>
         </div>
     </form>

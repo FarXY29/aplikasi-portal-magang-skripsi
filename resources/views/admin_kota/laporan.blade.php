@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+            <h2 class="font-extrabold text-xl md:text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
                     <i class="fas fa-chart-pie text-teal-600 dark:text-teal-400 text-lg"></i>
                 </div>
@@ -29,35 +29,35 @@
                     <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-800/60 shadow-xs">
                         <i class="fas fa-building text-xs"></i>
                     </div>
-                    <p class="text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($stats['total_instansi']) }}</p>
+                    <p class="text-xl md:text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($stats['total_instansi']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Instansi</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-800/60 shadow-xs">
                         <i class="fas fa-briefcase text-xs"></i>
                     </div>
-                    <p class="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($stats['total_lowongan']) }}</p>
+                    <p class="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($stats['total_lowongan']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Lowongan Aktif</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
                     <div class="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-800/60 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
-                    <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight">{{ number_format($stats['total_pelamar']) }}</p>
+                    <p class="text-xl md:text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight">{{ number_format($stats['total_pelamar']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Pelamar</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
                     <div class="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-100 dark:border-emerald-800/60 shadow-xs">
                         <i class="fas fa-user-check text-xs"></i>
                     </div>
-                    <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{{ number_format($stats['total_diterima']) }}</p>
+                    <p class="text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{{ number_format($stats['total_diterima']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Diterima / Lulus</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
                     <div class="w-9 h-9 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-800/60 shadow-xs">
                         <i class="fas fa-percentage text-xs"></i>
                     </div>
-                    <p class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-tight">{{ $stats['avg_seleksi_rate'] }}%</p>
+                    <p class="text-xl md:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-tight">{{ $stats['avg_seleksi_rate'] }}%</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Seleksi Kota</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
@@ -80,7 +80,7 @@
                     <p class="text-xs text-teal-50/90 font-medium">Tingkat seleksi kelulusan peserta kota berada pada kisaran {{ $stats['avg_seleksi_rate'] }}%.</p>
                 </div>
                 @if($laporan->count() > 0)
-                <div class="sm:ml-auto flex-shrink-0 flex gap-2">
+                <div class="sm:ml-auto flex-shrink-0 flex flex-wrap gap-2 justify-center">
                     <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-900 dark:text-teal-200 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition text-xs font-extrabold shadow-xs hover:shadow active:scale-95" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-rose-500"></i> PDF
                     </a>
@@ -145,7 +145,7 @@
                 </div>
 
                 {{-- Table Content --}}
-                <div class="overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
@@ -217,6 +217,69 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse($laporan as $index => $data)
+                    <div class="p-4 space-y-3.5">
+                        {{-- Header: No + Instansi Name --}}
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-400 dark:text-gray-500 font-bold text-xs flex-shrink-0">{{ $index + 1 }}</span>
+                            <div class="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                <i class="far fa-building"></i>
+                            </div>
+                            <span class="font-bold text-gray-900 dark:text-gray-100 text-sm leading-tight">{{ $data['nama_dinas'] }}</span>
+                        </div>
+
+                        {{-- Detail Grid --}}
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">Lowongan Aktif</p>
+                                <span class="text-gray-700 dark:text-gray-300 font-bold bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full text-xs border border-gray-200 dark:border-gray-700">
+                                    {{ $data['lowongan_aktif'] }} Posisi
+                                </span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">Total Pelamar</p>
+                                <span class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded-full font-bold text-xs border border-blue-200 dark:border-blue-800/60 inline-block">
+                                    {{ $data['total_pelamar'] }} Orang
+                                </span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">Diterima</p>
+                                <span class="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-full font-bold text-xs border border-emerald-200 dark:border-emerald-800/60 inline-block">
+                                    {{ $data['total_magang'] }} Orang
+                                </span>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">Rasio Peminat</p>
+                                <span class="text-gray-600 dark:text-gray-400 font-bold italic text-xs">
+                                    {{ $data['avg_peminat'] }} <span class="text-[10px] text-gray-400 dark:text-gray-500 font-normal">pelamar/posisi</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Tingkat Seleksi + Progress Bar --}}
+                        <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Tingkat Seleksi</p>
+                                <span class="font-black text-gray-900 dark:text-gray-100 font-mono text-sm">{{ $data['seleksi_rate'] }}%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden border border-transparent dark:border-gray-700">
+                                <div class="h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-500" style="width: {{ $data['seleksi_rate'] }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-10 flex flex-col items-center justify-center text-center">
+                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <p class="text-gray-900 dark:text-gray-100 font-bold">Data instansi tidak ditemukan</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Coba sesuaikan kata kunci pencarian Anda.</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
 

@@ -26,14 +26,14 @@
                 </a>
                 
                 @if($instansis->count() > 0)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download PDF">
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
                     </a>
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download Excel">
+                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
                         <i class="fas fa-file-excel text-emerald-500"></i> Excel
                     </a>
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-1.5" title="Download CSV">
+                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
                         <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
@@ -117,7 +117,7 @@
                     </div>
 
                     {{-- Table Content --}}
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto">
+                    <div class="hidden md:block overflow-x-auto max-h-[650px] overflow-y-auto">
                         <table class="w-full divide-y divide-gray-100 dark:divide-gray-700 border-collapse">
                             <thead class="bg-gray-50 dark:bg-gray-900 sticky top-0 z-20">
                                 <tr>
@@ -187,6 +187,47 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    {{-- Mobile Card View --}}
+                    <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse($instansis as $index => $instansi)
+                        <div class="p-4 space-y-3.5"
+                            x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                            <div class="flex items-center gap-3">
+                                <div class="h-9 w-9 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
+                                    {{ strtoupper(substr($instansi->nama_dinas, 0, 2)) }}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-gray-900 dark:text-gray-100 leading-snug line-clamp-2" title="{{ $instansi->nama_dinas }}">{{ $instansi->nama_dinas }}</div>
+                                    <div class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-0.5">No. {{ $index + 1 }}</div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-3 text-center">
+                                <div>
+                                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Peserta</p>
+                                    <p class="font-black text-gray-800 dark:text-gray-100 font-mono text-sm">{{ $instansi->applications->count() }}</p>
+                                </div>
+                                <div class="border-x border-gray-200 dark:border-gray-700">
+                                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Hari</p>
+                                    <p class="font-black text-gray-800 dark:text-gray-100 font-mono text-sm">{{ $instansi->avg_durasi_hari }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Bulan</p>
+                                    <p class="font-black text-teal-600 dark:text-teal-400 font-mono text-sm">{{ number_format($instansi->avg_durasi_bulan, 1) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-10 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                                    <i class="fas fa-search text-2xl"></i>
+                                </div>
+                                <p class="text-gray-900 dark:text-gray-100 font-bold">Data instansi tidak ditemukan</p>
+                            </div>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

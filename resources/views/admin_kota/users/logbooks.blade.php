@@ -117,7 +117,7 @@
                                     @endphp
                                     <div class="flex items-center px-2.5 py-1 rounded-lg border {{ $statusColor }} w-fit text-xs font-bold">
                                         <i class="fas fa-building mr-1.5 text-[10px] flex-shrink-0"></i>
-                                        <span class="truncate max-w-[220px]" title="{{ $app->position->instansi->nama_dinas }}">
+                                        <span class="truncate max-w-[180px] sm:max-w-[220px]" title="{{ $app->position->instansi->nama_dinas }}">
                                             {{ $app->position->instansi->nama_dinas }}
                                         </span>
                                     </div>
