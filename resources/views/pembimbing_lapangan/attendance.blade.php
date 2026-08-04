@@ -285,8 +285,12 @@
                                                 <button x-on:click="$dispatch('close')" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"><i class="fas fa-times"></i></button>
                                             </div>
                                             
-                                            <div class="flex justify-center bg-gray-50 dark:bg-gray-900 rounded-2xl p-3 mb-4 border border-gray-200 dark:border-gray-700">
-                                                <img src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($row->proof_file)]) }}" class="max-h-[60vh] rounded-xl shadow-xs hover:scale-105 transition duration-300" alt="Bukti">
+                                            <div class="flex justify-center bg-gray-50 dark:bg-gray-900 rounded-2xl p-3 mb-4 border border-gray-200 dark:border-gray-700 w-full">
+                                                @if(Str::endsWith(strtolower($row->proof_file), '.pdf'))
+                                                    <iframe src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($row->proof_file)]) }}" class="w-full h-[50vh] rounded-xl border-0"></iframe>
+                                                @else
+                                                    <img src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($row->proof_file)]) }}" class="max-h-[60vh] rounded-xl shadow-xs hover:scale-105 transition duration-300" alt="Bukti">
+                                                @endif
                                             </div>
                                             
                                             <div class="bg-teal-50/60 dark:bg-teal-950/40 p-4 rounded-2xl border border-teal-200 dark:border-teal-800/60">

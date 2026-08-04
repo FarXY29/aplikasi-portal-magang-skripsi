@@ -16,7 +16,7 @@ class PermissionRequest extends FormRequest
         return [
             'status' => ['required', 'in:izin,sakit'],
             'description' => ['required', 'string', 'max:255'],
-            'proof_file' => ['required', 'image', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096'],
+            'proof_file' => ['required', 'file', 'mimes:jpeg,png,jpg,webp,pdf', 'max:2048'],
         ];
     }
 
@@ -28,8 +28,8 @@ class PermissionRequest extends FormRequest
             'description.required' => 'Keterangan izin/sakit wajib diisi.',
             'description.max' => 'Keterangan maksimal 255 karakter.',
             'proof_file.required' => 'Bukti pendukung wajib diunggah.',
-            'proof_file.image' => 'Bukti pendukung harus berupa gambar.',
-            'proof_file.mimes' => 'Bukti pendukung harus berformat JPEG, PNG, atau JPG.',
+            'proof_file.file' => 'Bukti pendukung harus berupa file.',
+            'proof_file.mimes' => 'Bukti pendukung harus berformat JPEG, PNG, JPG, WEBP, atau PDF.',
             'proof_file.max' => 'Ukuran bukti pendukung maksimal 2 MB.',
         ];
     }

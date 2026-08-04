@@ -1,5 +1,5 @@
 <!-- Progress Card -->
-<div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex flex-col justify-between stagger-1">
+<div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex flex-col justify-between stagger-1">
     <div>
         <div class="flex justify-between items-center mb-4">
             <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Progress Magang</h4>
@@ -7,7 +7,7 @@
                 <i class="fas fa-calendar-alt"></i>
             </div>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 mb-1 font-mono animate-count-up">
+        <div class="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 dark:text-gray-100 mb-1 font-mono animate-count-up">
             {{ $stats['elapsed_days'] }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400 font-sans">dari {{ $stats['total_days'] }} Hari</span>
         </div>
         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-medium">Persentase penyelesaian periode magang Anda saat ini.</p>

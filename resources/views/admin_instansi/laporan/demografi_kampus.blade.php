@@ -2,9 +2,6 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center gap-3">
-                <a href="{{ route('dinas.laporan.hub') }}" class="w-9 h-9 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 hover:text-orange-600 dark:hover:text-orange-400 transition shadow-xs">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
                 <div>
                     <h2 class="font-black text-xl text-gray-800 dark:text-gray-100 leading-tight flex items-center gap-2">
                         <i class="fas fa-university text-orange-500"></i>
@@ -14,26 +11,17 @@
                 </div>
             </div>
 
-            {{-- Tombol Export --}}
-            @if($demografi->count() > 0)
-            <div class="flex items-center gap-2">
-                <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </a>
-                <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'excel']) }}" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
-                    <i class="fas fa-file-excel"></i> Excel
-                </a>
-                <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'csv']) }}" class="inline-flex items-center px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
-                    <i class="fas fa-file-csv"></i> CSV
-                </a>
-            </div>
-            @endif
         </div>
     </x-slot>
 
     <div class="py-6 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
+            <a href="{{ route('dinas.laporan.hub') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
+                <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-xs">
+                    <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
+                </div>
+                Kembali ke Pusat Laporan
+            </a>
             {{-- Ringkasan 4 Kartu Utama --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4">
@@ -89,9 +77,25 @@
                         <h3 class="text-base font-black text-gray-900 dark:text-gray-100">{{ $stats['kampus_terbanyak'] }}</h3>
                     </div>
                 </div>
+
+                {{-- Tombol Export --}}
+                @if($demografi->count() > 0)
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'excel']) }}" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'csv']) }}" class="inline-flex items-center px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
+                        <i class="fas fa-file-csv"></i> CSV
+                    </a>
+                </div>
+                @endif
                 <div class="px-4 py-1.5 bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-900/60 rounded-xl text-xs font-bold text-orange-700 dark:text-orange-300">
                     {{ $stats['kampus_terbanyak_jumlah'] }} Pelamar
                 </div>
+                
             </div>
             @endif
 

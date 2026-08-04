@@ -444,3 +444,170 @@
 .countdown-badge-pulse {
     animation: pulse-ring 2s ease-out infinite;
 }
+
+/* --------------------------------------------------------------------------
+   18. MOBILE, ANDROID & iOS DASHBOARD OPTIMIZATIONS
+   -------------------------------------------------------------------------- */
+
+/* Phone portrait (< 640px): compact spacing, native feel */
+@media (max-width: 639px) {
+    /* Welcome banner: smaller radius, subtler gradient */
+    .welcome-banner {
+        border-radius: 1.25rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 60%, #ecfdf5 100%);
+    }
+
+    .dark .welcome-banner {
+        background: linear-gradient(135deg, #1f2937 0%, rgba(20, 184, 166, 0.10) 60%, rgba(6, 78, 59, 0.12) 100%);
+    }
+
+    /* Welcome banner avatar slightly smaller on mobile */
+    .welcome-banner-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.125rem;
+        border-radius: 0.875rem;
+    }
+
+    /* Stats card: tighter padding on mobile */
+    .stat-summary-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    /* Progress bar slightly thinner on mobile */
+    .progress-bar-track {
+        height: 8px;
+    }
+
+    /* Stagger animation: faster on mobile to feel snappy */
+    .stagger-1 { animation-delay: 0.03s; }
+    .stagger-2 { animation-delay: 0.06s; }
+    .stagger-3 { animation-delay: 0.09s; }
+    .stagger-4 { animation-delay: 0.12s; }
+    .stagger-5 { animation-delay: 0.15s; }
+    .stagger-6 { animation-delay: 0.18s; }
+
+    /* Upload zone smaller min-height on mobile */
+    .upload-zone {
+        min-height: 7rem;
+        border-radius: 0.875rem;
+    }
+
+    /* Date timeline picker compact on mobile */
+    .date-timeline-wrapper {
+        padding: 1rem 1.125rem;
+        border-radius: 0.875rem;
+    }
+
+    /* Logbook card: smaller hover lift on mobile (avoid layout shift) */
+    .logbook-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+}
+
+/* Touch device optimization: larger tap targets, no hover-only effects */
+@media (max-width: 768px) and (pointer: coarse) {
+    /* Disable hover transforms on touch devices to prevent sticky hover state */
+    .stat-summary-card:hover,
+    .logbook-card:hover {
+        transform: none;
+    }
+
+    /* Ensure all interactive elements have minimum 44px touch target (Apple HIG / Material) */
+    .btn-ripple,
+    a[class*="rounded-2xl"][class*="flex"][class*="items-center"],
+    button[class*="rounded-2xl"][class*="flex"][class*="items-center"],
+    button[class*="rounded-xl"][class*="flex"][class*="items-center"] {
+        min-height: 44px;
+    }
+
+    /* GPS status badge: ensure tappable */
+    #gps-badge {
+        min-height: 44px;
+        min-width: 44px;
+        justify-content: center;
+    }
+
+    /* Absensi rows: larger touch area */
+    .absensi-row {
+        min-height: 48px;
+    }
+}
+
+/* iOS Safari specific: prevent input zoom & fix 100vh issue */
+@supports (-webkit-touch-callout: none) {
+    /* Ensure inputs don't trigger zoom on focus (must be >= 16px) */
+    @media (max-width: 768px) {
+        .welcome-banner input,
+        .welcome-banner select,
+        .welcome-banner textarea,
+        #gps-status-banner input,
+        #gps-status-banner select {
+            font-size: 16px;
+        }
+    }
+
+    /* Use dynamic viewport height for modals on iOS Safari */
+    .modal-container {
+        max-height: 85dvh;
+    }
+}
+
+/* Android Chrome: respect safe area & notch */
+@media (max-width: 768px) {
+    /* Dashboard container: respect bottom safe area (bottom nav height) */
+    .dashboard-container {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* Modal bottom buttons reachable above keyboard */
+    [x-modal] .modal-content {
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* Reduce motion preference: disable animations for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-up,
+    .animate-fade-in-left,
+    .animate-slide-in-down,
+    .animate-scale-in,
+    .animate-float-gentle,
+    .animate-ping-slow,
+    .animate-spin-slow,
+    .animate-count-up,
+    .stagger-1,
+    .stagger-2,
+    .stagger-3,
+    .stagger-4,
+    .stagger-5,
+    .stagger-6,
+    .notification-banner,
+    .countdown-badge-pulse,
+    .welcome-banner-avatar,
+    .gps-ping-dot::after,
+    .progress-bar-fill,
+    .donut-ring {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   19. NO SCROLLBAR UTILITY (for horizontal stepper scroll on mobile)
+   -------------------------------------------------------------------------- */
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

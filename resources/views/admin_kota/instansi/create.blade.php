@@ -222,7 +222,15 @@
         }
 
         var mapContainer = document.getElementById('map');
-        if(!mapContainer || mapContainer._leaflet_id) return; // Prevent double init
+        if(!mapContainer) return;
+        if (mapContainer._leaflet_id && window.instansiMap) {
+            return;
+        }
+        if (window.instansiMap) {
+            window.instansiMap.remove();
+            window.instansiMap = null;
+        }
+        mapContainer._leaflet_id = null;
 
         // Default koordinat (Banjarmasin)
         var defaultLat = -3.316694;
@@ -236,7 +244,8 @@
         var initLng = lngInput.value ? parseFloat(lngInput.value) : defaultLng;
         var initRadius = radiusInput.value ? parseInt(radiusInput.value) : 50;
 
-        var map = L.map('map').setView([initLat, initLng], 15);
+        window.instansiMap = L.map('map').setView([initLat, initLng], 15);
+        var map = window.instansiMap;
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
@@ -311,6 +320,7 @@
     } else {
         initLeafletMap();
     }
+    document.addEventListener('turbo:load', initLeafletMap);
 </script>
 @endpush
 </x-app-layout>

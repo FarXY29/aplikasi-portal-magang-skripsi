@@ -181,9 +181,18 @@
                                     </div>
                                     
                                     @if($log->proof_file)
-                                        <a href="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}" target="_blank" class="text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 hover:underline inline-flex items-center gap-1.5 mt-1.5">
-                                            <i class="fas fa-paperclip text-teal-500 dark:text-teal-400"></i> Lihat Bukti Pengajuan
-                                        </a>
+                                        @if(Str::endsWith(strtolower($log->proof_file), '.pdf'))
+                                            <a href="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 rounded-xl text-xs font-bold transition shadow-xs mt-1.5">
+                                                <i class="fas fa-file-pdf text-rose-500 text-sm"></i> Lihat Dokumen PDF
+                                            </a>
+                                        @else
+                                            <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm mt-1.5" onclick="openImageModal('{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}')">
+                                                <img src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+                                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
+                                                    <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

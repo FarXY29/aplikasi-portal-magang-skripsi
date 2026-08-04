@@ -103,7 +103,7 @@
                         <i class="fas fa-chart-pie w-5 text-center {{ request()->routeIs('dinas.laporan.hub') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pusat Laporan Hub
                     </a>
                     <a href="{{ route('dinas.settings') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('dinas.settings') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
-                        <i class="fas fa-sliders-h w-5 text-center {{ request()->routeIs('dinas.settings') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pengaturan Geofencing
+                        <i class="fas fa-sliders-h w-5 text-center {{ request()->routeIs('dinas.settings') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pengaturan
                     </a>
                 @elseif(Auth::user()->role == 'pembimbing_lapangan')
                     <a href="{{ route('pembimbing_lapangan.attendance.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">

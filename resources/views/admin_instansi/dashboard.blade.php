@@ -343,14 +343,14 @@
                                 <i class="fas fa-briefcase"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-xs font-bold text-slate-200 truncate">{{ $pos->title }}</p>
+                                <p class="text-xs font-bold text-slate-200 truncate">{{ $pos->judul_posisi }}</p>
                                 <p class="text-[10px] text-slate-400 truncate mt-0.5 font-medium">
-                                    Kuota: {{ $pos->quota }} orang
+                                    Kuota: {{ $pos->kuota }} orang
                                 </p>
                             </div>
                         </div>
-                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase {{ $pos->is_active ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/10 text-red-400 border border-red-500/30' }}">
-                            {{ $pos->is_active ? 'Aktif' : 'Non-Aktif' }}
+                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase {{ $pos->status == 'buka' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/10 text-red-400 border border-red-500/30' }}">
+                            {{ $pos->status == 'buka' ? 'Aktif' : 'Non-Aktif' }}
                         </span>
                     </div>
                     @empty

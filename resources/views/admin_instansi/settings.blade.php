@@ -330,10 +330,16 @@
         function initAdminMap() {
             const mapContainer = document.getElementById('map-instansi');
             if (!mapContainer) return;
+
             if (mapContainer._leaflet_id && adminMap) {
-                adminMap.remove();
-                mapContainer._leaflet_id = null;
+                return;
             }
+
+            if (adminMap) {
+                adminMap.remove();
+                adminMap = null;
+            }
+            mapContainer._leaflet_id = null;
 
             const latInput = document.getElementById('input_latitude');
             const lngInput = document.getElementById('input_longitude');
@@ -466,7 +472,11 @@
             );
         }
 
-        document.addEventListener('DOMContentLoaded', initAdminMap);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAdminMap);
+        } else {
+            initAdminMap();
+        }
         document.addEventListener('turbo:load', initAdminMap);
     </script>
     @endpush

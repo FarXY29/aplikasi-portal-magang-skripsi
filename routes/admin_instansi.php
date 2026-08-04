@@ -43,8 +43,8 @@ Route::middleware(['auth', 'role:admin_instansi'])->prefix('dinas')->name('dinas
     Route::get('/pusat-laporan', [AdminInstansiReportController::class, 'laporanHub'])->name('laporan.hub');
     Route::get('/laporan/rekap', [AdminInstansiReportController::class, 'laporanRekap'])->name('laporan.rekap');
     Route::get('/laporan/rekap/print', [AdminInstansiReportController::class, 'printRekap'])->name('laporan.rekap.print');
-    Route::get('/laporan/kinerja-mahasiswa', [AdminInstansiReportController::class, 'laporanKinerjaMahasiswa'])->name('laporan.kinerja_mahasiswa');
-    Route::get('/laporan/kinerja-mahasiswa/print', [AdminInstansiReportController::class, 'printKinerjaMahasiswa'])->name('laporan.kinerja_mahasiswa.print');
+    Route::get('/laporan/kinerja-peserta', [AdminInstansiReportController::class, 'laporanKinerjaPeserta'])->name('laporan.kinerja_peserta');
+    Route::get('/laporan/kinerja-peserta/print', [AdminInstansiReportController::class, 'printKinerjaPeserta'])->name('laporan.kinerja_peserta.print');
     Route::get('/laporan/beban-pembimbing', [AdminInstansiReportController::class, 'laporanBebanPembimbing'])->name('laporan.beban_pembimbing');
     Route::get('/laporan/beban-pembimbing/print', [AdminInstansiReportController::class, 'printBebanPembimbing'])->name('laporan.beban_pembimbing.print');
     Route::get('/laporan/demografi-kampus', [AdminInstansiReportController::class, 'laporanDemografiKampus'])->name('laporan.demografi_kampus');
