@@ -42,11 +42,19 @@ class DashboardController extends Controller
 
         $myApplications = $query->get();
 
+        // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $activeApp = Application::where('user_id', $user->id)
-                        ->whereIn('status', ['diterima', 'selesai'])
+                        ->where('status', 'diterima')
                         ->with(['position.instansi', 'pembimbing_lapangan'])
-                        ->latest('updated_at')
                         ->first();
+
+        if (!$activeApp) {
+            $activeApp = Application::where('user_id', $user->id)
+                            ->where('status', 'selesai')
+                            ->with(['position.instansi', 'pembimbing_lapangan'])
+                            ->latest('updated_at')
+                            ->first();
+        }
 
         // Cek Absensi Hari Ini
         $attendanceToday = null;

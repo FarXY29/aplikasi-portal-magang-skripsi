@@ -18,12 +18,19 @@ class LogbookController extends Controller
 {
     public function index()
     {
-        // Ambil aplikasi magang yang statusnya 'diterima' atau 'selesai'
+        // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $activeApp = Application::with('position.instansi')
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['diterima', 'selesai'])
-            ->latest('updated_at')
+            ->where('status', 'diterima')
             ->first();
+
+        if (!$activeApp) {
+            $activeApp = Application::with('position.instansi')
+                ->where('user_id', Auth::id())
+                ->where('status', 'selesai')
+                ->latest('updated_at')
+                ->first();
+        }
 
         if (!$activeApp) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif.');
@@ -113,9 +120,11 @@ class LogbookController extends Controller
 
         $this->authorize('update', $log);
 
-        if ($log->status_validasi !== 'revisi') {
-            return back()->with('error', 'Logbook ini tidak dalam status revisi.');
+        if (!in_array($log->status_validasi, ['pending', 'revisi'], true)) {
+            return back()->with('error', 'Logbook ini tidak dalam status pending atau revisi.');
         }
+
+        $isRevision = $log->status_validasi === 'revisi';
 
         $fotoPath = $log->bukti_foto_path;
         if ($request->hasFile('foto')) {
@@ -136,12 +145,42 @@ class LogbookController extends Controller
             Storage::disk($disk)->delete($oldFotoPath);
         }
 
-        $auditLogService->record('daily_log.revised', $log, [
+        $auditLogService->record($isRevision ? 'daily_log.revised' : 'daily_log.updated', $log, [
             'application_id' => $log->application_id,
             'has_proof' => (bool) $fotoPath,
         ]);
 
-        return back()->with('success', 'Logbook berhasil direvisi dan dikirim ulang untuk divalidasi!');
+        $message = $isRevision
+            ? 'Logbook berhasil direvisi dan dikirim ulang untuk divalidasi!'
+            : 'Logbook harian berhasil diperbarui!';
+
+        return back()->with('success', $message);
+    }
+
+    public function destroy($id, AuditLogService $auditLogService)
+    {
+        $log = DailyLog::with('application')->findOrFail($id);
+
+        if ($log->application?->status_value === 'selesai' || $log->application?->status === 'selesai') {
+            return back()->with('error', 'Status magang Anda telah selesai. Logbook tidak dapat dihapus lagi.');
+        }
+
+        $this->authorize('delete', $log);
+
+        $fotoPath = $log->bukti_foto_path;
+
+        $log->delete();
+
+        if ($fotoPath) {
+            $disk = Storage::disk('private')->exists($fotoPath) ? 'private' : 'public';
+            Storage::disk($disk)->delete($fotoPath);
+        }
+
+        $auditLogService->record('daily_log.deleted', $log, [
+            'application_id' => $log->application_id,
+        ]);
+
+        return back()->with('success', 'Logbook harian berhasil dihapus!');
     }
 
     // --- CETAK REKAP LOGBOOK ---

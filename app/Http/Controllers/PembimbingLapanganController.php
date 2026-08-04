@@ -147,7 +147,7 @@ class PembimbingLapanganController extends Controller
             $lifecycleService->markAsFinished($app);
         }
 
-        return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Nilai berhasil disimpan.');
+        return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Penilaian Berhasil Diperbarui');
     }
 
     public function attendance(Request $request)
@@ -243,7 +243,7 @@ class PembimbingLapanganController extends Controller
             $lifecycleService->markAsFinished($app);
         }
 
-        return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Penilaian berhasil disimpan!');
+        return redirect()->route('pembimbing_lapangan.dashboard')->with('success', 'Penilaian Berhasil Diperbarui');
     }
 
     public function formPenilaian($id)

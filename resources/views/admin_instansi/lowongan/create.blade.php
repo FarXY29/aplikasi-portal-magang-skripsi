@@ -68,7 +68,9 @@
                                         <div class="relative transition-all duration-300 group-focus-within:drop-shadow-sm">
                                             <input type="text" name="judul_posisi" id="judul_posisi" value="{{ old('judul_posisi') }}" 
                                                 class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('judul_posisi') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-bold text-slate-800 dark:text-gray-100 text-lg placeholder-slate-400 dark:placeholder-gray-500"
-                                                placeholder="Contoh: Programmer Web, Staff Administrasi, Desainer Grafis" required>
+                                                placeholder="Contoh: Programmer Web, Staff Administrasi, Desainer Grafis" required
+                                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                oninput="this.setCustomValidity('')">
                                             @error('judul_posisi')
                                                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
                                                     <i class="fas fa-exclamation-circle text-lg"></i>
@@ -110,7 +112,9 @@
                                             </label>
                                             <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                                 <input type="number" name="kuota" id="kuota" value="{{ old('kuota', 1) }}" min="1" 
-                                                    class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('kuota') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-slate-800 dark:text-gray-100" required>
+                                                    class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('kuota') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-slate-800 dark:text-gray-100" required
+                                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
+                                                    oninput="this.setCustomValidity('')">
                                                 @error('kuota')
                                                     <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
                                                         <i class="fas fa-exclamation-circle text-lg"></i>

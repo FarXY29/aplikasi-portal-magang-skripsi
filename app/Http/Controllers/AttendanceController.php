@@ -19,9 +19,17 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $application = Application::where('user_id', $user->id)
-                        ->whereIn('status', ['diterima', 'selesai'])
+                        ->where('status', 'diterima')
                         ->first();
+
+        if (!$application) {
+            $application = Application::where('user_id', $user->id)
+                            ->where('status', 'selesai')
+                            ->latest('updated_at')
+                            ->first();
+        }
 
         if (!$application) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');

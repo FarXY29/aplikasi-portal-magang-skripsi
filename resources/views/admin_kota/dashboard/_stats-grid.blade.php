@@ -1,7 +1,7 @@
-<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
     {{-- Card 1: Instansi --}}
     <a href="{{ route('admin.instansi.index') }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-teal-500/40 hover:shadow-teal-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">INSTANSI</p>
                 <h3 id="stat-instansi" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($totalInstansi) }}</h3>
@@ -15,7 +15,7 @@
 
     {{-- Card 2: Pengguna --}}
     <a href="{{ route('admin.users.index') }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">PENGGUNA</p>
                 <h3 id="stat-pengguna" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($totalUser) }}</h3>
@@ -29,7 +29,7 @@
 
     {{-- Card 3: Pendaftar --}}
     <a href="{{ route('admin.laporan.peserta_global', ['status' => 'semua']) }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-purple-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">PENDAFT...</p>
                 <h3 id="stat-pendaftar" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($totalApplications) }}</h3>
@@ -46,7 +46,7 @@
 
     {{-- Card 4: Aktif --}}
     <a href="{{ route('admin.laporan.peserta_global', ['status' => 'diterima']) }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-emerald-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">AKTIF</p>
                 <h3 id="stat-aktif" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($activeInterns) }}</h3>
@@ -63,7 +63,7 @@
 
     {{-- Card 5: Selesai --}}
     <a href="{{ route('admin.laporan.peserta_global', ['status' => 'selesai']) }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-indigo-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">SELESAI</p>
                 <h3 id="stat-selesai" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($completedInterns) }}</h3>
@@ -80,7 +80,7 @@
 
     {{-- Card 6: Pending --}}
     <a href="{{ route('admin.laporan.peserta_global', ['status' => 'pending']) }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-800/40 bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-amber-500/10">
-        <div class="flex items-start justify-between gap-2">
+        <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
                 <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-400">PENDING</p>
                 <h3 id="stat-pending" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-white">{{ number_format($pendingApplications) }}</h3>

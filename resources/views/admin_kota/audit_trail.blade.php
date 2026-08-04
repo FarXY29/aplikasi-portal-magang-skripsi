@@ -2,7 +2,7 @@
     <div class="p-6">
         <div class="mb-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Audit Trail (Keamanan)</h1>
+                <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Audit Trail (Keamanan)</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">Riwayat aktivitas pengguna, perubahan data, dan akses sistem.</p>
             </div>
         </div>
@@ -47,7 +47,7 @@
 
         <!-- Tabel Data -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm text-gray-600 dark:text-gray-400">
                     <thead class="bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                         <tr>
@@ -74,7 +74,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') 'bg-blue-100 text-blue-700' 'delete') 'bg-red-100 text-red-700' 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
                                     {{ strtoupper($log->action) }}
                                 </span>
                             </td>
@@ -100,6 +100,54 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                @forelse($auditLogs as $log)
+                <div class="p-4 space-y-3.5">
+                    {{-- Header: Waktu + IP + Aksi badge --}}
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $log->ip_address }}</div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
+                            {{ strtoupper($log->action) }}
+                        </span>
+                    </div>
+
+                    {{-- Detail block --}}
+                    <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 space-y-2">
+                        <div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">Aktor</div>
+                            @if($log->user)
+                                <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->user->name }}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucfirst(str_replace('_', ' ', $log->user->role)) }})</div>
+                            @else
+                                <span class="text-gray-400 italic">System / Unauthenticated</span>
+                            @endif
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">Model & ID</div>
+                            <div class="text-gray-900 dark:text-gray-100 font-medium">{{ $log->auditable_type ? class_basename($log->auditable_type) : '-' }}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">ID: {{ $log->auditable_id ?? '-' }}</div>
+                        </div>
+                        <div class="pt-1">
+                            <button type="button"
+                                @click="openMetadataModal('{{ addslashes(json_encode($log->metadata)) }}')"
+                                class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                                Lihat Detail
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="p-10 text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-history text-3xl text-gray-300 mb-3 block"></i>
+                    Belum ada log aktivitas yang terekam.
+                </div>
+                @endforelse
             </div>
             
             @if($auditLogs->hasPages())

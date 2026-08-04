@@ -56,7 +56,7 @@
 
                 {{-- Right: Period Filter Bar + Refresh Button --}}
                 <div class="flex flex-wrap items-center gap-2">
-                    <div class="inline-flex items-center bg-[#0f172a] p-1.5 rounded-2xl border border-slate-800/60 shadow-inner">
+                    <div class="inline-flex items-center bg-[#0f172a] p-1.5 rounded-2xl border border-slate-800/60 shadow-inner overflow-x-auto max-w-full flex-nowrap">
                         <button type="button" data-period="hari_ini" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === 'hari_ini' ? 'active' : '' }}">
                             Hari Ini
                         </button>
@@ -92,7 +92,7 @@
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- MAIN CHARTS ROW (TREN PENDAFTARAN + STATUS LAMARAN) --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             
             {{-- Tren Pendaftaran (2/3 width) --}}
             <div class="xl:col-span-2 bg-[#161f33] rounded-3xl border border-slate-800/40 p-6 flex flex-col justify-between shadow-xl">
@@ -112,7 +112,7 @@
                         </span>
                     </div>
 
-                    <div class="relative w-full mt-4" style="height: 280px;">
+                    <div class="relative w-full mt-4 min-h-[200px] sm:min-h-[280px]" style="height: 280px;">
                         <canvas id="trendChart"
                             data-labels="{{ json_encode($trendLabels) }}"
                             data-values="{{ json_encode($trendData) }}">
@@ -134,7 +134,7 @@
                         </div>
                     </div>
 
-                    <div class="relative flex items-center justify-center" style="height: 210px;">
+                    <div class="relative flex items-center justify-center min-h-[180px] sm:min-h-[210px]" style="height: 210px;">
                         <canvas id="statusChart"
                             data-labels="{{ json_encode($statusLabels) }}"
                             data-values="{{ json_encode($statusData) }}">
@@ -164,7 +164,7 @@
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- TABLE & INSTANSI SUMMARY --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             {{-- Tabel statistik per instansi --}}
             <div class="xl:col-span-2 bg-[#161f33] rounded-3xl border border-slate-800/40 overflow-hidden shadow-xl">
                 <div class="p-5 border-b border-slate-800/60 flex items-center justify-between bg-[#161f33]">
