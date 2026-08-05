@@ -6,7 +6,6 @@ Portal Magang mengelola seluruh siklus magang: publikasi lowongan, pengajuan pes
 
 - **Keamanan Penyimpanan Dokumen**: Surat pengantar, bukti logbook, dan bukti absensi disimpan di penyimpanan pribadi (`private` disk) dengan otorisasi akses dinamis via `StorageAccessController`.
 - **Sistem Backup Database**: Pembuatan berkas cadangan SQL yang dikompresi melalui antrean queue (`CreateDatabaseBackup`), dilengkapi tautan unduh kedaluwarsa bertanda tangan, serta pembersihan berkala otomatis.
-- **Google OAuth Login**: Pendaftaran dan login cepat bagi peran **Peserta** dan **Pembimbing Akademik/Sekolah** menggunakan Laravel Socialite.
 - **Evaluasi Alur Sertifikat (Gated Feedback)**: Peserta wajib mengisi formulir saran dan evaluasi terlebih dahulu sebelum tombol unduh transkrip nilai dan sertifikat diaktifkan.
 - **Absensi Validasi Koordinat & Radius**: Fitur presensi masuk/pulang berbasis Leaflet Map yang divalidasi berdasarkan titik koordinat dan batas radius yang dapat dikonfigurasi per instansi.
 - **Dukungan Mode Gelap (Dark Mode)**: Antarmuka modern yang sepenuhnya responsif dan mendukung mode gelap pada seluruh panel dashboard peran.
@@ -26,7 +25,6 @@ Portal Magang mengelola seluruh siklus magang: publikasi lowongan, pengajuan pes
 - **Frontend**: Vite, Tailwind CSS, Alpine.js, dan Leaflet.js (Peta)
 - **Paket Tambahan Utama**:
   - `spatie/laravel-permission` (RBAC)
-  - `laravel/socialite` (Google OAuth)
   - `barryvdh/laravel-dompdf` (Dokumen PDF)
   - `maatwebsite/excel` (Dokumen Excel)
   - `simplesoftwareio/simple-qrcode` (Kode QR Sertifikat)
@@ -42,7 +40,6 @@ Portal Magang mengelola seluruh siklus magang: publikasi lowongan, pengajuan pes
    Lengkapi setelan dasar database, pengirim email, dan beberapa kunci baru berikut:
    - `FILESYSTEM_DISK=local` (Mengaktifkan penyimpanan berkas lokal, di mana berkas privat disimpan di `storage/app/private`).
    - `QUEUE_CONNECTION=database` (Untuk menjalankan proses backup database dan email notifikasi secara asynchronous).
-   - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URL` (Kredensial API dari Google Cloud Console untuk fitur login Google).
 3. **Instal Dependensi**:
    ```powershell
    composer install

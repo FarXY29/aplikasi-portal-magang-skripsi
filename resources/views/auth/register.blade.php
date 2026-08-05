@@ -155,22 +155,6 @@
                     </button>
                 </div>
 
-                <div class="relative my-3.5">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs">
-                        <span class="px-3 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-[11px] font-bold uppercase tracking-wider">Atau daftar dengan</span>
-                    </div>
-                </div>
-
-                <div>
-                    <a id="googleRegisterBtn" href="{{ route('google.login', ['role' => 'peserta']) }}" class="flex items-center justify-center w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-xl shadow-xs text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 sm:h-4.5 sm:w-4.5 mr-2.5" alt="Google">
-                        <span id="googleRegisterText">Daftar sebagai Peserta Magang dengan Google</span>
-                    </a>
-                </div>
-
                 <div class="text-center pt-2.5 border-t border-gray-100 dark:border-gray-700 mt-3.5">
                     <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
                         Sudah punya akun? 
@@ -188,8 +172,6 @@
                     const inputMajor = document.getElementById('major');
                     const inputInstansi = document.getElementById('asal_instansi');
                     const desc = document.getElementById('form-description');
-                    const googleBtn = document.getElementById('googleRegisterBtn');
-                    const googleText = document.getElementById('googleRegisterText');
 
                     if (role === 'pembimbing') {
                         fieldPeserta.classList.add('hidden');
@@ -197,20 +179,12 @@
                         inputInstansi.setAttribute('required', 'required');
                         inputMajor.removeAttribute('required');
                         desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai pembimbing sekolah/kampus.";
-                        if (googleBtn && googleText) {
-                            googleBtn.href = "{{ route('google.login') }}?role=pembimbing";
-                            googleText.textContent = "Daftar sebagai Pembimbing Sekolah dengan Google";
-                        }
                     } else {
                         fieldPeserta.classList.remove('hidden');
                         fieldPembimbing.classList.add('hidden');
                         inputMajor.setAttribute('required', 'required');
                         inputInstansi.removeAttribute('required');
                         desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai peserta magang.";
-                        if (googleBtn && googleText) {
-                            googleBtn.href = "{{ route('google.login') }}?role=peserta";
-                            googleText.textContent = "Daftar sebagai Peserta Magang dengan Google";
-                        }
                     }
                 }
             </script>

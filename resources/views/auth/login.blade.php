@@ -103,22 +103,6 @@
 
             </form>
 
-            <div class="relative my-8 sm:my-9">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
-                <div class="relative flex justify-center text-xs">
-                    <span class="px-3.5 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-wider">Atau masuk dengan</span>
-                </div>
-            </div>
-
-            <div>
-                <a href="{{ route('google.login') }}" class="flex items-center justify-center w-full px-4 py-3.5 border border-gray-300 dark:border-gray-700 rounded-xl shadow-xs text-sm font-bold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-3" alt="Google">
-                    Lanjutkan dengan Google
-                </a>
-            </div>
-
         </div>
     </div>
 </x-guest-layout>
