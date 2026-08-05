@@ -26,6 +26,19 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
+
+            // Force HTTPS on public domains (e.g. Cloudflare Tunnels) for camera/location APIs
+            const isLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname) || 
+                            !location.hostname.includes('.') ||
+                            location.hostname.endsWith('.test') ||
+                            location.hostname.endsWith('.dev') ||
+                            location.hostname.endsWith('.local') ||
+                            location.hostname.startsWith('192.168.') || 
+                            location.hostname.startsWith('10.') || 
+                            location.hostname.startsWith('172.');
+            if (location.protocol !== 'https:' && !isLocal) {
+                location.replace('https:' + location.href.substring(location.protocol.length));
+            }
         </script>
     </head>
     <body class="font-sans text-gray-900 dark:text-gray-100 antialiased bg-gray-100 dark:bg-gray-800 dark:bg-gray-900 transition-colors duration-300">

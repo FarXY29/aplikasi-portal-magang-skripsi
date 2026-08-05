@@ -23,6 +23,7 @@
                 <a href="#lowongan" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Cari Lowongan</a>
                 <a href="#langkah" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Alur Magang</a>
                 <a href="#faq" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">FAQ</a>
+                <a href="{{url('/scan-qr') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Scan QR</a>
 
                 <div class="h-5 w-[1px]" :class="scrolled ? 'bg-slate-200 dark:bg-gray-700' : 'bg-white/20'"></div>
 
@@ -75,6 +76,9 @@
         </a>
         <a href="#faq" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
             <i class="fas fa-question-circle text-teal-600 mr-3"></i> FAQ & Bantuan
+        </a>
+        <a href="{{url('/scan-qr') }}" id="scan-qr-btn"@click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
+            <i class="fas fa-qrcode text-teal-600 mr-3"></i> Scan QR
         </a>
         <div class="pt-3 border-t border-slate-100 dark:border-gray-800 flex flex-col gap-2">
             @auth

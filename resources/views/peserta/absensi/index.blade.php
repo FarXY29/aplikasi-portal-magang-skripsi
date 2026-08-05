@@ -34,7 +34,7 @@
                 $alpaCount    = $attendances->getCollection()->where('status', 'alpa')->count();
             @endphp
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="glass-panel hover-lift p-5 rounded-3xl flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Hari</p>
                         <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ $totalRecords }}</p>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="glass-panel hover-lift p-5 rounded-3xl flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Hadir</p>
                         <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ $hadirCount }}</p>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="glass-panel hover-lift p-5 rounded-3xl flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Izin / Sakit</p>
                         <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ $izinCount }}</p>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="glass-panel hover-lift p-5 rounded-3xl flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Alpha</p>
                         <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ $alpaCount }}</p>
@@ -76,8 +76,8 @@
             </div>
 
             {{-- Main Table Card --}}
-            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="glass-panel hover-lift rounded-3xl overflow-hidden">
+                <div class="p-6 border-b border-gray-100/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h3 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                             <i class="fas fa-list-check text-teal-600 dark:text-teal-400"></i> Histori Absen Saya
@@ -117,7 +117,7 @@
                                         $durationText = $diff->h . 'j ' . $diff->i . 'm';
                                     }
                                 @endphp
-                                <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition duration-150">
+                                <tr class="table-row-hover border-b border-gray-100/50 dark:border-gray-700/50">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('l, d M Y') }}</div>
                                     </td>
@@ -188,7 +188,7 @@
                     </table>
                 </div>
                 
-                <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                <div class="p-4 border-t border-gray-100/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
                     {{ $attendances->links() }}
                 </div>
             </div>

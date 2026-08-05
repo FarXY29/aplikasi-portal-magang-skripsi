@@ -37,6 +37,19 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
+
+        // Force HTTPS on public domains (e.g. Cloudflare Tunnels) for camera/location APIs
+        const isLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname) || 
+                        !location.hostname.includes('.') ||
+                        location.hostname.endsWith('.test') ||
+                        location.hostname.endsWith('.dev') ||
+                        location.hostname.endsWith('.local') ||
+                        location.hostname.startsWith('192.168.') || 
+                        location.hostname.startsWith('10.') || 
+                        location.hostname.startsWith('172.');
+        if (location.protocol !== 'https:' && !isLocal) {
+            location.replace('https:' + location.href.substring(location.protocol.length));
+        }
     </script>
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 dark:text-gray-100 transition-colors duration-300" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
@@ -66,7 +79,7 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50 dark:bg-gray-900">
             
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
-            <header class="hidden md:flex bg-white dark:bg-gray-800/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700/80 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-xs">
+            <header class="hidden md:flex glass-panel border-b border-gray-200/50 dark:border-gray-700/50 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-sm sticky top-0">
                 
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
@@ -98,7 +111,7 @@
             </header>
 
             <!-- MOBILE NATIVE TOP BAR (Android & iOS < md) -->
-            <header class="md:hidden sticky top-0 z-30 bg-white dark:bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700/80 px-4 py-3 flex items-center justify-between shadow-xs">
+            <header class="md:hidden sticky top-0 z-30 glass-panel border-b border-gray-200/50 dark:border-gray-700/50 px-4 py-3 flex items-center justify-between shadow-sm">
                 <div class="flex items-center gap-3 min-w-0">
                     <!-- Tombol Hamburger di pojok kiri atas mobile -->
                     <button @click="sidebarOpen = true" class="p-2 -ml-1 text-gray-700 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 focus:outline-none active:scale-95 transition" title="Buka Sidebar">
