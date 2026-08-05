@@ -193,19 +193,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Jabatan Pejabat</label>
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Jabatan</label>
                                         <input type="text" name="jabatan_pejabat" value="{{ old('jabatan_pejabat', $instansi->jabatan_pejabat) }}"
                                             class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs"
                                             placeholder="Contoh: Kepala Dinas Kominfo">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Nama Pejabat</label>
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Nama</label>
                                         <input type="text" name="nama_pejabat" value="{{ old('nama_pejabat', $instansi->nama_pejabat) }}"
                                             class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs"
                                             placeholder="Nama Lengkap beserta gelar">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">NIP Pejabat</label>
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">NIP</label>
                                         <input type="text" name="nip_pejabat" value="{{ old('nip_pejabat', $instansi->nip_pejabat) }}"
                                             class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-mono font-bold shadow-xs"
                                             placeholder="19xxxxxxxx xxx x xxx">
@@ -238,7 +238,7 @@
 
                             <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end">
                                 <button type="submit" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-md transition flex items-center active:scale-95">
-                                    <i class="fas fa-check-circle mr-2 text-sm"></i> Simpan Data Pejabat
+                                    <i class="fas fa-check-circle mr-2 text-sm"></i> Simpan Data 
                                 </button>
                             </div>
                         </form>

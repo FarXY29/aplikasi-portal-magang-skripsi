@@ -10,10 +10,10 @@ Route::get('/lowongan', [PublicLowonganController::class, 'index'])->name('lowon
 Route::get('/lowongan/{id}', [PublicLowonganController::class, 'show'])->name('lowongan.show');
 
 Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])
-    ->middleware('throttle:auth-sensitive')
+    ->middleware('throttle:social-auth')
     ->name('google.login');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
-    ->middleware('throttle:auth-sensitive');
+    ->middleware('throttle:social-auth');
 
 Route::get('/scan-qr', [CertificateController::class, 'showScanner'])->name('qr.scanner');
 Route::get('/verify-certificate/{token}', [CertificateController::class, 'verify'])->name('certificate.verify');
