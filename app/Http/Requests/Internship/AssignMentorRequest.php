@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Internship;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignMentorRequest extends FormRequest
 {
@@ -14,6 +15,12 @@ class AssignMentorRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['pembimbing_lapangan_id' => ['required', 'integer', 'exists:users,id']];
+        return [
+            'pembimbing_lapangan_id' => [
+                'required',
+                'integer',
+                Rule::exists('users', 'id')->where('role', 'pembimbing_lapangan'),
+            ],
+        ];
     }
 }

@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\AdminInstansi;
 
+use App\Enums\ApplicationStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Internship\AssignMentorRequest;
+use App\Http\Requests\Internship\ValidateDailyLogRequest;
+use App\Mail\InternshipCompleted;
 use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\DailyLog;
 use App\Models\User;
-use App\Enums\ApplicationStatus;
+use App\Services\ApplicationLifecycleService;
 use App\Services\AuditLogService;
 use App\Services\PdfExportService;
-use App\Http\Requests\Internship\AssignMentorRequest;
-use App\Http\Requests\Internship\ValidateDailyLogRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 class ActiveInternController extends Controller
 {
     protected $pdfService;
+
     protected $auditLogService;
 
     public function __construct(PdfExportService $pdfService, AuditLogService $auditLogService)
@@ -36,11 +39,11 @@ class ActiveInternController extends Controller
 
         $status = $request->input('status', 'semua');
 
-        $query = Application::whereHas('position', function($q) use ($instansiId) {
+        $query = Application::whereHas('position', function ($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->with(['user', 'position', 'pembimbing_lapangan'])
-        ->orderBy('status', 'asc');
+            ->with(['user', 'position', 'pembimbing_lapangan'])
+            ->orderBy('status', 'asc');
 
         if ($status === 'aktif') {
             $query->where('status', 'diterima');
@@ -52,11 +55,11 @@ class ActiveInternController extends Controller
 
         $interns = $query->paginate(15)->withQueryString();
 
-        $activeCount = Application::whereHas('position', function($q) use ($instansiId) {
+        $activeCount = Application::whereHas('position', function ($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })
-        ->where('status', 'diterima')
-        ->count();
+            ->where('status', 'diterima')
+            ->count();
 
         return view('admin_instansi.peserta.index', compact('interns', 'pembimbing_lapangan', 'activeCount'));
     }
@@ -76,23 +79,24 @@ class ActiveInternController extends Controller
         $this->auditLogService->record('application.mentor_assigned', $app, [
             'pembimbing_lapangan_id' => $mentor->id,
         ]);
+
         return back()->with('success', 'Pembimbing lapangan berhasil ditetapkan.');
     }
 
-    public function finishIntern($id, \App\Services\ApplicationLifecycleService $lifecycleService)
+    public function finishIntern($id, ApplicationLifecycleService $lifecycleService)
     {
         $app = Application::with(['user', 'position.instansi'])->findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
-        
+
         $lifecycleService->markAsFinished($app);
         try {
             if ($app->user && $app->user->email) {
-                Mail::to($app->user->email)->send(new \App\Mail\InternshipCompleted($app));
+                Mail::to($app->user->email)->send(new InternshipCompleted($app));
             }
         } catch (\Exception $e) {
-            Log::error('Failed to send internship completed email: ' . $e->getMessage());
+            Log::error('Failed to send internship completed email: '.$e->getMessage());
         }
-        
+
         return back()->with('success', 'Peserta berhasil diluluskan! Sertifikat kini tersedia.');
     }
 
@@ -123,6 +127,7 @@ class ActiveInternController extends Controller
             ->orderBy('tanggal', 'desc')
             ->paginate(15)
             ->withQueryString();
+
         return view('admin_instansi.peserta.detail', compact('app', 'logs'));
     }
 
@@ -133,12 +138,13 @@ class ActiveInternController extends Controller
 
         $log->update([
             'status_validasi' => $request->validated('status'),
-            'komentar_pembimbing_lapangan' => $request->validated('komentar')
+            'komentar_pembimbing_lapangan' => $request->validated('komentar'),
         ]);
         $this->auditLogService->record('daily_log.validated', $log, [
             'status_validasi' => $request->validated('status'),
             'application_id' => $log->application_id,
         ]);
+
         return back()->with('success', 'Status logbook diperbarui.');
     }
 
@@ -155,20 +161,21 @@ class ActiveInternController extends Controller
 
         $absensi = $query->paginate(15)->withQueryString();
 
-        $allData = Attendance::where('application_id', $id)->get();
+        // Statistik dihitung via agregasi SQL, tanpa load seluruh riwayat absensi
+        $statsRow = Attendance::where('application_id', $id)
+            ->selectRaw("
+                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in <= '08:00:00') as tepat_waktu,
+                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in > '08:00:00') as terlambat,
+                SUM(status IN ('izin', 'sakit')) as izin,
+                SUM(status = 'alpa') as alpha
+            ")
+            ->first();
 
         $stats = [
-            'tepat_waktu' => $allData->filter(function ($item) {
-                return $item->status == 'hadir' && $item->clock_in && $item->clock_in <= '08:00:00';
-            })->count(),
-
-            'terlambat' => $allData->filter(function ($item) {
-                return $item->status == 'hadir' && $item->clock_in && $item->clock_in > '08:00:00';
-            })->count(),
-
-            'izin' => $allData->whereIn('status', ['izin', 'sakit'])->count(),
-
-            'alpha' => $allData->where('status', 'alpa')->count(),
+            'tepat_waktu' => (int) ($statsRow->tepat_waktu ?? 0),
+            'terlambat' => (int) ($statsRow->terlambat ?? 0),
+            'izin' => (int) ($statsRow->izin ?? 0),
+            'alpha' => (int) ($statsRow->alpha ?? 0),
         ];
 
         return view('admin_instansi.peserta.absensi', compact('app', 'absensi', 'stats'));
@@ -188,11 +195,11 @@ class ActiveInternController extends Controller
         $data = $query->get();
 
         $payload = [
-            'data'   => $data,
-            'app'    => $app,
-            'bulan'  => $request->bulan ? Carbon::create()->month($request->bulan)->translatedFormat('F') : 'Semua Periode'
+            'data' => $data,
+            'app' => $app,
+            'bulan' => $request->bulan ? Carbon::create()->month($request->bulan)->translatedFormat('F') : 'Semua Periode',
         ];
 
-        return $this->pdfService->stream('pdf.admin_instansi.rekap_absensi', $payload, 'Laporan-Absensi-' . $app->user->name . '.pdf', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_instansi.rekap_absensi', $payload, 'Laporan-Absensi-'.$app->user->name.'.pdf', 'a4', 'portrait');
     }
 }

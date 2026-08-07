@@ -56,6 +56,15 @@ export default defineConfig(({ mode }) => {
                 host: localIp,
             },
         },
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        vendor: ['alpinejs', '@hotwired/turbo'],
+                    },
+                },
+            },
+        },
         plugins: [
             laravel({
                 input: [

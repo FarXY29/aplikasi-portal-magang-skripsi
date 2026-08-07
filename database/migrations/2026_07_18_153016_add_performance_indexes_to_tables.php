@@ -20,13 +20,13 @@ return new class extends Migration
 
         try {
             Schema::table('attendances', function (Blueprint $table) {
-                $table->index(['user_id', 'date']);
+                $table->index(['application_id', 'date']);
             });
         } catch (\Exception $e) {}
 
         try {
-            Schema::table('logbooks', function (Blueprint $table) {
-                $table->index(['user_id', 'date']);
+            Schema::table('daily_logs', function (Blueprint $table) {
+                $table->index(['application_id', 'tanggal']);
             });
         } catch (\Exception $e) {}
     }
@@ -45,13 +45,13 @@ return new class extends Migration
 
         try {
             Schema::table('attendances', function (Blueprint $table) {
-                $table->dropIndex(['user_id', 'date']);
+                $table->dropIndex(['application_id', 'date']);
             });
         } catch (\Exception $e) {}
 
         try {
-            Schema::table('logbooks', function (Blueprint $table) {
-                $table->dropIndex(['user_id', 'date']);
+            Schema::table('daily_logs', function (Blueprint $table) {
+                $table->dropIndex(['application_id', 'tanggal']);
             });
         } catch (\Exception $e) {}
     }

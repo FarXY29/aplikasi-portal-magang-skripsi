@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\AdminInstansi;
 
 use App\Http\Controllers\Controller;
-use App\Models\Application;
-use App\Services\InternshipApplicationService;
 use App\Http\Requests\Internship\RejectApplicationRequest;
+use App\Models\Application;
+use App\Models\InternshipPosition;
+use App\Services\InternshipApplicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -22,9 +23,9 @@ class ApplicantController extends Controller
     public function applicants(Request $request)
     {
         $instansiId = Auth::user()->instansi_id;
-        $query = Application::whereHas('position', function($q) use ($instansiId) {
+        $query = Application::whereHas('position', function ($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
-        })->with(['user', 'position'])->orderBy('created_at', 'desc');
+        })->with(['user.university', 'user.school', 'position'])->orderBy('created_at', 'desc');
 
         if ($request->has('status') && $request->status != 'semua' && $request->status != '') {
             $query->where('status', $request->status);
@@ -36,17 +37,17 @@ class ApplicantController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->whereHas('user', function($u) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($u) use ($search) {
                     $u->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('phone', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
                 })->orWhere('letter_number', 'like', "%{$search}%");
             });
         }
 
         $applicants = $query->paginate(15)->withQueryString();
-        $positions = \App\Models\InternshipPosition::where('instansi_id', $instansiId)->get();
+        $positions = InternshipPosition::where('instansi_id', $instansiId)->get();
 
         return view('admin_instansi.pelamar', compact('applicants', 'positions'));
     }
@@ -77,7 +78,7 @@ class ApplicantController extends Controller
     {
         $app = Application::with('position', 'user')->findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
-        
+
         if ($app->position->kuota <= 0) {
             return back()->with('error', 'Peringatan: Posisi ini memiliki kapasitas 0 (Ditutup).');
         }
@@ -95,8 +96,9 @@ class ApplicantController extends Controller
     {
         $app = Application::with('position.instansi', 'user')->findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
-        
+
         $this->applicationService->rejectApplicant($app, $request->validated('alasan'));
+
         return back()->with('success', 'Peserta ditolak dan catatan telah disimpan.');
     }
 }

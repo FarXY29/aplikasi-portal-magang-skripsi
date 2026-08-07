@@ -47,7 +47,7 @@
                                     </span>
                                     <input type="text" name="name" value="{{ old('name', $pembimbing_lapangan->name) }}" 
                                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" 
-                                        required>
+                                        required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
@@ -73,7 +73,7 @@
                                     </span>
                                     <input type="email" name="email" value="{{ old('email', $pembimbing_lapangan->email) }}" 
                                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm text-sm" 
-                                        required>
+                                        required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')">
                                 </div>
                                 @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>

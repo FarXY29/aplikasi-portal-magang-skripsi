@@ -74,9 +74,9 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="text-center sm:text-left flex-grow">
-                    <p class="text-xs font-bold uppercase tracking-wider text-blue-100">Scorecard Kinerja Mahasiswa Dinas</p>
+                    <p class="text-xs font-bold uppercase tracking-wider text-blue-100">Scorecard Kinerja Peserta Dinas</p>
                     <p class="text-xl font-black mt-0.5">Rata-rata Kehadiran {{ $stats['avg_kehadiran'] }}%</p>
-                    <p class="text-sm text-blue-100 font-medium">Tingkat kepatuhan validasi logbook mahasiswa mencapai {{ $stats['avg_logbook'] }}% dari keseluruhan mahasiswa aktif/selesai.</p>
+                    <p class="text-sm text-blue-100 font-medium">Tingkat kepatuhan validasi logbook peserta mencapai {{ $stats['avg_logbook'] }}% dari keseluruhan peserta aktif/selesai.</p>
                 </div>
                 @if($kinerja->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
@@ -93,7 +93,7 @@
                 @endif
             </div>
 
-            {{-- Tabel Kinerja Mahasiswa --}}
+            {{-- Tabel Kinerja Peserta --}}
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
@@ -108,7 +108,7 @@
                         <thead class="bg-gray-50 dark:bg-gray-900">
                             <tr>
                                 <th class="px-5 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">No</th>
-                                <th class="px-5 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama Mahasiswa & Kampus</th>
+                                <th class="px-5 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama Peserta & Kampus</th>
                                 <th class="px-5 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Posisi Magang</th>
                                 <th class="px-5 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Kehadiran</th>
                                 <th class="px-5 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Validasi Logbook</th>
@@ -295,8 +295,8 @@
                                         <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
                                             <i class="fas fa-graduation-cap text-3xl text-gray-400 dark:text-gray-500"></i>
                                         </div>
-                                        <p class="font-bold text-gray-700 dark:text-gray-300">Belum ada data Mahasiswa</p>
-                                        <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Data mahasiswa magang dengan status aktif atau selesai belum terdaftar di instansi Anda.</p>
+                                        <p class="font-bold text-gray-700 dark:text-gray-300">Belum ada data Peserta</p>
+                                        <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Data peserta magang dengan status aktif atau selesai belum terdaftar di instansi Anda.</p>
                                     </div>
                                 </td>
                             </tr>

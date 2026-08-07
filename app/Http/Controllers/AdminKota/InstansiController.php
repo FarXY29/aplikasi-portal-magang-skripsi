@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Instansi;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class InstansiController extends Controller
@@ -55,15 +56,19 @@ class InstansiController extends Controller
             'password_admin' => 'required|min:8',
         ]);
 
-        $instansi = Instansi::create($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
+        $instansi = DB::transaction(function () use ($request) {
+            $instansi = Instansi::create($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
 
-        User::create([
-            'name' => 'Admin ' . $request->nama_dinas,
-            'email' => $request->email_admin,
-            'password' => Hash::make($request->password_admin),
-            'role' => 'admin_instansi',
-            'instansi_id' => $instansi->id,
-        ]);
+            User::create([
+                'name' => 'Admin ' . $request->nama_dinas,
+                'email' => $request->email_admin,
+                'password' => Hash::make($request->password_admin),
+                'role' => 'admin_instansi',
+                'instansi_id' => $instansi->id,
+            ]);
+
+            return $instansi;
+        });
 
         return redirect()->route('admin.instansi.index')->with('success', 'INSTANSI Baru & Akun Admin berhasil dibuat!');
     }
@@ -97,23 +102,25 @@ class InstansiController extends Controller
             'password_admin' => 'nullable|min:8',
         ]);
 
-        $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
+        DB::transaction(function () use ($instansi, $adminUser, $request) {
+            $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
 
-        if ($adminUser && $request->email_admin) {
-            $adminUser->email = $request->email_admin;
-            if ($request->filled('password_admin')) {
-                $adminUser->password = Hash::make($request->password_admin);
+            if ($adminUser && $request->email_admin) {
+                $adminUser->email = $request->email_admin;
+                if ($request->filled('password_admin')) {
+                    $adminUser->password = Hash::make($request->password_admin);
+                }
+                $adminUser->save();
+            } elseif (!$adminUser && $request->email_admin && $request->filled('password_admin')) {
+                User::create([
+                    'name' => 'Admin ' . $request->nama_dinas,
+                    'email' => $request->email_admin,
+                    'password' => Hash::make($request->password_admin),
+                    'role' => 'admin_instansi',
+                    'instansi_id' => $instansi->id,
+                ]);
             }
-            $adminUser->save();
-        } elseif (!$adminUser && $request->email_admin && $request->filled('password_admin')) {
-            User::create([
-                'name' => 'Admin ' . $request->nama_dinas,
-                'email' => $request->email_admin,
-                'password' => Hash::make($request->password_admin),
-                'role' => 'admin_instansi',
-                'instansi_id' => $instansi->id,
-            ]);
-        }
+        });
 
         return redirect()->route('admin.instansi.index')->with('success', 'Data INSTANSI berhasil diperbarui!');
     }

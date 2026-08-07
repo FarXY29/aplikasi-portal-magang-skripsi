@@ -3,7 +3,7 @@
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     @push('styles')
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
         <style>
             .action-btn { transition: all 0.2s ease; }
             .action-btn:hover { transform: translateY(-1px); }

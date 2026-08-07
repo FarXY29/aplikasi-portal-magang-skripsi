@@ -86,7 +86,7 @@ class AttendanceController extends Controller
         $jamMasukINSTANSI = $application->position->instansi->jam_mulai_masuk ?? '07:30:00'; // Default jika null
         
         // Buat objek Carbon untuk jam masuk hari ini
-        $waktuBukaAbsen = Carbon::createFromFormat('H:i:s', $jamMasukINSTANSI);
+        $waktuBukaAbsen = Carbon::parse($jamMasukINSTANSI);
 
         // Validasi: Jika sekarang lebih awal dari jam buka absen
         if ($now->lessThan($waktuBukaAbsen)) {
@@ -175,7 +175,7 @@ class AttendanceController extends Controller
 
         // 2. CEK JADWAL PULANG (DINAMIS DARI DB)
         $jamPulangINSTANSI = $application->position->instansi->jam_mulai_pulang ?? '16:00:00';
-        $waktuBolehPulang = Carbon::createFromFormat('H:i:s', $jamPulangINSTANSI);
+        $waktuBolehPulang = Carbon::parse($jamPulangINSTANSI);
 
         // Validasi: Jika sekarang belum waktunya pulang
         if ($now->lessThan($waktuBolehPulang)) {

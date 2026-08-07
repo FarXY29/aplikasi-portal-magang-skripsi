@@ -1,13 +1,13 @@
 <!-- Hero Section -->
 <section class="bg-sasirangan-premium text-white pt-28 pb-20 sm:pt-36 sm:pb-28 md:pt-40 md:pb-32 relative overflow-hidden w-full">
     <!-- Ambient Blurred Background Ornaments -->
-    <div class="absolute -top-12 -right-12 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-teal-500 opacity-20 rounded-full blur-[90px] sm:blur-[120px] animate-ambient-1 pointer-events-none"></div>
-    <div class="absolute -bottom-16 -left-16 w-[300px] sm:w-[450px] h-[300px] sm:h-[450px] bg-emerald-500 opacity-15 rounded-full blur-[90px] sm:blur-[120px] animate-ambient-2 pointer-events-none"></div>
+    <div class="absolute -top-12 -right-12 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-teal-500 opacity-20 rounded-full blur-[90px] sm:blur-[120px] pointer-events-none"></div>
+    <div class="absolute -bottom-16 -left-16 w-[300px] sm:w-[450px] h-[300px] sm:h-[450px] bg-emerald-500 opacity-15 rounded-full blur-[90px] sm:blur-[120px] pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 w-full flex flex-col items-center">
         <!-- Top Tag Badge -->
         <span class="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-teal-900/60 border border-teal-500/35 backdrop-blur-md text-teal-200 text-xs font-extrabold tracking-wider uppercase mb-6 sm:mb-8 shadow-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>
             Portal Resmi Magang Kota Banjarmasin
         </span>
 

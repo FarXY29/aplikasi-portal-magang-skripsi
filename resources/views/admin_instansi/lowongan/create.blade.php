@@ -289,12 +289,17 @@
         }
     </style>
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/super-build/ckeditor.js"></script>
     <script>
+        // CKEditor di-load on-demand saat user mulai mengetik (hindari ~1 MB blocking script)
         document.addEventListener("turbo:load", function() {
             const editorElement = document.querySelector('#editor');
-            if (editorElement) {
-                CKEDITOR.ClassicEditor.create(editorElement, {
+            const initCkEditor = () => {
+                if (!editorElement || editorElement.dataset.ckLoaded) return;
+                editorElement.dataset.ckLoaded = '1';
+                const script = document.createElement('script');
+                script.src = 'https://cdn.ckeditor.com/ckeditor5/40.0.0/super-build/ckeditor.js';
+                script.onload = () => {
+                    CKEDITOR.ClassicEditor.create(editorElement, {
                     toolbar: {
                         items: [
                             'heading', '|',
@@ -318,6 +323,12 @@
                         writer.setStyle('border', 'none', editor.editing.view.document.getRoot());
                     });
                 }).catch(error => console.error(error));
+                };
+                document.head.appendChild(script);
+            };
+            if (editorElement) {
+                editorElement.addEventListener('focus', initCkEditor, { once: true });
+                editorElement.addEventListener('pointerdown', initCkEditor, { once: true });
             }
 
             // Double Submit Prevention

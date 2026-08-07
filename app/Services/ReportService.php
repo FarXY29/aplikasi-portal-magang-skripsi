@@ -5,10 +5,9 @@ namespace App\Services;
 use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class ReportService
 {
@@ -57,7 +56,7 @@ class ReportService
         if ($request->filled('asal_instansi')) {
             $searchInstansi = $request->asal_instansi;
             $query->whereHas('user', function ($q) use ($searchInstansi) {
-                $q->where('asal_instansi', 'like', '%' . $searchInstansi . '%');
+                $q->where('asal_instansi', 'like', '%'.$searchInstansi.'%');
             });
         }
 
@@ -95,20 +94,20 @@ class ReportService
      */
     public function getDurasiMagangData(?Request $request = null)
     {
-        $query = Instansi::with(['applications' => function($q) {
+        $query = Instansi::with(['applications' => function ($q) {
             $q->whereIn('applications.status', ['diterima', 'selesai'])->whereNotNull('tanggal_mulai')->whereNotNull('tanggal_selesai');
         }]);
 
         if ($request && ($request->filled('q') || $request->filled('search'))) {
             $search = $request->input('q') ?: $request->input('search');
-            $query->where('nama_dinas', 'like', '%' . $search . '%');
+            $query->where('nama_dinas', 'like', '%'.$search.'%');
         }
 
-        return $query->get()->map(function($instansi) {
+        return $query->get()->map(function ($instansi) {
             $totalHari = 0;
             $count = 0;
 
-            foreach($instansi->applications as $app) {
+            foreach ($instansi->applications as $app) {
                 $mulai = Carbon::parse($app->tanggal_mulai);
                 $selesai = Carbon::parse($app->tanggal_selesai);
                 $totalHari += $mulai->diffInDays($selesai);
@@ -117,7 +116,7 @@ class ReportService
 
             $instansi->avg_durasi_hari = $count > 0 ? round($totalHari / $count) : 0;
             $instansi->avg_durasi_bulan = $count > 0 ? round(($totalHari / $count) / 30, 1) : 0;
-            
+
             return $instansi;
         })->sortByDesc('avg_durasi_hari');
     }
@@ -132,7 +131,7 @@ class ReportService
 
         if ($request && ($request->filled('q') || $request->filled('search'))) {
             $search = $request->input('q') ?: $request->input('search');
-            $query->where('required_major', 'like', '%' . $search . '%');
+            $query->where('required_major', 'like', '%'.$search.'%');
         }
 
         return $query->orderBy('total_kuota', 'desc')->get();
@@ -143,34 +142,41 @@ class ReportService
      */
     public function getPenyerapanKuotaData(?Request $request = null)
     {
-        $query = Instansi::with(['positions' => function($q) {
-            $q->withCount(['applications as diterima' => function($query) {
+        $query = Instansi::with(['positions' => function ($q) {
+            $q->withCount(['applications as diterima' => function ($query) {
                 $query->whereIn('applications.status', ['diterima', 'selesai']);
             }]);
         }]);
 
         if ($request && ($request->filled('q') || $request->filled('search'))) {
             $search = $request->input('q') ?: $request->input('search');
-            $query->where('nama_dinas', 'like', '%' . $search . '%');
+            $query->where('nama_dinas', 'like', '%'.$search.'%');
         }
 
-        $instansis = $query->get()->map(function($instansi) {
+        $instansis = $query->get()->map(function ($instansi) {
             $totalKuota = $instansi->positions->sum('kuota');
             $totalTerserap = $instansi->positions->sum('diterima');
-            
+
             $instansi->total_kuota = $totalKuota;
             $instansi->total_terserap = $totalTerserap;
             $instansi->persentase_penyerapan = $totalKuota > 0 ? ($totalTerserap / $totalKuota) * 100 : 0;
-            
+
             return $instansi;
         });
 
         if ($request && $request->filled('status_keterisian')) {
             $status = $request->status_keterisian;
-            $instansis = $instansis->filter(function($instansi) use ($status) {
-                if ($status === 'optimal') return $instansi->persentase_penyerapan >= 80;
-                if ($status === 'cukup') return $instansi->persentase_penyerapan >= 50 && $instansi->persentase_penyerapan < 80;
-                if ($status === 'rendah') return $instansi->persentase_penyerapan < 50;
+            $instansis = $instansis->filter(function ($instansi) use ($status) {
+                if ($status === 'optimal') {
+                    return $instansi->persentase_penyerapan >= 80;
+                }
+                if ($status === 'cukup') {
+                    return $instansi->persentase_penyerapan >= 50 && $instansi->persentase_penyerapan < 80;
+                }
+                if ($status === 'rendah') {
+                    return $instansi->persentase_penyerapan < 50;
+                }
+
                 return true;
             });
         }
@@ -184,13 +190,32 @@ class ReportService
     public function getGradingReportData(Request $request)
     {
         $query = Application::with(['user', 'position.instansi'])
-                    ->where(function($q) {
-                        $q->whereNotNull('nilai_rata_rata')
-                          ->orWhereNotNull('nilai_teknis');
-                    })
-                    ->get();
+            ->where(function ($q) {
+                $q->whereNotNull('nilai_rata_rata')
+                    ->orWhereNotNull('nilai_teknis');
+            });
 
-        $gradedData = $query->map(function($app) {
+        // Filter yang bisa dipindah ke SQL agar tidak load seluruh data
+        if ($request->filled('q')) {
+            $term = strtolower($request->q);
+            $query->whereHas('user', function ($q) use ($term) {
+                $q->whereRaw('LOWER(name) LIKE ?', ['%'.$term.'%']);
+            });
+        }
+        if ($request->filled('instansi_id')) {
+            $query->whereHas('position', function ($q) use ($request) {
+                $q->where('instansi_id', $request->instansi_id);
+            });
+        }
+        $campus = $request->input('instansi') ?: $request->input('asal_instansi');
+        if (! empty($campus)) {
+            $term = strtolower($campus);
+            $query->whereHas('user', function ($q) use ($term) {
+                $q->whereRaw('LOWER(asal_instansi) LIKE ?', ['%'.$term.'%']);
+            });
+        }
+
+        $gradedData = $query->get()->map(function ($app) {
             if ($app->nilai_rata_rata !== null) {
                 $avg = (float) $app->nilai_rata_rata;
                 $kerajinan = (float) ($app->nilai_kerajinan ?? 0);
@@ -198,25 +223,30 @@ class ReportService
                 $adaptasi = (float) ($app->nilai_adaptasi ?? 0);
                 $kreatifitas = (float) ($app->nilai_kreatifitas ?? 0);
                 $skill = (float) ($app->nilai_skill_pengetahuan ?? 0);
-                
-                $teknis = $skill; 
+
+                $teknis = $skill;
                 $perilaku = ($adaptasi + $kreatifitas + $kerajinan) / 3;
             } else {
                 $teknis = (float) ($app->nilai_teknis ?? 0);
                 $disiplin = (float) ($app->nilai_disiplin ?? 0);
                 $perilaku = (float) ($app->nilai_perilaku ?? 0);
                 $avg = ($teknis + $disiplin + $perilaku) / 3;
-                
+
                 $kerajinan = $disiplin;
                 $adaptasi = $perilaku;
                 $kreatifitas = $perilaku;
                 $skill = $teknis;
             }
-            
-            if ($avg >= 86) $predikat = 'Sangat Baik';
-            elseif ($avg >= 71) $predikat = 'Baik';
-            elseif ($avg >= 56) $predikat = 'Cukup';
-            else $predikat = 'Kurang';
+
+            if ($avg >= 86) {
+                $predikat = 'Sangat Baik';
+            } elseif ($avg >= 71) {
+                $predikat = 'Baik';
+            } elseif ($avg >= 56) {
+                $predikat = 'Cukup';
+            } else {
+                $predikat = 'Kurang';
+            }
 
             $app->computed_avg = $avg;
             $app->computed_teknis = $teknis;
@@ -231,24 +261,8 @@ class ReportService
             return $app;
         });
 
-        if ($request->filled('q')) {
-            $gradedData = $gradedData->filter(function($app) use ($request) {
-                return str_contains(strtolower($app->user->name ?? ''), strtolower($request->q));
-            });
-        }
-        if ($request->filled('instansi_id')) {
-            $gradedData = $gradedData->filter(function($app) use ($request) {
-                return $app->position->instansi_id == $request->instansi_id;
-            });
-        }
-        $campus = $request->input('instansi') ?: $request->input('asal_instansi');
-        if (!empty($campus)) {
-            $gradedData = $gradedData->filter(function($app) use ($campus) {
-                return str_contains(strtolower($app->user->asal_instansi ?? ''), strtolower($campus));
-            });
-        }
         if ($request->filled('predikat')) {
-            $gradedData = $gradedData->filter(function($app) use ($request) {
+            $gradedData = $gradedData->filter(function ($app) use ($request) {
                 return strtolower($app->computed_predikat) == strtolower($request->predikat);
             });
         }
@@ -305,66 +319,93 @@ class ReportService
      */
     public function getInstansiDisiplinData(Request $request)
     {
-        $query = Instansi::with(['applications' => function($q) {
-            $q->whereIn('applications.status', ['diterima', 'selesai'])->with('attendances');
-        }]);
+        $instansiQuery = Instansi::query();
 
         if ($request->filled('q')) {
-            $query->where('nama_dinas', 'like', '%' . $request->q . '%');
+            $instansiQuery->where('nama_dinas', 'like', '%'.$request->q.'%');
         }
 
-        $instansis = $query->get()->map(function($instansi) {
-            $totalAttendances = 0;
-            $totalTerlambat = 0;
-            $totalAlpa = 0;
-            $totalHadir = 0;
-            $totalSakit = 0;
-            $totalIzin = 0;
+        $instansiIds = $instansiQuery->pluck('id');
 
-            $pelanggarList = [];
+        // Agregasi kehadiran per instansi via SQL (1 query), bukan load semua attendance ke PHP
+        $aggRows = DB::table('instansis')
+            ->whereIn('instansis.id', $instansiIds)
+            ->leftJoin('internship_positions', 'internship_positions.instansi_id', '=', 'instansis.id')
+            ->leftJoin('applications', function ($join) {
+                $join->on('applications.internship_position_id', '=', 'internship_positions.id')
+                    ->whereIn('applications.status', ['diterima', 'selesai']);
+            })
+            ->leftJoin('attendances', 'attendances.application_id', '=', 'applications.id')
+            ->groupBy('instansis.id')
+            ->select(
+                'instansis.id',
+                DB::raw('COUNT(attendances.id) as total_attendances'),
+                DB::raw("SUM(attendances.status = 'hadir') as total_hadir"),
+                DB::raw("SUM(attendances.status = 'sakit') as total_sakit"),
+                DB::raw("SUM(attendances.status = 'izin') as total_izin"),
+                DB::raw("SUM(attendances.status = 'alpa') as total_alpa"),
+                DB::raw("SUM(attendances.status = 'hadir' AND attendances.clock_in > COALESCE(NULLIF(instansis.jam_mulai_masuk, ''), '08:00:00')) as total_terlambat")
+            )
+            ->get()
+            ->keyBy('id');
 
-            foreach($instansi->applications as $app) {
-                $pTerlambat = 0;
-                $pAlpa = 0;
+        // Data pelanggar hanya untuk aplikasi yang punya pelanggaran (1 query agregasi + 1 eager load)
+        $pelanggarRows = DB::table('attendances')
+            ->join('applications', 'applications.id', '=', 'attendances.application_id')
+            ->whereIn('applications.status', ['diterima', 'selesai'])
+            ->join('internship_positions', 'internship_positions.id', '=', 'applications.internship_position_id')
+            ->whereIn('internship_positions.instansi_id', $instansiIds)
+            ->join('instansis', 'instansis.id', '=', 'internship_positions.instansi_id')
+            ->groupBy('attendances.application_id')
+            ->select(
+                'attendances.application_id',
+                DB::raw("SUM(attendances.status = 'alpa') as total_alpa"),
+                DB::raw("SUM(attendances.status = 'hadir' AND attendances.clock_in > COALESCE(NULLIF(instansis.jam_mulai_masuk, ''), '08:00:00')) as total_terlambat")
+            )
+            ->get()
+            ->filter(function ($row) {
+                return ($row->total_alpa + $row->total_terlambat) > 0;
+            });
 
-                foreach($app->attendances as $att) {
-                    $totalAttendances++;
-                    if ($att->status == 'alpa') {
-                        $totalAlpa++;
-                        $pAlpa++;
-                    }
-                    if ($att->status == 'hadir') {
-                        $totalHadir++;
-                        $jamMasuk = $instansi->jam_mulai_masuk ?: '08:00:00';
-                        if ($att->clock_in > $jamMasuk) {
-                            $totalTerlambat++;
-                            $pTerlambat++;
-                        }
-                    }
-                    if ($att->status == 'sakit') $totalSakit++;
-                    if ($att->status == 'izin') $totalIzin++;
-                }
+        $pelanggarApps = $pelanggarRows->isNotEmpty()
+            ? Application::whereIn('id', $pelanggarRows->pluck('application_id'))
+                ->with(['user', 'position'])
+                ->get()
+                ->keyBy('id')
+            : collect();
 
-                if ($pTerlambat > 0 || $pAlpa > 0) {
-                    $pelanggarList[] = [
-                        'nama' => $app->user->name ?? '-',
-                        'kampus' => $app->user->asal_instansi ?? '-',
-                        'posisi' => $app->position->judul_posisi ?? '-',
-                        'terlambat' => $pTerlambat,
-                        'alpa' => $pAlpa,
-                    ];
-                }
+        $pelanggarByInstansi = [];
+        foreach ($pelanggarRows as $row) {
+            $app = $pelanggarApps[$row->application_id] ?? null;
+            if (! $app || ! $app->position) {
+                continue;
             }
 
+            $pelanggarByInstansi[$app->position->instansi_id][] = [
+                'nama' => $app->user->name ?? '-',
+                'kampus' => $app->user->asal_instansi ?? '-',
+                'posisi' => $app->position->judul_posisi ?? '-',
+                'terlambat' => (int) $row->total_terlambat,
+                'alpa' => (int) $row->total_alpa,
+            ];
+        }
+
+        $instansis = Instansi::whereIn('id', $instansiIds)->get()->map(function ($instansi) use ($aggRows, $pelanggarByInstansi) {
+            $row = $aggRows[$instansi->id] ?? null;
+
+            $totalAttendances = (int) ($row->total_attendances ?? 0);
+            $totalTerlambat = (int) ($row->total_terlambat ?? 0);
+            $totalAlpa = (int) ($row->total_alpa ?? 0);
+
             $instansi->total_attendances = $totalAttendances;
-            $instansi->total_hadir = $totalHadir;
-            $instansi->total_sakit = $totalSakit;
-            $instansi->total_izin = $totalIzin;
+            $instansi->total_hadir = (int) ($row->total_hadir ?? 0);
+            $instansi->total_sakit = (int) ($row->total_sakit ?? 0);
+            $instansi->total_izin = (int) ($row->total_izin ?? 0);
             $instansi->total_alpa = $totalAlpa;
             $instansi->total_terlambat = $totalTerlambat;
             $instansi->total_pelanggaran = $totalTerlambat + $totalAlpa;
             $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 100;
-            $instansi->pelanggar_list = collect($pelanggarList)->sortByDesc(function($p) {
+            $instansi->pelanggar_list = collect($pelanggarByInstansi[$instansi->id] ?? [])->sortByDesc(function ($p) {
                 return $p['terlambat'] + $p['alpa'];
             })->values()->all();
 
@@ -373,7 +414,7 @@ class ReportService
 
         if ($request->filled('disiplin_range')) {
             $range = $request->disiplin_range;
-            $instansis = $instansis->filter(function($instansi) use ($range) {
+            $instansis = $instansis->filter(function ($instansi) use ($range) {
                 if ($range === 'sangat') {
                     return $instansi->tingkat_disiplin >= 90;
                 } elseif ($range === 'cukup') {
@@ -381,16 +422,19 @@ class ReportService
                 } elseif ($range === 'kurang') {
                     return $instansi->tingkat_disiplin < 70;
                 }
+
                 return true;
             });
         }
 
         $instansis = $instansis->sortByDesc('tingkat_disiplin')->values();
 
-        $podium = $instansis->filter(function($i) { return $i->total_attendances > 0; })
-                            ->sortByDesc('tingkat_disiplin')
-                            ->values()
-                            ->take(3);
+        $podium = $instansis->filter(function ($i) {
+            return $i->total_attendances > 0;
+        })
+            ->sortByDesc('tingkat_disiplin')
+            ->values()
+            ->take(3);
 
         $stats = [
             'total_instansi' => $instansis->count(),
@@ -422,20 +466,20 @@ class ReportService
         }
 
         if ($request->has('instansi_id') && $request->instansi_id != '') {
-            $query->whereHas('position.instansi', function($q) use ($request) {
+            $query->whereHas('position.instansi', function ($q) use ($request) {
                 $q->where('id', $request->instansi_id);
             });
         }
 
         if ($request->has('instansi') && $request->instansi != '') {
-            $query->whereHas('user', function($q) use ($request) {
+            $query->whereHas('user', function ($q) use ($request) {
                 $q->where('asal_instansi', $request->instansi);
             });
         }
 
         if ($request->has('posisi') && $request->posisi != '') {
-            $query->whereHas('position', function($q) use ($request) {
-                $q->where('judul_posisi', 'like', '%' . $request->posisi . '%');
+            $query->whereHas('position', function ($q) use ($request) {
+                $q->where('judul_posisi', 'like', '%'.$request->posisi.'%');
             });
         }
 
@@ -443,13 +487,13 @@ class ReportService
             $term = $request->q;
             $query->where(function ($q) use ($term) {
                 $q->whereHas('user', function ($sub) use ($term) {
-                    $sub->where('name', 'like', '%' . $term . '%')
-                        ->orWhere('email', 'like', '%' . $term . '%')
-                        ->orWhere('asal_instansi', 'like', '%' . $term . '%');
+                    $sub->where('name', 'like', '%'.$term.'%')
+                        ->orWhere('email', 'like', '%'.$term.'%')
+                        ->orWhere('asal_instansi', 'like', '%'.$term.'%');
                 })->orWhereHas('position', function ($sub) use ($term) {
-                    $sub->where('judul_posisi', 'like', '%' . $term . '%')
+                    $sub->where('judul_posisi', 'like', '%'.$term.'%')
                         ->orWhereHas('instansi', function ($inst) use ($term) {
-                            $inst->where('nama_dinas', 'like', '%' . $term . '%');
+                            $inst->where('nama_dinas', 'like', '%'.$term.'%');
                         });
                 });
             });
@@ -458,9 +502,9 @@ class ReportService
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $start = $request->start_date;
             $end = $request->end_date;
-            $query->where(function($q) use ($start, $end) {
+            $query->where(function ($q) use ($start, $end) {
                 $q->whereBetween('tanggal_mulai', [$start, $end])
-                  ->orWhereBetween('tanggal_selesai', [$start, $end]);
+                    ->orWhereBetween('tanggal_selesai', [$start, $end]);
             });
         } elseif ($request->filled('start_date')) {
             $query->where('tanggal_mulai', '>=', $request->start_date);
@@ -468,34 +512,38 @@ class ReportService
             $query->where('tanggal_selesai', '<=', $request->end_date);
         }
 
-        $allInterns = $query->get()->sortBy(function($app) {
-            return $app->position->instansi->nama_dinas ?? '';
-        })->values();
+        // Statistik dihitung via agregasi SQL, bukan load seluruh tabel ke memori
+        $statusTotals = (clone $query)
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
         $stats = [
-            'total' => $allInterns->count(),
-            'aktif' => $allInterns->where('status.value', 'diterima')->count(),
-            'selesai' => $allInterns->where('status.value', 'selesai')->count(),
-            'pending' => $allInterns->whereIn('status.value', ['pending', 'menunggu'])->count(),
-            'total_dinas' => $allInterns->pluck('position.instansi.id')->unique()->filter()->count(),
-            'total_kampus' => $allInterns->pluck('user.asal_instansi')->unique()->filter()->count()
+            'total' => (int) $statusTotals->sum(),
+            'aktif' => (int) ($statusTotals['diterima'] ?? 0),
+            'selesai' => (int) ($statusTotals['selesai'] ?? 0),
+            'pending' => (int) ($statusTotals['pending'] ?? 0) + (int) ($statusTotals['menunggu'] ?? 0),
+            'total_dinas' => (clone $query)
+                ->join('internship_positions', 'applications.internship_position_id', '=', 'internship_positions.id')
+                ->count(DB::raw('DISTINCT internship_positions.instansi_id')),
+            'total_kampus' => (clone $query)
+                ->join('users', 'applications.user_id', '=', 'users.id')
+                ->count(DB::raw('DISTINCT users.asal_instansi')),
         ];
 
+        // Urutan berdasar nama instansi dipindah ke SQL
+        $sortedQuery = $query
+            ->select('applications.*')
+            ->join('internship_positions', 'applications.internship_position_id', '=', 'internship_positions.id')
+            ->join('instansis', 'internship_positions.instansi_id', '=', 'instansis.id')
+            ->orderBy('instansis.nama_dinas')
+            ->orderBy('applications.created_at');
+
         if ($paginate) {
-            $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 10;
-            $currentPageItems = $allInterns->slice(($currentPage - 1) * $perPage, $perPage)->values();
-            
-            $paginatedInterns = new \Illuminate\Pagination\LengthAwarePaginator(
-                $currentPageItems,
-                $allInterns->count(),
-                $perPage,
-                $currentPage,
-                ['path' => \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPath()]
-            );
-            $paginatedInterns->withQueryString();
-            
-            $allInterns = $paginatedInterns;
+            // Pagination native SQL, hanya 10 baris per halaman yang di-load
+            $allInterns = $sortedQuery->paginate(10)->withQueryString();
+        } else {
+            $allInterns = $sortedQuery->get();
         }
 
         return compact('allInterns', 'stats');
@@ -511,37 +559,37 @@ class ReportService
 
     public function getKinerjaMahasiswaData(int $instansiId)
     {
-        $kinerja = Application::whereHas('position', function($q) use ($instansiId) {
+        $kinerja = Application::whereHas('position', function ($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
-        ->with(['user', 'position', 'logs', 'attendances', 'pembimbing_lapangan'])
-        ->get()->map(function($app) {
-            $total_logs = $app->logs->count();
-            $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
-            $log_rate = $total_logs > 0 ? ($approved_logs / $total_logs) * 100 : 0;
+            ->with(['user', 'position', 'logs', 'attendances', 'pembimbing_lapangan'])
+            ->get()->map(function ($app) {
+                $total_logs = $app->logs->count();
+                $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
+                $log_rate = $total_logs > 0 ? ($approved_logs / $total_logs) * 100 : 0;
 
-            $total_attendance = $app->attendances->count();
-            $hadir = $app->attendances->where('status', 'hadir')->count();
-            $attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
+                $total_attendance = $app->attendances->count();
+                $hadir = $app->attendances->where('status', 'hadir')->count();
+                $attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
 
-            $avg_nilai = 0;
-            if ($app->nilai_rata_rata) {
-                $avg_nilai = (float) $app->nilai_rata_rata;
-            } else {
-                $t = (float) $app->nilai_teknis;
-                $d = (float) $app->nilai_disiplin;
-                $p = (float) $app->nilai_perilaku;
-                if ($t > 0 || $d > 0 || $p > 0) {
-                    $avg_nilai = ($t + $d + $p) / 3;
+                $avg_nilai = 0;
+                if ($app->nilai_rata_rata) {
+                    $avg_nilai = (float) $app->nilai_rata_rata;
+                } else {
+                    $t = (float) $app->nilai_teknis;
+                    $d = (float) $app->nilai_disiplin;
+                    $p = (float) $app->nilai_perilaku;
+                    if ($t > 0 || $d > 0 || $p > 0) {
+                        $avg_nilai = ($t + $d + $p) / 3;
+                    }
                 }
-            }
 
-            $app->log_rate = $log_rate;
-            $app->attendance_rate = $attendance_rate;
-            $app->avg_nilai = $avg_nilai;
+                $app->log_rate = $log_rate;
+                $app->attendance_rate = $attendance_rate;
+                $app->avg_nilai = $avg_nilai;
 
-            return $app;
-        })->sortByDesc('avg_nilai');
+                return $app;
+            })->sortByDesc('avg_nilai');
 
         $stats = [
             'total_peserta' => $kinerja->count(),
@@ -551,7 +599,7 @@ class ReportService
             'avg_logbook' => $kinerja->count() > 0 ? round($kinerja->avg('log_rate'), 1) : 0,
             'avg_nilai' => $kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
                 ? round($kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
-                : 0
+                : 0,
         ];
 
         return compact('kinerja', 'stats');

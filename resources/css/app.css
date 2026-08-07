@@ -1,3 +1,8 @@
+@import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
+@import '@fortawesome/fontawesome-free/css/solid.min.css';
+@import '@fortawesome/fontawesome-free/css/regular.min.css';
+@import '@fortawesome/fontawesome-free/css/brands.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -45,18 +50,6 @@
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
-}
-
-/* Ambient Floating Blobs Animation */
-@keyframes float-ambient {
-    0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
-    50% { transform: translateY(-20px) scale(1.08) rotate(180deg); }
-}
-.animate-ambient-1 {
-    animation: float-ambient 12s ease-in-out infinite;
-}
-.animate-ambient-2 {
-    animation: float-ambient 16s ease-in-out infinite 3s;
 }
 
 /* Modern UI/UX Utilities */

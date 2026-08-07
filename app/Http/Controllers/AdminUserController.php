@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Instansi;
-use App\Models\DailyLog;
 use App\Models\Application;
+use App\Models\DailyLog;
+use App\Models\Instansi;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminUserController extends Controller
 {
-
     public function index(Request $request)
     {
         $query = User::with('instansi');
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -39,6 +38,7 @@ class AdminUserController extends Controller
     public function create()
     {
         $instansis = Instansi::all();
+
         return view('admin_kota.users.create', compact('instansis'));
     }
 
@@ -71,6 +71,7 @@ class AdminUserController extends Controller
     {
         $user = User::findOrFail($id);
         $instansis = Instansi::all();
+
         return view('admin_kota.users.edit', compact('user', 'instansis'));
     }
 
@@ -107,8 +108,11 @@ class AdminUserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if (auth()->id() == $user->id) return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
+        if (auth()->id() == $user->id) {
+            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
+        }
         $user->delete();
+
         return back()->with('success', 'Pengguna telah dihapus.');
     }
 
@@ -135,14 +139,14 @@ class AdminUserController extends Controller
     public function showLogbook($userId)
     {
         $user = User::findOrFail($userId);
-        
+
         // Ambil aplikasi aktif/terakhir peserta ini
         $app = Application::where('user_id', $userId)
-                ->with(['position.instansi', 'logs'])
-                ->latest()
-                ->first();
+            ->with(['position.instansi', 'logs'])
+            ->latest()
+            ->first();
 
-        if (!$app) {
+        if (! $app) {
             return back()->with('error', 'Peserta ini belum memiliki data magang.');
         }
 
@@ -156,10 +160,11 @@ class AdminUserController extends Controller
     public function printParticipants()
     {
         // Ambil hanya user dengan role 'peserta'
-        // Urutkan berdasarkan nama agar rapi
+        // Urutkan berdasarkan nama agar rapi, hanya kolom yang dipakai template PDF
         $participants = User::where('role', 'peserta')
-                            ->orderBy('name', 'asc')
-                            ->get();
+            ->select(['name', 'nik', 'asal_instansi', 'major', 'email', 'phone'])
+            ->orderBy('name', 'asc')
+            ->get();
 
         // Load View PDF
         $pdf = Pdf::loadView('pdf.admin_kota.peserta', compact('participants'));
@@ -170,5 +175,4 @@ class AdminUserController extends Controller
         // Stream (Tampilkan di browser)
         return $pdf->stream('Laporan-Master-Peserta.pdf');
     }
-
 }

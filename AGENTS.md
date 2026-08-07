@@ -65,7 +65,7 @@ Routes split by role in `routes/`:
 `StorageAccessController::serveFile($type, $filename)` resolves `surat`/`logbook`/`attendance` to owning model, calls `$this->authorize('view', $model)`, falls back to public disk if file not in private. Documents never served by raw path. Use this pattern for new document types.
 
 ### Console commands (custom)
-- `internship:complete-expired` (daily) — auto-finish internships past end date. Also triggered inline by `UpdateExpiredInternships` middleware (cached 1h) on every web request.
+- `internship:complete-expired` (daily) — auto-finish internships past end date. Runs via scheduler only (legacy `UpdateExpiredInternships` web middleware removed for performance).
 - `app:send-ending-notifications` (daily 08:00) — H-7 ending email.
 - `backups:prune` (hourly) — prune expired backup logs + SQL files.
 - `magang:backfill-roles-master` — one-shot backfill of Spatie roles from legacy column.

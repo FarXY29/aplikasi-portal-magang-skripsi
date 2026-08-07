@@ -3,7 +3,7 @@
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     @push('styles')
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
         <style>
             .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
             .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -11,6 +11,12 @@
             .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
 
             .period-btn.active {
+                background-color: #14b8a6;
+                color: #ffffff;
+                box-shadow: 0 2px 8px rgba(20,184,166,0.3);
+                border: 1px solid #0d9488;
+            }
+            .dark .period-btn.active {
                 background-color: #1e293b;
                 color: #ffffff;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -25,30 +31,30 @@
                 <i class="fas fa-shield-alt text-sm"></i>
             </div>
             <div>
-                <h2 class="font-black text-xl text-slate-100 leading-tight">Super Admin Dashboard</h2>
-                <p class="text-xs text-slate-400 font-medium hidden md:block">Pusat Kontrol & Monitoring Portal Magang</p>
+                <h2 class="font-black text-xl text-gray-800 dark:text-slate-100 leading-tight">Super Admin Dashboard</h2>
+                <p class="text-xs text-gray-500 dark:text-slate-500 dark:text-slate-400 font-medium hidden md:block">Pusat Kontrol & Monitoring Portal Magang</p>
             </div>
         </div>
     </x-slot>
 
-    <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-[#0f172a] text-slate-100 min-h-screen">
+    <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
 
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- HERO WELCOME BANNER WITH PERIOD FILTERS & AUTO-REFRESH --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
-        <div class="relative overflow-hidden rounded-3xl bg-[#161f33] text-white shadow-xl border border-slate-800/40 p-6 md:p-7">
+        <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-[#161f33] text-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-800/40 p-6 md:p-7">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 
                 {{-- Left: User Info --}}
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-500/30 text-teal-400 flex items-center justify-center text-xl shrink-0 shadow-inner">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xl shrink-0 shadow-inner">
                         <i class="fas fa-user-shield"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl md:text-2xl font-black text-white tracking-tight">
+                        <h1 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                             Selamat Datang, Super Admin
                         </h1>
-                        <p class="text-xs md:text-sm text-slate-400 font-semibold mt-1">
+                        <p class="text-xs md:text-sm text-gray-500 dark:text-slate-400 font-semibold mt-1">
                             <span id="current-period-display">{{ now()->translatedFormat('l, d F Y') }} • {{ $periodText }}</span>
                         </p>
                     </div>
@@ -56,20 +62,20 @@
 
                 {{-- Right: Period Filter Bar + Refresh Button --}}
                 <div class="flex flex-wrap items-center gap-2">
-                    <div class="inline-flex items-center bg-[#0f172a] p-1.5 rounded-2xl border border-slate-800/60 shadow-inner overflow-x-auto max-w-full flex-nowrap">
-                        <button type="button" data-period="hari_ini" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === 'hari_ini' ? 'active' : '' }}">
+                    <div class="inline-flex items-center bg-gray-100 dark:bg-[#0f172a] p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800/60 shadow-inner overflow-x-auto max-w-full flex-nowrap">
+                        <button type="button" data-period="hari_ini" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition {{ $period === 'hari_ini' ? 'active' : '' }}">
                             Hari Ini
                         </button>
-                        <button type="button" data-period="7_hari" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === '7_hari' ? 'active' : '' }}">
+                        <button type="button" data-period="7_hari" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition {{ $period === '7_hari' ? 'active' : '' }}">
                             7 Hari
                         </button>
-                        <button type="button" data-period="30_hari" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === '30_hari' ? 'active' : '' }}">
+                        <button type="button" data-period="30_hari" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition {{ $period === '30_hari' ? 'active' : '' }}">
                             30 Hari
                         </button>
-                        <button type="button" data-period="semester" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === 'semester' ? 'active' : '' }}">
+                        <button type="button" data-period="semester" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition {{ $period === 'semester' ? 'active' : '' }}">
                             Semester
                         </button>
-                        <button type="button" data-period="tahun" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition {{ $period === 'tahun' ? 'active' : '' }}">
+                        <button type="button" data-period="tahun" class="period-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition {{ $period === 'tahun' ? 'active' : '' }}">
                             Tahun
                         </button>
                     </div>
@@ -95,19 +101,19 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             
             {{-- Tren Pendaftaran (2/3 width) --}}
-            <div class="xl:col-span-2 bg-[#161f33] rounded-3xl border border-slate-800/40 p-6 flex flex-col justify-between shadow-xl">
+            <div class="xl:col-span-2 bg-white dark:bg-[#161f33] rounded-3xl border border-slate-200 dark:border-slate-800/40 p-6 flex flex-col justify-between shadow-xl">
                 <div>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-teal-500/20 text-teal-400 border border-teal-500/30 flex items-center justify-center shadow-xs">
+                            <div class="w-10 h-10 rounded-2xl bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-500/30 flex items-center justify-center shadow-xs">
                                 <i class="fas fa-chart-line text-base"></i>
                             </div>
                             <div>
-                                <h3 class="text-base font-black text-white">Tren Pendaftaran</h3>
-                                <p class="text-xs text-slate-400 font-medium">Jumlah pendaftar per hari dalam periode terpilih</p>
+                                <h3 class="text-base font-black text-slate-900 dark:text-white">Tren Pendaftaran</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Jumlah pendaftar per hari dalam periode terpilih</p>
                             </div>
                         </div>
-                        <span id="chart-period-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-500/20 text-teal-300 border border-teal-500/30 tracking-wider">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 tracking-wider">
                             {{ strtoupper($periodText) }}
                         </span>
                     </div>
@@ -122,15 +128,15 @@
             </div>
 
             {{-- Status Lamaran Donut Chart (1/3 width) --}}
-            <div class="bg-[#161f33] rounded-3xl border border-slate-800/40 p-6 flex flex-col justify-between shadow-xl">
+            <div class="bg-white dark:bg-[#161f33] rounded-3xl border border-slate-200 dark:border-slate-800/40 p-6 flex flex-col justify-between shadow-xl">
                 <div>
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-2xl bg-orange-500/20 text-orange-400 border border-orange-500/30 flex items-center justify-center shadow-xs">
+                        <div class="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30 flex items-center justify-center shadow-xs">
                             <i class="fas fa-chart-pie text-base"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-black text-white">Status Lamaran</h3>
-                            <p class="text-xs text-slate-400 font-medium">Distribusi status dalam periode</p>
+                            <h3 class="text-base font-black text-slate-900 dark:text-white">Status Lamaran</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Distribusi status dalam periode</p>
                         </div>
                     </div>
 
@@ -143,16 +149,16 @@
                 </div>
 
                 {{-- Lolos & Tolak Summary Cards at Bottom --}}
-                <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-800/60">
-                    <div class="bg-emerald-950/30 p-3 rounded-2xl border border-emerald-900/40 text-center">
-                        <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">LOLOS</span>
-                        <span id="lolos-percentage" class="text-xl font-black text-emerald-400 mt-0.5 block">
+                <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800/60">
+                    <div class="bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-2xl border border-emerald-200 dark:border-emerald-900/40 text-center">
+                        <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">LOLOS</span>
+                        <span id="lolos-percentage" class="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">
                             {{ $lolosPercentage }}%
                         </span>
                     </div>
-                    <div class="bg-red-950/30 p-3 rounded-2xl border border-red-900/40 text-center">
-                        <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">TOLAK</span>
-                        <span id="tolak-percentage" class="text-xl font-black text-red-400 mt-0.5 block">
+                    <div class="bg-red-50 dark:bg-red-950/30 p-3 rounded-2xl border border-red-200 dark:border-red-900/40 text-center">
+                        <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">TOLAK</span>
+                        <span id="tolak-percentage" class="text-xl font-black text-red-600 dark:text-red-400 mt-0.5 block">
                             {{ $tolakPercentage }}%
                         </span>
                     </div>
@@ -166,25 +172,25 @@
         {{-- ══════════════════════════════════════════════════════════ --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
             {{-- Tabel statistik per instansi --}}
-            <div class="xl:col-span-2 bg-[#161f33] rounded-3xl border border-slate-800/40 overflow-hidden shadow-xl">
-                <div class="p-5 border-b border-slate-800/60 flex items-center justify-between bg-[#161f33]">
+            <div class="xl:col-span-2 bg-white dark:bg-[#161f33] rounded-3xl border border-slate-200 dark:border-slate-800/40 overflow-hidden shadow-xl">
+                <div class="p-5 border-b border-slate-200 dark:border-slate-800/60 flex items-center justify-between bg-white dark:bg-[#161f33]">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center shadow-xs border border-teal-500/30">
                             <i class="fas fa-building text-sm"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-black text-white">Statistik Pelamar per Instansi</h3>
-                            <p class="text-xs text-slate-400 font-medium">Distribusi peminat magang berdasarkan dinas</p>
+                            <h3 class="text-base font-black text-slate-900 dark:text-white">Statistik Pelamar per Instansi</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Distribusi peminat magang berdasarkan dinas</p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.laporan.peserta_global') }}" class="text-xs text-teal-400 bg-teal-500/10 px-3 py-1.5 rounded-xl hover:bg-teal-500/20 font-bold transition border border-teal-500/30">
+                    <a href="{{ route('admin.laporan.peserta_global') }}" class="text-xs text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-3 py-1.5 rounded-xl hover:bg-teal-100 dark:hover:bg-teal-500/20 font-bold transition border border-teal-200 dark:border-teal-500/30">
                         <i class="fas fa-external-link-alt text-[10px] mr-1"></i> Lihat Semua
                     </a>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-[#0f172a] text-slate-400 text-[10px] font-black uppercase tracking-wider border-b border-slate-800/60">
+                        <thead class="bg-gray-100 dark:bg-[#0f172a] text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider border-b border-slate-200 dark:border-slate-800/60">
                             <tr>
                                 <th class="px-5 py-3.5 w-14">No</th>
                                 <th class="px-5 py-3.5">Nama Instansi</th>
@@ -192,33 +198,33 @@
                                 <th class="px-5 py-3.5 text-right w-32">Total Pelamar</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60 text-xs font-semibold">
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800/60 text-xs font-semibold">
                             @forelse($instansiStats as $index => $instansi)
                                 @php
                                     $percentage = $maxPelamar > 0 ? ($instansi->applications_count / $maxPelamar) * 100 : 0;
                                 @endphp
-                                <tr class="hover:bg-slate-800/40 transition">
+                                <tr class="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition">
                                     <td class="px-5 py-3.5 text-slate-500 font-bold">
                                         {{ $instansiStats->firstItem() + $index }}
                                     </td>
                                     <td class="px-5 py-3.5 pr-8">
-                                        <p class="text-slate-200 font-bold">{{ $instansi->nama_dinas }}</p>
-                                        <div class="w-full bg-slate-900 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-800/60">
+                                        <p class="text-slate-700 dark:text-slate-200 font-bold">{{ $instansi->nama_dinas }}</p>
+                                        <div class="w-full bg-slate-200 dark:bg-slate-900 rounded-full h-1.5 mt-2 overflow-hidden border border-slate-200 dark:border-slate-800/60">
                                             <div class="bg-teal-400 h-1.5 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-3.5 text-right text-slate-400 font-bold">
+                                    <td class="px-5 py-3.5 text-right text-slate-500 dark:text-slate-400 font-bold">
                                         {{ number_format($percentage, 1) }}%
                                     </td>
                                     <td class="px-5 py-3.5 text-right">
-                                        <span class="inline-flex items-center justify-center px-3 py-1 rounded-xl text-xs font-black bg-teal-500/10 text-teal-300 border border-teal-500/30 min-w-[56px]">
+                                        <span class="inline-flex items-center justify-center px-3 py-1 rounded-xl text-xs font-black bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 min-w-[56px]">
                                             {{ $instansi->applications_count }}
                                         </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                                    <td colspan="4" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                         Belum ada data instansi.
                                     </td>
                                 </tr>
@@ -228,7 +234,7 @@
                 </div>
 
                 @if($instansiStats->hasPages())
-                <div class="p-4 border-t border-slate-800/60 bg-[#0f172a]">
+                <div class="p-4 border-t border-slate-200 dark:border-slate-800/60 bg-gray-100 dark:bg-[#0f172a]">
                     {{ $instansiStats->links() }}
                 </div>
                 @endif
@@ -237,25 +243,25 @@
             {{-- Kolom Kanan: Instansi Terbaru & Info Server --}}
             <div class="space-y-5">
                 {{-- Instansi Terbaru --}}
-                <div class="bg-[#161f33] rounded-3xl border border-slate-800/40 overflow-hidden shadow-xl">
-                    <div class="p-5 border-b border-slate-800/60 flex items-center justify-between bg-[#161f33]">
+                <div class="bg-white dark:bg-[#161f33] rounded-3xl border border-slate-200 dark:border-slate-800/40 overflow-hidden shadow-xl">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-800/60 flex items-center justify-between bg-white dark:bg-[#161f33]">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center border border-teal-500/30">
                                 <i class="fas fa-plus-circle text-xs"></i>
                             </div>
-                            <h3 class="text-sm font-black text-white">Instansi Terbaru</h3>
+                            <h3 class="text-sm font-black text-slate-900 dark:text-white">Instansi Terbaru</h3>
                         </div>
-                        <a href="{{ route('admin.instansi.index') }}" class="text-[10px] text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded-lg font-black transition border border-teal-500/30">Semua</a>
+                        <a href="{{ route('admin.instansi.index') }}" class="text-[10px] text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-2.5 py-1 rounded-lg font-black transition border border-teal-200 dark:border-teal-500/30">Semua</a>
                     </div>
-                    <div class="divide-y divide-slate-800/60">
+                    <div class="divide-y divide-slate-200 dark:divide-slate-800/60">
                         @foreach($recentInstansis as $dinas)
-                        <div class="p-4 flex items-center gap-3 hover:bg-slate-800/40 transition">
-                            <div class="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs shrink-0">
+                        <div class="p-4 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-800/40 transition">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold text-xs shrink-0">
                                 <i class="fas fa-building"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs font-bold text-slate-200 truncate">{{ $dinas->nama_dinas }}</p>
-                                <p class="text-[10px] text-slate-400 truncate mt-0.5 font-medium">
+                                <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ $dinas->nama_dinas }}</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
                                     <i class="far fa-clock text-[9px]"></i> {{ $dinas->created_at->diffForHumans() }}
                                 </p>
                             </div>
@@ -265,25 +271,25 @@
                 </div>
 
                 {{-- Info Sistem --}}
-                <div class="bg-[#161f33] rounded-3xl border border-slate-800/40 p-6 shadow-xl">
+                <div class="bg-white dark:bg-[#161f33] rounded-3xl border border-slate-200 dark:border-slate-800/40 p-6 shadow-xl">
                     <div class="flex items-center gap-2.5 mb-4">
-                        <div class="w-8 h-8 rounded-xl bg-slate-800/60 text-slate-400 flex items-center justify-center border border-slate-800/60">
+                        <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 flex items-center justify-center border border-slate-200 dark:border-slate-800/60">
                             <i class="fas fa-server text-xs"></i>
                         </div>
-                        <h3 class="text-sm font-black text-white">Informasi Sistem</h3>
+                        <h3 class="text-sm font-black text-slate-900 dark:text-white">Informasi Sistem</h3>
                     </div>
                     <div class="space-y-3 text-xs font-bold">
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                            <span class="text-slate-400">Framework</span>
-                            <span class="text-teal-300 bg-teal-500/10 px-2.5 py-1 rounded-lg border border-teal-500/30 font-black text-[11px]">v{{ app()->version() }}</span>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800/60">
+                            <span class="text-slate-500 dark:text-slate-400">Framework</span>
+                            <span class="text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-500/10 px-2.5 py-1 rounded-lg border border-teal-200 dark:border-teal-500/30 font-black text-[11px]">v{{ app()->version() }}</span>
                         </div>
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                            <span class="text-slate-400">PHP</span>
-                            <span class="text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/30 font-black text-[11px]">{{ PHP_VERSION }}</span>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800/60">
+                            <span class="text-slate-500 dark:text-slate-400">PHP</span>
+                            <span class="text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-200 dark:border-blue-500/30 font-black text-[11px]">{{ PHP_VERSION }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Status Auto-Refresh</span>
-                            <span class="text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/30 flex items-center gap-1.5 font-black text-[11px]">
+                            <span class="text-slate-500 dark:text-slate-400">Status Auto-Refresh</span>
+                            <span class="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-500/30 flex items-center gap-1.5 font-black text-[11px]">
                                 <span class="relative flex h-2 w-2">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>

@@ -8,6 +8,7 @@ use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -21,16 +22,6 @@ class DashboardController extends Controller
         $instansi = $user->instansi;
 
         $period = $request->query('period', '30_hari');
-        
-        $startDate = match ($period) {
-            'hari_ini' => now()->startOfDay(),
-            '7_hari' => now()->subDays(7)->startOfDay(),
-            '30_hari' => now()->subDays(30)->startOfDay(),
-            'semester' => now()->subMonths(6)->startOfDay(),
-            'tahun' => now()->subYear()->startOfDay(),
-            default => now()->subDays(30)->startOfDay(),
-        };
-        $endDate = now()->endOfDay();
 
         $periodText = match ($period) {
             'hari_ini' => 'Hari Ini',
@@ -41,85 +32,82 @@ class DashboardController extends Controller
             default => '30 Hari Terakhir',
         };
 
-        // Lowongan & Pembimbing counts
-        $totalLowongan = InternshipPosition::where('instansi_id', $instansi->id)->count();
-        $totalPembimbing = User::where('instansi_id', $instansi->id)->where('role', 'pembimbing_lapangan')->count();
+        $data = Cache::remember(
+            'admin_instansi_dashboard:'.$instansi->id.':'.$period,
+            60,
+            fn () => $this->buildDashboardData($instansi->id, $period)
+        );
 
-        // Position IDs for this instansi
-        $positionIds = InternshipPosition::where('instansi_id', $instansi->id)->pluck('id');
-
-        // Query applications for this instansi in period
-        $appQuery = Application::whereIn('internship_position_id', $positionIds)
-            ->whereBetween('created_at', [$startDate, $endDate]);
-        
-        $periodAppCount = (clone $appQuery)->count();
-        $useFilter = $periodAppCount > 0;
-
-        $totalApplications = $useFilter 
-            ? $periodAppCount 
-            : Application::whereIn('internship_position_id', $positionIds)->count();
-
-        $activeInterns = $useFilter 
-            ? (clone $appQuery)->where('status', 'diterima')->count() 
-            : Application::whereIn('internship_position_id', $positionIds)->where('status', 'diterima')->count();
-
-        $completedInterns = $useFilter 
-            ? (clone $appQuery)->where('status', 'selesai')->count() 
-            : Application::whereIn('internship_position_id', $positionIds)->where('status', 'selesai')->count();
-
-        $pendingApplications = $useFilter 
-            ? (clone $appQuery)->where('status', 'pending')->count() 
-            : Application::whereIn('internship_position_id', $positionIds)->where('status', 'pending')->count();
-
-        $rejectedApplications = $useFilter 
-            ? (clone $appQuery)->where('status', 'ditolak')->count() 
-            : Application::whereIn('internship_position_id', $positionIds)->where('status', 'ditolak')->count();
-
-        // --- GRAFIK TREN PENDAFTARAN (LINE CHART) ---
-        $trendLabels = [];
-        $trendData = [];
-
-        if ($period === 'hari_ini') {
-            for ($i = 0; $i < 24; $i += 3) {
-                $hStart = now()->startOfDay()->addHours($i);
-                $hEnd = (clone $hStart)->addHours(3);
-                $trendLabels[] = $hStart->format('H:i');
-                $trendData[] = Application::whereIn('internship_position_id', $positionIds)
-                    ->whereBetween('created_at', [$hStart, $hEnd])->count();
-            }
-        } elseif ($period === '7_hari') {
-            for ($i = 6; $i >= 0; $i--) {
-                $date = now()->subDays($i);
-                $trendLabels[] = $date->translatedFormat('d M');
-                $trendData[] = Application::whereIn('internship_position_id', $positionIds)
-                    ->whereDate('created_at', $date->toDateString())->count();
-            }
-        } elseif ($period === 'semester') {
-            for ($i = 5; $i >= 0; $i--) {
-                $month = now()->subMonths($i);
-                $trendLabels[] = $month->translatedFormat('M Y');
-                $trendData[] = Application::whereIn('internship_position_id', $positionIds)
-                    ->whereYear('created_at', $month->year)
-                    ->whereMonth('created_at', $month->month)
-                    ->count();
-            }
-        } elseif ($period === 'tahun') {
-            for ($i = 11; $i >= 0; $i--) {
-                $month = now()->subMonths($i);
-                $trendLabels[] = $month->translatedFormat('M Y');
-                $trendData[] = Application::whereIn('internship_position_id', $positionIds)
-                    ->whereYear('created_at', $month->year)
-                    ->whereMonth('created_at', $month->month)
-                    ->count();
-            }
-        } else { // 30_hari
-            for ($i = 29; $i >= 0; $i--) {
-                $date = now()->subDays($i);
-                $trendLabels[] = $date->translatedFormat('d M');
-                $trendData[] = Application::whereIn('internship_position_id', $positionIds)
-                    ->whereDate('created_at', $date->toDateString())->count();
-            }
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'totalLowongan' => number_format($data['totalLowongan']),
+                'totalPembimbing' => number_format($data['totalPembimbing']),
+                'totalApplications' => number_format($data['totalApplications']),
+                'activeInterns' => number_format($data['activeInterns']),
+                'completedInterns' => number_format($data['completedInterns']),
+                'pendingApplications' => number_format($data['pendingApplications']),
+                'rejectedApplications' => number_format($data['rejectedApplications']),
+                'lolosPercentage' => $data['lolosPercentage'],
+                'tolakPercentage' => $data['tolakPercentage'],
+                'statusLabels' => $data['statusLabels'],
+                'statusData' => $data['statusData'],
+                'trendLabels' => $data['trendLabels'],
+                'trendData' => $data['trendData'],
+                'periodText' => $periodText,
+                'period' => $period,
+                'updatedAt' => now()->translatedFormat('l, d F Y - H:i:s'),
+            ]);
         }
+
+        return view('admin_instansi.dashboard', array_merge($data, [
+            'instansi' => $instansi,
+            'periodText' => $periodText,
+            'period' => $period,
+        ]));
+    }
+
+    /**
+     * Hitung seluruh data dashboard instansi sekali jalan (di-cache 60 detik).
+     */
+    private function buildDashboardData(int $instansiId, string $period): array
+    {
+        $startDate = match ($period) {
+            'hari_ini' => now()->startOfDay(),
+            '7_hari' => now()->subDays(7)->startOfDay(),
+            '30_hari' => now()->subDays(30)->startOfDay(),
+            'semester' => now()->subMonths(6)->startOfDay(),
+            'tahun' => now()->subYear()->startOfDay(),
+            default => now()->subDays(30)->startOfDay(),
+        };
+        $endDate = now()->endOfDay();
+
+        $totalLowongan = InternshipPosition::where('instansi_id', $instansiId)->count();
+        $totalPembimbing = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')->count();
+
+        $positionIds = InternshipPosition::where('instansi_id', $instansiId)->pluck('id');
+
+        // Satu query GROUP BY menggantikan 5 query count terpisah
+        $periodCounts = Application::whereIn('internship_position_id', $positionIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $periodAppCount = (int) $periodCounts->sum();
+
+        $statusCounts = $periodAppCount > 0
+            ? $periodCounts
+            : Application::whereIn('internship_position_id', $positionIds)
+                ->select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
+        $totalApplications = $periodAppCount > 0 ? $periodAppCount : (int) $statusCounts->sum();
+        $activeInterns = (int) ($statusCounts['diterima'] ?? 0);
+        $completedInterns = (int) ($statusCounts['selesai'] ?? 0);
+        $pendingApplications = (int) ($statusCounts['pending'] ?? 0);
+        $rejectedApplications = (int) ($statusCounts['ditolak'] ?? 0);
+
+        [$trendLabels, $trendData] = $this->buildTrend($positionIds, $period);
 
         $lolosCount = $activeInterns + $completedInterns;
         $lolosPercentage = $totalApplications > 0 ? round(($lolosCount / $totalApplications) * 100, 1) : 0;
@@ -127,27 +115,6 @@ class DashboardController extends Controller
 
         $statusLabels = ['Pending', 'Aktif', 'Selesai', 'Ditolak'];
         $statusData = [$pendingApplications, $activeInterns, $completedInterns, $rejectedApplications];
-
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'totalLowongan' => number_format($totalLowongan),
-                'totalPembimbing' => number_format($totalPembimbing),
-                'totalApplications' => number_format($totalApplications),
-                'activeInterns' => number_format($activeInterns),
-                'completedInterns' => number_format($completedInterns),
-                'pendingApplications' => number_format($pendingApplications),
-                'rejectedApplications' => number_format($rejectedApplications),
-                'lolosPercentage' => $lolosPercentage,
-                'tolakPercentage' => $tolakPercentage,
-                'statusLabels' => $statusLabels,
-                'statusData' => $statusData,
-                'trendLabels' => $trendLabels,
-                'trendData' => $trendData,
-                'periodText' => $periodText,
-                'period' => $period,
-                'updatedAt' => now()->translatedFormat('l, d F Y - H:i:s'),
-            ]);
-        }
 
         $topInstansi = DB::table('applications')
             ->join('users', 'applications.user_id', '=', 'users.id')
@@ -160,12 +127,11 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $recentPositions = InternshipPosition::where('instansi_id', $instansi->id)->latest()->take(5)->get();
+        $recentPositions = InternshipPosition::where('instansi_id', $instansiId)->latest()->take(5)->get();
 
-        return view('admin_instansi.dashboard', compact(
-            'instansi', 
-            'totalLowongan', 
-            'totalPembimbing', 
+        return compact(
+            'totalLowongan',
+            'totalPembimbing',
             'totalApplications',
             'activeInterns',
             'completedInterns',
@@ -177,10 +143,70 @@ class DashboardController extends Controller
             'statusData',
             'trendLabels',
             'trendData',
-            'periodText',
-            'period',
-            'topInstansi', 
+            'topInstansi',
             'recentPositions'
-        ));
+        );
+    }
+
+    /**
+     * Tren pendaftar: satu query GROUP BY menggantikan count per bucket.
+     *
+     * @return array{0: array<int, string>, 1: array<int, int>}
+     */
+    private function buildTrend($positionIds, string $period): array
+    {
+        $labels = [];
+        $data = [];
+
+        if ($period === 'hari_ini') {
+            $rows = Application::whereIn('internship_position_id', $positionIds)
+                ->where('created_at', '>=', now()->startOfDay())
+                ->where('created_at', '<=', now())
+                ->selectRaw('FLOOR(HOUR(created_at) / 3) as bucket, COUNT(*) as total')
+                ->groupBy('bucket')
+                ->pluck('total', 'bucket');
+
+            for ($i = 0; $i < 24; $i += 3) {
+                $labels[] = now()->startOfDay()->addHours($i)->format('H:i');
+                $data[] = (int) ($rows[intdiv($i, 3)] ?? 0);
+            }
+
+            return [$labels, $data];
+        }
+
+        if ($period === '7_hari' || $period === '30_hari') {
+            $days = $period === '7_hari' ? 7 : 30;
+            $start = now()->subDays($days - 1)->startOfDay();
+            $rows = Application::whereIn('internship_position_id', $positionIds)
+                ->whereBetween('created_at', [$start, now()->endOfDay()])
+                ->selectRaw('DATE(created_at) as hari, COUNT(*) as total')
+                ->groupBy('hari')
+                ->pluck('total', 'hari');
+
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $date = now()->subDays($i);
+                $labels[] = $date->translatedFormat('d M');
+                $data[] = (int) ($rows[$date->toDateString()] ?? 0);
+            }
+
+            return [$labels, $data];
+        }
+
+        $months = $period === 'tahun' ? 12 : 6;
+        $start = now()->subMonths($months - 1)->startOfMonth();
+        $rows = Application::whereIn('internship_position_id', $positionIds)
+            ->where('created_at', '>=', $start)
+            ->where('created_at', '<=', now())
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan, COUNT(*) as total")
+            ->groupBy('bulan')
+            ->pluck('total', 'bulan');
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $labels[] = $month->translatedFormat('M Y');
+            $data[] = (int) ($rows[$month->format('Y-m')] ?? 0);
+        }
+
+        return [$labels, $data];
     }
 }

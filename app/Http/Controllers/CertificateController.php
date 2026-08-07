@@ -99,6 +99,8 @@ class CertificateController extends Controller
         $app = Application::with(['user', 'position.instansi'])
                 ->findOrFail($applicationId);
 
+        $this->authorize('manageActiveIntern', $app);
+
         // Validasi: Pastikan nilai sudah ada sebelum terbit sertifikat
         if (!$app->nilai_rata_rata) {
             return redirect()->back()->with('error', 'Peserta belum dinilai oleh pembimbing_lapangan. Sertifikat tidak dapat diterbitkan.');
@@ -132,6 +134,8 @@ class CertificateController extends Controller
         ]);
 
         $app = Application::findOrFail($applicationId);
+
+        $this->authorize('manageActiveIntern', $app);
 
         // 1. Simpan Data Legalitas Sertifikat
         $app->update([

@@ -3,21 +3,21 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', function () {
-    $role = auth()->user()->role;
+    $user = auth()->user();
 
-    if ($role === 'admin_kota') {
+    if ($user->hasPortalRole('admin_kota')) {
         return redirect()->route('admin.dashboard');
     }
-    if ($role === 'admin_instansi') {
+    if ($user->hasPortalRole('admin_instansi')) {
         return redirect()->route('dinas.dashboard');
     }
-    if ($role === 'pembimbing_lapangan') {
+    if ($user->hasPortalRole('pembimbing_lapangan')) {
         return redirect()->route('pembimbing_lapangan.dashboard');
     }
-    if ($role === 'peserta') {
+    if ($user->hasPortalRole('peserta')) {
         return redirect()->route('peserta.dashboard');
     }
-    if ($role === 'pembimbing') {
+    if ($user->hasPortalRole('pembimbing')) {
         return redirect()->route('pembimbing.dashboard');
     }
 

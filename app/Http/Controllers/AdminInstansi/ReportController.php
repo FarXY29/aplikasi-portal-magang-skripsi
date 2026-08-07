@@ -125,14 +125,14 @@ class ReportController extends Controller
                   ->with(['user', 'position', 'logs', 'attendances']);
             }])
             ->get()->map(function($pl) {
-                $pl->total_bimbingan_aktif = $pl->bimbingan->where('status', 'diterima')->count();
-                $pl->total_lulus = $pl->bimbingan->where('status', 'selesai')->count();
+                $pl->total_bimbingan_aktif = $pl->bimbingan->where('status.value', 'diterima')->count();
+                $pl->total_lulus = $pl->bimbingan->where('status.value', 'selesai')->count();
                 
                 $pending_logs = 0;
                 $total_nilai = 0;
                 $count_nilai = 0;
 
-                $pl->mahasiswa_aktif = $pl->bimbingan->where('status', 'diterima')->map(function($app) use (&$pending_logs) {
+                $pl->mahasiswa_aktif = $pl->bimbingan->where('status.value', 'diterima')->map(function($app) use (&$pending_logs) {
                     $total_l = $app->logs->count();
                     $approved_l = $app->logs->where('status_validasi', 'disetujui')->count();
                     $pending_l = $app->logs->where('status_validasi', 'pending')->count();
@@ -283,10 +283,10 @@ class ReportController extends Controller
             'total_kampus' => $demografi->count(),
             'total_jurusan' => $demografiJurusan->count(),
             'total_pelamar' => $applications->count(),
-            'total_diterima' => $applications->whereIn('status', ['diterima', 'selesai'])->count(),
-            'total_selesai' => $applications->where('status', 'selesai')->count(),
-            'total_ditolak' => $applications->where('status', 'ditolak')->count(),
-            'total_pending' => $applications->where('status', 'pending')->count(),
+            'total_diterima' => $applications->whereIn('status.value', ['diterima', 'selesai'])->count(),
+            'total_selesai' => $applications->where('status.value', 'selesai')->count(),
+            'total_ditolak' => $applications->where('status.value', 'ditolak')->count(),
+            'total_pending' => $applications->where('status.value', 'pending')->count(),
             'kampus_terbanyak' => $demografi->count() > 0 ? $demografi->keys()->first() : '-',
             'kampus_terbanyak_jumlah' => $demografi->count() > 0 ? $demografi->first()['total_pelamar'] : 0,
         ];

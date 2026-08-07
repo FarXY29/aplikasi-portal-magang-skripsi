@@ -2,17 +2,13 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 
 class InternshipCompleted extends Mailable
 {
-    use Queueable, SerializesModels;
 
     public $application;
 
@@ -30,7 +26,7 @@ class InternshipCompleted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Selamat! Magang Anda Telah Selesai - ' . env('APP_NAME', 'Portal Magang'),
+            subject: 'Selamat! Magang Anda Telah Selesai - '.config('app.name', 'Portal Magang'),
         );
     }
 

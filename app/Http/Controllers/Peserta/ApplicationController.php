@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Peserta\StoreApplicationRequest;
 use App\Models\Application;
 use App\Models\InternshipPosition;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\Peserta\StoreApplicationRequest;
 
 class ApplicationController extends Controller
 {
@@ -33,7 +33,7 @@ class ApplicationController extends Controller
         // 1. Validasi Jurusan
         $syaratJurusan = strtolower($position->required_major);
         $jurusanPelamar = strtolower($user->major);
-        if (!str_contains($syaratJurusan, 'semua jurusan') && !str_contains($syaratJurusan, $jurusanPelamar)) {
+        if (! str_contains($syaratJurusan, 'semua jurusan') && ! str_contains($syaratJurusan, $jurusanPelamar)) {
             return redirect()->route('home')->with('error', "Posisi ini khusus jurusan: {$position->required_major}.");
         }
 
@@ -54,7 +54,7 @@ class ApplicationController extends Controller
         $user = Auth::user();
 
         $reqStart = $request->tanggal_mulai;
-        $reqEnd   = $request->tanggal_selesai;
+        $reqEnd = $request->tanggal_selesai;
 
         // Cek Application Limiter (Maksimal 2 lamaran aktif)
         $activeApplicationsCount = Application::where('user_id', $user->id)
@@ -84,9 +84,9 @@ class ApplicationController extends Controller
 
             $conflictingAppsCount = Application::where('internship_position_id', $id)
                 ->whereIn('status', ['diterima', 'pending'])
-                ->where(function($q) use ($reqStart, $reqEnd) {
+                ->where(function ($q) use ($reqStart, $reqEnd) {
                     $q->where('tanggal_mulai', '<=', $reqEnd)
-                      ->where('tanggal_selesai', '>=', $reqStart);
+                        ->where('tanggal_selesai', '>=', $reqStart);
                 })
                 ->count();
 
@@ -94,11 +94,11 @@ class ApplicationController extends Controller
             $instansi = $position->instansi()->lockForUpdate()->first();
             $instansiFull = false;
             if ($instansi && $instansi->max_total_quota > 0) {
-                $instansiActiveCount = Application::whereHas('position', fn($q) => $q->where('instansi_id', $instansi->id))
+                $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
                     ->whereIn('status', ['diterima', 'pending'])
-                    ->where(function($q) use ($reqStart, $reqEnd) {
+                    ->where(function ($q) use ($reqStart, $reqEnd) {
                         $q->where('tanggal_mulai', '<=', $reqEnd)
-                          ->where('tanggal_selesai', '>=', $reqStart);
+                            ->where('tanggal_selesai', '>=', $reqStart);
                     })
                     ->count();
                 if ($instansiActiveCount >= $instansi->max_total_quota) {
@@ -115,7 +115,7 @@ class ApplicationController extends Controller
                 'user_id' => $user->id,
                 'internship_position_id' => $id,
                 'letter_number' => $request->letter_number ?? null,
-                'cv_path' => '-', 
+                'cv_path' => '-',
                 'surat_pengantar_path' => $suratPath,
                 'status' => $status,
                 'tanggal_mulai' => $reqStart,
@@ -125,8 +125,8 @@ class ApplicationController extends Controller
             return $status;
         });
 
-        $successMessage = $status === 'menunggu' 
-            ? 'Anda berhasil masuk Daftar Tunggu! Anda akan otomatis diterima dan jadwal disesuaikan saat ada peserta yang selesai.' 
+        $successMessage = $status === 'menunggu'
+            ? 'Anda berhasil masuk Daftar Tunggu! Anda akan otomatis diterima dan jadwal disesuaikan saat ada peserta yang selesai.'
             : 'Lamaran berhasil dikirim! Slot tanggal aman.';
 
         return redirect()->route('peserta.dashboard')->with('success', $successMessage);
@@ -150,9 +150,9 @@ class ApplicationController extends Controller
 
         $conflictingAppsQuery = Application::where('internship_position_id', $id)
             ->whereIn('status', ['diterima', 'pending'])
-            ->where(function($q) use ($reqStart, $reqEnd) {
+            ->where(function ($q) use ($reqStart, $reqEnd) {
                 $q->where('tanggal_mulai', '<=', $reqEnd)
-                  ->where('tanggal_selesai', '>=', $reqStart);
+                    ->where('tanggal_selesai', '>=', $reqStart);
             });
 
         $bentrokCount = $conflictingAppsQuery->count();
@@ -162,14 +162,14 @@ class ApplicationController extends Controller
             return response()->json([
                 'status' => 'available',
                 'message' => "Kuota Tersedia! (Terisi: {$bentrokCount} dari {$kapasitasMaksimal} kursi)",
-                'class' => 'text-green-600 bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900/50 dark:text-green-400'
+                'class' => 'text-green-600 bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900/50 dark:text-green-400',
             ]);
         } else {
             $lastParticipant = $conflictingAppsQuery->orderBy('tanggal_selesai', 'desc')->first();
-            
-            $suggestionMessage = "";
-            $suggestionDate = "";
-            $suggestionDateText = "";
+
+            $suggestionMessage = '';
+            $suggestionDate = '';
+            $suggestionDateText = '';
 
             if ($lastParticipant) {
                 $finishDate = Carbon::parse($lastParticipant->tanggal_selesai);
@@ -178,17 +178,17 @@ class ApplicationController extends Controller
                 $suggestionDate = $nextAvailableDate->format('Y-m-d');
                 $suggestionDateText = $nextAvailableDate->translatedFormat('d F Y');
 
-                $suggestionMessage = " Kuota Penuh untuk rentang tanggal ini. Sudah ada {$bentrokCount} peserta terjadwal sampai " . $finishDate->translatedFormat('d F Y') . ".";
+                $suggestionMessage = " Kuota Penuh untuk rentang tanggal ini. Sudah ada {$bentrokCount} peserta terjadwal sampai ".$finishDate->translatedFormat('d F Y').'.';
             } else {
-                $suggestionMessage = " Kuota Penuh untuk rentang tanggal ini.";
+                $suggestionMessage = ' Kuota Penuh untuk rentang tanggal ini.';
             }
 
             return response()->json([
                 'status' => 'full',
                 'message' => $suggestionMessage,
                 'class' => 'text-red-600 bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900/50 dark:text-red-400',
-                'suggestion_date' => $suggestionDate, 
-                'suggestion_text' => $suggestionDateText
+                'suggestion_date' => $suggestionDate,
+                'suggestion_text' => $suggestionDateText,
             ]);
         }
     }
@@ -198,8 +198,8 @@ class ApplicationController extends Controller
         $user = Auth::user();
 
         $activeApplicationsCount = Application::where('user_id', $user->id)
-                        ->whereIn('status', ['pending', 'menunggu', 'diterima'])
-                        ->count();
+            ->whereIn('status', ['pending', 'menunggu', 'diterima'])
+            ->count();
 
         if ($activeApplicationsCount >= 2) {
             return redirect()->route('peserta.dashboard')->with('error', 'Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya terlebih dahulu.');
@@ -219,58 +219,54 @@ class ApplicationController extends Controller
         ]);
 
         $reqStart = $request->tanggal_mulai;
-        $reqEnd   = $request->tanggal_selesai;
+        $reqEnd = $request->tanggal_selesai;
 
         $activeApplicationsCount = Application::where('user_id', $user->id)
-                        ->whereIn('status', ['pending', 'menunggu', 'diterima'])
-                        ->count();
+            ->whereIn('status', ['pending', 'menunggu', 'diterima'])
+            ->count();
 
         if ($activeApplicationsCount >= 2) {
             return redirect()->route('peserta.dashboard')->with('error', 'Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya terlebih dahulu.');
         }
 
         $openPositions = InternshipPosition::with('instansi')
-                            ->where('status', 'buka')
-                            ->where('kuota', '>', 0)
-                            ->get();
+            ->where('status', 'buka')
+            ->where('kuota', '>', 0)
+            ->get();
 
         $userMajor = strtolower(trim($user->major ?? ''));
-        $eligiblePositions = $openPositions->filter(function($position) use ($userMajor) {
+        $eligiblePositions = $openPositions->filter(function ($position) use ($userMajor) {
             $reqMajor = strtolower(trim($position->required_major ?? ''));
-            return str_contains($reqMajor, 'semua jurusan') || 
+
+            return str_contains($reqMajor, 'semua jurusan') ||
                    str_contains($reqMajor, $userMajor) ||
-                   $reqMajor == '' || 
+                   $reqMajor == '' ||
                    $reqMajor == '-';
         });
 
         if ($eligiblePositions->isEmpty()) {
-            return redirect()->back()->with('error', 'Maaf, saat ini tidak ada lowongan yang dibuka yang sesuai dengan jurusan Anda (' . ($user->major ?? '-') . ').');
+            return redirect()->back()->with('error', 'Maaf, saat ini tidak ada lowongan yang dibuka yang sesuai dengan jurusan Anda ('.($user->major ?? '-').').');
         }
+
+        // 2 query grouped menggantikan hitungan per-posisi di dalam loop
+        $eligibleIds = $eligiblePositions->pluck('id');
+
+        $bentrokCounts = Application::whereIn('internship_position_id', $eligibleIds)
+            ->whereIn('status', ['diterima', 'pending'])
+            ->where(function ($q) use ($reqStart, $reqEnd) {
+                $q->where('tanggal_mulai', '<=', $reqEnd)
+                    ->where('tanggal_selesai', '>=', $reqStart);
+            })
+            ->select('internship_position_id', DB::raw('count(*) as total'))
+            ->groupBy('internship_position_id')
+            ->pluck('total', 'internship_position_id');
 
         $availablePositions = [];
         foreach ($eligiblePositions as $position) {
             $kapasitasMaksimal = $position->kuota;
 
-            $bentrokCount = Application::where('internship_position_id', $position->id)
-                ->whereIn('status', ['diterima', 'pending'])
-                ->where(function($q) use ($reqStart, $reqEnd) {
-                    $q->where('tanggal_mulai', '<=', $reqEnd)
-                      ->where('tanggal_selesai', '>=', $reqStart);
-                })
-                ->count();
-
-            if ($bentrokCount < $kapasitasMaksimal) {
-                $instansiId = $position->instansi_id;
-                $instansiInternsCount = Application::whereHas('position', function($q) use ($instansiId) {
-                    $q->where('instansi_id', $instansiId);
-                })
-                ->whereIn('status', ['diterima', 'pending'])
-                ->count();
-
-                $availablePositions[] = [
-                    'position' => $position,
-                    'instansi_interns_count' => $instansiInternsCount,
-                ];
+            if (($bentrokCounts[$position->id] ?? 0) < $kapasitasMaksimal) {
+                $availablePositions[] = $position;
             }
         }
 
@@ -278,7 +274,23 @@ class ApplicationController extends Controller
             return redirect()->back()->with('error', 'Maaf, semua kuota instansi yang sesuai dengan jurusan Anda sudah penuh untuk periode tersebut.');
         }
 
-        usort($availablePositions, function($a, $b) {
+        $instansiIds = collect($availablePositions)->pluck('instansi_id')->unique()->values();
+
+        $instansiInternsCounts = Application::whereIn('status', ['diterima', 'pending'])
+            ->join('internship_positions', 'applications.internship_position_id', '=', 'internship_positions.id')
+            ->whereIn('internship_positions.instansi_id', $instansiIds)
+            ->select('internship_positions.instansi_id', DB::raw('count(*) as total'))
+            ->groupBy('internship_positions.instansi_id')
+            ->pluck('total', 'instansi_id');
+
+        $availablePositions = array_map(function ($position) use ($instansiInternsCounts) {
+            return [
+                'position' => $position,
+                'instansi_interns_count' => $instansiInternsCounts[$position->instansi_id] ?? 0,
+            ];
+        }, $availablePositions);
+
+        usort($availablePositions, function ($a, $b) {
             return $a['instansi_interns_count'] <=> $b['instansi_interns_count'];
         });
 
@@ -292,20 +304,20 @@ class ApplicationController extends Controller
 
             $conflictingAppsCount = Application::where('internship_position_id', $position->id)
                 ->whereIn('status', ['diterima', 'pending'])
-                ->where(function($q) use ($reqStart, $reqEnd) {
+                ->where(function ($q) use ($reqStart, $reqEnd) {
                     $q->where('tanggal_mulai', '<=', $reqEnd)
-                      ->where('tanggal_selesai', '>=', $reqStart);
+                        ->where('tanggal_selesai', '>=', $reqStart);
                 })
                 ->count();
 
             $instansi = $position->instansi()->lockForUpdate()->first();
             $instansiFull = false;
             if ($instansi && $instansi->max_total_quota > 0) {
-                $instansiActiveCount = Application::whereHas('position', fn($q) => $q->where('instansi_id', $instansi->id))
+                $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
                     ->whereIn('status', ['diterima', 'pending'])
-                    ->where(function($q) use ($reqStart, $reqEnd) {
+                    ->where(function ($q) use ($reqStart, $reqEnd) {
                         $q->where('tanggal_mulai', '<=', $reqEnd)
-                          ->where('tanggal_selesai', '>=', $reqStart);
+                            ->where('tanggal_selesai', '>=', $reqStart);
                     })
                     ->count();
                 if ($instansiActiveCount >= $instansi->max_total_quota) {
@@ -322,7 +334,7 @@ class ApplicationController extends Controller
                 'user_id' => $user->id,
                 'internship_position_id' => $position->id,
                 'letter_number' => $request->letter_number ?? null,
-                'cv_path' => '-', 
+                'cv_path' => '-',
                 'surat_pengantar_path' => $suratPath,
                 'status' => $status,
                 'tanggal_mulai' => $reqStart,
@@ -334,8 +346,8 @@ class ApplicationController extends Controller
         });
 
         $msg = $status === 'menunggu'
-            ? 'Pendaftaran berhasil! Anda masuk daftar tunggu di ' . $selectedPosition->instansi->nama_dinas . ' karena kuota terisi.'
-            : 'Pendaftaran berhasil! Anda telah otomatis ditempatkan di ' . $selectedPosition->instansi->nama_dinas . '.';
+            ? 'Pendaftaran berhasil! Anda masuk daftar tunggu di '.$selectedPosition->instansi->nama_dinas.' karena kuota terisi.'
+            : 'Pendaftaran berhasil! Anda telah otomatis ditempatkan di '.$selectedPosition->instansi->nama_dinas.'.';
 
         return redirect()->route('peserta.dashboard')->with('success', $msg);
     }
@@ -343,13 +355,13 @@ class ApplicationController extends Controller
     public function submitSaran(Request $request, $id)
     {
         $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
-        
+
         $request->validate([
-            'saran_peserta' => 'required|string'
+            'saran_peserta' => 'required|string',
         ]);
 
         $app->update([
-            'saran_peserta' => $request->saran_peserta
+            'saran_peserta' => $request->saran_peserta,
         ]);
 
         return back()->with('success', 'Terima kasih, saran dan evaluasi Anda telah disimpan secara anonim untuk admin instansi.');

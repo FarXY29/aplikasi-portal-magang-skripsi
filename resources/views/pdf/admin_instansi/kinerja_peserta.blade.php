@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Kinerja Mahasiswa</title>
+    <title>Laporan Kinerja Peserta</title>
     <style>
         body { font-family: sans-serif; font-size: 9px; color: #333; }
         .header { text-align: center; margin-bottom: 15px; border-bottom: 3px double #333; padding-bottom: 12px; }
@@ -33,7 +33,7 @@
         .stats-table .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
         .stats-table .value { font-size: 14px; font-weight: bold; color: #111; }
         
-        .mahasiswa-row { background-color: #f9fafb; font-weight: bold; font-size: 9px; }
+        .peserta-row { background-color: #f9fafb; font-weight: bold; font-size: 9px; }
         
         .detail-title { font-weight: bold; font-size: 8px; margin-bottom: 3px; text-transform: uppercase; }
         .detail-table { width: 100%; border-collapse: collapse; margin-top: 2px; }
@@ -87,7 +87,7 @@
     </table>
 
     {{-- Tabel Utama --}}
-    <div class="section-title">Scorecard Performa Mahasiswa</div>
+    <div class="section-title">Scorecard Performa Peserta</div>
     <table>
         <thead>
             <tr>
@@ -102,8 +102,8 @@
         </thead>
         <tbody>
             @forelse($kinerja as $app)
-                {{-- Baris Profil Mahasiswa --}}
-                <tr class="mahasiswa-row" style="background-color: #f3f4f6;">
+                {{-- Baris Profil Peserta --}}
+                <tr class="peserta-row" style="background-color: #f3f4f6;">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
                         <strong>{{ $app->user->name }}</strong><br>
@@ -120,7 +120,7 @@
                     </td>
                 </tr>
                 
-                {{-- Baris Detail Mahasiswa --}}
+                {{-- Baris Detail Peserta --}}
                 <tr>
                     <td colspan="7" style="padding: 8px 10px; background-color: #ffffff;">
                         <div style="width: 100%;">

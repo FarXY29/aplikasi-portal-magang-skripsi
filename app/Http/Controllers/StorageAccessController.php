@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StorageAccessController extends Controller
 {
+    /** Escape LIKE wildcards so a filename cannot match multiple rows. */
+    private function like(string $value): string
+    {
+        return addcslashes($value, '%_\\');
+    }
+
     /** Serve a document only after resolving its owning record and policy. */
     public function serveFile(string $type, string $filename): Response
     {
@@ -39,7 +45,7 @@ class StorageAccessController extends Controller
     {
         $application = Application::query()
             ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
-            ->where('surat_pengantar_path', 'like', '%/'.$filename)
+            ->where('surat_pengantar_path', 'like', '%/'.$this->like($filename))
             ->firstOrFail();
 
         return [$application->surat_pengantar_path, $application];
@@ -50,7 +56,7 @@ class StorageAccessController extends Controller
     {
         $log = DailyLog::query()
             ->with('application.user')
-            ->where('bukti_foto_path', 'like', '%/'.$filename)
+            ->where('bukti_foto_path', 'like', '%/'.$this->like($filename))
             ->firstOrFail();
 
         return [$log->bukti_foto_path, $log];
@@ -61,7 +67,7 @@ class StorageAccessController extends Controller
     {
         $attendance = Attendance::query()
             ->with('application.user')
-            ->where('proof_file', 'like', '%/'.$filename)
+            ->where('proof_file', 'like', '%/'.$this->like($filename))
             ->firstOrFail();
 
         return [$attendance->proof_file, $attendance];

@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\AdminKota;
 
+use App\Exports\GenericViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Instansi;
+use App\Models\InternshipPosition;
 use App\Models\User;
 use App\Services\PdfExportService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\GenericViewExport;
 
 class ReportController extends Controller
 {
     protected $reportService;
+
     protected $pdfService;
 
     public function __construct(ReportService $reportService, PdfExportService $pdfService)
@@ -29,11 +31,12 @@ class ReportController extends Controller
     protected function exportData($view, $data, $filenameBase, $paper = 'a4', $orientation = 'portrait', $format = 'pdf')
     {
         if ($format === 'excel') {
-            return Excel::download(new GenericViewExport($view, $data), $filenameBase . '.xlsx');
+            return Excel::download(new GenericViewExport($view, $data), $filenameBase.'.xlsx');
         } elseif ($format === 'csv') {
-            return Excel::download(new GenericViewExport($view, $data), $filenameBase . '.csv', \Maatwebsite\Excel\Excel::CSV);
+            return Excel::download(new GenericViewExport($view, $data), $filenameBase.'.csv', \Maatwebsite\Excel\Excel::CSV);
         }
-        return $this->pdfService->stream($view, $data, $filenameBase . '.pdf', $paper, $orientation);
+
+        return $this->pdfService->stream($view, $data, $filenameBase.'.pdf', $paper, $orientation);
     }
 
     /**
@@ -50,6 +53,7 @@ class ReportController extends Controller
     public function report(Request $request)
     {
         $data = $this->getGeneralReportData($request);
+
         return view('admin_kota.laporan', $data);
     }
 
@@ -60,6 +64,7 @@ class ReportController extends Controller
     {
         $data = $this->getGeneralReportData($request);
         $data['request'] = $request;
+
         return $this->exportData('pdf.admin_kota.laporan', $data, 'Laporan-Statistik-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -69,6 +74,7 @@ class ReportController extends Controller
     public function laporanInstansi()
     {
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
+
         return view('admin_kota.laporan_instansi', compact('instansis'));
     }
 
@@ -78,6 +84,7 @@ class ReportController extends Controller
     public function printInstansi(Request $request)
     {
         $instansis = Instansi::with(['positions.applications'])->orderBy('nama_dinas', 'asc')->get();
+
         return $this->exportData('pdf.admin_kota.instansi', compact('instansis'), 'Laporan-Master-INSTANSI', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -89,6 +96,7 @@ class ReportController extends Controller
         $data = $this->reportService->getGlobalInternsData($request);
         $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
         $data['listInstansi'] = User::where('role', 'peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
+
         return view('admin_kota.laporan.peserta_global', $data);
     }
 
@@ -100,10 +108,11 @@ class ReportController extends Controller
         $data = $this->reportService->getGlobalInternsData($request, false);
         $title = 'Laporan Global Peserta Magang';
         if ($request->has('status') && $request->status !== '' && $request->status !== 'semua') {
-            $title .= ' (' . ucfirst($request->status) . ')';
+            $title .= ' ('.ucfirst($request->status).')';
         }
         $data['title'] = $title;
         $data['request'] = $request;
+
         return $this->exportData('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -116,6 +125,7 @@ class ReportController extends Controller
         $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
         $data['listCampus'] = User::where('role', 'peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
         $data['request'] = $request;
+
         return view('admin_kota.laporan.grading', $data);
     }
 
@@ -127,10 +137,11 @@ class ReportController extends Controller
         $data = $this->reportService->getGradingReportData($request);
         $title = 'Laporan Evaluasi & Penilaian Peserta Magang';
         if ($request->filled('predikat')) {
-            $title .= ' - Predikat: ' . ucfirst($request->predikat);
+            $title .= ' - Predikat: '.ucfirst($request->predikat);
         }
         $data['title'] = $title;
         $data['request'] = $request;
+
         return $this->exportData('pdf.admin_kota.grading', $data, 'Laporan-Grading-Peserta', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -141,6 +152,7 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getInstansiDisiplinData($request);
         $data['request'] = $request;
+
         return view('admin_kota.laporan.instansi_disiplin', $data);
     }
 
@@ -152,10 +164,11 @@ class ReportController extends Controller
         $data = $this->reportService->getInstansiDisiplinData($request);
         $title = 'Laporan Kedisiplinan Kehadiran Peserta per Instansi';
         if ($request->filled('disiplin_range')) {
-            $title .= ' - Kategori ' . ucfirst($request->disiplin_range);
+            $title .= ' - Kategori '.ucfirst($request->disiplin_range);
         }
         $data['title'] = $title;
         $data['request'] = $request;
+
         return $this->exportData('pdf.admin_kota.instansi_disiplin', $data, 'Laporan-Kedisiplinan-Instansi', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -165,6 +178,7 @@ class ReportController extends Controller
     public function laporanDurasiMagang(Request $request)
     {
         $instansis = $this->reportService->getDurasiMagangData($request);
+
         return view('admin_kota.laporan.durasi_magang', compact('instansis'));
     }
 
@@ -174,6 +188,7 @@ class ReportController extends Controller
     public function printDurasiMagang(Request $request)
     {
         $data = $this->reportService->getDurasiMagangData($request);
+
         return $this->exportData('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -183,6 +198,7 @@ class ReportController extends Controller
     public function laporanDemografiJurusan(Request $request)
     {
         $jurusans = $this->reportService->getDemografiJurusanData($request);
+
         return view('admin_kota.laporan.demografi_jurusan', compact('jurusans'));
     }
 
@@ -192,9 +208,10 @@ class ReportController extends Controller
     public function printDemografiJurusan(Request $request)
     {
         $data = $this->reportService->getDemografiJurusanData($request);
+
         return $this->exportData('pdf.admin_kota.demografi_jurusan', [
             'jurusans' => $data,
-            'request' => $request
+            'request' => $request,
         ], 'Laporan-Demografi-Jurusan', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -204,6 +221,7 @@ class ReportController extends Controller
     public function laporanPenyerapanKuota(Request $request)
     {
         $penyerapan = $this->reportService->getPenyerapanKuotaData($request);
+
         return view('admin_kota.laporan.penyerapan_kuota', compact('penyerapan'));
     }
 
@@ -213,9 +231,10 @@ class ReportController extends Controller
     public function printPenyerapanKuota(Request $request)
     {
         $data = $this->reportService->getPenyerapanKuotaData($request);
+
         return $this->exportData('pdf.admin_kota.penyerapan_kuota', [
             'penyerapan' => $data,
-            'request' => $request
+            'request' => $request,
         ], 'Laporan-Penyerapan-Kuota', 'a4', 'portrait', $request->query('format', 'pdf'));
     }
 
@@ -227,61 +246,53 @@ class ReportController extends Controller
         $search = $request->input('search');
         $sort = $request->input('sort', 'pelamar_desc');
 
-        $query = Instansi::with(['positions.applications']);
-        
-        if ($search) {
-            $query->where('nama_dinas', 'like', '%' . $search . '%');
-        }
+        // Statistik global dihitung via agregasi SQL, bukan load seluruh tree instansi
+        $totalInstansi = Instansi::count();
+        $totalLowongan = InternshipPosition::where('status', 'buka')->count();
+        $totalPelamarGlobal = Application::count();
+        $totalDiterimaGlobal = Application::whereIn('status', ['diterima', 'selesai'])->count();
 
-        $instansis = $query->get();
+        $avgSeleksiRate = $totalPelamarGlobal > 0 ? round(($totalDiterimaGlobal / $totalPelamarGlobal) * 100, 1) : 0;
 
-        $allInstansis = Instansi::with(['positions.applications'])->get();
-        $totalInstansi = $allInstansis->count();
-        $totalLowongan = $allInstansis->flatMap->positions->where('status', 'buka')->count();
-        
-        $allApps = $allInstansis->flatMap->positions->flatMap->applications;
-        $totalPelamar = $allApps->count();
-        $totalDiterima = $allApps->filter(function($app) {
-            $st = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string) $app->status;
-            return in_array($st, ['diterima', 'selesai']);
-        })->count();
-        
-        $avgSeleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
-        
-        $favDinas = $allInstansis->map(function($d) {
-            return [
-                'nama' => $d->nama_dinas,
-                'count' => $d->positions->flatMap->applications->count()
-            ];
-        })->sortByDesc('count')->first();
-        $favDinasName = $favDinas && $favDinas['count'] > 0 ? $favDinas['nama'] : '-';
+        $favDinasModel = Instansi::withCount('applications')->orderByDesc('applications_count')->first();
+        $favDinasName = $favDinasModel && $favDinasModel->applications_count > 0 ? $favDinasModel->nama_dinas : '-';
 
         $stats = [
             'total_instansi' => $totalInstansi,
             'total_lowongan' => $totalLowongan,
-            'total_pelamar' => $totalPelamar,
-            'total_diterima' => $totalDiterima,
+            'total_pelamar' => $totalPelamarGlobal,
+            'total_diterima' => $totalDiterimaGlobal,
             'avg_seleksi_rate' => $avgSeleksiRate,
-            'fav_dinas' => $favDinasName
+            'fav_dinas' => $favDinasName,
         ];
 
-        $laporan = $instansis->map(function($dinas) {
-            $positions = $dinas->positions;
-            $applications = $positions->flatMap->applications;
-            
-            $totalPelamar = $applications->count();
-            $totalDiterima = $applications->filter(function($app) {
-                $st = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string) $app->status;
-                return in_array($st, ['diterima', 'selesai']);
-            })->count();
-            $totalPosisi = $positions->count();
-            
+        // Baris laporan: withCount menggantikan eager load tree positions.applications
+        $query = Instansi::withCount([
+            'positions',
+            'positions as lowongan_aktif_count' => function ($q) {
+                $q->where('status', 'buka');
+            },
+            'applications as total_pelamar_count',
+            'applications as total_diterima_count' => function ($q) {
+                $q->whereIn('status', ['diterima', 'selesai']);
+            },
+        ]);
+
+        if ($search) {
+            $query->where('nama_dinas', 'like', '%'.$search.'%');
+        }
+
+        $laporan = $query->get()->map(function ($dinas) {
+            $totalPelamar = (int) $dinas->total_pelamar_count;
+            $totalDiterima = (int) $dinas->total_diterima_count;
+            $totalPosisi = (int) $dinas->positions_count;
+
             $seleksiRate = $totalPelamar > 0 ? round(($totalDiterima / $totalPelamar) * 100, 1) : 0;
             $avgPelamar = $totalPosisi > 0 ? round($totalPelamar / $totalPosisi, 1) : 0;
 
             return [
                 'nama_dinas' => $dinas->nama_dinas,
-                'lowongan_aktif' => $positions->where('status', 'buka')->count(),
+                'lowongan_aktif' => (int) $dinas->lowongan_aktif_count,
                 'total_pelamar' => $totalPelamar,
                 'total_magang' => $totalDiterima,
                 'seleksi_rate' => $seleksiRate,

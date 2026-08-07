@@ -94,56 +94,9 @@
                                 @endif
                             </div>
 
-                            <div class="grid grid-cols-2 sm:flex sm:flex-row flex-wrap gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-3 lg:mt-0" x-on:click.stop>
-                                @if($app->display_status == 'diterima')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-id-card"></i> ID Card
-                                    </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-file-contract"></i> Surat Balasan
-                                    </a>
-                                    <a href="{{ route('peserta.logbook.index') }}" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-book-open"></i> Logbook
-                                    </a>
-                                    <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-file-pdf"></i> Rekap Logbook
-                                    </a>
-                                @elseif($app->display_status == 'belum mulai')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-id-card"></i> ID Card
-                                    </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-file-contract"></i> Surat Balasan
-                                    </a>
-                                @elseif($app->display_status == 'selesai')
-                                    <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-id-card"></i> ID Card
-                                    </a>
-                                    <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-file-contract"></i> Surat Balasan
-                                    </a>
-                                    <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center justify-center gap-2">
-                                        <i class="fas fa-file-pdf"></i> Rekap Logbook
-                                    </a>
-                                    @if(empty($app->saran_peserta))
-                                        <button type="button" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
-                                            <i class="fas fa-lock"></i> Sertifikat (Kunci)
-                                        </button>
-                                        <button type="button" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
-                                            <i class="fas fa-lock"></i> Transkrip (Kunci)
-                                        </button>
-                                    @else
-                                        <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition shadow-xs flex items-center justify-center gap-2">
-                                            <i class="fas fa-certificate"></i> Sertifikat
-                                        </a>
-                                        <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">
-                                            <i class="fas fa-file-alt"></i> Transkrip
-                                        </a>
-                                    @endif
-                                @endif
-
+                            <div class="flex flex-wrap items-center gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-3 lg:mt-0" x-on:click.stop>
                                 @if(in_array($app->status?->value, ['pending', 'menunggu']) || ($app->status?->value === 'diterima' && $app->display_status === 'belum mulai'))
-                                    <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" class="col-span-2 sm:col-span-1 sm:w-auto inline" @submit.prevent="$dispatch('open-confirm', { message: 'Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
+                                    <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
                                         @csrf
                                         <button type="submit" class="min-h-[44px] w-full sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-rose-600 text-white rounded-xl text-xs font-bold hover:bg-rose-700 transition shadow-xs flex items-center justify-center gap-2">
                                             <i class="fas fa-times-circle"></i> Batalkan
@@ -151,8 +104,8 @@
                                     </form>
                                 @endif
 
-                                <button type="button" class="min-h-[44px] col-span-2 sm:col-span-1 sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow-xs flex items-center justify-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
-                                    <i class="fas fa-info-circle"></i> Detail
+                                <button type="button" class="min-h-[44px] justify-center px-3 sm:px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
+                                    <i class="fas fa-download"></i> Detail & Unduh
                                 </button>
                             </div>
                         </div>
@@ -188,6 +141,65 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                @if(in_array($app->display_status, ['diterima', 'belum mulai', 'selesai']))
+                                <div class="mb-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-4 sm:p-5 shadow-xs">
+                                    <h3 class="font-bold text-gray-800 dark:text-gray-200 text-xs flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                                        <i class="fas fa-download text-teal-600 dark:text-teal-400"></i> Unduh Dokumen
+                                    </h3>
+                                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                        @if($app->display_status == 'diterima')
+                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-id-card"></i> ID Card
+                                            </a>
+                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-contract"></i> Surat Balasan
+                                            </a>
+                                            <a href="{{ route('peserta.logbook.index') }}" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-book-open"></i> Logbook
+                                            </a>
+                                            <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-pdf"></i> Rekap Logbook
+                                            </a>
+                                        @elseif($app->display_status == 'belum mulai')
+                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-id-card"></i> ID Card
+                                            </a>
+                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-contract"></i> Surat Balasan
+                                            </a>
+                                        @elseif($app->display_status == 'selesai')
+                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-id-card"></i> ID Card
+                                            </a>
+                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-contract"></i> Surat Balasan
+                                            </a>
+                                            <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center justify-center gap-2">
+                                                <i class="fas fa-file-pdf"></i> Rekap Logbook
+                                            </a>
+                                            @if(empty($app->saran_peserta))
+                                                <button type="button" class="min-h-[44px] justify-center px-3 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
+                                                    <i class="fas fa-lock"></i> Sertifikat (Kunci)
+                                                </button>
+                                                <button type="button" class="min-h-[44px] justify-center px-3 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
+                                                    <i class="fas fa-lock"></i> Transkrip (Kunci)
+                                                </button>
+                                            @else
+                                                <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                    <i class="fas fa-certificate"></i> Sertifikat
+                                                </a>
+                                                <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                    <i class="fas fa-file-alt"></i> Transkrip
+                                                </a>
+                                            @endif
+                                        @endif
+                                    </div>
+                                    <p class="text-[11px] text-gray-400 dark:text-gray-500 font-medium mt-3 flex items-center gap-1.5">
+                                        <i class="fas fa-info-circle"></i> Dokumen dapat diunduh kembali kapan saja dari menu ini.
+                                    </p>
+                                </div>
+                                @endif
 
                                 @if($app->catatan_pembimbing_lapangan)
                                     <div class="bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-4 rounded-2xl shadow-xs mb-6">

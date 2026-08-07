@@ -55,8 +55,8 @@ class SettingController extends Controller
     public function updateSettings(Request $request)
     {
         $request->validate([
-            'jam_mulai_masuk' => 'nullable|required_without:latitude',
-            'jam_mulai_pulang' => 'nullable|required_without:latitude',
+            'jam_mulai_masuk' => 'nullable|string|regex:/^\d{1,2}:\d{2}(:\d{2})?$/',
+            'jam_mulai_pulang' => 'nullable|string|regex:/^\d{1,2}:\d{2}(:\d{2})?$/',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'radius_absen' => 'nullable|integer|min:10|max:10000',
