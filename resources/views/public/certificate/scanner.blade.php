@@ -10,7 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100 text-center">
                     <h2 class="text-2xl font-bold mb-4 text-teal-700">Scan QR Code Verifikasi</h2>
-                    <p class="mb-6 text-gray-600 dark:text-gray-400 text-sm">Arahkan kamera ke QR Code, atau unggah file Sertifikat/ID Card (PDF/Gambar) untuk verifikasi.</p>
+                    <p class="mb-6 text-gray-600 dark:text-gray-400 text-sm">Tekan tombol Kamera, izinkan akses kamera, lalu arahkan kamera belakang HP ke QR Code. Pastikan halaman dibuka melalui HTTPS.</p>
                     
                     <!-- QR Reader Wrapper -->
                     <div class="relative mx-auto border-2 border-teal-500/30 dark:border-teal-500/20 rounded-2xl overflow-hidden shadow-lg bg-slate-900 aspect-square" style="width:100%; max-width:400px;">
@@ -41,20 +41,20 @@
 
                     <!-- Controls & Status -->
                     <div class="mt-5 flex flex-col items-center gap-3">
-                        <div id="scanner-status" class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-4 py-1.5 rounded-full font-semibold border dark:border-slate-700">
+                        <div id="scanner-status" role="status" aria-live="polite" class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-4 py-1.5 rounded-full font-semibold border dark:border-slate-700">
                             Status: <span class="text-slate-600 dark:text-slate-400">Mati</span>
                         </div>
 
                         <div class="flex flex-wrap justify-center gap-3 w-full max-w-sm">
-                            <button id="btn-start-scan" class="flex-1 bg-teal-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2 shadow-md shadow-teal-600/20 cursor-pointer">
+                            <button type="button" id="btn-start-scan" aria-controls="qr-reader" class="flex-1 bg-teal-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2 shadow-md shadow-teal-600/20 cursor-pointer">
                                 <i class="fas fa-camera"></i> Kamera
                             </button>
-                            <button id="btn-stop-scan" class="flex-1 bg-rose-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-700 transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 cursor-pointer hidden">
+                            <button type="button" id="btn-stop-scan" aria-controls="qr-reader" class="flex-1 bg-rose-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-700 transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 cursor-pointer hidden">
                                 <i class="fas fa-stop"></i> Stop Kamera
                             </button>
                             
                             <input type="file" id="qr-file-input" accept="image/*,application/pdf" class="hidden">
-                            <button id="btn-upload-file" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+                            <button type="button" id="btn-upload-file" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                                 <i class="fas fa-file-upload"></i> Upload File
                             </button>
                         </div>
@@ -96,8 +96,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script>
-        // Set worker source untuk pdf.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        // PDF.js hanya diperlukan untuk upload PDF; kamera tetap harus berjalan
+        // meskipun dependensi PDF gagal dimuat.
+        if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        }
 
         function docReady(fn) {
             if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -136,17 +139,33 @@
             debugMedia.textContent = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? "Didukung" : "Tidak Didukung oleh Browser";
 
             var html5QrCode = null;
+            var isStarting = false;
+
+            function setStatus(message, className) {
+                statusSpan.textContent = message;
+                statusSpan.className = className;
+            }
 
             function showDebug(error) {
                 console.error("Camera startup error:", error);
                 debugPanel.classList.remove('hidden');
-                debugErrorMsg.textContent = error.name + ": " + error.message;
+                var errorName = error && error.name ? error.name : "CameraError";
+                var errorMessage = error && error.message ? error.message : String(error || "Kesalahan tidak diketahui");
+                debugErrorMsg.textContent = errorName + ": " + errorMessage;
                 
-                statusSpan.textContent = "Gagal Aktif";
-                statusSpan.className = "text-rose-600 dark:text-rose-400";
+                setStatus("Gagal Aktif", "text-rose-600 dark:text-rose-400");
+            }
+
+            function showDependencyError(message) {
+                debugPanel.classList.remove('hidden');
+                debugErrorMsg.textContent = message;
+                setStatus("Library Gagal", "text-rose-600 dark:text-rose-400");
             }
 
             function onScanSuccess(decodedText, decodedResult) {
+                decodedText = String(decodedText || '').trim();
+                if (!decodedText) return;
+
                 if (decodedText !== lastResult) {
                     ++countResults;
                     lastResult = decodedText;
@@ -169,14 +188,26 @@
             }
 
             function startScanning() {
+                if (isStarting || (html5QrCode && html5QrCode.isScanning)) return;
+
+                if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showDependencyError("Kamera HP hanya dapat digunakan melalui HTTPS dan browser yang mendukung akses kamera.");
+                    return;
+                }
+
+                if (typeof window.Html5Qrcode === 'undefined') {
+                    showDependencyError("Library pemindai QR belum berhasil dimuat. Periksa koneksi internet lalu muat ulang halaman.");
+                    return;
+                }
+
                 debugPanel.classList.add('hidden');
                 resultContainer.innerHTML = "";
-                statusSpan.textContent = "Memulai Kamera...";
-                statusSpan.className = "text-amber-500";
+                isStarting = true;
+                setStatus("Memulai Kamera...", "text-amber-500");
                 resetPlaceholder();
                 
                 if (!html5QrCode) {
-                    html5QrCode = new Html5Qrcode("qr-reader");
+                    html5QrCode = new window.Html5Qrcode("qr-reader");
                 }
 
                 const config = { 
@@ -190,8 +221,7 @@
                     onScanSuccess,
                     undefined // No-op on scan frame error to prevent flooding console
                 ).then(() => {
-                    statusSpan.textContent = "Kamera Aktif";
-                    statusSpan.className = "text-teal-600 dark:text-teal-400";
+                    setStatus("Kamera Aktif", "text-teal-600 dark:text-teal-400");
                     
                     btnStart.classList.add('hidden');
                     btnStop.classList.remove('hidden');
@@ -203,25 +233,38 @@
                     btnStop.classList.add('hidden');
                     scannerOverlay.classList.add('hidden');
                     scannerPlaceholder.classList.remove('hidden');
+                    html5QrCode = null;
+                }).finally(() => {
+                    isStarting = false;
                 });
             }
 
-            function stopScanning() {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    return html5QrCode.stop().then(() => {
-                        statusSpan.textContent = "Mati";
-                        statusSpan.className = "text-slate-600 dark:text-slate-400";
-                        
-                        btnStart.classList.remove('hidden');
-                        btnStop.classList.add('hidden');
-                        scannerOverlay.classList.add('hidden');
-                        scannerPlaceholder.classList.remove('hidden');
-                        resetPlaceholder();
-                    }).catch(err => {
+            async function stopScanning() {
+                if (isStarting) return;
+
+                var scanner = html5QrCode;
+                html5QrCode = null;
+
+                if (scanner) {
+                    try {
+                        if (scanner.isScanning) await scanner.stop();
+                    } catch (err) {
                         console.error("Failed to stop scan", err);
-                    });
+                    }
+
+                    try {
+                        await scanner.clear();
+                    } catch (err) {
+                        console.error("Failed to clear scanner", err);
+                    }
                 }
-                return Promise.resolve();
+
+                setStatus("Mati", "text-slate-600 dark:text-slate-400");
+                btnStart.classList.remove('hidden');
+                btnStop.classList.add('hidden');
+                scannerOverlay.classList.add('hidden');
+                scannerPlaceholder.classList.remove('hidden');
+                resetPlaceholder();
             }
 
             function resetPlaceholder() {
@@ -249,8 +292,7 @@
                 
                 // Stop camera before processing file
                 stopScanning().then(() => {
-                    statusSpan.textContent = "Membaca File...";
-                    statusSpan.className = "text-amber-500";
+                    setStatus("Membaca File...", "text-amber-500");
                     
                     // Show custom loading placeholder with icon
                     scannerPlaceholder.innerHTML = `
@@ -258,7 +300,7 @@
                             <i class="fas ${file.type === 'application/pdf' ? 'fa-file-pdf' : 'fa-file-image'} text-2xl"></i>
                         </div>
                         <p class="font-bold text-slate-700 dark:text-slate-300 text-sm">Membaca ${file.type === 'application/pdf' ? 'PDF' : 'Gambar'}...</p>
-                        <p class="text-[10px] text-center mt-1 text-slate-400 dark:text-slate-500 max-w-[200px] truncate">${file.name}</p>
+                        <p class="text-[10px] text-center mt-1 text-slate-400 dark:text-slate-500 max-w-[200px] truncate">Mohon tunggu...</p>
                     `;
 
                     if (file.type.startsWith('image/')) {
@@ -267,41 +309,48 @@
                         scanPdfFile(file);
                     } else {
                         resultContainer.innerHTML = "<span class='text-red-500'>Format file tidak didukung! Gunakan gambar (PNG, JPEG) atau PDF.</span>";
-                        statusSpan.textContent = "Mati";
-                        statusSpan.className = "text-slate-600 dark:text-slate-400";
+                        setStatus("Mati", "text-slate-600 dark:text-slate-400");
                         resetPlaceholder();
                     }
                 });
             });
 
             function scanImageFile(file) {
+                if (typeof window.Html5Qrcode === 'undefined') {
+                    showDependencyError("Library pemindai QR belum berhasil dimuat. Muat ulang halaman lalu coba lagi.");
+                    return;
+                }
+
                 if (!html5QrCode) {
-                    html5QrCode = new Html5Qrcode("qr-reader");
+                    html5QrCode = new window.Html5Qrcode("qr-reader");
                 }
                 
                 html5QrCode.scanFile(file, false)
                     .then(decodedText => {
                         onScanSuccess(decodedText, null);
-                        statusSpan.textContent = "Mati";
-                        statusSpan.className = "text-slate-600 dark:text-slate-400";
+                        setStatus("Mati", "text-slate-600 dark:text-slate-400");
                         resetPlaceholder();
                     })
                     .catch(err => {
                         console.error(err);
                         resultContainer.innerHTML = "<span class='text-red-500'>QR Code tidak ditemukan dalam gambar!</span>";
-                        statusSpan.textContent = "Gagal";
-                        statusSpan.className = "text-rose-600 dark:text-rose-400";
+                        setStatus("Gagal", "text-rose-600 dark:text-rose-400");
                         fileInput.value = ""; // Clear input
                         resetPlaceholder();
                     });
             }
 
             function scanPdfFile(file) {
+                if (!window.pdfjsLib) {
+                    showDependencyError("Library pembaca PDF belum berhasil dimuat. Gunakan gambar QR atau muat ulang halaman.");
+                    return;
+                }
+
                 var fileReader = new FileReader();
                 fileReader.onload = function() {
                     var typedarray = new Uint8Array(this.result);
                     
-                    pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    window.pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
                         // Ambil halaman pertama
                         return pdf.getPage(1);
                     }).then(function(page) {
@@ -334,8 +383,7 @@
                     }).catch(function(err) {
                         console.error("Gagal memproses PDF:", err);
                         resultContainer.innerHTML = "<span class='text-red-500'>Gagal membaca file PDF atau QR Code tidak ditemukan!</span>";
-                        statusSpan.textContent = "Gagal";
-                        statusSpan.className = "text-rose-600 dark:text-rose-400";
+                        setStatus("Gagal", "text-rose-600 dark:text-rose-400");
                         fileInput.value = "";
                         resetPlaceholder();
                     });
@@ -346,8 +394,12 @@
             btnStart.addEventListener('click', startScanning);
             btnStop.addEventListener('click', stopScanning);
 
+            if (typeof window.Html5Qrcode === 'undefined') {
+                showDependencyError("Library pemindai QR belum berhasil dimuat. Muat ulang halaman atau periksa koneksi internet.");
+            }
+
             // Clean up on unload
-            window.addEventListener('beforeunload', function() {
+            window.addEventListener('pagehide', function() {
                 stopScanning();
             });
         });

@@ -42,42 +42,42 @@
 
             {{-- 6 Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total seluruh peserta magang se-Kota Banjarmasin yang telah memiliki penilaian evaluasi akhir.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-800/60 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($stats['total']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Dinilai</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta dengan predikat 'Sangat Baik'. Kriteria Nilai Rata-Rata: 86,00 s.d. 100,00.">
                     <div class="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-100 dark:border-emerald-800/60 shadow-xs">
                         <i class="fas fa-check-circle text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{{ number_format($stats['sangat_baik']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Sangat Baik</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta dengan predikat 'Baik'. Kriteria Nilai Rata-Rata: 71,00 s.d. 85,99.">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-800/60 shadow-xs">
                         <i class="fas fa-thumbs-up text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($stats['baik']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Baik</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta dengan predikat 'Cukup'. Kriteria Nilai Rata-Rata: 56,00 s.d. 70,99.">
                     <div class="w-9 h-9 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-800/60 shadow-xs">
                         <i class="fas fa-info-circle text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-tight">{{ number_format($stats['cukup']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Cukup</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta dengan predikat 'Kurang'. Kriteria Nilai Rata-Rata: 0,00 s.d. 55,99.">
                     <div class="w-9 h-9 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-100 dark:border-rose-800/60 shadow-xs">
                         <i class="fas fa-times-circle text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono tracking-tight">{{ number_format($stats['kurang']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Kurang</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20" title="Nilai rata-rata evaluasi akhir akumulasi seluruh peserta yang telah dinilai di Kota Banjarmasin. Rumus: (Total Nilai Rata-Rata Seluruh Peserta / Jumlah Peserta Dinilai).">
                     <div class="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
                         <i class="fas fa-star text-xs"></i>
                     </div>
@@ -87,8 +87,8 @@
             </div>
 
             {{-- 3-Component Rerata Mini Panel --}}
-            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xs border border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xs border border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-3 gap-6 cursor-help" title="Perbandingan nilai rata-rata 3 aspek utama: Teknis, Disiplin, dan Perilaku peserta se-Kota Banjarmasin.">
+                <div class="cursor-help" title="Rata-rata aspek keahlian teknis peserta. Rumus: (Total Nilai Teknis / Jumlah Peserta Dinilai). Nilai Teknis = Skill Pengetahuan.">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fas fa-laptop-code text-blue-500 dark:text-blue-400"></i> Rerata Teknis
@@ -99,7 +99,7 @@
                         <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_teknis'] }}%"></div>
                     </div>
                 </div>
-                <div>
+                <div class="cursor-help" title="Rata-rata aspek kedisiplinan dan ketepatan waktu peserta. Rumus: (Total Nilai Disiplin / Jumlah Peserta Dinilai).">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fas fa-calendar-check text-emerald-500 dark:text-emerald-400"></i> Rerata Disiplin
@@ -110,7 +110,7 @@
                         <div class="bg-emerald-500 h-2 rounded-full" style="width: {{ $statsGlobal['avg_disiplin'] }}%"></div>
                     </div>
                 </div>
-                <div>
+                <div class="cursor-help" title="Rata-rata aspek etika, keaktifan, dan komunikasi peserta. Rumus: (Total Nilai Perilaku / Jumlah Peserta). Nilai Perilaku = (Adaptasi + Kreativitas + Kerajinan) / 3.">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fas fa-user-friends text-purple-500 dark:text-purple-400"></i> Rerata Perilaku
@@ -125,7 +125,7 @@
 
             {{-- Collapsible Top 3 Podium Leaderboard --}}
             @if($podium->count() > 0)
-            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xs border border-gray-100 dark:border-gray-700 transition-all duration-300" x-data="{ showTop3: false }">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xs border border-gray-100 dark:border-gray-700 transition-all duration-300 cursor-help" x-data="{ showTop3: false }" title="Peringkat 3 alumni peserta magang dengan pencapaian nilai akhir evaluasi tertinggi se-Kota Banjarmasin.">
                 <div class="flex items-center justify-between cursor-pointer select-none" @click="showTop3 = !showTop3">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-xs">

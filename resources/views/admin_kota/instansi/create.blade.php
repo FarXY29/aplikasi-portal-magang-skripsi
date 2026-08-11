@@ -217,7 +217,7 @@
 <script>
     function initLeafletMap() {
         if (typeof L === 'undefined') {
-            setTimeout(initLeafletMap, 100);
+            console.warn('Leaflet gagal dimuat; peta instansi tidak tersedia.');
             return;
         }
 

@@ -149,6 +149,37 @@ class User extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
+    /**
+     * Ambil satu role portal yang menjadi sumber tampilan utama.
+     * Role Spatie diprioritaskan, lalu kolom legacy dipakai sebagai fallback.
+     */
+    public function getPrimaryPortalRole(): ?string
+    {
+        $roleNames = $this->relationLoaded('roles')
+            ? $this->roles->pluck('name')
+            : $this->roles()->where('guard_name', 'web')->pluck('name');
+
+        foreach (self::PORTAL_ROLES as $role) {
+            if ($roleNames->contains($role)) {
+                return $role;
+            }
+        }
+
+        return in_array($this->role, self::PORTAL_ROLES, true) ? $this->role : null;
+    }
+
+    /** Query akun berdasarkan role Spatie dengan fallback kolom role legacy. */
+    public function scopePortalRole($query, string $role)
+    {
+        return $query->where(function ($roleQuery) use ($role) {
+            $roleQuery->where($this->qualifyColumn('role'), $role)
+                ->orWhereHas('roles', function ($spatieRoleQuery) use ($role) {
+                    $spatieRoleQuery->where('name', $role)
+                        ->where('guard_name', 'web');
+                });
+        });
+    }
+
     /** Sinkronkan tepat satu role utama ke Spatie tanpa menghapus data user lama. */
     public function syncPrimaryRole(): bool
     {

@@ -118,15 +118,17 @@ class DashboardController extends Controller
         return back()->with('success', 'Lamaran magang berhasil dibatalkan.');
     }
 
-    public function downloadCertificate()
+    public function downloadCertificate($id = null)
     {
         $user = Auth::user();
-        
-        $finishedApp = Application::where('user_id', $user->id)
+
+        $finishedAppQuery = Application::where('user_id', $user->id)
                         ->where('status', 'selesai')
-                        ->with(['position.instansi', 'user'])
-                        ->latest('updated_at')
-                        ->first();
+                        ->with(['position.instansi', 'user']);
+
+        $finishedApp = $id
+            ? $finishedAppQuery->whereKey($id)->first()
+            : $finishedAppQuery->latest('updated_at')->first();
 
         if (!$finishedApp) {
             return back()->with('error', 'Anda belum menyelesaikan program magang manapun.');

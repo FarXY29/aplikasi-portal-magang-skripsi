@@ -13,7 +13,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{ searchQuery: '{{ request('q') }}' }">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{ searchQuery: @js(request('q')) }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             {{-- Navigation & Export Buttons --}}
@@ -27,14 +27,8 @@
                 
                 @if($penyerapan->count() > 0)
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
+                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', request()->query()) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
-                    </a>
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
-                        <i class="fas fa-file-excel text-emerald-500"></i> Excel
-                    </a>
-                    <a href="{{ route('admin.laporan.penyerapan_kuota.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
-                        <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
                 @endif
@@ -47,28 +41,28 @@
                 $avgPenyerapanKota = $totalKuotaKota > 0 ? round(($totalTerserapKota / $totalKuotaKota) * 100, 1) : 0;
             @endphp
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total jumlah instansi/dinas Pemerintah Kota Banjarmasin yang membuka formasi kuota penerimaan magang.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-800/60 shadow-xs">
                         <i class="fas fa-building text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($penyerapan->count()) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Instansi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total akumulasi daya tampung kursi magang yang disediakan oleh seluruh instansi Pemko.">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-800/60 shadow-xs">
                         <i class="fas fa-chair text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($totalKuotaKota) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Kuota Disediakan</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total peserta magang (diterima & selesai) yang telah menempati dan mengisi kuota magang di dinas.">
                     <div class="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-100 dark:border-emerald-800/60 shadow-xs">
                         <i class="fas fa-user-check text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{{ number_format($totalTerserapKota) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Peserta Terserap</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20" title="Persentase keterisian total kuota magang se-Kota Banjarmasin. Rumus: (Total Peserta Terserap / Total Kuota Disediakan) x 100%.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
                         <i class="fas fa-chart-pie text-xs"></i>
                     </div>
@@ -140,7 +134,7 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
                                 @forelse($penyerapan as $index => $instansi)
                                 <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition group"
-                                    x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                                    x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                                     <td class="px-4 py-4 text-center">
                                         @if($index == 0 && $instansi->persentase_penyerapan > 0)
                                             <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto shadow-xs border border-amber-200 dark:border-amber-800/50">
@@ -229,7 +223,7 @@
                                     $barBg = 'from-blue-500 to-indigo-500';
                                 }
                             @endphp
-                            <div class="p-4 space-y-3.5" x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                            <div class="p-4 space-y-3.5" x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                                 <div class="flex items-center gap-3">
                                     <div class="w-7 h-7 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
                                         {{ $index + 1 }}

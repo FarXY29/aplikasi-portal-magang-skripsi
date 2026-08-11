@@ -24,42 +24,42 @@
 
             {{-- Statistik Ringkasan --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Total seluruh peserta magang (aktif dan selesai) yang tercatat dalam laporan kinerja instansi.">
                     <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-2.5 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total_peserta'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Total Peserta</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah peserta magang yang saat ini sedang aktif menjalankan kegiatan magang (status 'diterima').">
                     <div class="w-10 h-10 rounded-2xl bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-2.5 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-user-clock"></i>
                     </div>
                     <p class="text-2xl font-black text-green-700 dark:text-green-400">{{ $stats['aktif'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Peserta Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah peserta magang yang telah tuntas menyelesaikan seluruh program magang dan dinyatakan lulus.">
                     <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-2.5 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-flag-checkered"></i>
                     </div>
                     <p class="text-2xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['selesai'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Selesai / Lulus</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Rata-rata persentase presensi seluruh peserta. Rumus per peserta: (Jumlah Hari Hadir / Total Hari Presensi) x 100%, lalu dirata-ratakan seluruh peserta.">
                     <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-2.5 border border-teal-100 dark:border-teal-900/50">
                         <i class="fas fa-calendar-check"></i>
                     </div>
                     <p class="text-2xl font-black text-teal-700 dark:text-teal-400">{{ $stats['avg_kehadiran'] }}%</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Avg Kehadiran</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Rata-rata persentase validasi logbook peserta. Rumus per peserta: (Jumlah Jurnal Disetujui / Total Jurnal Diinput) x 100%, lalu dirata-ratakan.">
                     <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-2.5 border border-purple-100 dark:border-purple-900/50">
                         <i class="fas fa-clipboard-list"></i>
                     </div>
                     <p class="text-2xl font-black text-purple-700 dark:text-purple-400">{{ $stats['avg_logbook'] }}%</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Avg Logbook</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Rata-rata nilai akhir evaluasi peserta yang telah lulus. Rumus Nilai Peserta: (Nilai Teknis + Nilai Disiplin + Nilai Perilaku) / 3, lalu dirata-ratakan.">
                     <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-2.5 border border-amber-100 dark:border-amber-900/50">
                         <i class="fas fa-star"></i>
                     </div>
@@ -69,7 +69,7 @@
             </div>
 
             {{-- Highlight Banner --}}
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg shadow-blue-600/20 flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg shadow-blue-600/20 flex flex-col sm:flex-row items-center gap-4 cursor-help" title="Scorecard ringkasan performa presensi, validasi jurnal, dan rerata nilai akhir seluruh peserta magang.">
                 <div class="w-14 h-14 rounded-2xl bg-white/20 dark:bg-gray-800/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0 border border-white/20">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -80,14 +80,8 @@
                 </div>
                 @if($kinerja->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
+                    <a href="{{ route('dinas.laporan.kinerja_peserta.print') }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
-                    </a>
-                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'excel']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
-                        <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
-                    </a>
-                    <a href="{{ route('dinas.laporan.kinerja_peserta.print', ['format' => 'csv']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
-                        <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>
                 @endif

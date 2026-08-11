@@ -38,7 +38,7 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/laporan-penyerapan-kuota', [AdminKotaReportController::class, 'laporanPenyerapanKuota'])->name('laporan.penyerapan_kuota');
     Route::get('/laporan-penyerapan-kuota/print', [AdminKotaReportController::class, 'printPenyerapanKuota'])->name('laporan.penyerapan_kuota.print');
 
-    Route::resource('users', AdminUserController::class);
+    Route::resource('users', AdminUserController::class)->except(['show']);
     Route::get('/monitoring-logbook', [AdminUserController::class, 'logbooks'])->name('users.logbooks');
     Route::get('/monitoring-logbook/{id}', [AdminUserController::class, 'showLogbook'])->name('users.logbooks.show');
 

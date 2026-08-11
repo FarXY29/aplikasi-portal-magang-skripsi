@@ -68,7 +68,7 @@
                             <td class="px-6 py-4">
                                 @if($log->user)
                                     <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->user->name }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucfirst(str_replace('_', ' ', $log->user->role)) }})</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucwords(str_replace('_', ' ', $log->user->getPrimaryPortalRole() ?? $log->user->role)) }})</div>
                                 @else
                                     <span class="text-gray-400 italic">System / Unauthenticated</span>
                                 @endif
@@ -84,7 +84,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <button type="button" 
-                                    @click="openMetadataModal('{{ addslashes(json_encode($log->metadata)) }}')" 
+                                    @click="openMetadataModal(@js(json_encode($log->metadata)))"
                                     class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                     Lihat Detail
                                 </button>
@@ -123,7 +123,7 @@
                             <div class="text-xs text-gray-500 dark:text-gray-400">Aktor</div>
                             @if($log->user)
                                 <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->user->name }}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucfirst(str_replace('_', ' ', $log->user->role)) }})</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucwords(str_replace('_', ' ', $log->user->getPrimaryPortalRole() ?? $log->user->role)) }})</div>
                             @else
                                 <span class="text-gray-400 italic">System / Unauthenticated</span>
                             @endif
@@ -135,7 +135,7 @@
                         </div>
                         <div class="pt-1">
                             <button type="button"
-                                @click="openMetadataModal('{{ addslashes(json_encode($log->metadata)) }}')"
+                                @click="openMetadataModal(@js(json_encode($log->metadata)))"
                                 class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                 Lihat Detail
                             </button>

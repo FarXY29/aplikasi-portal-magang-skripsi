@@ -35,18 +35,78 @@ class AttendanceController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');
         }
 
-        $query = Attendance::where('application_id', $application->id)
-                           ->orderBy('date', 'desc');
+        // Generate daftar pilihan bulan berdasarkan rentang tanggal magang peserta (terbaru -> terlama)
+        $periodMonths = [];
+        if ($application->tanggal_mulai && $application->tanggal_selesai) {
+            $start = Carbon::parse($application->tanggal_mulai)->startOfMonth();
+            $end = Carbon::parse($application->tanggal_selesai)->endOfMonth();
+            $today = Carbon::today()->endOfMonth();
 
-        // Filter berdasarkan bulan jika ada
-        if ($request->has('month') && $request->month != '') {
-            $query->whereMonth('date', Carbon::parse($request->month)->month)
-                  ->whereYear('date', Carbon::parse($request->month)->year);
+            if ($end->gt($today)) {
+                $end = $today;
+            }
+
+            if ($start->lte($end)) {
+                $curr = $end->copy();
+                while ($curr->gte($start)) {
+                    $periodMonths[$curr->format('Y-m')] = $curr->translatedFormat('F Y');
+                    $curr->subMonth();
+                }
+            }
         }
 
-        $attendances = $query->paginate(15);
+        $query = Attendance::where('application_id', $application->id);
 
-        return view('peserta.absensi.index', compact('attendances', 'application'));
+        // Filter berdasarkan bulan jika ada
+        if ($request->filled('month')) {
+            $monthVal = trim($request->month);
+            if (preg_match('/^\d{4}-\d{1,2}$/', $monthVal)) {
+                [$yr, $mo] = explode('-', $monthVal);
+                $query->whereYear('date', (int)$yr)
+                      ->whereMonth('date', (int)$mo);
+            } elseif (is_numeric($monthVal) && (int)$monthVal >= 1 && (int)$monthVal <= 12) {
+                $query->whereMonth('date', (int)$monthVal);
+                if ($request->filled('year')) {
+                    $query->whereYear('date', (int)$request->year);
+                }
+            } else {
+                try {
+                    $monthDate = Carbon::parse($monthVal);
+                    $query->whereMonth('date', $monthDate->month)
+                          ->whereYear('date', $monthDate->year);
+                } catch (\Exception $e) {
+                    // Abaikan jika format bulan tidak valid
+                }
+            }
+        }
+
+        // Summary counts (berdasarkan query bulan jika ada, sebelum filter status & search agar statistik tetap komprehensif)
+        $attendanceSummary = [
+            'total' => (clone $query)->count(),
+            'hadir' => (clone $query)->where('status', 'hadir')->count(),
+            'izin'  => (clone $query)->whereIn('status', ['izin', 'sakit'])->count(),
+            'alpa'  => (clone $query)->where('status', 'alpa')->count(),
+        ];
+
+        // Filter berdasarkan status
+        if ($request->filled('status') && in_array($request->status, ['hadir', 'izin', 'sakit', 'alpa'])) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter berdasarkan pencarian deskripsi/catatan
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where('description', 'like', "%{$search}%");
+        }
+
+        // Urutan
+        $sort = $request->get('sort', 'desc');
+        $sort = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
+        $query->orderBy('date', $sort);
+
+        $attendances = $query->paginate(15)->withQueryString();
+
+        return view('peserta.absensi.index', compact('attendances', 'application', 'attendanceSummary', 'periodMonths'));
     }
 
     /**

@@ -24,42 +24,42 @@
 
             {{-- Statistik Ringkasan --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Total seluruh akumulasi entri laporan kegiatan harian (logbook) yang diinput oleh peserta magang pada periode terpilih.">
                     <div class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-2.5 border border-purple-100 dark:border-purple-900/50">
                         <i class="fas fa-book"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total_jurnal'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Total Jurnal</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah entri jurnal harian yang telah diverifikasi dan disetujui oleh pembimbing lapangan.">
                     <div class="w-10 h-10 rounded-2xl bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-2.5 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <p class="text-2xl font-black text-green-700 dark:text-green-400">{{ $stats['disetujui'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Disetujui</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah entri jurnal harian yang belum diverifikasi dan masih menantikan validasi pembimbing.">
                     <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-2.5 border border-amber-100 dark:border-amber-900/50">
                         <i class="fas fa-hourglass-half"></i>
                     </div>
                     <p class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ $stats['pending'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Pending</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah entri jurnal harian yang dikembalikan kepada peserta oleh pembimbing untuk diperbaiki catatannya.">
                     <div class="w-10 h-10 rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-2.5 border border-red-100 dark:border-red-900/50">
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
                     <p class="text-2xl font-black text-red-700 dark:text-red-400">{{ $stats['revisi'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Revisi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah peserta magang aktif yang aktif menginput entri laporan jurnal harian pada periode terpilih.">
                     <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-2.5 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-user-friends"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total_peserta_aktif'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Peserta Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Persentase kelengkapan validasi jurnal harian. Rumus: (Jumlah Jurnal Disetujui / Total Jurnal) x 100%.">
                     <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-2.5 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-tasks"></i>
                     </div>
@@ -69,7 +69,7 @@
             </div>
 
             {{-- Highlight Banner --}}
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-purple-600/20 flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-purple-600/20 flex flex-col sm:flex-row items-center gap-4 cursor-help" title="Ringkasan statistik penuntasan validasi jurnal harian dan sisa jurnal pending sesuai periode terpilih.">
                 <div class="w-14 h-14 rounded-2xl bg-white/20 dark:bg-gray-800/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0 border border-white/20">
                     <i class="fas fa-book-reader"></i>
                 </div>
@@ -93,14 +93,8 @@
 
                     @if($jurnal->count() > 0)
                         <div class="flex gap-2">
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 rounded-xl hover:bg-purple-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
+                            <a href="{{ route('dinas.laporan.jurnal_harian.print', ['filter' => $filter]) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 rounded-xl hover:bg-purple-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                                 <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
-                            </a>
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 rounded-xl hover:bg-purple-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
-                                <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
-                            </a>
-                            <a href="{{ route('dinas.laporan.jurnal_harian.print', array_merge(['filter' => $filter], ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 rounded-xl hover:bg-purple-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
-                                <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                             </a>
                         </div>
                     @endif

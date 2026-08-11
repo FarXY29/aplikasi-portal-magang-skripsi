@@ -20,42 +20,58 @@ class AttendanceSeeder extends Seeder
      * - Tanggal absensi = hari kerja (Senin-Jumat) antara tanggal_mulai s.d. hari ini atau tanggal_selesai.
      * - Mayoritas hadir (~70%), sebagian terlambat (~15%), sakit/izin (~10%), alpa (~5%).
      * - clock_in & clock_out realistis berdasarkan jam_mulai_masuk & jam_mulai_pulang instansi.
+     * - Geotagging (latitude_in, longitude_in, latitude_out, longitude_out) disesuaikan dengan posisi instansi.
      * - Beberapa peserta dibuat "bermasalah" (sering telat/alpa) agar laporan disiplin terlihat bervariasi.
+     * - Idempoten: tidak menduplikat tanggal yang sudah pernah di-insert per aplikasi.
      */
     public function run(): void
     {
         $faker = Faker::create('id_ID');
 
-        // Hapus data absensi lama agar bisa dijalankan ulang tanpa duplikat
-        Attendance::truncate();
-
-        // Cache instansi jam kerja
-        $instansiJam = Instansi::pluck('jam_mulai_masuk', 'id')->toArray();
-        $instansiJamPulang = Instansi::pluck('jam_mulai_pulang', 'id')->toArray();
+        // Cache instansi lengkap
+        $instansiMap = Instansi::all()->keyBy('id');
 
         // Ambil semua aplikasi aktif (diterima / selesai) beserta posisinya
         $applications = Application::whereIn('status', ['diterima', 'selesai'])
-            ->with('position')
+            ->with(['position', 'user'])
             ->get();
 
         if ($applications->isEmpty()) {
-            $this->command->warn('⚠ Tidak ada aplikasi berstatus diterima/selesai. Jalankan DatabaseSeeder terlebih dahulu.');
+            if (isset($this->command)) {
+                $this->command->warn('⚠ Tidak ada aplikasi berstatus diterima/selesai. Jalankan DatabaseSeeder terlebih dahulu.');
+            }
             return;
         }
 
         $totalAttendances = 0;
-        $bar = $this->command->getOutput()->createProgressBar($applications->count());
-        $bar->setFormat(" %current%/%max% [%bar%] %percent:3s%% — %message%");
-        $bar->setMessage('Memulai generate absensi...');
-        $bar->start();
+        $output = isset($this->command) ? $this->command->getOutput() : null;
+        $bar = $output ? $output->createProgressBar($applications->count()) : null;
+
+        if ($bar) {
+            $bar->setFormat(" %current%/%max% [%bar%] %percent:3s%% — %message%");
+            $bar->setMessage('Memulai generate absensi...');
+            $bar->start();
+        }
 
         // Tentukan ~20% peserta sebagai "bermasalah" (sering telat/alpa)
         $troublemakers = $applications->random(max(1, (int)($applications->count() * 0.2)))->pluck('id')->toArray();
 
         foreach ($applications as $app) {
             $instansiId = $app->position->instansi_id ?? null;
-            $jamMasuk = $instansiJam[$instansiId] ?? '07:30:00';
-            $jamPulang = $instansiJamPulang[$instansiId] ?? '16:00:00';
+            $instansi = $instansiMap->get($instansiId);
+
+            $jamMasuk = $instansi->jam_mulai_masuk ?? '07:30:00';
+            $jamPulang = $instansi->jam_mulai_pulang ?? '16:00:00';
+
+            $baseLat = (float)($instansi->latitude ?? -3.3194);
+            $baseLng = (float)($instansi->longitude ?? 114.5908);
+
+            // Ambil tanggal absensi yang sudah tersimpan agar aman dari constraint duplikasi
+            $existingDates = Attendance::where('application_id', $app->id)
+                ->pluck('date')
+                ->map(fn($d) => is_string($d) ? $d : $d->format('Y-m-d'))
+                ->toArray();
+            $existingDatesSet = array_flip($existingDates);
 
             // Tentukan rentang tanggal absensi
             $startDate = Carbon::parse($app->tanggal_mulai);
@@ -69,7 +85,9 @@ class AttendanceSeeder extends Seeder
 
             // Jika tanggal mulai di masa depan, skip
             if ($startDate->gt($today)) {
-                $bar->advance();
+                if ($bar) {
+                    $bar->advance();
+                }
                 continue;
             }
 
@@ -92,6 +110,11 @@ class AttendanceSeeder extends Seeder
             $attendanceBatch = [];
 
             foreach ($workdays as $workday) {
+                $dateStr = $workday->format('Y-m-d');
+                if (isset($existingDatesSet[$dateStr])) {
+                    continue; // Skip jika sudah ada data absensi pada tanggal tersebut
+                }
+
                 $roll = $faker->numberBetween(1, 100);
 
                 if ($isTroublemaker) {
@@ -124,13 +147,34 @@ class AttendanceSeeder extends Seeder
 
                 $clockIn = null;
                 $clockOut = null;
+                $latIn = null;
+                $lngIn = null;
+                $latOut = null;
+                $lngOut = null;
+                $ipAddress = null;
+                $deviceInfo = null;
                 $status = 'hadir';
                 $description = null;
                 $proofFile = null;
                 $validationStatus = 'approved';
 
-                $jamMasukCarbon = Carbon::createFromFormat('H:i:s', $jamMasuk);
-                $jamPulangCarbon = Carbon::createFromFormat('H:i:s', $jamPulang);
+                $jamMasukCarbon = Carbon::createFromFormat('H:i:s', strlen($jamMasuk) == 5 ? $jamMasuk.':00' : $jamMasuk);
+                $jamPulangCarbon = Carbon::createFromFormat('H:i:s', strlen($jamPulang) == 5 ? $jamPulang.':00' : $jamPulang);
+
+                if (in_array($scenario, ['hadir_tepat', 'hadir_telat'])) {
+                    // Variasi koordinat di sekitar lokasi instansi (radius ~50-100 meter)
+                    $latIn = round($baseLat + ($faker->numberBetween(-50, 50) / 1000000), 8);
+                    $lngIn = round($baseLng + ($faker->numberBetween(-50, 50) / 1000000), 8);
+                    $latOut = round($baseLat + ($faker->numberBetween(-50, 50) / 1000000), 8);
+                    $lngOut = round($baseLng + ($faker->numberBetween(-50, 50) / 1000000), 8);
+
+                    $ipAddress = '180.252.' . $faker->numberBetween(1, 254) . '.' . $faker->numberBetween(1, 254);
+                    $deviceInfo = $faker->randomElement([
+                        'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
+                        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1',
+                        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                    ]);
+                }
 
                 switch ($scenario) {
                     case 'hadir_tepat':
@@ -210,11 +254,17 @@ class AttendanceSeeder extends Seeder
 
                 $attendanceBatch[] = [
                     'application_id' => $app->id,
-                    'date' => $workday->format('Y-m-d'),
+                    'date' => $dateStr,
                     'status' => $status,
                     'validation_status' => $validationStatus,
                     'clock_in' => $clockIn,
                     'clock_out' => $clockOut,
+                    'latitude_in' => $latIn,
+                    'longitude_in' => $lngIn,
+                    'latitude_out' => $latOut,
+                    'longitude_out' => $lngOut,
+                    'ip_address' => $ipAddress,
+                    'device_info' => $deviceInfo,
                     'description' => $description,
                     'proof_file' => $proofFile,
                     'pembimbing_lapangan_note' => null,
@@ -223,22 +273,29 @@ class AttendanceSeeder extends Seeder
                 ];
             }
 
-            // Insert batch per aplikasi untuk performa
+            // Insert batch per aplikasi
             if (!empty($attendanceBatch)) {
-                // Insert dalam chunk 100 baris agar tidak terlalu berat
                 foreach (array_chunk($attendanceBatch, 100) as $chunk) {
                     Attendance::insert($chunk);
                 }
                 $totalAttendances += count($attendanceBatch);
             }
 
-            $bar->setMessage($app->user->name ?? "App #{$app->id}");
-            $bar->advance();
+            if ($bar) {
+                $bar->setMessage($app->user->name ?? "App #{$app->id}");
+                $bar->advance();
+            }
         }
 
-        $bar->setMessage('Selesai!');
-        $bar->finish();
-        $this->command->newLine(2);
-        $this->command->info("✅ Berhasil membuat {$totalAttendances} data absensi untuk {$applications->count()} peserta aktif.");
+        if ($bar) {
+            $bar->setMessage('Selesai!');
+            $bar->finish();
+        }
+
+        if (isset($this->command)) {
+            $this->command->newLine(2);
+            $this->command->info("✅ Berhasil membuat {$totalAttendances} data absensi untuk {$applications->count()} peserta aktif/selesai.");
+        }
     }
 }
+

@@ -18,6 +18,12 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $period = $request->query('period', '30_hari');
+        $allowedPeriods = ['hari_ini', '7_hari', '30_hari', 'semester', 'tahun'];
+        if (! in_array($period, $allowedPeriods, true)) {
+            $period = '30_hari';
+        }
+
+        $page = max(1, $request->integer('page', 1));
 
         $periodText = match ($period) {
             'hari_ini' => 'Hari Ini',
@@ -28,7 +34,11 @@ class DashboardController extends Controller
             default => '30 Hari Terakhir',
         };
 
-        $data = Cache::remember('admin_kota_dashboard:'.$period, 60, fn () => $this->buildDashboardData($period));
+        $data = Cache::remember(
+            'admin_kota_dashboard:'.$period.':page:'.$page,
+            60,
+            fn () => $this->buildDashboardData($period, $page)
+        );
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
@@ -60,7 +70,7 @@ class DashboardController extends Controller
     /**
      * Hitung seluruh data dashboard sekali jalan (di-cache 60 detik).
      */
-    private function buildDashboardData(string $period): array
+    private function buildDashboardData(string $period, int $page = 1): array
     {
         $startDate = match ($period) {
             'hari_ini' => now()->startOfDay(),
@@ -82,16 +92,12 @@ class DashboardController extends Controller
             ->pluck('total', 'status');
         $periodAppCount = (int) $periodCounts->sum();
 
-        $statusCounts = $periodAppCount > 0
-            ? $periodCounts
-            : Application::select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->pluck('total', 'status');
-
-        $totalApplications = $periodAppCount > 0 ? $periodAppCount : (int) $statusCounts->sum();
+        $statusCounts = $periodCounts;
+        $totalApplications = $periodAppCount;
         $activeInterns = (int) ($statusCounts['diterima'] ?? 0);
         $completedInterns = (int) ($statusCounts['selesai'] ?? 0);
-        $pendingApplications = (int) ($statusCounts['pending'] ?? 0);
+        $pendingApplications = (int) ($statusCounts['pending'] ?? 0)
+            + (int) ($statusCounts['menunggu'] ?? 0);
         $rejectedApplications = (int) ($statusCounts['ditolak'] ?? 0);
 
         [$trendLabels, $trendData] = $this->buildTrend($period);
@@ -108,7 +114,7 @@ class DashboardController extends Controller
 
         // Statistik pelamar per instansi: 2 query (paginate + chart) menggantikan 3 query berulang
         $instansiBase = Instansi::withCount('applications')->orderByDesc('applications_count');
-        $instansiStats = (clone $instansiBase)->paginate(10);
+        $instansiStats = (clone $instansiBase)->paginate(10, ['*'], 'page', $page);
         $instansiChart = (clone $instansiBase)->take(10)->get();
         $instansiChartLabels = $instansiChart->pluck('nama_dinas')->toArray();
         $instansiChartData = $instansiChart->pluck('applications_count')->toArray();
@@ -127,7 +133,7 @@ class DashboardController extends Controller
             ['label' => 'Pengaturan', 'icon' => 'fas fa-cog', 'route' => route('admin.settings.index'), 'color' => 'rose'],
         ];
 
-        $demografiKampus = User::where('role', 'peserta')
+        $demografiKampus = User::portalRole('peserta')
             ->whereNotNull('asal_instansi')
             ->select('asal_instansi', DB::raw('count(*) as total'))
             ->groupBy('asal_instansi')

@@ -105,7 +105,7 @@
                                 @endif
 
                                 <button type="button" class="min-h-[44px] justify-center px-3 sm:px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
-                                    <i class="fas fa-download"></i> Detail & Unduh
+                                    <i class="fas fa-download"></i> Detail
                                 </button>
                             </div>
                         </div>
@@ -186,7 +186,7 @@
                                                     <i class="fas fa-lock"></i> Transkrip (Kunci)
                                                 </button>
                                             @else
-                                                <a href="{{ route('peserta.sertifikat') }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition shadow-xs flex items-center justify-center gap-2">
+                                                <a href="{{ route('peserta.sertifikat', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition shadow-xs flex items-center justify-center gap-2">
                                                     <i class="fas fa-certificate"></i> Sertifikat
                                                 </a>
                                                 <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">

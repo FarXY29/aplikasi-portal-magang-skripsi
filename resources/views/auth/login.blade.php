@@ -1,108 +1,84 @@
 <x-guest-layout>
-    <div class="flex flex-col md:flex-row gap-6 max-w-6xl mx-auto my-auto px-4 sm:px-6">
-        
-        <div class="w-full md:w-5/12 bg-teal-600 dark:bg-teal-950/80 rounded-3xl shadow-xl overflow-hidden relative flex flex-col justify-between p-8 md:p-12 min-h-[220px] md:min-h-[460px] border border-teal-500/20 dark:border-teal-800/60">
-            
-            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-white opacity-10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-teal-800 opacity-20 rounded-full blur-3xl"></div>
+    <div class="flex flex-col gap-6 lg:gap-8 md:flex-row md:items-stretch max-w-6xl mx-auto my-auto px-2 sm:px-4">
 
-            <div class="relative z-10">
-                <a href="{{ route('home') }}" class="group inline-flex items-center text-xs sm:text-sm font-bold text-teal-100 dark:text-teal-200 hover:text-white transition">
-                    <div class="w-9 h-9 rounded-full bg-teal-700/50 dark:bg-teal-900/60 flex items-center justify-center mr-2.5 group-hover:bg-teal-500 transition shadow-xs border border-teal-500/30 dark:border-teal-700/50">
-                        <i class="fas fa-arrow-left text-xs"></i>
-                    </div>
-                    Kembali ke Beranda
-                </a>
-            </div>
-
-            <div class="relative z-10 mt-8 md:mt-0 text-center md:text-left">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 dark:bg-gray-800/40 rounded-2xl flex items-center justify-center mb-5 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-inner mx-auto md:mx-0">
-                    <x-application-logo class="w-10 h-10 sm:w-12 sm:h-12 fill-current text-white" />
-                </div>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 drop-shadow-xs">
-                    Selamat Datang!
-                </h1>
-                <p class="text-teal-50 dark:text-teal-100/90 text-sm sm:text-base font-medium leading-relaxed opacity-90">
-                    Masuk untuk mengakses dashboard, memantau status lamaran, dan mengisi logbook harian.
-                </p>
-            </div>
-
-            <div class="relative z-10 mt-8 text-center md:text-left hidden md:block">
-                <p class="text-xs text-teal-200/60 dark:text-teal-300/60 font-medium">
-                    &copy; {{ date('Y') }} Diskominfotik Banjarmasin.
-                </p>
-            </div>
+        {{-- Left Card: Branding Panel (5/12) --}}
+        <div class="w-full md:w-5/12 flex flex-col">
+            <x-auth.branding-panel
+                class="h-full"
+                title="Selamat Datang!"
+                subtitle="Masuk untuk mengakses dashboard, memantau status lamaran, dan mengisi logbook harian magang Anda."
+            />
         </div>
 
-        <div class="w-full md:w-7/12 bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden p-8 md:p-11 border border-gray-100 dark:border-gray-700 flex flex-col justify-center">
-            
-            <div class="mb-6">
-                <h2 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">Masuk ke Akun</h2>
-                <p class="mt-1.5 text-sm text-gray-500 dark:text-gray-400 font-medium">
-                    Belum punya akun? 
-                    <a href="{{ route('register') }}" class="font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition">
-                        Daftar di sini
-                    </a>
-                </p>
-            </div>
+        {{-- Right Card: Form Input (7/12) --}}
+        <div class="w-full md:w-7/12 flex flex-col">
+            <x-auth.card maxWidth="xl" heading="Masuk ke Akun" class="h-full">
+                <x-slot:description>
+                    Belum punya akun? <a href="{{ route('register') }}" class="font-bold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 underline underline-offset-2 transition-colors">Daftar di sini</a>.
+                </x-slot:description>
 
-            <x-auth-session-status class="mb-5" :status="session('status')" />
+                @if (session('status'))
+                    <x-auth.alert type="success" class="mb-5">
+                        {{ session('status') }}
+                    </x-auth.alert>
+                @endif
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                @csrf
+                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                    @csrf
 
-                <div>
-                    <label for="email" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1.5 ml-1">Email / Username</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i class="far fa-envelope text-gray-400 dark:text-gray-500 text-base"></i>
+                    <x-auth.field
+                        name="email"
+                        label="Email / Username"
+                        type="text"
+                        value="{{ old('email') }}"
+                        placeholder="Masukkan email atau username"
+                        icon="far fa-envelope"
+                        :required="true"
+                        :autofocus="true"
+                        :errors="$errors"
+                    />
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="password" class="auth-label !mb-0">Password</label>
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="text-xs font-bold text-teal-600 transition hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300">
+                                    Lupa Password?
+                                </a>
+                            @endif
                         </div>
-                        <input id="email" name="email" type="text" required autofocus
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full pl-11 pr-4 py-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 shadow-xs font-medium"
-                            placeholder="email@contoh.com" :value="old('email')">
+                        <x-auth.field
+                            name="password"
+                            type="password"
+                            placeholder="Masukkan password"
+                            icon="fas fa-lock"
+                            autocomplete="current-password"
+                            :required="true"
+                            :errors="$errors"
+                        />
                     </div>
-                    <x-input-error :messages="$errors->get('email')" class="mt-1" />
-                </div>
 
-                <div>
-                    <div class="flex justify-between items-center mb-1.5 ml-1">
-                        <label for="password" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition">
-                                Lupa Password?
-                            </a>
-                        @endif
+                    <div class="flex items-center justify-between pt-1">
+                        <label for="remember_me" class="group inline-flex cursor-pointer items-center select-none">
+                            <input
+                                id="remember_me"
+                                type="checkbox"
+                                name="remember"
+                                class="h-4 w-4 cursor-pointer rounded border-gray-300 bg-white text-teal-600 shadow-sm focus:ring-teal-500 dark:border-gray-700 dark:bg-gray-900 dark:focus:ring-offset-gray-900 transition"
+                            >
+                            <span class="ml-2.5 text-xs sm:text-sm font-semibold text-gray-600 transition group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-gray-200">
+                                Ingat saya di perangkat ini
+                            </span>
+                        </label>
                     </div>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400 dark:text-gray-500 text-base"></i>
-                        </div>
-                        <input id="password" name="password" type="password" required autocomplete="current-password"
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full pl-11 pr-4 py-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 shadow-xs font-medium"
-                            placeholder="••••••••">
+
+                    <div class="pt-2">
+                        <x-auth.button icon="fas fa-sign-in-alt" class="shimmer-btn">
+                            Masuk Sekarang
+                        </x-auth.button>
                     </div>
-                    <x-input-error :messages="$errors->get('password')" class="mt-1" />
-                </div>
-
-                <div class="flex items-center pt-0.5">
-                    <label for="remember_me" class="inline-flex items-center cursor-pointer group">
-                        <input id="remember_me" type="checkbox" class="rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-teal-600 shadow-xs focus:ring-teal-500 w-4 h-4 cursor-pointer" name="remember">
-                        <span class="ml-2.5 text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition font-medium">Ingat saya</span>
-                    </label>
-                </div>
-
-                <div class="pt-1">
-                    <button type="submit" class="w-full flex justify-center items-center py-3.5 px-6 border border-transparent rounded-xl shadow-md text-sm font-extrabold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition tracking-wide uppercase">
-                        MASUK SEKARANG <i class="fas fa-sign-in-alt ml-2.5"></i>
-                    </button>
-                </div>
-
-            </form>
-
+                </form>
+            </x-auth.card>
         </div>
     </div>
 </x-guest-layout>

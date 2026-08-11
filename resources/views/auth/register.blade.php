@@ -1,194 +1,242 @@
 <x-guest-layout>
-    <div class="flex flex-col md:flex-row gap-4 max-w-5xl mx-auto my-auto px-2 sm:px-6">
-        
-        <div class="w-full md:w-5/12 bg-teal-600 dark:bg-teal-950/80 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden relative flex flex-col justify-between p-6 sm:p-8 min-h-[160px] md:min-h-[420px] border border-teal-500/20 dark:border-teal-800/60">
-            
-            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-white opacity-10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-teal-800 opacity-20 rounded-full blur-3xl"></div>
+    <div
+        x-data="{
+            role: '{{ old('role', 'peserta') }}',
+            password: '',
+            get passwordStrength() {
+                if (!this.password) return 0;
+                let score = 0;
+                if (this.password.length >= 8) score++;
+                if (/[A-Z]/.test(this.password)) score++;
+                if (/[0-9]/.test(this.password)) score++;
+                if (/[^A-Za-z0-9]/.test(this.password)) score++;
+                return score;
+            },
+            get strengthText() {
+                let s = this.passwordStrength;
+                if (s === 1) return 'Sangat Lemah';
+                if (s === 2) return 'Lemah';
+                if (s === 3) return 'Sedang';
+                if (s >= 4) return 'Kuat';
+                return '';
+            },
+            get strengthWidth() {
+                let s = this.passwordStrength;
+                if (s === 1) return '25%';
+                if (s === 2) return '50%';
+                if (s === 3) return '75%';
+                if (s >= 4) return '100%';
+                return '0%';
+            },
+            get strengthColor() {
+                let s = this.passwordStrength;
+                if (s === 1) return 'bg-rose-500';
+                if (s === 2) return 'bg-amber-500';
+                if (s === 3) return 'bg-sky-500';
+                if (s >= 4) return 'bg-emerald-500';
+                return 'bg-gray-200 dark:bg-gray-700';
+            }
+        }"
+        class="flex flex-col gap-6 lg:gap-8 md:flex-row md:items-stretch max-w-6xl mx-auto my-auto px-2 sm:px-4"
+    >
 
-            <div class="relative z-10">
-                <a href="{{ route('home') }}" class="group inline-flex items-center text-xs sm:text-sm font-bold text-teal-100 dark:text-teal-200 hover:text-white transition">
-                    <div class="w-8 h-8 rounded-full bg-teal-700/50 dark:bg-teal-900/60 flex items-center justify-center mr-2.5 group-hover:bg-teal-500 transition shadow-xs border border-teal-500/30 dark:border-teal-700/50">
-                        <i class="fas fa-arrow-left text-xs"></i>
-                    </div>
-                    Kembali ke Beranda
-                </a>
-            </div>
-
-            <div class="relative z-10 mt-6 md:mt-0">
-                <div class="w-14 h-14 bg-white/10 dark:bg-gray-800/40 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-inner">
-                    <x-application-logo class="w-8 h-8 fill-current text-white" />
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-2 drop-shadow-xs">
-                    SiMagang
-                </h1>
-                <p class="text-teal-50 dark:text-teal-100/90 text-xs sm:text-sm font-medium leading-relaxed opacity-90">
-                    Platform resmi Pemerintah Kota Banjarmasin. Mulai perjalanan karir profesional Anda bersama kami.
-                </p>
-            </div>
-
-            <div class="relative z-10 mt-6 hidden md:block">
-                <p class="text-[11px] text-teal-200/60 dark:text-teal-300/60 font-medium">
-                    &copy; {{ date('Y') }} Diskominfotik Banjarmasin.
-                </p>
-            </div>
+        {{-- Left Card: Branding Panel (5/12) --}}
+        <div class="w-full md:w-5/12 flex flex-col">
+            <x-auth.branding-panel
+                class="h-full"
+                title="Daftar Akun"
+                subtitle="Buat akun baru untuk memulai perjalanan karir profesional Anda bersama Pemerintah Kota Banjarmasin."
+            />
         </div>
 
-        <div class="w-full md:w-7/12 bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden p-5 sm:p-7 border border-gray-100 dark:border-gray-700 flex flex-col justify-center">
-            
-            <div class="mb-4">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">Buat Akun Baru</h2>
-                <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium" id="form-description">
-                    Silakan pilih peran Anda dan lengkapi formulir pendaftaran.
+        {{-- Right Card: Form Input (7/12) --}}
+        <div class="w-full md:w-7/12 flex flex-col">
+            <x-auth.card maxWidth="xl" heading="Buat Akun Baru" class="h-full">
+                <x-slot:description>
+                    Sudah memiliki akun? <a href="{{ route('login') }}" class="font-bold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 underline underline-offset-2 transition-colors">Masuk di sini</a>
+                </x-slot:description>
+
+                <p class="mb-5 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400" id="form-description">
+                    Lengkapi formulir di bawah ini untuk mendaftar sebagai peserta magang atau pembimbing.
                 </p>
-            </div>
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-3" id="registerForm">
-                @csrf
+                <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
+                    @csrf
 
-                <!-- Pilihan Role -->
-                <div>
-                    <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1.5 ml-1">Mendaftar Sebagai</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="role" value="peserta" class="peer sr-only" checked onchange="toggleRoleFields('peserta')">
-                            <div class="rounded-xl border-2 border-gray-200 dark:border-gray-700 px-3.5 py-2 hover:bg-gray-50 dark:hover:bg-gray-900 peer-checked:border-teal-500 peer-checked:bg-teal-50 dark:peer-checked:bg-teal-950/60 peer-checked:text-teal-700 dark:peer-checked:text-teal-300 transition">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Peserta Magang</span>
-                                    <i class="fas fa-user-graduate text-teal-500 opacity-0 peer-checked:opacity-100 text-xs"></i>
+                    {{-- Dynamic Role Selector Cards --}}
+                    <div>
+                        <span class="auth-label">Mendaftar Sebagai</span>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <label class="group relative cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="peserta"
+                                    x-model="role"
+                                    class="peer sr-only"
+                                    {{ old('role', 'peserta') == 'peserta' ? 'checked' : '' }}
+                                >
+                                <div class="flex items-center justify-between rounded-xl border-2 border-gray-200 bg-white/70 p-3.5 transition-all duration-300 transform active:scale-95 group-hover:border-teal-400 group-hover:bg-teal-50/50 group-hover:shadow-sm peer-checked:border-teal-500 peer-checked:bg-teal-50/80 peer-checked:shadow-md peer-checked:scale-[1.03] peer-checked:ring-2 peer-checked:ring-teal-500/25 dark:border-gray-800 dark:bg-gray-900/60 dark:group-hover:border-teal-500/50 dark:peer-checked:border-teal-500 dark:peer-checked:bg-teal-950/60 dark:peer-checked:ring-teal-400/25">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-100 text-teal-700 dark:bg-teal-900/60 dark:text-teal-300 transition-transform duration-300 group-hover:scale-110 group-active:scale-95">
+                                            <i class="fas fa-user-graduate text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-xs sm:text-sm font-extrabold text-gray-800 dark:text-gray-100">Peserta Magang</span>
+                                            <span class="block text-[11px] text-gray-500 dark:text-gray-400">Siswa / Mahasiswa</span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-circle-check text-teal-500 opacity-0 scale-75 transition-all duration-300 peer-checked:opacity-100 peer-checked:scale-100"></i>
+                                </div>
+                            </label>
+
+                            <label class="group relative cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="pembimbing"
+                                    x-model="role"
+                                    class="peer sr-only"
+                                    {{ old('role') == 'pembimbing' ? 'checked' : '' }}
+                                >
+                                <div class="flex items-center justify-between rounded-xl border-2 border-gray-200 bg-white/70 p-3.5 transition-all duration-300 transform active:scale-95 group-hover:border-teal-400 group-hover:bg-teal-50/50 group-hover:shadow-sm peer-checked:border-teal-500 peer-checked:bg-teal-50/80 peer-checked:shadow-md peer-checked:scale-[1.03] peer-checked:ring-2 peer-checked:ring-teal-500/25 dark:border-gray-800 dark:bg-gray-900/60 dark:group-hover:border-teal-500/50 dark:peer-checked:border-teal-500 dark:peer-checked:bg-teal-950/60 dark:peer-checked:ring-teal-400/25">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-100 text-teal-700 dark:bg-teal-900/60 dark:text-teal-300 transition-transform duration-300 group-hover:scale-110 group-active:scale-95">
+                                            <i class="fas fa-chalkboard-teacher text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-xs sm:text-sm font-extrabold text-gray-800 dark:text-gray-100">Pembimbing Sekolah</span>
+                                            <span class="block text-[11px] text-gray-500 dark:text-gray-400">Guru / Dosen Pembimbing</span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-circle-check text-teal-500 opacity-0 scale-75 transition-all duration-300 peer-checked:opacity-100 peer-checked:scale-100"></i>
+                                </div>
+                            </label>
+                        </div>
+                        <x-input-error :messages="$errors->get('role')" class="mt-1.5" />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <x-auth.field
+                            name="name"
+                            label="Nama Lengkap"
+                            type="text"
+                            value="{{ old('name') }}"
+                            placeholder="Masukkan nama lengkap"
+                            icon="fas fa-user"
+                            :required="true"
+                            :autofocus="true"
+                            :errors="$errors"
+                        />
+                        <x-auth.field
+                            name="username"
+                            label="Username"
+                            type="text"
+                            value="{{ old('username') }}"
+                            placeholder="Masukkan username"
+                            icon="fas fa-at"
+                            :required="true"
+                            :errors="$errors"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <x-auth.field
+                            name="email"
+                            label="Alamat Email"
+                            type="email"
+                            value="{{ old('email') }}"
+                            placeholder="Masukkan alamat email"
+                            icon="far fa-envelope"
+                            :required="true"
+                            :errors="$errors"
+                        />
+
+                        <x-auth.field
+                            id="asal_instansi"
+                            name="asal_instansi"
+                            label="Asal Sekolah / Kampus"
+                            type="text"
+                            value="{{ old('asal_instansi') }}"
+                            placeholder="Masukkan nama instansi"
+                            icon="fas fa-building-columns"
+                            :errors="$errors"
+                            :required="true"
+                        />
+                    </div>
+
+                    {{-- Field Khusus Peserta --}}
+                    <div
+                        x-show="role === 'peserta'"
+                        x-transition:enter="transition-all ease-out duration-300"
+                        x-transition:enter-start="opacity-0 -translate-y-2 max-h-0 overflow-hidden"
+                        x-transition:enter-end="opacity-100 translate-y-0 max-h-[120px] overflow-visible"
+                        x-transition:leave="transition-all ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 max-h-[120px] overflow-visible"
+                        x-transition:leave-end="opacity-0 -translate-y-2 max-h-0 overflow-hidden"
+                        class="overflow-hidden"
+                    >
+                        <x-auth.field
+                            id="major"
+                            name="major"
+                            label="Jurusan / Program Studi"
+                            type="text"
+                            value="{{ old('major') }}"
+                            placeholder="Masukkan jurusan"
+                            icon="fas fa-graduation-cap"
+                            :errors="$errors"
+                            ::required="role === 'peserta'"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div class="min-h-[94px]">
+                            <x-auth.field
+                                name="password"
+                                label="Password"
+                                type="password"
+                                placeholder="Masukkan password"
+                                icon="fas fa-lock"
+                                autocomplete="new-password"
+                                :required="true"
+                                :errors="$errors"
+                                x-model="password"
+                            />
+                            {{-- Real-time Password Strength Indicator --}}
+                            <div x-show="password.length > 0" class="mt-2 ml-1" x-transition x-cloak>
+                                <div class="flex items-center justify-between text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1">
+                                    <span>Kekuatan Password:</span>
+                                    <span x-text="strengthText" :class="
+                                        passwordStrength === 1 ? 'text-rose-500' :
+                                        passwordStrength === 2 ? 'text-amber-500' :
+                                        passwordStrength === 3 ? 'text-sky-500' : 'text-emerald-500'
+                                    "></span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="pwd-strength-bar h-full" :class="strengthColor" :style="{ width: strengthWidth }"></div>
                                 </div>
                             </div>
-                        </label>
-
-                        <label class="cursor-pointer relative">
-                            <input type="radio" name="role" value="pembimbing" class="peer sr-only" onchange="toggleRoleFields('pembimbing')" {{ old('role') == 'pembimbing' ? 'checked' : '' }}>
-                            <div class="rounded-xl border-2 border-gray-200 dark:border-gray-700 px-3.5 py-2 hover:bg-gray-50 dark:hover:bg-gray-900 peer-checked:border-teal-500 peer-checked:bg-teal-50 dark:peer-checked:bg-teal-950/60 peer-checked:text-teal-700 dark:peer-checked:text-teal-300 transition">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Pembimbing Sekolah</span>
-                                    <i class="fas fa-chalkboard-teacher text-teal-500 opacity-0 peer-checked:opacity-100 text-xs"></i>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <x-input-error :messages="$errors->get('role')" class="mt-1" />
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Nama Lengkap</label>
-                        <input id="name" name="name" type="text" required autofocus
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                            placeholder="Sesuai KTP/KTM" value="{{ old('name') }}">
-                        <x-input-error :messages="$errors->get('name')" class="mt-1" />
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Username</label>
-                        <input id="username" name="username" type="text" required
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                            placeholder="Username unik" value="{{ old('username') }}">
-                        <x-input-error :messages="$errors->get('username')" class="mt-1" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Email</label>
-                        <input id="email" name="email" type="email" required
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                            placeholder="Email aktif" value="{{ old('email') }}">
-                        <x-input-error :messages="$errors->get('email')" class="mt-1" />
-                    </div>
-                    <div>
-                        <!-- Field Khusus Peserta -->
-                        <div id="field-peserta" class="{{ old('role') == 'pembimbing' ? 'hidden' : 'block' }}">
-                            <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Jurusan / Program Studi</label>
-                            <input id="major" name="major" type="text"
-                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                                oninput="this.setCustomValidity('')"
-                                class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                                placeholder="Contoh: Teknik Informatika" value="{{ old('major') }}">
-                            <x-input-error :messages="$errors->get('major')" class="mt-1" />
                         </div>
-                        <!-- Field Khusus Pembimbing -->
-                        <div id="field-pembimbing" class="{{ old('role') == 'pembimbing' ? 'block' : 'hidden' }}">
-                            <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Asal Sekolah / Kampus</label>
-                            <input id="asal_instansi" name="asal_instansi" type="text"
-                                oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                                oninput="this.setCustomValidity('')"
-                                class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                                placeholder="Contoh: Univ. Lambung Mangkurat" value="{{ old('asal_instansi') }}">
-                            <x-input-error :messages="$errors->get('asal_instansi')" class="mt-1" />
-                        </div>
+
+                        <x-auth.field
+                            name="password_confirmation"
+                            label="Konfirmasi Password"
+                            type="password"
+                            placeholder="Ulangi password Anda"
+                            icon="fas fa-lock"
+                            autocomplete="new-password"
+                            :required="true"
+                            :errors="$errors"
+                        />
                     </div>
-                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Password</label>
-                        <input id="password" name="password" type="password" required autocomplete="new-password"
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                            placeholder="Min. 8 karakter">
-                        <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                    <div class="pt-3">
+                        <x-auth.button icon="fas fa-user-plus" class="shimmer-btn">
+                            Daftar Sekarang
+                        </x-auth.button>
                     </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase mb-1 ml-1">Konfirmasi Password</label>
-                        <input id="password_confirmation" name="password_confirmation" type="password" required
-                            oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                            oninput="this.setCustomValidity('')"
-                            class="block w-full px-3.5 py-2 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition placeholder-gray-400 dark:placeholder-gray-500 font-medium"
-                            placeholder="Ulangi password">
-                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
-                    </div>
-                </div>
-
-                <div class="pt-1.5">
-                    <button type="submit" class="w-full flex justify-center items-center py-2.5 px-5 border border-transparent rounded-xl shadow-md text-xs sm:text-sm font-extrabold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition uppercase tracking-wide">
-                        DAFTAR SEKARANG <i class="fas fa-user-plus ml-2"></i>
-                    </button>
-                </div>
-
-                <div class="text-center pt-2.5 border-t border-gray-100 dark:border-gray-700 mt-3.5">
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
-                        Sudah punya akun? 
-                        <a href="{{ route('login') }}" class="font-bold text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition">
-                            Masuk di sini
-                        </a>
-                    </p>
-                </div>
-            </form>
-
-            <script>
-                function toggleRoleFields(role) {
-                    const fieldPeserta = document.getElementById('field-peserta');
-                    const fieldPembimbing = document.getElementById('field-pembimbing');
-                    const inputMajor = document.getElementById('major');
-                    const inputInstansi = document.getElementById('asal_instansi');
-                    const desc = document.getElementById('form-description');
-
-                    if (role === 'pembimbing') {
-                        fieldPeserta.classList.add('hidden');
-                        fieldPembimbing.classList.remove('hidden');
-                        inputInstansi.setAttribute('required', 'required');
-                        inputMajor.removeAttribute('required');
-                        desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai pembimbing sekolah/kampus.";
-                    } else {
-                        fieldPeserta.classList.remove('hidden');
-                        fieldPembimbing.classList.add('hidden');
-                        inputMajor.setAttribute('required', 'required');
-                        inputInstansi.removeAttribute('required');
-                        desc.textContent = "Lengkapi formulir di bawah untuk mendaftar sebagai peserta magang.";
-                    }
-                }
-            </script>
-
+                </form>
+            </x-auth.card>
         </div>
     </div>
 </x-guest-layout>

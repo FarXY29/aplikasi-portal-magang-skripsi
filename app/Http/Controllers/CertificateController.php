@@ -101,8 +101,12 @@ class CertificateController extends Controller
 
         $this->authorize('manageActiveIntern', $app);
 
-        // Validasi: Pastikan nilai sudah ada sebelum terbit sertifikat
-        if (!$app->nilai_rata_rata) {
+        if ($app->status_value !== 'selesai') {
+            return redirect()->back()->with('error', 'Peserta belum dinyatakan selesai. Sertifikat tidak dapat diterbitkan.');
+        }
+
+        // Validasi ini wajib diulang pada endpoint POST, bukan hanya halaman form.
+        if (is_null($app->nilai_rata_rata) || (float) $app->nilai_rata_rata <= 0) {
             return redirect()->back()->with('error', 'Peserta belum dinilai oleh pembimbing_lapangan. Sertifikat tidak dapat diterbitkan.');
         }
 
@@ -136,6 +140,15 @@ class CertificateController extends Controller
         $app = Application::findOrFail($applicationId);
 
         $this->authorize('manageActiveIntern', $app);
+
+        if ($app->status_value !== 'selesai') {
+            return redirect()->back()->with('error', 'Peserta belum dinyatakan selesai. Sertifikat tidak dapat diterbitkan.');
+        }
+
+        // Jangan percayakan guard pada halaman GET; request POST dapat dibuat langsung.
+        if (is_null($app->nilai_rata_rata) || (float) $app->nilai_rata_rata <= 0) {
+            return redirect()->back()->with('error', 'Peserta belum dinilai oleh pembimbing_lapangan. Sertifikat tidak dapat diterbitkan.');
+        }
 
         // 1. Simpan Data Legalitas Sertifikat
         $app->update([

@@ -104,7 +104,7 @@
 
                             {{-- Role --}}
                             <td class="px-5 py-3.5 whitespace-nowrap">
-                                @include('admin_kota.users.partials.role-badge', ['role' => $user->role])
+                                @include('admin_kota.users.partials.role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
                             </td>
 
                             {{-- Detail / Contact --}}
@@ -162,7 +162,7 @@
                             </div>
                         </div>
                         <div class="shrink-0">
-                            @include('admin_kota.users.partials.role-badge', ['role' => $user->role])
+                            @include('admin_kota.users.partials.role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
                         </div>
                     </div>
 

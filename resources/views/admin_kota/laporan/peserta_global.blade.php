@@ -13,14 +13,6 @@
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
                     </a>
                 @endif
-                @if($stats['total'] > 0)
-                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
-                        <i class="fas fa-file-pdf text-rose-500"></i> PDF
-                    </a>
-                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
-                        <i class="fas fa-file-excel text-emerald-500"></i> Excel
-                    </a>
-                @endif
             </div>
         </div>
     </x-slot>
@@ -36,11 +28,19 @@
                     </div>
                     Kembali ke Pusat Laporan
                 </a>
+
+                @if($stats['total'] > 0)
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
+                        <i class="fas fa-file-pdf text-rose-500"></i> PDF
+                    </a>
+                </div>
+                @endif
             </div>
 
             <!-- Ringkasan Statistik Utama -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between cursor-help hover:shadow-md transition" title="Jumlah seluruh peserta yang sesuai dengan filter laporan saat ini.">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Peserta</p>
                         <p class="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1 font-mono">{{ number_format($stats['total']) }}</p>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between cursor-help hover:shadow-md transition" title="Jumlah peserta magang dengan status 'diterima' yang saat ini sedang aktif menjalani kegiatan magang di instansi Pemko.">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Aktif Magang</p>
                         <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono">{{ number_format($stats['aktif']) }}</p>
@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between cursor-help hover:shadow-md transition" title="Jumlah alumni peserta magang yang telah menyelesaikan seluruh program magang secara tuntas (status 'selesai').">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Selesai Magang</p>
                         <p class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1 font-mono">{{ number_format($stats['selesai']) }}</p>
@@ -70,7 +70,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex items-center justify-between cursor-help hover:shadow-md transition" title="Jumlah pendaftaran magang yang masih dalam proses verifikasi seleksi / pending (status 'pending'/'menunggu').">
                     <div>
                         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pending / Menunggu</p>
                         <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1 font-mono">{{ number_format($stats['pending']) }}</p>
@@ -226,9 +226,13 @@
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-xs font-bold text-gray-700 dark:text-gray-300">
-                                    <span class="px-3 py-1 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl font-mono inline-block">
-                                        {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
-                                    </span>
+                                    @if($data->tanggal_mulai && $data->tanggal_selesai)
+                                        <span class="px-3 py-1 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl font-mono inline-block">
+                                            {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-gray-400 dark:text-gray-500 italic">Tanggal belum ditentukan</span>
+                                    @endif
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -331,9 +335,13 @@
                             </div>
                             <div class="flex items-start gap-2">
                                 <span class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0 pt-0.5">Periode</span>
-                                <span class="px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-[11px] inline-block font-bold text-gray-700 dark:text-gray-300">
-                                    {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
-                                </span>
+                                @if($data->tanggal_mulai && $data->tanggal_selesai)
+                                    <span class="px-2.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg font-mono text-[11px] inline-block font-bold text-gray-700 dark:text-gray-300">
+                                        {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}
+                                    </span>
+                                @else
+                                    <span class="text-xs text-gray-400 dark:text-gray-500 italic">Tanggal belum ditentukan</span>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -21,18 +21,22 @@
             </div>
 
             @if(session('success'))
-    <x-ui.alert type="success" class="mb-4">
-        {{ session('success') }}
-    </x-ui.alert>
-@endif
+                <x-ui.alert type="success" class="mb-4">
+                    {{ session('success') }}
+                </x-ui.alert>
+            @endif
 
             @if(session('error'))
-    <x-ui.alert type="error" class="mb-4">
-        {{ session('error') }}
-    </x-ui.alert>
-@endif
+                <x-ui.alert type="error" class="mb-4">
+                    {{ session('error') }}
+                </x-ui.alert>
+            @endif
 
-            <form action="{{ route('admin.settings.update') }}" method="POST">
+            <form id="backup-form" action="{{ route('admin.settings.backup') }}" method="POST">
+                @csrf
+            </form>
+
+            <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="space-y-8">
@@ -54,7 +58,7 @@
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition">
                                         <i class="fas fa-heading"></i>
                                     </span>
-                                    <input type="text" name="app_name" value="{{ $settings['app_name'] ?? 'SiMagang Banjarmasin' }}"
+                                    <input type="text" name="app_name" value="{{ old('app_name', $settings['app_name'] ?? 'SiMagang Banjarmasin') }}"
                                         class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm"
                                         placeholder="Masukkan nama aplikasi...">
                                 </div>
@@ -65,9 +69,52 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700"
-                         x-data="{ announcement: '{{ addslashes($settings['announcement'] ?? '') }}' }">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-950/40 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-inner">
+                                <i class="fas fa-user-tie text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Pejabat Penandatangan</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Data ini digunakan pada dokumen resmi yang diterbitkan sistem.</p>
+                            </div>
+                        </div>
+                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="pejabat_name" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Pejabat</label>
+                                <input id="pejabat_name" type="text" name="pejabat_name" value="{{ old('pejabat_name', $settings['pejabat_name'] ?? '') }}"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                @error('pejabat_name') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="pejabat_nip" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">NIP</label>
+                                <input id="pejabat_nip" type="text" name="pejabat_nip" value="{{ old('pejabat_nip', $settings['pejabat_nip'] ?? '') }}"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                @error('pejabat_nip') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="pejabat_jabatan" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Jabatan</label>
+                                <input id="pejabat_jabatan" type="text" name="pejabat_jabatan" value="{{ old('pejabat_jabatan', $settings['pejabat_jabatan'] ?? '') }}"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                @error('pejabat_jabatan') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="ttd_image" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tanda Tangan Digital / Stempel (Opsional)</label>
+                                <input id="ttd_image" type="file" name="ttd_image" accept="image/*"
+                                    class="w-full py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                @if(!empty($settings['ttd_image']))
+                                    <div class="mt-3 flex items-center gap-3">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 font-semibold">Tanda Tangan Saat Ini:</span>
+                                        <img src="{{ asset('storage/' . $settings['ttd_image']) }}" alt="TTD Pejabat" class="h-12 object-contain bg-white p-1 border rounded-lg">
+                                    </div>
+                                @endif
+                                @error('ttd_image') <p class="mt-2 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700"
+                         x-data="{ announcement: @js(old('announcement', $settings['announcement'] ?? '')) }">
                         <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center gap-4">
                             <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center text-orange-600 dark:text-orange-400 shadow-inner">
                                 <i class="fas fa-bullhorn text-xl"></i>
@@ -120,11 +167,14 @@
                                 </div>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
-                                <input type="password" name="password" autocomplete="current-password" placeholder="Konfirmasi password" class="rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm" aria-label="Konfirmasi password untuk backup">
-                                <button type="submit" formaction="{{ route('admin.settings.backup') }}" formmethod="POST" class="inline-flex items-center justify-center px-4 py-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-bold rounded-xl shadow-sm transition">
+                                <input type="password" name="password" form="backup-form" autocomplete="current-password" placeholder="Konfirmasi password" class="rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm" aria-label="Konfirmasi password untuk backup" required>
+                                <button type="submit" form="backup-form" class="inline-flex items-center justify-center px-4 py-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-bold rounded-xl shadow-sm transition">
                                     <i class="fas fa-database mr-2"></i> Antrekan Backup
                                 </button>
                             </div>
+                            @error('password')
+                                <p class="mt-2 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
                         @if($backups->isNotEmpty())
                             <div class="px-6 py-4 space-y-2 text-sm border-t border-gray-100 dark:border-gray-700">

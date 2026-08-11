@@ -217,7 +217,7 @@
                                                     </button>
                                                 @endif
 
-                                                <button type="button" @click="openReject('{{ route('dinas.pelamar.tolak', $app->id) }}', '{{ $app->user->name }}')" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/60 text-xs font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 active:scale-95 transition shadow-xs" title="Tolak Peserta">
+                                                <button type="button" @click="openReject(@js(route('dinas.pelamar.tolak', $app->id)), @js($app->user->name))" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/60 text-xs font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 active:scale-95 transition shadow-xs" title="Tolak Peserta">
                                                     <i class="fas fa-times mr-1"></i> Tolak
                                                 </button>
                                             </div>
@@ -225,7 +225,7 @@
 
                                         <!-- Tombol In-Browser PDF Viewer -->
                                         @if($app->surat_pengantar_path)
-                                            <button type="button" @click="openPdf('{{ route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) }}', 'Surat Pengantar - {{ $app->user->name }}')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline flex items-center cursor-pointer bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/50 transition">
+                                            <button type="button" @click="openPdf(@js(route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)])), @js('Surat Pengantar - ' . $app->user->name))" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline flex items-center cursor-pointer bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/50 transition">
                                                 <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> Lihat Surat
                                             </button>
                                         @else

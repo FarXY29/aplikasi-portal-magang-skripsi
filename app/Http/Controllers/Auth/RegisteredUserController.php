@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'major' => ['required_if:role,peserta', 'nullable', 'string', 'max:255'], // Validasi Jurusan
-            'asal_instansi' => ['required_if:role,pembimbing', 'nullable', 'string', 'max:255'], // Validasi Asal Instansi
+            'asal_instansi' => ['required', 'string', 'max:255'], // Validasi Asal Instansi (required for both)
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'major' => $request->role === 'peserta' ? $request->major : null,
-            'asal_instansi' => $request->role === 'pembimbing' ? $request->asal_instansi : null,
+            'asal_instansi' => $request->asal_instansi,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);

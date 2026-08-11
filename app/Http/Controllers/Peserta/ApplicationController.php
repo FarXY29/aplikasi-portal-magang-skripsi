@@ -55,6 +55,7 @@ class ApplicationController extends Controller
 
         $reqStart = $request->tanggal_mulai;
         $reqEnd = $request->tanggal_selesai;
+        $requestedWaitingList = $request->boolean('is_waiting_list');
 
         // Cek Application Limiter (Maksimal 2 lamaran aktif)
         $activeApplicationsCount = Application::where('user_id', $user->id)
@@ -77,7 +78,7 @@ class ApplicationController extends Controller
         // Upload berkas di luar transaksi agar lock database tidak tertahan oleh proses I/O storage
         $suratPath = $request->file('surat')->store('documents/surat', 'private');
 
-        $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request) {
+        $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request, $requestedWaitingList) {
             // Pessimistic Locking pada baris InternshipPosition untuk menjamin akurasi kuota instansi
             $position = InternshipPosition::where('id', $id)->lockForUpdate()->firstOrFail();
             $kapasitasMaksimal = $position->kuota;
@@ -107,7 +108,7 @@ class ApplicationController extends Controller
             }
 
             $status = 'pending';
-            if ($conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
+            if ($requestedWaitingList || $conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
                 $status = 'menunggu';
             }
 

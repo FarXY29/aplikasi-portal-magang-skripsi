@@ -12,7 +12,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
             @php
-                $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
+                $globalAnnouncement = $globalAnnouncement ?? null;
             @endphp
             @if(!empty($globalAnnouncement))
                 <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border-l-4 border-amber-500 p-6 rounded-r-2xl shadow-sm border border-amber-100 dark:border-amber-900/40 flex gap-4 items-start relative overflow-hidden">

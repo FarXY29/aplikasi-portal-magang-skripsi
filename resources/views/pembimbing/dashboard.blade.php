@@ -18,7 +18,7 @@
                 <div class="p-6 sm:p-8">
                     <h3 class="text-2xl font-black text-gray-900 dark:text-gray-100 mb-2">Selamat datang, {{ Auth::user()->name }}!</h3>
                     <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium leading-relaxed">
-                        Anda login sebagai <strong class="text-gray-800 dark:text-gray-200">Pembimbing Sekolah / Akademik</strong>.
+                        Anda login sebagai <strong class="text-gray-800 dark:text-gray-200">Pembimbing Akademik</strong>.
                         @if(Auth::user()->asal_instansi)
                             Mahasiswa di bawah ini adalah mereka yang secara spesifik telah memilih Anda sebagai dosen pembimbing mereka pada portal magang ini.
                         @else

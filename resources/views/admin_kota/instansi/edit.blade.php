@@ -117,7 +117,7 @@
                                                 <i class="fas fa-envelope"></i>
                                             </span>
                                             <input type="email" name="email_admin" value="{{ old('email_admin', $adminUser->email ?? '') }}" 
-                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" required
+                                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-200 transition shadow-sm" @required($adminUser)
                                                 oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                                 oninput="this.setCustomValidity('')">
                                         </div>
@@ -210,7 +210,7 @@
 <script>
     function initLeafletMap() {
         if (typeof L === 'undefined') {
-            setTimeout(initLeafletMap, 100);
+            console.warn('Leaflet gagal dimuat; peta instansi tidak tersedia.');
             return;
         }
 

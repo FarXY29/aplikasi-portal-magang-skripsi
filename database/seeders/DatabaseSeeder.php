@@ -267,11 +267,14 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 4. Sinkronisasikan Role Spatie untuk Seluruh User
+        // 4. Generate Absensi Dummy untuk Peserta Magang (Aktif & Selesai)
+        $this->call(AttendanceSeeder::class);
+
+        // 5. Sinkronisasikan Role Spatie untuk Seluruh User
         User::all()->each(function ($user) {
             if ($user->role && \Spatie\Permission\Models\Role::where('name', $user->role)->exists()) {
                 $user->assignRole($user->role);
             }
         });
     }
-}
+}

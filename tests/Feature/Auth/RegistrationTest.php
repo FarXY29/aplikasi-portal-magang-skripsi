@@ -25,6 +25,7 @@ class RegistrationTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'major' => 'Informatika',
+            'asal_instansi' => 'SMKN 1 Banjarmasin',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);

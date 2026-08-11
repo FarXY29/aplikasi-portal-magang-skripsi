@@ -21,46 +21,54 @@
                     </div>
                     Kembali ke Pusat Laporan
                 </a>
+                
+                @if($laporan->count() > 0)
+                <div class="sm:ml-auto flex-shrink-0 flex flex-wrap gap-2 justify-center">
+                    <a href="{{ route('admin.laporan.print', request()->query()) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-900 dark:text-teal-200 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition text-xs font-extrabold shadow-xs hover:shadow active:scale-95" title="Download PDF">
+                        <i class="fas fa-file-pdf mr-1.5 text-rose-500"></i> PDF
+                    </a>
+                </div>
+                @endif
             </div>
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total seluruh instansi/dinas Pemerintah Kota Banjarmasin yang terdaftar dalam sistem portal magang.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-800/60 shadow-xs">
                         <i class="fas fa-building text-xs"></i>
                     </div>
                     <p class="text-xl md:text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($stats['total_instansi']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Instansi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah posisi lowongan magang berstatus terbuka (buka) yang sedang ditawarkan seluruh instansi.">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-800/60 shadow-xs">
                         <i class="fas fa-briefcase text-xs"></i>
                     </div>
                     <p class="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($stats['total_lowongan']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Lowongan Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total akumulasi berkas pendaftaran/lamaran peserta yang masuk ke seluruh instansi Pemko.">
                     <div class="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-800/60 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
                     <p class="text-xl md:text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight">{{ number_format($stats['total_pelamar']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Pelamar</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta magang yang telah diterima (status 'diterima') atau telah lulus/selesai (status 'selesai') secara akumulatif di seluruh instansi.">
                     <div class="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3 border border-emerald-100 dark:border-emerald-800/60 shadow-xs">
                         <i class="fas fa-user-check text-xs"></i>
                     </div>
                     <p class="text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{{ number_format($stats['total_diterima']) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Diterima / Lulus</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20" title="Rata-rata persentase kelulusan seleksi tingkat kota. Rumus: (Total Diterima / Total Pelamar) x 100%.">
                     <div class="w-9 h-9 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-3 border border-amber-100 dark:border-amber-800/60 shadow-xs">
                         <i class="fas fa-percentage text-xs"></i>
                     </div>
                     <p class="text-xl md:text-2xl font-black text-amber-600 dark:text-amber-400 font-mono tracking-tight">{{ $stats['avg_seleksi_rate'] }}%</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Seleksi Kota</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Instansi/dinas dengan jumlah pendaftar terbanyak se-Kota Banjarmasin.">
                     <div class="w-9 h-9 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-3 border border-rose-100 dark:border-rose-800/60 shadow-xs">
                         <i class="fas fa-award text-xs"></i>
                     </div>
@@ -79,19 +87,6 @@
                     <h2 class="text-xl font-extrabold mt-0.5 tracking-tight">Maju Bersama {{ $stats['total_instansi'] }} Instansi Pemerintahan</h2>
                     <p class="text-xs text-teal-50/90 font-medium">Tingkat seleksi kelulusan peserta kota berada pada kisaran {{ $stats['avg_seleksi_rate'] }}%.</p>
                 </div>
-                @if($laporan->count() > 0)
-                <div class="sm:ml-auto flex-shrink-0 flex flex-wrap gap-2 justify-center">
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-900 dark:text-teal-200 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition text-xs font-extrabold shadow-xs hover:shadow active:scale-95" title="Download PDF">
-                        <i class="fas fa-file-pdf mr-1.5 text-rose-500"></i> PDF
-                    </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-900 dark:text-teal-200 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition text-xs font-extrabold shadow-xs hover:shadow active:scale-95" title="Download Excel">
-                        <i class="fas fa-file-excel mr-1.5 text-emerald-500"></i> Excel
-                    </a>
-                    <a href="{{ route('admin.laporan.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-900 dark:text-teal-200 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 border border-transparent dark:border-gray-700 transition text-xs font-extrabold shadow-xs hover:shadow active:scale-95" title="Download CSV">
-                        <i class="fas fa-file-csv mr-1.5 text-blue-500"></i> CSV
-                    </a>
-                </div>
-                @endif
             </div>
 
             {{-- Main Table Card with Integrated Header Filters --}}

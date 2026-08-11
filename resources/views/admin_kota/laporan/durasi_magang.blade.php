@@ -13,7 +13,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{ searchQuery: '{{ request('q') }}' }">
+    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{ searchQuery: @js(request('q')) }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             {{-- Navigation & Export Buttons --}}
@@ -27,14 +27,8 @@
                 
                 @if($instansis->count() > 0)
                 <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
+                    <a href="{{ route('admin.laporan.durasi_magang.print', request()->query()) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
-                    </a>
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
-                        <i class="fas fa-file-excel text-emerald-500"></i> Excel
-                    </a>
-                    <a href="{{ route('admin.laporan.durasi_magang.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
-                        <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
                 @endif
@@ -48,28 +42,28 @@
                 $totalPesertaEvaluasi = $instansis->sum(fn($i) => $i->applications->count());
             @endphp
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Total jumlah instansi/dinas Pemerintah Kota Banjarmasin yang terdaftar pada laporan durasi magang.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-3 border border-teal-100 dark:border-teal-800/60 shadow-xs">
                         <i class="fas fa-building text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100 font-mono tracking-tight">{{ number_format($instansis->count()) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Total Instansi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Jumlah peserta magang aktif & alumni yang memiliki data tanggal mulai dan selesai magang secara valid.">
                     <div class="w-9 h-9 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3 border border-blue-100 dark:border-blue-800/60 shadow-xs">
                         <i class="fas fa-users text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono tracking-tight">{{ number_format($totalPesertaEvaluasi) }}</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Peserta Terdokumentasi</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help" title="Rata-rata durasi magang instansi dalam satuan hari. Rumus per instansi: Total Selisih Hari (Tanggal Selesai - Tanggal Mulai) / Jumlah Peserta Magang.">
                     <div class="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-3 border border-indigo-100 dark:border-indigo-800/60 shadow-xs">
                         <i class="fas fa-calendar-day text-xs"></i>
                     </div>
                     <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight">{{ $avgHariKota }} Hari</p>
                     <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1.5">Rerata Kota (Hari)</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-xs border border-gray-100 dark:border-gray-700 text-center hover:shadow-md transition cursor-help bg-gradient-to-br from-teal-50/50 via-white to-indigo-50/30 dark:from-teal-950/20 dark:via-gray-800 dark:to-indigo-950/20" title="Rata-rata durasi magang instansi dalam satuan bulan (asumsi 1 bulan = 30 hari). Rumus: Rata-Rata Durasi Hari / 30 Hari.">
                     <div class="w-9 h-9 rounded-2xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-3 shadow-xs">
                         <i class="fas fa-clock text-xs"></i>
                     </div>
@@ -132,7 +126,7 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
                                 @forelse($instansis as $index => $instansi)
                                 <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition group"
-                                    x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                                    x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                                     <td class="px-4 py-4 text-center text-gray-400 dark:text-gray-500 font-bold text-xs">
                                         {{ $index + 1 }}
                                     </td>
@@ -193,7 +187,7 @@
                     <div class="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($instansis as $index => $instansi)
                         <div class="p-4 space-y-3.5"
-                            x-show="!searchQuery || '{{ strtolower($instansi->nama_dinas) }}'.includes(searchQuery.toLowerCase())">
+                            x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                             <div class="flex items-center gap-3">
                                 <div class="h-9 w-9 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-800/60 text-xs flex-shrink-0 flex items-center justify-center">
                                     {{ strtoupper(substr($instansi->nama_dinas, 0, 2)) }}

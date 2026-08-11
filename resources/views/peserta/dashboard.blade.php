@@ -368,7 +368,7 @@
                     <div class="flex-grow">
                         <h4 class="text-xs font-black text-teal-800 dark:text-teal-300 uppercase tracking-wider mb-1">Unduh Dokumen Lamaran</h4>
                         <p class="text-xs sm:text-sm text-teal-900 dark:text-teal-200 font-medium leading-relaxed">
-                            Klik tombol <strong>Detail &amp; Unduh</strong> pada setiap lamaran untuk mengunduh dokumen seperti <strong>ID Card</strong>, <strong>Surat Balasan</strong>, <strong>Rekap Logbook</strong>, <strong>Sertifikat</strong>, dan <strong>Transkrip</strong>.
+                            Klik tombol <strong>Detail</strong> pada setiap lamaran untuk mengunduh dokumen seperti <strong>ID Card</strong>, <strong>Surat Balasan</strong>, <strong>Rekap Logbook</strong>, <strong>Sertifikat</strong>, dan <strong>Transkrip</strong>.
                         </p>
                     </div>
                 </div>

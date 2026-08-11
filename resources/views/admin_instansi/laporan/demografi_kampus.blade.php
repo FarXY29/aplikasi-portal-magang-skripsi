@@ -24,7 +24,7 @@
             </a>
             {{-- Ringkasan 4 Kartu Utama --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4 cursor-help transition hover:shadow-md" title="Total jumlah perguruan tinggi atau sekolah unik asal peserta yang tercatat pada data pendaftaran magang instansi.">
                     <div class="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl flex-shrink-0 border border-orange-100 dark:border-orange-900/50">
                         <i class="fas fa-university"></i>
                     </div>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4 cursor-help transition hover:shadow-md" title="Total akumulasi berkas lamaran pendaftar dari seluruh instansi pendidikan/kampus yang mengajukan magang.">
                     <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl flex-shrink-0 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-users"></i>
                     </div>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4 cursor-help transition hover:shadow-md" title="Jumlah pendaftar magang yang lamarannya telah dikonfirmasi dan diterima (status 'diterima') oleh instansi.">
                     <div class="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 flex items-center justify-center text-xl flex-shrink-0 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-user-check"></i>
                     </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/60 shadow-xs flex items-center gap-4 cursor-help transition hover:shadow-md" title="Jumlah pendaftar magang yang telah tuntas menyelesaikan program magang dan dinyatakan lulus (status 'selesai').">
                     <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl flex-shrink-0 border border-purple-100 dark:border-purple-900/50">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
@@ -67,7 +67,7 @@
 
             {{-- Highlight Kontributor Terbanyak --}}
             @if($stats['total_kampus'] > 0 && !empty($stats['kampus_terbanyak']))
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-orange-200 dark:border-orange-900/50 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-orange-200 dark:border-orange-900/50 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 cursor-help" title="Nama perguruan tinggi / sekolah yang berkontribusi menyumbang jumlah pendaftar magang terbanyak ke instansi.">
                 <div class="flex items-center gap-3.5">
                     <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center text-lg flex-shrink-0 shadow-xs">
                         <i class="fas fa-trophy"></i>
@@ -81,14 +81,8 @@
                 {{-- Tombol Export --}}
                 @if($demografi->count() > 0)
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
+                    <a href="{{ route('dinas.laporan.demografi_kampus.print') }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
                         <i class="fas fa-file-pdf"></i> PDF
-                    </a>
-                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'excel']) }}" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
-                        <i class="fas fa-file-excel"></i> Excel
-                    </a>
-                    <a href="{{ route('dinas.laporan.demografi_kampus.print', ['format' => 'csv']) }}" class="inline-flex items-center px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition gap-1.5">
-                        <i class="fas fa-file-csv"></i> CSV
                     </a>
                 </div>
                 @endif
