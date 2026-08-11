@@ -26,7 +26,7 @@
                         <h1 class="text-lg md:text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">{{ $user->name }}</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-0.5">
                             <i class="fas fa-building mr-1.5 text-gray-400 dark:text-gray-500"></i> 
-                            {{ isset($app->position) ? $app->position->instansi->nama_dinas : 'Lokasi tidak ditemukan' }}
+                            {{ $app->position?->instansi?->nama_dinas ?? 'Lokasi tidak ditemukan' }}
                         </p>
                     </div>
                 </div>

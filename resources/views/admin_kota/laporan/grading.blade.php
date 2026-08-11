@@ -1,4 +1,7 @@
 <x-app-layout>
+    @php
+        $isUnfiltered = !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat');
+    @endphp
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
@@ -29,12 +32,6 @@
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download PDF">
                         <i class="fas fa-file-pdf text-rose-500"></i> PDF
-                    </a>
-                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download Excel">
-                        <i class="fas fa-file-excel text-emerald-500"></i> Excel
-                    </a>
-                    <a href="{{ route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-teal-50 dark:hover:bg-gray-700 rounded-xl font-bold text-xs transition shadow-xs flex items-center justify-center gap-1.5" title="Download CSV">
-                        <i class="fas fa-file-csv text-blue-500"></i> CSV
                     </a>
                 </div>
                 @endif
@@ -314,13 +311,13 @@
                                 @forelse($gradedList as $index => $res)
                                 <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition group cursor-pointer" @click="openRow = (openRow === {{ $index }} ? null : {{ $index }})">
                                     <td class="px-4 py-4 text-center">
-                                        @if($index == 0 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @if($index == 0 && $isUnfiltered)
                                             <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto shadow-xs border border-amber-200 dark:border-amber-800/50">
                                                 <i class="fas fa-crown text-xs"></i>
                                             </div>
-                                        @elseif($index == 1 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @elseif($index == 1 && $isUnfiltered)
                                             <div class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center mx-auto border border-gray-300 dark:border-gray-700 font-bold text-xs">2</div>
-                                        @elseif($index == 2 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @elseif($index == 2 && $isUnfiltered)
                                             <div class="w-7 h-7 rounded-full bg-amber-100/60 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto border border-amber-200 dark:border-amber-800/50 font-bold text-xs">3</div>
                                         @else
                                             <span class="text-gray-400 dark:text-gray-500 font-bold text-xs">#{{ $index + 1 }}</span>
@@ -458,13 +455,13 @@
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3 min-w-0">
                                     <div class="flex-shrink-0">
-                                        @if($index == 0 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @if($index == 0 && $isUnfiltered)
                                             <div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-xs border border-amber-200 dark:border-amber-800/50">
                                                 <i class="fas fa-crown text-xs"></i>
                                             </div>
-                                        @elseif($index == 1 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @elseif($index == 1 && $isUnfiltered)
                                             <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 flex items-center justify-center border border-gray-300 dark:border-gray-700 font-bold text-xs">2</div>
-                                        @elseif($index == 2 && !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat'))
+                                        @elseif($index == 2 && $isUnfiltered)
                                             <div class="w-8 h-8 rounded-full bg-amber-100/60 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-800/50 font-bold text-xs">3</div>
                                         @else
                                             <div class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-500 flex items-center justify-center border border-gray-200 dark:border-gray-700 font-bold text-xs">#{{ $index + 1 }}</div>

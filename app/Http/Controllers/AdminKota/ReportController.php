@@ -80,7 +80,7 @@ class ReportController extends Controller
     {
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
 
-        return view('admin_kota.laporan_instansi', compact('instansis'));
+        return view('admin_kota.instansi.laporan_instansi', compact('instansis'));
     }
 
     /**

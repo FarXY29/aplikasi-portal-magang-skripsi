@@ -48,7 +48,6 @@ class DashboardController extends Controller
                 'activeInterns' => number_format($data['activeInterns']),
                 'completedInterns' => number_format($data['completedInterns']),
                 'pendingApplications' => number_format($data['pendingApplications']),
-                'rejectedApplications' => number_format($data['rejectedApplications']),
                 'lolosPercentage' => $data['lolosPercentage'],
                 'tolakPercentage' => $data['tolakPercentage'],
                 'statusLabels' => $data['statusLabels'],
@@ -110,38 +109,16 @@ class DashboardController extends Controller
         $statusData = [$pendingApplications, $activeInterns, $completedInterns, $rejectedApplications];
 
         $recentInstansis = Instansi::latest()->take(5)->get();
-        $recentApplications = Application::with(['user', 'position.instansi'])->latest()->take(5)->get();
 
-        // Statistik pelamar per instansi: 2 query (paginate + chart) menggantikan 3 query berulang
+        // Statistik pelamar per instansi (terurut dari peminat terbanyak).
         $instansiBase = Instansi::withCount('applications')->orderByDesc('applications_count');
         $instansiStats = (clone $instansiBase)->paginate(10, ['*'], 'page', $page);
-        $instansiChart = (clone $instansiBase)->take(10)->get();
-        $instansiChartLabels = $instansiChart->pluck('nama_dinas')->toArray();
-        $instansiChartData = $instansiChart->pluck('applications_count')->toArray();
 
-        $maxPelamar = $instansiChart->first()?->applications_count ?? 1;
+        // Max peminat global untuk normalisasi progress bar (list terurut desc).
+        $maxPelamar = (clone $instansiBase)->take(1)->get()->first()?->applications_count ?? 1;
         if ($maxPelamar == 0) {
             $maxPelamar = 1;
         }
-
-        $quickActions = [
-            ['label' => 'Instansi', 'icon' => 'fas fa-building', 'route' => route('admin.instansi.index'), 'color' => 'teal'],
-            ['label' => 'Pengguna', 'icon' => 'fas fa-users', 'route' => route('admin.users.index'), 'color' => 'blue'],
-            ['label' => 'Pusat Laporan', 'icon' => 'fas fa-chart-pie', 'route' => route('admin.laporan.hub'), 'color' => 'indigo'],
-            ['label' => 'Logbook', 'icon' => 'fas fa-book-open', 'route' => route('admin.users.logbooks'), 'color' => 'purple'],
-            ['label' => 'Audit Trail', 'icon' => 'fas fa-clipboard-list', 'route' => route('admin.audit_trail'), 'color' => 'amber'],
-            ['label' => 'Pengaturan', 'icon' => 'fas fa-cog', 'route' => route('admin.settings.index'), 'color' => 'rose'],
-        ];
-
-        $demografiKampus = User::portalRole('peserta')
-            ->whereNotNull('asal_instansi')
-            ->select('asal_instansi', DB::raw('count(*) as total'))
-            ->groupBy('asal_instansi')
-            ->orderByDesc('total')
-            ->take(7)
-            ->get();
-        $kampusLabels = $demografiKampus->pluck('asal_instansi')->toArray();
-        $kampusData = $demografiKampus->pluck('total')->toArray();
 
         return compact(
             'totalInstansi',
@@ -150,22 +127,15 @@ class DashboardController extends Controller
             'activeInterns',
             'completedInterns',
             'pendingApplications',
-            'rejectedApplications',
             'lolosPercentage',
             'tolakPercentage',
             'recentInstansis',
-            'recentApplications',
             'instansiStats',
-            'instansiChartLabels',
-            'instansiChartData',
             'maxPelamar',
             'statusLabels',
             'statusData',
             'trendLabels',
-            'trendData',
-            'kampusLabels',
-            'kampusData',
-            'quickActions'
+            'trendData'
         );
     }
 

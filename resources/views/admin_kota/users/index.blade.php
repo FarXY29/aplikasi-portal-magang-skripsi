@@ -203,15 +203,4 @@
         </div>
     </div>
 
-    <script>
-        let timeout = null;
-        function autoSubmitSearch() {
-            const loading = document.getElementById('loadingIcon');
-            if(loading) loading.classList.remove('hidden');
-            clearTimeout(timeout);
-            timeout = setTimeout(function () {
-                document.getElementById('searchForm').submit();
-            }, 800);
-        }
-    </script>
 </x-app-layout>

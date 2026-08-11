@@ -8,7 +8,7 @@
                 {{ __('Rekapitulasi Global Peserta Magang') }}
             </h2>
             <div class="flex flex-wrap items-center gap-2">
-                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi', 'q']))
+                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q']))
                     <a href="{{ route('admin.laporan.peserta_global') }}" class="flex-1 sm:flex-none px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
                     </a>
@@ -148,7 +148,7 @@
                     @endif
 
                     <div class="flex flex-col sm:flex-row justify-end items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'start_date', 'end_date', 'posisi', 'q']))
+                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q']))
                             <a href="{{ route('admin.laporan.peserta_global') }}" class="w-full sm:w-auto px-4 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-rose-600 bg-gray-100 dark:bg-gray-900 rounded-xl transition text-center border border-gray-200 dark:border-gray-700">
                                 <i class="fas fa-times mr-1"></i> Bersihkan Filter
                             </a>
@@ -199,10 +199,10 @@
                             @forelse($allInterns as $data)
                             <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-950/20 transition duration-150"
                                 x-show="quickSearch === '' || 
-                                        '{{ strtolower($data->user->name ?? '') }}'.includes(quickSearch.toLowerCase()) || 
-                                        '{{ strtolower($data->user->asal_instansi ?? '') }}'.includes(quickSearch.toLowerCase()) || 
-                                        '{{ strtolower($data->position->instansi->nama_dinas ?? '') }}'.includes(quickSearch.toLowerCase()) ||
-                                        '{{ strtolower($data->position->judul_posisi ?? '') }}'.includes(quickSearch.toLowerCase())">
+                                        @js(strtolower($data->user->name ?? '')).includes(quickSearch.toLowerCase()) || 
+                                        @js(strtolower($data->user->asal_instansi ?? '')).includes(quickSearch.toLowerCase()) || 
+                                        @js(strtolower($data->position->instansi->nama_dinas ?? '')).includes(quickSearch.toLowerCase()) ||
+                                        @js(strtolower($data->position->judul_posisi ?? '')).includes(quickSearch.toLowerCase())">
                                 
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-400 dark:text-gray-500">
                                     {{ $loop->iteration }}
@@ -236,26 +236,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    @php
-                                        $statusVal = $data->status instanceof \App\Enums\ApplicationStatus ? $data->status->value : $data->status;
-                                        $badgeClass = match($statusVal) {
-                                            'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
-                                            'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
-                                            'pending', 'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
-                                            'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
-                                            default => 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700'
-                                        };
-                                        $label = match($statusVal) {
-                                            'diterima' => 'Aktif',
-                                            'selesai' => 'Selesai',
-                                            'pending', 'menunggu' => 'Pending',
-                                            'ditolak' => 'Ditolak',
-                                            default => ucfirst($statusVal)
-                                        };
-                                    @endphp
-                                    <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $badgeClass }}">
-                                        {{ $label }}
-                                    </span>
+                                    @include('admin_kota.laporan.partials.application-status-badge', ['status' => $data->status])
                                 </td>
                             </tr>
                             @empty
@@ -280,10 +261,10 @@
                     @forelse($allInterns as $data)
                     <div class="p-4 space-y-3.5 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition"
                         x-show="quickSearch === '' ||
-                                '{{ strtolower($data->user->name ?? '') }}'.includes(quickSearch.toLowerCase()) ||
-                                '{{ strtolower($data->user->asal_instansi ?? '') }}'.includes(quickSearch.toLowerCase()) ||
-                                '{{ strtolower($data->position->instansi->nama_dinas ?? '') }}'.includes(quickSearch.toLowerCase()) ||
-                                '{{ strtolower($data->position->judul_posisi ?? '') }}'.includes(quickSearch.toLowerCase())">
+                                @js(strtolower($data->user->name ?? '')).includes(quickSearch.toLowerCase()) ||
+                                @js(strtolower($data->user->asal_instansi ?? '')).includes(quickSearch.toLowerCase()) ||
+                                @js(strtolower($data->position->instansi->nama_dinas ?? '')).includes(quickSearch.toLowerCase()) ||
+                                @js(strtolower($data->position->judul_posisi ?? '')).includes(quickSearch.toLowerCase())">
 
                         {{-- header row: iteration + name + status badge --}}
                         <div class="flex items-start justify-between gap-3">
@@ -294,26 +275,7 @@
                                     <div class="text-xs text-gray-400 dark:text-gray-500 font-medium truncate mt-0.5">{{ $data->user->email ?? '-' }}</div>
                                 </div>
                             </div>
-                            @php
-                                $statusVal = $data->status instanceof \App\Enums\ApplicationStatus ? $data->status->value : $data->status;
-                                $badgeClass = match($statusVal) {
-                                    'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
-                                    'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
-                                    'pending', 'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
-                                    'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
-                                    default => 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700'
-                                };
-                                $label = match($statusVal) {
-                                    'diterima' => 'Aktif',
-                                    'selesai' => 'Selesai',
-                                    'pending', 'menunggu' => 'Pending',
-                                    'ditolak' => 'Ditolak',
-                                    default => ucfirst($statusVal)
-                                };
-                            @endphp
-                            <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $badgeClass }} shrink-0">
-                                {{ $label }}
-                            </span>
+                            @include('admin_kota.laporan.partials.application-status-badge', ['status' => $data->status, 'extraClass' => 'shrink-0'])
                         </div>
 
                         {{-- detail block: key-value mini grid --}}

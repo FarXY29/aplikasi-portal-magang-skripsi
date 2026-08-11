@@ -74,9 +74,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
-                                    {{ strtoupper($log->action) }}
-                                </span>
+                                @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-gray-900 dark:text-gray-100 font-medium">{{ $log->auditable_type ? class_basename($log->auditable_type) : '-' }}</div>
@@ -112,9 +110,7 @@
                             <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $log->ip_address }}</div>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
-                            {{ strtoupper($log->action) }}
-                        </span>
+                        @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
                     </div>
 
                     {{-- Detail block --}}

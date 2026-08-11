@@ -113,7 +113,7 @@
                                 <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Jumlah pendaftar per hari dalam periode terpilih</p>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 tracking-wider">
+                        <span id="chart-period-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 tracking-wider">
                             {{ strtoupper($periodText) }}
                         </span>
                     </div>
@@ -584,11 +584,16 @@
             function startAutoRefreshTimer() {
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(() => {
-                    countdown--;
-                    const timerEl = document.getElementById('countdown-timer');
-                    if (timerEl) timerEl.textContent = countdown;
+                    if (countdown > 0) {
+                        countdown--;
+                        const timerEl = document.getElementById('countdown-timer');
+                        if (timerEl) timerEl.textContent = countdown;
+                    }
 
                     if (countdown <= 0) {
+                        // Guarded by refreshInFlight inside fetchDashboardData;
+                        // countdown stays at 0 (never negative) until the request
+                        // settles and resets it back to 60.
                         fetchDashboardData(currentPeriod);
                     }
                 }, 1000);
