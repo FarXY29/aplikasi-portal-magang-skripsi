@@ -180,14 +180,55 @@
                     <x-input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
                 </div>
 
-                <!-- Jurusan -->
-                <div class="space-y-1.5">
-                    <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="major">
-                        <span>{{ __('Jurusan / Program Studi') }}</span> <span class="text-red-500">*</span>
-                    </label>
-                    <input id="major" name="major" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('major', $user->major) }}" placeholder="Contoh: Teknik Informatika" required />
-                    <p class="text-[11px] text-gray-400 dark:text-gray-500">Menentukan posisi magang yang bisa Anda lamar.</p>
+                <!-- Jurusan / Program Studi Terstandarisasi -->
+                <div class="space-y-1.5" x-data="{
+                    isCustom: {{ empty($user->major_id) && !empty($user->major) ? 'true' : 'false' }},
+                    customMajor: '{{ old('major', $user->major) }}',
+                    onSelectMajor(e) {
+                        if (e.target.value === 'custom') {
+                            this.isCustom = true;
+                        } else {
+                            this.isCustom = false;
+                            const opt = e.target.selectedOptions[0];
+                            if (opt && opt.getAttribute('data-name')) {
+                                this.customMajor = opt.getAttribute('data-name');
+                            }
+                        }
+                    }
+                }">
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="major_id">
+                            <span>{{ __('Jurusan / Program Studi') }}</span> <span class="text-red-500">*</span>
+                        </label>
+                        @if($user->majorDetail)
+                            <span class="text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">
+                                {{ $user->majorDetail->category->name ?? 'Terdaftar' }}
+                            </span>
+                        @endif
+                    </div>
+                    <select id="major_id" name="major_id" @change="onSelectMajor($event)" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15">
+                        <option value="">-- Pilih Jurusan / Program Studi Resmi --</option>
+                        @if(isset($categories))
+                            @foreach($categories as $category)
+                                <optgroup label="── {{ $category->name }} ({{ $category->code }}) ──">
+                                    @foreach($category->majors as $m)
+                                        <option value="{{ $m->id }}" data-name="{{ $m->name }}" {{ old('major_id', $user->major_id) == $m->id ? 'selected' : '' }}>
+                                            [{{ $m->degree_level }}] {{ $m->name }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        @endif
+                        <option value="custom" {{ (empty($user->major_id) && !empty($user->major)) || old('major_id') === 'custom' ? 'selected' : '' }}>-- Jurusan Lainnya (Tulis Manual) --</option>
+                    </select>
+
+                    <div x-show="isCustom" x-transition class="pt-1.5">
+                        <input id="major" name="major" type="text" x-model="customMajor" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" placeholder="Contoh: Teknik Informatika" />
+                    </div>
+                    <input type="hidden" name="major" :value="customMajor" x-show="!isCustom">
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500">Menentukan posisi magang yang sesuai dengan kualifikasi Anda.</p>
                     <x-input-error class="mt-1" :messages="$errors->get('major')" />
+                    <x-input-error class="mt-1" :messages="$errors->get('major_id')" />
                 </div>
 
                 <!-- Pemilihan Pembimbing Sekolah -->

@@ -84,22 +84,46 @@
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Syarat Jurusan -->
+                                        <!-- Rumpun Keilmuan / Kategori Jurusan -->
+                                        <div class="relative group">
+                                            <label for="required_major_category_id" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                                                <i class="fas fa-layer-group text-teal-500 dark:text-teal-400"></i> Rumpun Keilmuan yang Dibutuhkan
+                                            </label>
+                                            <div class="relative transition-all duration-300 group-focus-within:drop-shadow-sm">
+                                                <select name="required_major_category_id" id="required_major_category_id" 
+                                                    class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('required_major_category_id') border-red-400 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-bold text-slate-800 dark:text-gray-100 text-sm">
+                                                    <option value="">-- Terbuka Untuk Semua Rumpun Keilmuan --</option>
+                                                    @if(isset($categories))
+                                                        @foreach($categories as $cat)
+                                                            <option value="{{ $cat->id }}" {{ old('required_major_category_id') == $cat->id ? 'selected' : '' }}>
+                                                                {{ $cat->name }} ({{ $cat->code }})
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
+                                            <p class="text-xs text-slate-400 dark:text-gray-500 mt-2 ml-1 font-medium"><i class="fas fa-info-circle mr-1"></i> Standarisasi rumpun ilmu untuk seleksi dan rekomendasi pelamar.</p>
+                                            @error('required_major_category_id') 
+                                                <span class="text-red-500 text-xs mt-2 ml-1 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span> 
+                                            @enderror
+                                        </div>
+
+                                        <!-- Keterangan Jurusan / Syarat Tambahan -->
                                         <div class="relative group">
                                             <label for="required_major" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-1.5">
-                                                <i class="fas fa-graduation-cap text-teal-500 dark:text-teal-400"></i> Kualifikasi Jurusan
+                                                <i class="fas fa-graduation-cap text-teal-500 dark:text-teal-400"></i> Keterangan Jurusan Spesifik
                                             </label>
                                             <div class="relative transition-all duration-300 group-focus-within:drop-shadow-sm">
                                                 <input type="text" name="required_major" id="required_major" value="{{ old('required_major') }}" 
                                                     class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('required_major') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-medium text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500"
-                                                    placeholder="Contoh: Teknik Informatika, DKV, Akuntansi">
+                                                    placeholder="Contoh: Diutamakan Teknik Informatika, Sistem Informasi">
                                                 @error('required_major')
                                                     <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
                                                         <i class="fas fa-exclamation-circle text-lg"></i>
                                                     </div>
                                                 @enderror
                                             </div>
-                                            <p class="text-xs text-slate-400 dark:text-gray-500 mt-2 ml-1 font-medium"><i class="fas fa-info-circle mr-1"></i> Pisahkan dengan koma jika lebih dari satu. Kosongkan jika terbuka untuk semua jurusan.</p>
+                                            <p class="text-xs text-slate-400 dark:text-gray-500 mt-2 ml-1 font-medium"><i class="fas fa-info-circle mr-1"></i> Opsional: Tuliskan spesifikasi peminatan jika ada.</p>
                                             @error('required_major') 
                                                 <span class="text-red-500 text-xs mt-2 ml-1 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span> 
                                             @enderror

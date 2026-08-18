@@ -26,25 +26,6 @@ class ReportController extends Controller
     }
 
     /**
-     * Helper untuk pencetakan laporan PDF
-     */
-    protected function exportData($view, $data, $filenameBase, $paper = 'a4', $orientation = 'portrait')
-    {
-        $settings = Setting::all()->pluck('value', 'key');
-        $data['pejabat_nama'] = $settings['pejabat_name'] ?? 'H. Lukman Fadlun, SH';
-        $data['pejabat_nip'] = $settings['pejabat_nip'] ?? '-';
-        $data['pejabat_jabatan'] = $settings['pejabat_jabatan'] ?? 'Kepala Bakesbangpol Kota Banjarmasin';
-
-        $ttdPath = null;
-        if (! empty($settings['ttd_image']) && Storage::disk('public')->exists($settings['ttd_image'])) {
-            $ttdPath = public_path('storage/'.$settings['ttd_image']);
-        }
-        $data['ttd_image_path'] = $ttdPath;
-
-        return $this->pdfService->stream($view, $data, $filenameBase.'.pdf', $paper, $orientation);
-    }
-
-    /**
      * Pusat Laporan Hub (Superadmin)
      */
     public function laporanHub()
@@ -70,7 +51,7 @@ class ReportController extends Controller
         $data = $this->getGeneralReportData($request);
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.laporan', $data, 'Laporan-Statistik-Magang', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.laporan', $data, 'Laporan-Statistik-Magang.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -90,7 +71,7 @@ class ReportController extends Controller
     {
         $instansis = Instansi::with(['positions.applications'])->orderBy('nama_dinas', 'asc')->get();
 
-        return $this->exportData('pdf.admin_kota.instansi', compact('instansis'), 'Laporan-Master-INSTANSI', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.instansi', compact('instansis'), 'Laporan-Master-INSTANSI.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -118,7 +99,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -147,7 +128,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.grading', $data, 'Laporan-Grading-Peserta', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.grading', $data, 'Laporan-Grading-Peserta.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -174,7 +155,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.instansi_disiplin', $data, 'Laporan-Kedisiplinan-Instansi', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.instansi_disiplin', $data, 'Laporan-Kedisiplinan-Instansi.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -194,7 +175,7 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getDurasiMagangData($request);
 
-        return $this->exportData('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang', 'a4', 'portrait');
+        return $this->pdfService->stream('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -214,10 +195,10 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getDemografiJurusanData($request);
 
-        return $this->exportData('pdf.admin_kota.demografi_jurusan', [
+        return $this->pdfService->stream('pdf.admin_kota.demografi_jurusan', [
             'jurusans' => $data,
             'request' => $request,
-        ], 'Laporan-Demografi-Jurusan', 'a4', 'portrait');
+        ], 'Laporan-Demografi-Jurusan.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -237,10 +218,10 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getPenyerapanKuotaData($request);
 
-        return $this->exportData('pdf.admin_kota.penyerapan_kuota', [
+        return $this->pdfService->stream('pdf.admin_kota.penyerapan_kuota', [
             'penyerapan' => $data,
             'request' => $request,
-        ], 'Laporan-Penyerapan-Kuota', 'a4', 'portrait');
+        ], 'Laporan-Penyerapan-Kuota.pdf', 'a4', 'portrait', true);
     }
 
     /**

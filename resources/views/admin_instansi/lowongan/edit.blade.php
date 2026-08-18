@@ -77,8 +77,31 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 
                                 <div class="relative group">
+                                    <label for="required_major_category_id" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-layer-group text-teal-500 dark:text-teal-400"></i> Rumpun Keilmuan
+                                    </label>
+                                    <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
+                                        <select name="required_major_category_id" id="required_major_category_id" 
+                                            class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('required_major_category_id') border-red-400 @else border-slate-200 dark:border-gray-700 focus:border-teal-500 focus:ring-teal-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-bold text-slate-800 dark:text-gray-100 text-sm">
+                                            <option value="">-- Terbuka Untuk Semua Rumpun Keilmuan --</option>
+                                            @if(isset($categories))
+                                                @foreach($categories as $cat)
+                                                    <option value="{{ $cat->id }}" {{ old('required_major_category_id', $loker->required_major_category_id) == $cat->id ? 'selected' : '' }}>
+                                                        {{ $cat->name }} ({{ $cat->code }})
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 ml-1 font-medium"><i class="fas fa-info-circle text-slate-400 dark:text-gray-500 mr-1"></i> Standarisasi rumpun ilmu.</p>
+                                    @error('required_major_category_id') 
+                                        <span class="text-red-500 text-xs mt-2 ml-1 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span> 
+                                    @enderror
+                                </div>
+
+                                <div class="relative group">
                                     <label for="required_major" class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                                        <i class="fas fa-graduation-cap text-teal-500 dark:text-teal-400"></i> Kualifikasi Jurusan
+                                        <i class="fas fa-graduation-cap text-teal-500 dark:text-teal-400"></i> Keterangan Jurusan Spesifik
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
                                         <input type="text" name="required_major" id="required_major" value="{{ old('required_major', $loker->required_major) }}" 
@@ -90,7 +113,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                    <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 ml-1 font-medium"><i class="fas fa-info-circle text-slate-400 dark:text-gray-500 mr-1"></i> Pisahkan dengan koma jika lebih dari satu.</p>
+                                    <p class="text-xs text-slate-500 dark:text-gray-400 mt-2 ml-1 font-medium"><i class="fas fa-info-circle text-slate-400 dark:text-gray-500 mr-1"></i> Catatan kualifikasi atau peminatan tambahan.</p>
                                     @error('required_major') 
                                         <span class="text-red-500 text-xs mt-2 ml-1 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span> 
                                     @enderror

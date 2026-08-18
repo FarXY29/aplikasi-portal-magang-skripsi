@@ -15,6 +15,7 @@ class LowonganRequest extends FormRequest
     {
         $rules = [
             'judul_posisi' => ['required', 'string', 'max:255'],
+            'required_major_category_id' => ['nullable', 'exists:major_categories,id'],
             'required_major' => ['nullable', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'kuota' => ['required', 'integer', 'min:1'],

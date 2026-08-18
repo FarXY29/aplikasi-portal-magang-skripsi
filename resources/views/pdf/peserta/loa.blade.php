@@ -183,7 +183,7 @@
         </p>
 
         <p class="paragraph">
-            Berkaitan hal tersebut di atas, maka Dinas Komunikasi, Informatika dan Statistik Kota Banjarmasin pada prinsipnya <strong>MENYETUJUI</strong> Mahasiswa yang akan Magang pada Dinas kami, yaitu atas nama:
+            Berkaitan hal tersebut di atas, maka {{ $app->position->instansi->nama_dinas }} pada prinsipnya <strong>MENYETUJUI</strong> Mahasiswa/i yang akan Magang pada Instansi kami, yaitu atas nama:
         </p>
 
         <table class="student-table">
@@ -195,15 +195,15 @@
             </tr>
             <tr>
                 <td class="st-num"></td>
-                <td class="st-label">NIM / NISN</td>
+                <td class="st-label">NIM / NPM / NISN</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->nim ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->nik ?? $app->user->nim ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
                 <td class="st-label">Prodi / Jurusan</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->major ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->majorDetail?->name ?? $app->user->major ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
@@ -226,8 +226,22 @@
 
     <div class="signature-wrapper">
         <div class="signature-box">
-            <span>a.n. KEPALA DINAS</span><br>
-            <span style="text-transform: uppercase;">{{ $app->position->instansi->jabatan_pejabat ?? 'Sekretaris' }},</span>
+            @php
+                $jabatan = trim($app->position->instansi->jabatan_pejabat ?? 'Kepala Dinas');
+                $isKepala = stripos($jabatan, 'kepala dinas') !== false 
+                    || stripos($jabatan, 'kepala badan') !== false 
+                    || stripos($jabatan, 'kepala kantor') !== false 
+                    || stripos($jabatan, 'direktur') !== false 
+                    || stripos($jabatan, 'camat') !== false 
+                    || stripos($jabatan, 'lurah') !== false;
+            @endphp
+
+            @if(!$isKepala && !empty($jabatan))
+                <span>a.n. KEPALA DINAS</span><br>
+                <span style="text-transform: uppercase;">{{ $jabatan }},</span>
+            @else
+                <span style="text-transform: uppercase;">{{ $jabatan }},</span>
+            @endif
             
             <br>
             @if(!empty($app->position->instansi->ttd_kepala))

@@ -24,3 +24,43 @@ yarn-error.log
 /storage/framework/views-codex
 /.codex
 /.reasonix
+/opendesign
+opendesign/
+
+# Local env files (Vite/Laravel local overrides)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE/Editor local workspace configs
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-project
+*.sublime-workspace
+.vscode/sftp.json
+.vscode/settings.json
+
+# Test coverage and reports
+/coverage/
+/html/
+clover.xml
+junit.xml
+
+# Local database backups and dumps
+*.sql
+*.sqlite

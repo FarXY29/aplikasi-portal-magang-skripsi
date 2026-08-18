@@ -258,7 +258,7 @@
                     <span class="sign-name">
                         {{ $app->pembimbing_lapangan->name ?? '................................' }}
                     </span><br>
-                    <span style="font-size: 9.5pt; color: #475569;">NIP/NIK. {{ $app->pembimbing_lapangan->nomor_induk ?? '-' }}</span>
+                    <span style="font-size: 9.5pt; color: #475569;">NIP/NIK. {{ $app->pembimbing_lapangan->nik ?? $app->pembimbing_lapangan->nomor_induk ?? '-' }}</span>
                 </td>
             </tr>
         </table>

@@ -170,23 +170,79 @@
                         x-show="role === 'peserta'"
                         x-transition:enter="transition-all ease-out duration-300"
                         x-transition:enter-start="opacity-0 -translate-y-2 max-h-0 overflow-hidden"
-                        x-transition:enter-end="opacity-100 translate-y-0 max-h-[120px] overflow-visible"
+                        x-transition:enter-end="opacity-100 translate-y-0 max-h-[300px] overflow-visible"
                         x-transition:leave="transition-all ease-in duration-200"
-                        x-transition:leave-start="opacity-100 translate-y-0 max-h-[120px] overflow-visible"
+                        x-transition:leave-start="opacity-100 translate-y-0 max-h-[300px] overflow-visible"
                         x-transition:leave-end="opacity-0 -translate-y-2 max-h-0 overflow-hidden"
-                        class="overflow-hidden"
+                        class="overflow-hidden space-y-2"
+                        x-data="{
+                            selectedMajorId: '{{ old('major_id', '') }}',
+                            customMajor: '{{ old('major', '') }}',
+                            isCustom: {{ old('major_id') === 'custom' || (!old('major_id') && old('major')) ? 'true' : 'false' }},
+                            onSelectMajor(e) {
+                                if (e.target.value === 'custom') {
+                                    this.isCustom = true;
+                                    this.selectedMajorId = '';
+                                } else {
+                                    this.isCustom = false;
+                                    const opt = e.target.selectedOptions[0];
+                                    if (opt && opt.getAttribute('data-name')) {
+                                        this.customMajor = opt.getAttribute('data-name');
+                                    }
+                                }
+                            }
+                        }"
                     >
-                        <x-auth.field
-                            id="major"
-                            name="major"
-                            label="Jurusan / Program Studi"
-                            type="text"
-                            value="{{ old('major') }}"
-                            placeholder="Masukkan jurusan"
-                            icon="fas fa-graduation-cap"
-                            :errors="$errors"
-                            ::required="role === 'peserta'"
-                        />
+                        <div class="space-y-1.5">
+                            <label for="major_id" class="auth-label flex items-center justify-between">
+                                <span>Jurusan / Program Studi <span class="text-rose-500">*</span></span>
+                                <span class="text-[10px] text-gray-400 font-medium font-sans">Pilih Rumpun & Jurusan Resmi</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-graduation-cap text-xs"></i>
+                                </div>
+                                <select 
+                                    id="major_id" 
+                                    name="major_id" 
+                                    @change="onSelectMajor($event)"
+                                    class="w-full text-xs sm:text-sm pl-9 pr-8 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-2xs font-medium"
+                                >
+                                    <option value="">-- Pilih Jurusan Terdaftar --</option>
+                                    @if(isset($categories))
+                                        @foreach($categories as $category)
+                                            <optgroup label="── {{ $category->name }} ({{ $category->code }}) ──">
+                                                @foreach($category->majors as $m)
+                                                    <option value="{{ $m->id }}" data-name="{{ $m->name }}" {{ old('major_id') == $m->id ? 'selected' : '' }}>
+                                                        [{{ $m->degree_level }}] {{ $m->name }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    @endif
+                                    <option value="custom" {{ old('major_id') === 'custom' || (!old('major_id') && old('major')) ? 'selected' : '' }}>-- Jurusan Lainnya (Tulis Manual) --</option>
+                                </select>
+                            </div>
+                            @error('major_id')
+                                <p class="text-xs text-rose-500 font-medium mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Fallback / Custom Major Input -->
+                        <div x-show="isCustom" x-transition>
+                            <x-auth.field
+                                id="major_custom_input"
+                                name="major_custom"
+                                label="Nama Jurusan (Manual)"
+                                type="text"
+                                value="{{ old('major') }}"
+                                placeholder="Contoh: Teknik Mekatronika"
+                                icon="fas fa-edit"
+                                :errors="$errors"
+                                x-model="customMajor"
+                            />
+                        </div>
+                        <input type="hidden" name="major" :value="customMajor">
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

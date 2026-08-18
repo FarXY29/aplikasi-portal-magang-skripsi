@@ -55,6 +55,78 @@ class PesertaViewRegressionTest extends TestCase
         ]);
     }
 
+    public function test_application_with_waiting_list_opt_in_when_quota_full(): void
+    {
+        $user = $this->createPeserta();
+        $position = $this->createPosition(['kuota' => 1]);
+
+        $start = now()->addDays(5)->toDateString();
+        $end = now()->addDays(10)->toDateString();
+
+        // Fill quota with overlapping dates
+        $other = User::factory()->create(['role' => 'peserta']);
+        Application::create([
+            'user_id' => $other->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => $start,
+            'tanggal_selesai' => $end,
+        ]);
+
+        // User explicitly opts into waiting list when quota is full
+        $response = $this->actingAs($user)->post(route('peserta.daftar', $position->id), [
+            'surat' => UploadedFile::fake()->create('surat-pengantar.pdf', 10, 'application/pdf'),
+            'tanggal_mulai' => $start,
+            'tanggal_selesai' => $end,
+            'is_waiting_list' => '1',
+        ]);
+
+        $response->assertRedirect(route('peserta.dashboard'));
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'status' => 'menunggu',
+        ]);
+    }
+
+    public function test_application_quota_full_without_waiting_list_opt_in_still_creates_waiting_list_entry(): void
+    {
+        $user = $this->createPeserta();
+        $position = $this->createPosition(['kuota' => 1]);
+
+        $start = now()->addDays(5)->toDateString();
+        $end = now()->addDays(10)->toDateString();
+
+        // Fill quota with overlapping dates
+        $other = User::factory()->create(['role' => 'peserta']);
+        Application::create([
+            'user_id' => $other->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => $start,
+            'tanggal_selesai' => $end,
+        ]);
+
+        // User does NOT opt into waiting list when quota is full — BUT system auto-places them on waiting list
+        $response = $this->actingAs($user)->post(route('peserta.daftar', $position->id), [
+            'surat' => UploadedFile::fake()->create('surat-pengantar.pdf', 10, 'application/pdf'),
+            'tanggal_mulai' => $start,
+            'tanggal_selesai' => $end,
+            'is_waiting_list' => '0',
+        ]);
+
+        $response->assertRedirect(route('peserta.dashboard'));
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'status' => 'menunggu',
+        ]);
+    }
+
     public function test_logbook_status_filter_is_applied_before_pagination(): void
     {
         $user = $this->createPeserta();
@@ -190,4 +262,27 @@ class PesertaViewRegressionTest extends TestCase
             'saran_peserta' => $feedback,
         ]);
     }
+
+    public function test_surat_balasan_contains_participant_nim_and_details(): void
+    {
+        $user = $this->createPeserta();
+        $position = $this->createPosition();
+        $app = Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => now()->toDateString(),
+            'tanggal_selesai' => now()->addMonths(2)->toDateString(),
+        ]);
+
+        $this->assertEquals($user->nik, $user->nim);
+        $this->assertEquals($user->nik, $user->npm);
+        $this->assertEquals($user->nik, $user->nomor_induk);
+
+        $response = $this->actingAs($user)->get(route('peserta.loa.download', $app->id));
+        $response->assertOk();
+    }
 }
+

@@ -28,6 +28,7 @@ class ProfileUpdateRequest extends FormRequest
         if ($this->user()->role === 'peserta') {
             $rules['nik'] = ['nullable', 'string', 'max:50'];
             $rules['asal_instansi'] = ['nullable', 'string', 'max:255'];
+            $rules['major_id'] = ['nullable', 'exists:majors,id'];
             $rules['major'] = ['nullable', 'string', 'max:255'];
             $rules['pembimbing_sekolah_id'] = [
                 'nullable',

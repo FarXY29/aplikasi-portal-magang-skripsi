@@ -38,9 +38,9 @@
                     <td><strong>{{ $user->name }}</strong></td>
                 </tr>
                 <tr>
-                    <td>NIM/NISN</td>
+                    <td>NIM / NPM / NISN</td>
                     <td>:</td>
-                    <td>{{ $user->nomor_induk ?? '-' }}</td>
+                    <td>{{ $user->nik ?? $user->nomor_induk ?? '-' }}</td>
                 </tr>
             </table>
         </div>
@@ -119,7 +119,7 @@
                     @endif
 
                     <p style="font-weight: bold; text-decoration: underline;">{{ $app->pembimbing_lapangan->name ?? '.........................' }}</p>
-                    <p>NIP. {{ $app->pembimbing_lapangan->nomor_induk ?? '-' }}</p>
+                    <p>NIP/NIK. {{ $app->pembimbing_lapangan->nik ?? $app->pembimbing_lapangan->nomor_induk ?? '-' }}</p>
                 </td>
             </tr>
         </table>
