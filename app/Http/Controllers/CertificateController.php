@@ -35,7 +35,7 @@ class CertificateController extends Controller
             ->whereIn('status', ['diterima', 'selesai'])
             ->first();
 
-        return view('public.certificate.verify', [
+        return view('public.verifikasi.verify', [
             'app' => $app,
             'searchedToken' => $token,
             'isValid' => !is_null($app),
@@ -44,7 +44,7 @@ class CertificateController extends Controller
 
     public function showScanner()
     {
-        return view('public.certificate.scanner');
+        return view('public.verifikasi.scanner');
     }
 
     /**

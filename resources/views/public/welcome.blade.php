@@ -67,11 +67,11 @@
     @include('public.welcome._faq')
     @include('public.welcome._footer')
 
-    <!-- Floating Back to Top Button -->
+    <!-- Floating Back to Top Button (With iOS Safe Area Offset) -->
     <div x-data="{ showBackToTop: false }" 
-         x-init="showBackToTop = (window.pageYOffset > 300)"
-         @scroll.window.passive="showBackToTop = (window.pageYOffset > 300)"
-         class="fixed bottom-6 right-6 z-40">
+         x-init="showBackToTop = ((window.pageYOffset || window.scrollY) > 300)"
+         @scroll.window.passive="showBackToTop = ((window.pageYOffset || window.scrollY) > 300)"
+         class="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 z-40">
         <button x-show="showBackToTop" 
                 x-cloak
                 x-transition:enter="transition ease-out duration-300 transform"
@@ -82,16 +82,16 @@
                 x-transition:leave-end="opacity-0 translate-y-4 scale-90"
                 @click="window.scrollTo({ top: 0, behavior: 'smooth' })" 
                 type="button" 
-                class="w-12 h-12 rounded-2xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white shadow-xl shadow-teal-600/30 flex items-center justify-center transition-all duration-300 border border-teal-400/30 focus:outline-none group" 
+                class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white shadow-xl shadow-teal-600/30 flex items-center justify-center transition-all duration-300 border border-teal-400/30 focus:outline-none group" 
                 title="Kembali ke Atas">
             <i class="fas fa-chevron-up text-sm group-hover:-translate-y-0.5 transition-transform duration-300"></i>
         </button>
     </div>
 
-    <!-- Global Lightweight Toast Notification -->
+    <!-- Global Lightweight Toast Notification (With iOS Safe Area Offset) -->
     <div x-data="{ open: false, message: '' }" 
          @notify.window="message = $event.detail; open = true; setTimeout(() => open = false, 3500)"
-         class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none px-4 w-full max-w-sm">
+         class="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none px-4 w-full max-w-sm">
         <div x-show="open" 
              x-cloak
              x-transition:enter="transition ease-out duration-300 transform"

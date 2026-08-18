@@ -45,24 +45,24 @@
                 </div>
             </form>
 
-            <!-- Popular Trending Search Pills -->
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
-                <span class="text-teal-200/80 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 mr-1">
+            <!-- Popular Trending Search Pills (Touch-Swipeable Ribbon on Mobile) -->
+            <div class="mt-4 flex items-center justify-start sm:justify-center gap-2 text-xs overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1 px-1 -mx-2 sm:mx-0">
+                <span class="text-teal-200/90 font-black uppercase tracking-wider text-[10px] sm:text-[11px] flex items-center gap-1.5 shrink-0 pl-2 sm:pl-0">
                     <i class="fas fa-fire text-amber-400 text-xs animate-pulse"></i> Tren:
                 </span>
-                <a href="{{ route('home') }}?jurusan=Informatika#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                <a href="{{ route('home') }}?jurusan=Informatika#lowongan" class="snap-start inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-teal-900/50 hover:bg-teal-800/70 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform active:scale-95 text-[11px] shrink-0">
                     💻 Informatika
                 </a>
-                <a href="{{ route('home') }}?jurusan=Akuntansi#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                <a href="{{ route('home') }}?jurusan=Akuntansi#lowongan" class="snap-start inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-teal-900/50 hover:bg-teal-800/70 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform active:scale-95 text-[11px] shrink-0">
                     📊 Akuntansi
                 </a>
-                <a href="{{ route('home') }}?jurusan=Administrasi#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                <a href="{{ route('home') }}?jurusan=Administrasi#lowongan" class="snap-start inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-teal-900/50 hover:bg-teal-800/70 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform active:scale-95 text-[11px] shrink-0">
                     🏛️ Administrasi
                 </a>
-                <a href="{{ route('home') }}?jurusan=Desain#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                <a href="{{ route('home') }}?jurusan=Desain#lowongan" class="snap-start inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-teal-900/50 hover:bg-teal-800/70 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform active:scale-95 text-[11px] shrink-0">
                     🎨 Desain
                 </a>
-                <a href="{{ route('home') }}?jurusan=SMK#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                <a href="{{ route('home') }}?jurusan=SMK#lowongan" class="snap-start inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-teal-900/50 hover:bg-teal-800/70 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform active:scale-95 text-[11px] shrink-0 pr-2 sm:pr-3.5">
                     🎒 Khusus SMK
                 </a>
             </div>
