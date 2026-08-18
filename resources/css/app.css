@@ -304,9 +304,12 @@
 .ck-content h3 { font-size: 1.15em; font-weight: 600; margin-top: 1rem; color: #334155; }
 .ck-content p { margin-bottom: 0.75em; line-height: 1.7; }
 
-/* Safe area bottom navigation */
+/* Safe area utilities (iOS Notch & Dynamic Island / Home Indicator) */
 .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* ==========================================================================

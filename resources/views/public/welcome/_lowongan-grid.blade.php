@@ -73,15 +73,15 @@
               </div>
           </div>
 
-          <!-- Active Filter Chips Bar (If Any Filter Applied) -->
+          <!-- Active Filter Chips Bar (Touch-Swipeable on Mobile) -->
           @php
               $activeInstansi = request('instansi_id') ? $instansis->firstWhere('id', request('instansi_id')) : null;
               $activeCategory = request('major_category_id') && isset($majorCategories) ? $majorCategories->firstWhere('id', request('major_category_id')) : null;
           @endphp
 
           @if(request()->anyFilled(['search', 'instansi_id', 'major_category_id', 'jurusan', 'sort']))
-              <div class="reveal mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-gray-800/60 border border-slate-200/70 dark:border-gray-700/60 flex flex-wrap items-center gap-2.5 text-xs" style="--reveal-delay: 50ms" x-intersect.once="$el.classList.add('revealed')">
-                  <span class="font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider text-[10px] flex items-center gap-1.5 mr-1">
+              <div class="reveal mb-5 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-gray-800/60 border border-slate-200/70 dark:border-gray-700/60 flex items-center gap-2 text-xs overflow-x-auto no-scrollbar scroll-smooth flex-nowrap w-full -mx-4 px-4 sm:mx-0 sm:px-4" style="--reveal-delay: 50ms" x-intersect.once="$el.classList.add('revealed')">
+                  <span class="font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider text-[10px] flex items-center gap-1.5 shrink-0 mr-1">
                       <i class="fas fa-filter text-teal-600 dark:text-teal-400"></i> Filter Aktif:
                   </span>
 
@@ -89,7 +89,7 @@
                       @php
                           $querySearch = request()->except('search');
                       @endphp
-                      <a href="{{ route('home', $querySearch) }}#lowongan" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+                      <a href="{{ route('home', $querySearch) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <span>Kata Kunci: <em>"{{ request('search') }}"</em></span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
                       </a>
@@ -99,9 +99,9 @@
                       @php
                           $queryInstansi = request()->except('instansi_id');
                       @endphp
-                      <a href="{{ route('home', $queryInstansi) }}#lowongan" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+                      <a href="{{ route('home', $queryInstansi) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <i class="fas fa-building text-teal-600 dark:text-teal-400 text-xs"></i>
-                          <span>{{ Str::limit($activeInstansi->nama_dinas, 28) }}</span>
+                          <span>{{ Str::limit($activeInstansi->nama_dinas, 24) }}</span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
                       </a>
                   @endif
@@ -110,7 +110,7 @@
                       @php
                           $queryCategory = request()->except('major_category_id');
                       @endphp
-                      <a href="{{ route('home', $queryCategory) }}#lowongan" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+                      <a href="{{ route('home', $queryCategory) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <i class="fas fa-layer-group text-teal-600 dark:text-teal-400 text-xs"></i>
                           <span>{{ $activeCategory->name }}</span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -121,7 +121,7 @@
                       @php
                           $queryJurusan = request()->except('jurusan');
                       @endphp
-                      <a href="{{ route('home', $queryJurusan) }}#lowongan" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+                      <a href="{{ route('home', $queryJurusan) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <i class="fas fa-graduation-cap text-teal-600 dark:text-teal-400 text-xs"></i>
                           <span>Jurusan: "{{ request('jurusan') }}"</span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -131,23 +131,76 @@
                   @if(request('sort') && request('sort') !== 'latest')
                       @php
                           $querySort = request()->except('sort');
-                          $sortLabel = request('sort') === 'deadline_asc' ? 'Batas Waktu Terdekat' : 'Kuota Terbanyak';
+                          $sortLabel = request('sort') === 'deadline_asc' ? 'Batas Waktu' : 'Kuota';
                       @endphp
-                      <a href="{{ route('home', $querySort) }}#lowongan" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+                      <a href="{{ route('home', $querySort) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <i class="fas fa-arrow-down-short-wide text-teal-600 dark:text-teal-400 text-xs"></i>
                           <span>Urut: {{ $sortLabel }}</span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
                       </a>
                   @endif
 
-                  <a href="{{ route('home') }}#lowongan" class="text-rose-600 dark:text-rose-400 hover:underline font-bold text-xs ml-auto">
-                      Hapus Semua Filter
+                  <a href="{{ route('home') }}#lowongan" class="shrink-0 text-rose-600 dark:text-rose-400 hover:underline font-bold text-xs ml-auto pl-2">
+                      Reset
                   </a>
               </div>
           @endif
 
-          <!-- Filter Dock Card -->
-          <div class="reveal bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-[2.5rem] shadow-xs border border-slate-100 dark:border-gray-700 mb-8 w-full" style="--reveal-delay: 100ms" x-intersect.once="$el.classList.add('revealed')">
+          <!-- ============================================================= -->
+          <!-- 1. MOBILE COMPACT FILTER BAR (Screen < sm / Mobile Phones)   -->
+          <!-- ============================================================= -->
+          <div class="sm:hidden mb-5 space-y-3">
+              <!-- Live Search Input Box -->
+              <div class="relative w-full">
+                  <input type="text" 
+                         name="search" 
+                         x-model="filterState.search" 
+                         @input.debounce.400ms="applyFilter()" 
+                         placeholder="Cari posisi atau dinas..." 
+                         class="w-full pl-11 pr-10 py-3.5 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 shadow-2xs focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                      <i class="fas fa-search text-sm text-teal-600 dark:text-teal-400"></i>
+                  </div>
+                  <button type="button" x-show="filterState.search && filterState.search.length > 0" @click="filterState.search = ''; applyFilter()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                      <i class="fas fa-times-circle text-sm"></i>
+                  </button>
+              </div>
+
+              <!-- Filter Trigger Button & Compact Sort -->
+              <div class="flex items-center gap-2.5">
+                  <!-- Bottom Sheet Filter Opener -->
+                  <button type="button" 
+                          @click="openMobileFilter()" 
+                          class="flex-1 py-3 px-4 rounded-2xl border text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-2xs active:scale-95 transition"
+                          :class="activeFilterCount() > 0 ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/25' : 'bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-200 border-slate-200 dark:border-gray-700'">
+                      <i class="fas fa-sliders text-xs" :class="activeFilterCount() > 0 ? 'text-white' : 'text-teal-600 dark:text-teal-400'"></i>
+                      <span>Filter Lengkap</span>
+                      <template x-if="activeFilterCount() > 0">
+                          <span class="px-2 py-0.5 rounded-full bg-white text-teal-700 text-[10px] font-black shadow-2xs" x-text="activeFilterCount()"></span>
+                      </template>
+                  </button>
+
+                  <!-- Compact Sorting Dropdown -->
+                  <div class="relative group shrink-0">
+                      <select name="sort" x-model="filterState.sort" @change="applyFilter()" class="pl-8 pr-7 py-3 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-slate-700 dark:text-gray-200 appearance-none shadow-2xs cursor-pointer focus:ring-2 focus:ring-teal-500">
+                          <option value="latest">✨ Terbaru</option>
+                          <option value="deadline_asc">⏰ Batas Waktu</option>
+                          <option value="quota_desc">💺 Kuota</option>
+                      </select>
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                          <i class="fas fa-arrow-down-short-wide text-[11px] text-teal-600 dark:text-teal-400"></i>
+                      </div>
+                      <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-400">
+                          <i class="fas fa-chevron-down text-[9px]"></i>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- ============================================================= -->
+          <!-- 2. DESKTOP FILTER DOCK CARD (Screen >= sm / Tablets & Desktops)-->
+          <!-- ============================================================= -->
+          <div class="reveal hidden sm:block bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-[2.5rem] shadow-xs border border-slate-100 dark:border-gray-700 mb-8 w-full" style="--reveal-delay: 100ms" x-intersect.once="$el.classList.add('revealed')">
               <form action="{{ route('home') }}#lowongan" method="GET" id="filter-form" @submit.prevent="applyFilter()" class="w-full">
                   @if(request('search'))
                       <input type="hidden" name="search" value="{{ request('search') }}" x-model="filterState.search">
@@ -207,7 +260,7 @@
                           </div>
                       </div>
 
-                      <!-- Urutkan (Sorting) & Submit Button -->
+                      <!-- Urutkan (Sorting) -->
                       <div class="lg:col-span-2 w-full flex flex-col gap-2">
                           <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase mb-2 ml-1.5 tracking-wider flex items-center gap-2">
                               <i class="fas fa-sort text-teal-600 dark:text-teal-400"></i> Urutan
@@ -227,36 +280,149 @@
               </form>
           </div>
 
-          <!-- Quick Filter Scrollable Pills -->
-          <div class="reveal flex items-center gap-3.5 overflow-x-auto pb-4 mb-8 no-scrollbar w-full max-w-full" style="--reveal-delay: 200ms" x-intersect.once="$el.classList.add('revealed')">
-              <span class="text-xs font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-wider shrink-0 mr-1 flex items-center">
+          <!-- ============================================================= -->
+          <!-- 3. MOBILE FILTER BOTTOM SHEET MODAL (Screen < sm)             -->
+          <!-- ============================================================= -->
+          <template x-teleport="body">
+              <div x-show="mobileFilterOpen" 
+                   x-cloak
+                   @keydown.escape.window="closeMobileFilter()"
+                   class="fixed inset-0 z-[9998] sm:hidden overflow-hidden" 
+                   role="dialog" 
+                   aria-modal="true">
+                  
+                  <!-- Backdrop Overlay -->
+                  <div x-show="mobileFilterOpen" 
+                       x-transition:enter="ease-out duration-300" 
+                       x-transition:enter-start="opacity-0" 
+                       x-transition:enter-end="opacity-100" 
+                       x-transition:leave="ease-in duration-200" 
+                       x-transition:leave-start="opacity-100" 
+                       x-transition:leave-end="opacity-0" 
+                       @click="closeMobileFilter()"
+                       class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm transition-opacity"></div>
+
+                  <!-- Slide-Up Bottom Sheet Panel -->
+                  <div class="fixed inset-x-0 bottom-0 max-h-[88vh] bg-white dark:bg-gray-900 border-t border-slate-200/80 dark:border-gray-800 shadow-2xl rounded-t-[2.5rem] flex flex-col z-10 overflow-hidden"
+                       x-show="mobileFilterOpen"
+                       x-transition:enter="transition ease-out duration-300 transform"
+                       x-transition:enter-start="translate-y-full"
+                       x-transition:enter-end="translate-y-0"
+                       x-transition:leave="transition ease-in duration-200 transform"
+                       x-transition:leave-start="translate-y-0"
+                       x-transition:leave-end="translate-y-full"
+                       @click.stop>
+                      
+                      <!-- Grab Handle & Header -->
+                      <div class="px-6 pt-3 pb-4 border-b border-slate-100 dark:border-gray-800 text-center shrink-0">
+                          <div class="w-12 h-1.5 bg-slate-300 dark:bg-gray-700 rounded-full mx-auto mb-3"></div>
+                          <div class="flex items-center justify-between">
+                              <div class="flex items-center gap-2.5">
+                                  <div class="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center shadow-2xs">
+                                      <i class="fas fa-sliders text-xs"></i>
+                                  </div>
+                                  <h3 class="text-base font-black text-slate-800 dark:text-white font-display">Filter Lowongan</h3>
+                              </div>
+                              <button @click="closeMobileFilter()" type="button" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 flex items-center justify-center active:scale-95 transition">
+                                  <i class="fas fa-times text-xs"></i>
+                              </button>
+                          </div>
+                      </div>
+
+                      <!-- Bottom Sheet Body Form -->
+                      <div class="p-6 overflow-y-auto space-y-4 flex-grow overscroll-contain">
+                          <!-- Select Instansi -->
+                          <div>
+                              <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                  🏢 Instansi / Dinas
+                              </label>
+                              <select x-model="tempFilter.instansi_id" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 [color-scheme:dark]">
+                                  <option value="">🏢 Semua Instansi</option>
+                                  @foreach($instansis as $instansi)
+                                      <option value="{{ $instansi->id }}">{{ $instansi->nama_dinas }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+
+                          <!-- Select Rumpun Keilmuan -->
+                          <div>
+                              <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                  🌐 Rumpun Keilmuan
+                              </label>
+                              <select x-model="tempFilter.major_category_id" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 [color-scheme:dark]">
+                                  <option value="">🌐 Semua Rumpun</option>
+                                  @if(isset($majorCategories))
+                                      @foreach($majorCategories as $cat)
+                                          <option value="{{ $cat->id }}">{{ $cat->name }} ({{ $cat->code }})</option>
+                                      @endforeach
+                                  @endif
+                              </select>
+                          </div>
+
+                          <!-- Input Jurusan -->
+                          <div>
+                              <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                  🎓 Spesifikasi Jurusan
+                              </label>
+                              <input type="text" x-model="tempFilter.jurusan" placeholder="Contoh: Informatika, Akuntansi..." class="w-full px-4 py-3.5 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 placeholder-slate-400">
+                          </div>
+
+                          <!-- Select Urutan -->
+                          <div>
+                              <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                  ⇅ Urutan Hasil
+                              </label>
+                              <select x-model="tempFilter.sort" class="w-full px-4 py-3.5 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 [color-scheme:dark]">
+                                  <option value="latest">✨ Terbaru</option>
+                                  <option value="deadline_asc">⏰ Batas Waktu Terdekat</option>
+                                  <option value="quota_desc">💺 Kuota Terbanyak</option>
+                              </select>
+                          </div>
+                      </div>
+
+                      <!-- Sticky Bottom Sheet Footer -->
+                      <div class="p-5 border-t border-slate-100 dark:border-gray-800 bg-slate-50/95 dark:bg-gray-900/95 backdrop-blur-md flex items-center gap-3 shrink-0 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+                          <button type="button" @click="resetMobileFilter()" class="py-3.5 px-5 bg-white dark:bg-gray-800 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider active:scale-95 transition shadow-2xs">
+                              Reset
+                          </button>
+                          <button type="button" @click="applyMobileFilter()" class="flex-1 py-3.5 px-6 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-black text-xs uppercase tracking-wider shadow-md shadow-teal-600/30 active:scale-95 transition text-center">
+                              Terapkan Filter
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </template>
+
+          <!-- Quick Filter Scrollable Pills (Touch-Swipeable Ribbon on Mobile) -->
+          <div class="reveal flex items-center gap-2.5 sm:gap-3.5 overflow-x-auto pb-3 mb-8 no-scrollbar scroll-smooth snap-x snap-mandatory w-full max-w-full -mx-4 px-4 sm:mx-0 sm:px-0" style="--reveal-delay: 200ms" x-intersect.once="$el.classList.add('revealed')">
+              <span class="text-[11px] sm:text-xs font-black text-slate-400 dark:text-gray-400 uppercase tracking-wider shrink-0 mr-1 flex items-center">
                   <i class="fas fa-bolt text-amber-500 mr-2"></i> Filter Cepat:
               </span>
-              <button type="button" @click="setQuickJurusan('')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ !request('jurusan') && !request('instansi_id') && !request('major_category_id') && !request('search') ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ !request('jurusan') && !request('instansi_id') && !request('major_category_id') && !request('search') ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   ✨ Semua Posisi
               </button>
-              <button type="button" @click="setQuickJurusan('Informatika')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Informatika') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Informatika')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Informatika') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   💻 Informatika & Komputer
               </button>
-              <button type="button" @click="setQuickJurusan('Akuntansi')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Akuntansi') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Akuntansi')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Akuntansi') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   📊 Akuntansi & Keuangan
               </button>
-              <button type="button" @click="setQuickJurusan('Administrasi')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Administrasi') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Administrasi')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Administrasi') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   🏛️ Administrasi & Perkantoran
               </button>
-              <button type="button" @click="setQuickJurusan('Desain')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Desain') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Desain')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Desain') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   🎨 Desain & Multimedia
               </button>
-              <button type="button" @click="setQuickJurusan('Hukum')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Hukum') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Hukum')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Hukum') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   ⚖️ Hukum & Legal
               </button>
-              <button type="button" @click="setQuickJurusan('Kesehatan')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'Kesehatan') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('Kesehatan')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'Kesehatan') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   🏥 Medis & Kesehatan
               </button>
-              <button type="button" @click="setQuickJurusan('SMK')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'SMK') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('SMK')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'SMK') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   🏫 Khusus SMK
               </button>
-              <button type="button" @click="setQuickJurusan('S1')" class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition duration-300 {{ stripos(request('jurusan'), 'S1') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
+              <button type="button" @click="setQuickJurusan('S1')" class="snap-start shrink-0 px-4 py-2.5 rounded-full text-xs font-extrabold transition duration-200 active:scale-95 {{ stripos(request('jurusan'), 'S1') !== false ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs' }}">
                   🎓 Mahasiswa (S1/D3)
               </button>
           </div>
@@ -429,27 +595,30 @@
                                        @click="showModal = false"
                                        aria-hidden="true"></div>
 
-                                  <!-- Pop Up Modal Center Container -->
-                                  <div class="min-h-full flex items-center justify-center p-3 sm:p-6 text-center">
+                                  <!-- Pop Up Modal Center Container (Adaptive Bottom Sheet on Mobile) -->
+                                  <div class="min-h-full flex items-center justify-center p-3 sm:p-6 text-center max-sm:p-0 max-sm:items-end">
                                       <div x-show="showModal" 
                                            x-transition:enter="transition ease-out duration-300 transform" 
-                                           x-transition:enter-start="opacity-0 scale-95 translate-y-4" 
+                                           x-transition:enter-start="opacity-0 scale-95 translate-y-4 max-sm:translate-y-full max-sm:scale-100" 
                                            x-transition:enter-end="opacity-100 scale-100 translate-y-0" 
                                            x-transition:leave="transition ease-in duration-200 transform" 
                                            x-transition:leave-start="opacity-100 scale-100 translate-y-0" 
-                                           x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                                           x-transition:leave-end="opacity-0 scale-95 translate-y-4 max-sm:translate-y-full max-sm:scale-100"
                                            @click.stop
-                                           class="relative bg-white dark:bg-gray-800 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col z-10 transition-all text-left border border-slate-200/80 dark:border-gray-700 overscroll-contain">
+                                           class="relative bg-white dark:bg-gray-800 rounded-[2rem] sm:rounded-[2.5rem] max-sm:rounded-t-[2.5rem] max-sm:rounded-b-none shadow-2xl w-full max-w-2xl max-h-[90vh] max-sm:max-h-[92vh] overflow-hidden flex flex-col z-10 transition-all text-left border border-slate-200/80 dark:border-gray-700 overscroll-contain">
                                           
+                                          <!-- Mobile Bottom Sheet Grab Handle -->
+                                          <div class="w-12 h-1.5 bg-slate-300 dark:bg-gray-600 rounded-full mx-auto mt-3 mb-1 sm:hidden"></div>
+
                                           <!-- Header Pop Up -->
-                                          <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-gray-700/80 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-md shrink-0 flex justify-between items-center">
+                                          <div class="px-5 sm:px-8 py-3.5 sm:py-5 border-b border-slate-100 dark:border-gray-700/80 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-md shrink-0 flex justify-between items-center">
                                               <div class="flex items-center gap-3">
-                                                  <div class="w-10 h-10 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20 shadow-xs shrink-0">
-                                                      <i class="fas fa-briefcase text-sm"></i>
+                                                  <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-500/20 shadow-xs shrink-0">
+                                                      <i class="fas fa-briefcase text-xs sm:text-sm"></i>
                                                   </div>
                                                   <div>
-                                                      <span class="text-[10px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block">Informasi Lowongan</span>
-                                                      <h3 id="modal-title-{{ $loker->id }}" class="text-base sm:text-lg font-black text-slate-800 dark:text-gray-100 leading-tight">
+                                                      <span class="text-[9px] sm:text-[10px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block">Informasi Lowongan</span>
+                                                      <h3 id="modal-title-{{ $loker->id }}" class="text-sm sm:text-lg font-black text-slate-800 dark:text-gray-100 leading-tight">
                                                           Detail Lowongan Magang
                                                       </h3>
                                                   </div>
@@ -602,35 +771,35 @@
                                               </div>
                                           </div>
 
-                                          <!-- Footer Pop Up -->
-                                          <div class="px-6 sm:px-8 py-4 border-t border-slate-100 dark:border-gray-700 bg-gray-50/90 dark:bg-gray-900/90 backdrop-blur-md flex items-center justify-between gap-3 shrink-0 z-20">
-                                              <a href="{{ route('lowongan.show', $loker->id) }}" class="text-slate-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 text-xs font-bold transition flex items-center gap-1.5" title="Buka tautan langsung lowongan ini">
+                                          <!-- Footer Pop Up (Sticky Bottom on Mobile with iOS Safe Area) -->
+                                          <div class="px-5 sm:px-8 py-3.5 sm:py-4 border-t border-slate-100 dark:border-gray-700 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-md flex items-center justify-between gap-2.5 shrink-0 z-20 pb-[calc(0.875rem+env(safe-area-inset-bottom,0px))]">
+                                              <a href="{{ route('lowongan.show', $loker->id) }}" class="text-slate-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 text-xs font-bold transition flex items-center gap-1.5 shrink-0" title="Buka tautan langsung lowongan ini">
                                                   <i class="fas fa-arrow-up-right-from-square text-[11px]"></i>
                                                   <span class="hidden sm:inline">Halaman Penuh</span>
                                               </a>
 
-                                              <div class="flex items-center gap-3">
-                                                  <button @click="showModal = false" type="button" class="px-5 py-3 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-200 border border-slate-200 dark:border-gray-700 rounded-xl font-bold transition text-xs uppercase tracking-wider">
+                                              <div class="flex items-center gap-2 sm:gap-3 flex-grow sm:flex-grow-0 justify-end">
+                                                  <button @click="showModal = false" type="button" class="px-4 sm:px-5 py-3 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-200 border border-slate-200 dark:border-gray-700 rounded-xl font-bold transition text-xs uppercase tracking-wider active:scale-95">
                                                       Tutup
                                                   </button>
                                                   
                                                   @auth
                                                       @if(auth()->user()->hasPortalRole('peserta'))
                                                           @if($isMatch ?? true)
-                                                              <a href="{{ route('peserta.daftar.form', $loker->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                                              <a href="{{ route('peserta.daftar.form', $loker->id) }}" class="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700 text-white px-5 sm:px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
                                                                   <span>Ajukan Lamaran</span>
                                                                   <i class="fas fa-arrow-right text-xs"></i>
                                                               </a>
                                                           @else
-                                                              <button disabled class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
+                                                              <button disabled class="flex-1 sm:flex-none bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-4 sm:px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
                                                                   <i class="fas fa-lock text-xs mr-1"></i> Syarat Tidak Sesuai
                                                               </button>
                                                           @endif
                                                       @elseif(auth()->user()->hasPortalRole(['admin_kota', 'admin_instansi']))
-                                                          <button disabled class="px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-wider">Pratinjau Admin</button>
+                                                          <button disabled class="px-4 sm:px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-wider">Pratinjau Admin</button>
                                                       @endif
                                                   @else
-                                                      <a href="{{ route('peserta.daftar.form', $loker->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                                      <a href="{{ route('peserta.daftar.form', $loker->id) }}" class="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700 text-white px-5 sm:px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
                                                           <span>Masuk & Lamar</span>
                                                           <i class="fas fa-arrow-right text-xs"></i>
                                                       </a>
@@ -676,6 +845,7 @@
               function lowonganGridManager() {
                   return {
                       isLoading: false,
+                      mobileFilterOpen: false,
                       filterState: {
                           search: '{{ request('search') }}',
                           instansi_id: '{{ request('instansi_id') }}',
@@ -683,8 +853,49 @@
                           jurusan: '{{ request('jurusan') }}',
                           sort: '{{ request('sort', 'latest') }}'
                       },
+                      tempFilter: {
+                          instansi_id: '{{ request('instansi_id') }}',
+                          major_category_id: '{{ request('major_category_id') }}',
+                          jurusan: '{{ request('jurusan') }}',
+                          sort: '{{ request('sort', 'latest') }}'
+                      },
                       initGrid() {
                           this.setupPaginationLinks();
+                      },
+                      activeFilterCount() {
+                          let count = 0;
+                          if (this.filterState.instansi_id) count++;
+                          if (this.filterState.major_category_id) count++;
+                          if (this.filterState.jurusan) count++;
+                          if (this.filterState.sort && this.filterState.sort !== 'latest') count++;
+                          return count;
+                      },
+                      openMobileFilter() {
+                          this.tempFilter.instansi_id = this.filterState.instansi_id;
+                          this.tempFilter.major_category_id = this.filterState.major_category_id;
+                          this.tempFilter.jurusan = this.filterState.jurusan;
+                          this.tempFilter.sort = this.filterState.sort || 'latest';
+                          this.mobileFilterOpen = true;
+                          document.body.classList.add('overflow-hidden');
+                      },
+                      closeMobileFilter() {
+                          this.mobileFilterOpen = false;
+                          document.body.classList.remove('overflow-hidden');
+                      },
+                      applyMobileFilter() {
+                          this.filterState.instansi_id = this.tempFilter.instansi_id;
+                          this.filterState.major_category_id = this.tempFilter.major_category_id;
+                          this.filterState.jurusan = this.tempFilter.jurusan;
+                          this.filterState.sort = this.tempFilter.sort;
+                          this.closeMobileFilter();
+                          this.applyFilter();
+                      },
+                      resetMobileFilter() {
+                          this.tempFilter.instansi_id = '';
+                          this.tempFilter.major_category_id = '';
+                          this.tempFilter.jurusan = '';
+                          this.tempFilter.sort = 'latest';
+                          this.applyMobileFilter();
                       },
                       setQuickJurusan(jurusan) {
                           this.filterState.jurusan = jurusan;

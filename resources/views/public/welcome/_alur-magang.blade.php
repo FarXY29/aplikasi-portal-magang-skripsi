@@ -13,87 +13,87 @@
         </p>
     </div>
 
-    <!-- Connected Horizontal Steps / Grid -->
-    <div class="bg-white/80 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
+    <!-- Connected Horizontal Steps / Mobile Vertical Sequence -->
+    <div class="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
         <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200/70 dark:divide-slate-800/80">
 
             <!-- Step 1 -->
-            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
+            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group relative" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
                 <div>
-                    <div class="flex items-center justify-between mb-6 sm:mb-8">
-                        <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">01.</span>
-                        <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                    <div class="flex items-center justify-between mb-4 sm:mb-8">
+                        <span class="font-mono text-xs font-black text-teal-600 dark:text-teal-400 tracking-wider">LANGKAH 01</span>
+                        <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/60 dark:border-teal-800/60 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:bg-teal-600 group-hover:text-white transition-colors shadow-2xs">
                             <i class="fas fa-user-plus text-xs"></i>
                         </div>
                     </div>
-                    <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">1. Buat Akun Profil</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Registrasikan data diri Anda pada portal dengan email aktif & isi profil akademis lengkap.
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">1. Buat Akun Profil</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                        Registrasikan data diri Anda pada portal dengan email aktif & lengkapi data profil akademis Anda.
                     </p>
                 </div>
-                <div class="mt-6 sm:mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <div class="mt-5 sm:mt-8 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-mono font-bold">
                     <span>REGISTRASI</span>
-                    <span class="text-slate-600 dark:text-slate-300">EMAIL</span>
+                    <span class="text-teal-600 dark:text-teal-400">EMAIL & NIK</span>
                 </div>
             </div>
 
             <!-- Step 2 -->
-            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group" style="--reveal-delay: 120ms" x-intersect.once="$el.classList.add('revealed')">
+            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group relative" style="--reveal-delay: 120ms" x-intersect.once="$el.classList.add('revealed')">
                 <div>
-                    <div class="flex items-center justify-between mb-6 sm:mb-8">
-                        <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">02.</span>
-                        <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                    <div class="flex items-center justify-between mb-4 sm:mb-8">
+                        <span class="font-mono text-xs font-black text-teal-600 dark:text-teal-400 tracking-wider">LANGKAH 02</span>
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors shadow-2xs">
                             <i class="fas fa-search-location text-xs"></i>
                         </div>
                     </div>
-                    <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">2. Pilih Lowongan</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Cari dinas instansi yang relevan dengan kualifikasi jurusan dan minat karir Anda.
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">2. Pilih Lowongan</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                        Cari dinas instansi yang relevan dengan kualifikasi jurusan, keterampilan, dan minat karir Anda.
                     </p>
                 </div>
-                <div class="mt-6 sm:mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <div class="mt-5 sm:mt-8 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-mono font-bold">
                     <span>EKSPLORASI</span>
-                    <span class="text-slate-600 dark:text-slate-300">SKPD</span>
+                    <span class="text-emerald-600 dark:text-emerald-400">SKPD DINAS</span>
                 </div>
             </div>
 
             <!-- Step 3 -->
-            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group" style="--reveal-delay: 240ms" x-intersect.once="$el.classList.add('revealed')">
+            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group relative" style="--reveal-delay: 240ms" x-intersect.once="$el.classList.add('revealed')">
                 <div>
-                    <div class="flex items-center justify-between mb-6 sm:mb-8">
-                        <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">03.</span>
-                        <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                    <div class="flex items-center justify-between mb-4 sm:mb-8">
+                        <span class="font-mono text-xs font-black text-teal-600 dark:text-teal-400 tracking-wider">LANGKAH 03</span>
+                        <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-800/60 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white transition-colors shadow-2xs">
                             <i class="fas fa-calendar-alt text-xs"></i>
                         </div>
                     </div>
-                    <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">3. Slot Periode</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Tentukan tanggal masuk & selesai. Sistem akan memvalidasi sisa kuota yang tersedia.
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">3. Slot Periode</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                        Tentukan tanggal masuk & selesai. Sistem akan memvalidasi sisa kuota yang tersedia secara realtime.
                     </p>
                 </div>
-                <div class="mt-6 sm:mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <div class="mt-5 sm:mt-8 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-mono font-bold">
                     <span>VALIDASI</span>
-                    <span class="text-slate-600 dark:text-slate-300">KUOTA</span>
+                    <span class="text-amber-600 dark:text-amber-400">KUOTA OTOMATIS</span>
                 </div>
             </div>
 
             <!-- Step 4 -->
-            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group" style="--reveal-delay: 360ms" x-intersect.once="$el.classList.add('revealed')">
+            <div class="reveal p-6 sm:p-8 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors duration-300 flex flex-col justify-between group relative" style="--reveal-delay: 360ms" x-intersect.once="$el.classList.add('revealed')">
                 <div>
-                    <div class="flex items-center justify-between mb-6 sm:mb-8">
-                        <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">04.</span>
-                        <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                    <div class="flex items-center justify-between mb-4 sm:mb-8">
+                        <span class="font-mono text-xs font-black text-teal-600 dark:text-teal-400 tracking-wider">LANGKAH 04</span>
+                        <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-2xs">
                             <i class="fas fa-paper-plane text-xs"></i>
                         </div>
                     </div>
-                    <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">4. Mulai Magang</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Setelah divalidasi oleh instansi tujuan, Anda siap diterjunkan & mendapatkan pembimbing.
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight">4. Mulai Magang</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                        Setelah disetujui instansi, jalani magang dengan absensi GPS & logbook hingga penerbitan sertifikat QR.
                     </p>
                 </div>
-                <div class="mt-6 sm:mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                    <span>PENILAIAN</span>
-                    <span class="text-slate-600 dark:text-slate-300">SERTIFIKAT</span>
+                <div class="mt-5 sm:mt-8 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-mono font-bold">
+                    <span>SELESAI</span>
+                    <span class="text-indigo-600 dark:text-indigo-400">SERTIFIKAT DIGITAL</span>
                 </div>
             </div>
 

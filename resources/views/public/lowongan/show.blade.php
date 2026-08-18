@@ -5,7 +5,7 @@
         $isOpen = $position->status === 'buka' && $position->kuota > 0;
     @endphp
 
-    <div class="w-full max-w-4xl mx-auto py-6">
+    <div class="w-full max-w-4xl mx-auto py-6 pb-28 md:pb-8 px-4 sm:px-6">
         <!-- Breadcrumb / Back button -->
         <div class="mb-6 flex items-center justify-between">
             <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-2 rounded-xl border border-teal-200 dark:border-teal-800/60 transition shadow-2xs">
@@ -161,8 +161,8 @@
                 @endif
             </div>
 
-            <!-- Footer Actions -->
-            <div class="px-6 sm:px-8 py-5 border-t border-slate-100 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-900/80 flex flex-wrap items-center justify-between gap-4">
+            <!-- Desktop Footer Actions -->
+            <div class="px-6 sm:px-8 py-5 border-t border-slate-100 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-900/80 hidden md:flex items-center justify-between gap-4">
                 <a href="{{ route('home') }}#lowongan" class="px-5 py-3 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-200 border border-slate-200 dark:border-gray-700 rounded-xl font-bold transition text-xs uppercase tracking-wider shadow-2xs">
                     <i class="fas fa-arrow-left mr-1.5"></i> Kembali
                 </a>
@@ -201,6 +201,54 @@
                         </a>
                     @else
                         <button disabled class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-6 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
+                            Lowongan Ditutup
+                        </button>
+                    @endif
+                @endauth
+            </div>
+        </div>
+
+        <!-- Mobile Sticky Bottom Action Bar -->
+        <div class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-2xl border-t border-slate-200/80 dark:border-gray-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] shadow-2xl flex items-center justify-between gap-3">
+            <a href="{{ route('home') }}#lowongan" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0 active:scale-95 transition" title="Kembali">
+                <i class="fas fa-arrow-left text-sm"></i>
+            </a>
+
+            <div class="flex-grow">
+                @auth
+                    @if(auth()->user()->hasPortalRole('peserta'))
+                        @php
+                            $isMatch = $position->matchesUser(auth()->user());
+                        @endphp
+                        @if($isOpen)
+                            @if($isMatch)
+                                <a href="{{ route('peserta.daftar.form', $position->id) }}" class="w-full bg-teal-600 hover:bg-teal-700 text-white h-12 px-5 rounded-2xl font-black shadow-lg shadow-teal-600/30 transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
+                                    <span>Ajukan Lamaran</span>
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            @else
+                                <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
+                                    Syarat Tidak Sesuai
+                                </button>
+                            @endif
+                        @else
+                            <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
+                                Lowongan Ditutup
+                            </button>
+                        @endif
+                    @elseif(auth()->user()->hasPortalRole(['admin_kota', 'admin_instansi']))
+                        <button disabled class="w-full h-12 px-4 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider">
+                            Pratinjau Admin
+                        </button>
+                    @endif
+                @else
+                    @if($isOpen)
+                        <a href="{{ route('peserta.daftar.form', $position->id) }}" class="w-full bg-teal-600 hover:bg-teal-700 text-white h-12 px-5 rounded-2xl font-black shadow-lg shadow-teal-600/30 transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
+                            <span>Masuk & Lamar</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    @else
+                        <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
                             Lowongan Ditutup
                         </button>
                     @endif
