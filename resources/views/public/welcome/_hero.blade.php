@@ -26,14 +26,17 @@
         </p>
 
         <!-- Dynamic Global Search Dock -->
-        <div class="hero-enter w-full max-w-2xl px-2 sm:px-0" style="--hero-delay: 350ms">
+        <div class="hero-enter w-full max-w-2xl px-2 sm:px-0" style="--hero-delay: 350ms" x-data="{ heroSearch: '{{ request('search') }}' }">
             <form action="{{ route('home') }}#lowongan" method="GET" class="relative w-full" id="search-form">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center p-2.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/20 dark:border-gray-700/60 gap-2 sm:gap-0 transform transition-transform duration-300 focus-within:scale-[1.01] w-full">
                     <div class="flex items-center flex-grow pl-4 sm:pl-5 text-slate-400 dark:text-gray-400">
                         <i class="fas fa-search text-lg text-teal-600 dark:text-teal-400 shrink-0"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" 
+                        <input type="text" name="search" x-model="heroSearch" value="{{ request('search') }}" 
                             class="w-full py-3.5 px-4 text-slate-800 dark:text-gray-100 bg-transparent text-sm sm:text-base font-semibold placeholder-slate-400 dark:placeholder-gray-400 focus:outline-none border-none ring-0 focus:ring-0" 
                             placeholder="Cari posisi magang atau nama instansi...">
+                        <button type="button" x-show="heroSearch.length > 0" @click="heroSearch = ''" class="mr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition" title="Hapus teks">
+                            <i class="fas fa-times-circle text-sm"></i>
+                        </button>
                     </div>
                     <button type="submit" class="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold py-3.5 px-8 rounded-full transition-all duration-300 shadow-md shadow-teal-700/20 hover:shadow-lg active:scale-98 text-xs uppercase tracking-wider flex items-center justify-center gap-2 shrink-0">
                         <span>Cari Posisi</span>
@@ -41,6 +44,28 @@
                     </button>
                 </div>
             </form>
+
+            <!-- Popular Trending Search Pills -->
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
+                <span class="text-teal-200/80 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 mr-1">
+                    <i class="fas fa-fire text-amber-400 text-xs animate-pulse"></i> Tren:
+                </span>
+                <a href="{{ route('home') }}?jurusan=Informatika#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                    💻 Informatika
+                </a>
+                <a href="{{ route('home') }}?jurusan=Akuntansi#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                    📊 Akuntansi
+                </a>
+                <a href="{{ route('home') }}?jurusan=Administrasi#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                    🏛️ Administrasi
+                </a>
+                <a href="{{ route('home') }}?jurusan=Desain#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                    🎨 Desain
+                </a>
+                <a href="{{ route('home') }}?jurusan=SMK#lowongan" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-teal-900/40 hover:bg-teal-800/60 border border-teal-500/30 text-teal-100 font-bold backdrop-blur-md transition transform hover:scale-105 active:scale-95 text-[11px]">
+                    🎒 Khusus SMK
+                </a>
+            </div>
         </div>
     </div>
 
