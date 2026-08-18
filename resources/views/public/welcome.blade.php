@@ -39,6 +39,9 @@
         }
     </style>
     <script>
+        // Progressive enhancement flag: enables reveal/entrance animations only with JS.
+        document.documentElement.classList.add('js');
+
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {

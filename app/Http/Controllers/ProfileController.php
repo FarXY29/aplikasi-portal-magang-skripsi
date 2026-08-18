@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Major;
+use App\Models\MajorCategory;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -18,16 +22,24 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $pembimbings = [];
+        $categories = [];
 
-        if ($user->role === 'peserta' && $user->asal_instansi) {
-            $pembimbings = \App\Models\User::where('role', 'pembimbing')
-                ->where('asal_instansi', $user->asal_instansi)
-                ->get();
+        if ($user->role === 'peserta') {
+            if ($user->asal_instansi) {
+                $pembimbings = User::where('role', 'pembimbing')
+                    ->where('asal_instansi', $user->asal_instansi)
+                    ->get();
+            }
+
+            $categories = MajorCategory::with(['majors' => function ($q) {
+                $q->where('is_active', true)->orderBy('degree_level')->orderBy('name');
+            }])->orderBy('name')->get();
         }
 
         return view('profile.edit', [
             'user' => $user,
             'pembimbings' => $pembimbings,
+            'categories' => $categories,
         ]);
     }
 
@@ -37,7 +49,18 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $user->fill($request->validated());
+        $validated = $request->validated();
+
+        if ($user->role === 'peserta') {
+            if (!empty($validated['major_id'])) {
+                $majorObj = Major::find($validated['major_id']);
+                if ($majorObj) {
+                    $validated['major'] = $majorObj->name;
+                }
+            }
+        }
+
+        $user->fill($validated);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -45,27 +68,24 @@ class ProfileController extends Controller
 
         // TAMBAHAN: Handle Upload Signature
         if ($request->hasFile('signature')) {
-            // Hapus file lama jika ada
-            if ($user->signature && \Illuminate\Support\Facades\Storage::exists('public/' . $user->signature)) {
-                \Illuminate\Support\Facades\Storage::delete('public/' . $user->signature);
+            if ($user->signature && Storage::exists('public/' . $user->signature)) {
+                Storage::delete('public/' . $user->signature);
             }
             
-            // Simpan file baru
             $path = $request->file('signature')->store('signatures', 'public');
             $user->signature = $path;
         }
-        
 
         // Handle Upload Photo
         if ($request->hasFile('photo')) {
-            if ($user->photo && \Illuminate\Support\Facades\Storage::exists('public/' . $user->photo)) {
-                \Illuminate\Support\Facades\Storage::delete('public/' . $user->photo);
+            if ($user->photo && Storage::exists('public/' . $user->photo)) {
+                Storage::delete('public/' . $user->photo);
             }
             $path = $request->file('photo')->store('photos', 'public');
             $user->photo = $path;
         }
 
-        $request->user()->save();
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

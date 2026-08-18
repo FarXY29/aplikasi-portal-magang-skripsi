@@ -13,6 +13,8 @@
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
+            <x-announcement-banner audience="pembimbing" />
+
             {{-- Welcome Card --}}
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="p-6 sm:p-8">
@@ -98,17 +100,22 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center gap-3">
                                                     <div class="h-10 w-10 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-300 flex items-center justify-center font-black text-sm border border-teal-200 dark:border-teal-800/60 flex-shrink-0 shadow-xs">
-                                                        {{ strtoupper(substr($app->user->name, 0, 1)) }}
+                                                        {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($app->user->name, 0, 1)) }}
                                                     </div>
                                                     <div>
                                                         <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $app->user->name }}</div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->user->major ?? '-' }}</div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                                                            {{ $app->user->majorDetail?->name ?? ($app->user->major ?? '-') }}
+                                                            @if($app->user->majorDetail?->degree_level)
+                                                                <span class="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold">({{ $app->user->majorDetail->degree_level }})</span>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $app->position->instansi->nama_dinas }}</div>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->position->posisi }}</div>
+                                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $app->position?->instansi?->nama_dinas ?? '-' }}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->position?->posisi ?? '-' }}</div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-xs font-bold text-gray-800 dark:text-gray-200">
@@ -116,10 +123,11 @@
                                                     {{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}
                                                 </div>
                                                 @php
-                                                    $statusLabel = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($app->status);
-                                                    $statusVal = $app->status instanceof \UnitEnum ? $app->status->value : $app->status;
+                                                    $statusEnum = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status : null;
+                                                    $statusLabel = $statusEnum?->label() ?? ucfirst((string) $app->status);
+                                                    $badgeClass = $statusEnum?->badgeClass() ?? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700';
                                                 @endphp
-                                                <span class="inline-flex mt-1.5 items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $statusVal == 'selesai' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60' }}">
+                                                <span class="inline-flex mt-1.5 items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeClass }}">
                                                     {{ $statusLabel }}
                                                 </span>
                                             </td>
@@ -144,18 +152,24 @@
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="flex items-center gap-3">
                                         <div class="h-10 w-10 rounded-full bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center text-teal-600 dark:text-teal-300 font-black text-sm shrink-0 border border-teal-200 dark:border-teal-800/60">
-                                            {{ strtoupper(substr($app->user->name, 0, 1)) }}
+                                            {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($app->user->name, 0, 1)) }}
                                         </div>
                                         <div>
                                             <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $app->user->name }}</div>
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->user->major ?? '-' }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                                                {{ $app->user->majorDetail?->name ?? ($app->user->major ?? '-') }}
+                                                @if($app->user->majorDetail?->degree_level)
+                                                    <span class="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold">({{ $app->user->majorDetail->degree_level }})</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                     @php
-                                        $statusLabel = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($app->status);
-                                        $statusVal = $app->status instanceof \UnitEnum ? $app->status->value : $app->status;
+                                        $statusEnum = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status : null;
+                                        $statusLabel = $statusEnum?->label() ?? ucfirst((string) $app->status);
+                                        $badgeClass = $statusEnum?->badgeClass() ?? 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700';
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $statusVal == 'selesai' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60' }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeClass }}">
                                         {{ $statusLabel }}
                                     </span>
                                 </div>
@@ -163,11 +177,11 @@
                                 <div class="bg-gray-50 dark:bg-gray-900 p-3.5 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-1.5 text-xs">
                                     <div class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-bold">
                                         <i class="fas fa-building text-teal-600 dark:text-teal-400 w-4"></i>
-                                        <span>{{ $app->position->instansi->nama_dinas }}</span>
+                                        <span>{{ $app->position?->instansi?->nama_dinas ?? '-' }}</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-medium">
                                         <i class="fas fa-briefcase text-gray-400 dark:text-gray-500 w-4"></i>
-                                        <span>{{ $app->position->posisi }}</span>
+                                        <span>{{ $app->position?->posisi ?? '-' }}</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 pt-1.5 border-t border-gray-200 dark:border-gray-700/60 font-bold">
                                         <i class="far fa-calendar-alt text-gray-400 dark:text-gray-500 w-4"></i>
@@ -187,6 +201,8 @@
                             @endforeach
                         </div>
                     @endif
+
+                    <x-pembimbing.pagination :paginator="$applications" />
                 </div>
             </div>
 

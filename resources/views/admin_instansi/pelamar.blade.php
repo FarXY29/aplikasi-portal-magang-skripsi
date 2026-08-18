@@ -112,6 +112,20 @@
                                                 <span class="flex items-center"><i class="far fa-envelope mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->email }}</span>
                                                 <span class="flex items-center"><i class="fas fa-phone-alt mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->phone ?? '-' }}</span>
                                                 <span class="flex items-center"><i class="fas fa-university mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->university?->name ?? $app->user->school?->name ?? $app->user->asal_instansi ?? '-' }}</span>
+                                                <span class="flex items-center gap-1.5 font-semibold text-gray-700 dark:text-gray-300">
+                                                    <i class="fas fa-graduation-cap mr-1 w-3 text-teal-600 dark:text-teal-400"></i>
+                                                    <span>{{ $app->user->majorDetail?->name ?? ($app->user->major ?? '-') }}</span>
+                                                    @if($app->user->majorDetail?->degree_level)
+                                                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold font-mono">
+                                                            {{ $app->user->majorDetail->degree_level }}
+                                                        </span>
+                                                    @endif
+                                                    @if($app->position?->required_major_category_id && $app->user->majorDetail?->major_category_id === $app->position->required_major_category_id)
+                                                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+                                                            <i class="fas fa-check text-[7px] mr-0.5"></i> Sesuai Rumpun
+                                                        </span>
+                                                    @endif
+                                                </span>
                                                 @if($app->letter_number)
                                                     <span class="flex items-center font-bold text-teal-700 dark:text-teal-400 mt-0.5"><i class="fas fa-file-signature mr-1.5 w-3"></i> No. Surat: {{ $app->letter_number }}</span>
                                                 @endif

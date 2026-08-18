@@ -22,10 +22,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UniversityAndSchoolSeeder::class,
             RoleAndPermissionSeeder::class,
+            MajorSeeder::class,
         ]);
 
         $univList = \App\Models\University::all();
         $schoolList = \App\Models\School::all();
+        $majorList = \App\Models\Major::all();
 
         // 1. Buat Akun Super Admin (Admin Kota)
         User::updateOrCreate(
@@ -254,15 +256,29 @@ class DatabaseSeeder extends Seeder
                     $teknis = rand(70, 95);
                     $disiplin = rand(75, 95);
                     $perilaku = rand(80, 98);
+                    $certNum = 'MG-' . date('Y') . '-' . str_pad($app->id, 5, '0', STR_PAD_LEFT);
+                    $tokenVerif = Str::random(32);
                     
                     $app->update([
                         'nilai_teknis' => $teknis,
                         'nilai_disiplin' => $disiplin,
                         'nilai_perilaku' => $perilaku,
                         'nilai_angka' => ($teknis + $disiplin + $perilaku) / 3,
-                        'nomor_sertifikat' => 'MG-' . date('Y') . '-' . str_pad($app->id, 5, '0', STR_PAD_LEFT),
-                        'token_verifikasi' => Str::random(10),
+                        'nomor_sertifikat' => $certNum,
+                        'token_verifikasi' => $tokenVerif,
                     ]);
+
+                    \App\Models\Certificate::updateOrCreate(
+                        ['application_id' => $app->id],
+                        [
+                            'nomor_sertifikat' => $certNum,
+                            'token_verifikasi' => $tokenVerif,
+                            'status' => 'active',
+                            'signer_name' => $pos->instansi->nama_pejabat ?? 'Kepala Dinas',
+                            'signature_mock' => hash('sha256', $app->id . $tokenVerif),
+                            'published_at' => now()->subDays(rand(1, 30)),
+                        ]
+                    );
                 }
             }
         }

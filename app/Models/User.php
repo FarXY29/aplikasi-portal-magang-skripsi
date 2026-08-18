@@ -59,9 +59,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'asal_instansi', 
         'major',
+        'major_id',
         'nama_pembimbing_sekolah',
-        'pembimbing_sekolah_id', // TAMBAHAN: Relasi langsung ke akun pembimbing
-        'signature', // Kolom Tanda Tangan Pembimbing Lapangan
+        'pembimbing_sekolah_id',
+        'signature',
         'photo',
     ];
 
@@ -100,8 +101,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(School::class);
     }
 
-    // --- TAMBAHAN PENTING: RELASI KE LAMARAN (APPLICATIONS) ---
-    // Diperlukan agar Super Admin bisa melihat logbook peserta
+    // Relasi ke Master Data Jurusan / Program Studi
+    public function majorDetail() {
+        return $this->belongsTo(Major::class, 'major_id');
+    }
+
+    // Relasi ke LAMARAN (APPLICATIONS)
     public function applications() {
         return $this->hasMany(Application::class);
     }
@@ -118,6 +123,22 @@ class User extends Authenticatable implements MustVerifyEmail
     // Relasi pembimbing sekolah ke mahasiswanya
     public function mahasiswa_bimbingan() {
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
+    }
+
+    /** Accessor agar panggilan ->nim, ->npm, atau ->nomor_induk tetap mengembalikan nomor induk/nik peserta/pembimbing */
+    public function getNimAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
+    }
+
+    public function getNpmAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
+    }
+
+    public function getNomorIndukAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
     }
 
     protected static function boot()
@@ -255,5 +276,21 @@ class User extends Authenticatable implements MustVerifyEmail
                 \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * Cek apakah role menggunakan kolom instansi_id.
+     */
+    public static function usesInstansiId(string $role): bool
+    {
+        return in_array($role, ['admin_instansi', 'pembimbing_lapangan'], true);
+    }
+
+    /**
+     * Cek apakah role menggunakan kolom asal_instansi.
+     */
+    public static function usesAsalInstansi(string $role): bool
+    {
+        return in_array($role, ['peserta', 'pembimbing'], true);
     }
 }

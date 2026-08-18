@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Http\Requests\Attendance\ClockInRequest;
 use App\Http\Requests\Attendance\PermissionRequest;
 use App\Services\AuditLogService;
+use App\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
@@ -19,84 +20,15 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
-        $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->first();
 
-        if (!$application) {
-            $application = Application::where('user_id', $user->id)
-                            ->where('status', 'selesai')
-                            ->latest('updated_at')
-                            ->first();
-        }
+        $historyData = app(AttendanceService::class)->historyData($user, $request);
+        $application = $historyData['application'];
+        $periodMonths = $historyData['periodMonths'];
+        $attendanceSummary = $historyData['attendanceSummary'];
+        $query = $historyData['query'];
 
         if (!$application) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');
-        }
-
-        // Generate daftar pilihan bulan berdasarkan rentang tanggal magang peserta (terbaru -> terlama)
-        $periodMonths = [];
-        if ($application->tanggal_mulai && $application->tanggal_selesai) {
-            $start = Carbon::parse($application->tanggal_mulai)->startOfMonth();
-            $end = Carbon::parse($application->tanggal_selesai)->endOfMonth();
-            $today = Carbon::today()->endOfMonth();
-
-            if ($end->gt($today)) {
-                $end = $today;
-            }
-
-            if ($start->lte($end)) {
-                $curr = $end->copy();
-                while ($curr->gte($start)) {
-                    $periodMonths[$curr->format('Y-m')] = $curr->translatedFormat('F Y');
-                    $curr->subMonth();
-                }
-            }
-        }
-
-        $query = Attendance::where('application_id', $application->id);
-
-        // Filter berdasarkan bulan jika ada
-        if ($request->filled('month')) {
-            $monthVal = trim($request->month);
-            if (preg_match('/^\d{4}-\d{1,2}$/', $monthVal)) {
-                [$yr, $mo] = explode('-', $monthVal);
-                $query->whereYear('date', (int)$yr)
-                      ->whereMonth('date', (int)$mo);
-            } elseif (is_numeric($monthVal) && (int)$monthVal >= 1 && (int)$monthVal <= 12) {
-                $query->whereMonth('date', (int)$monthVal);
-                if ($request->filled('year')) {
-                    $query->whereYear('date', (int)$request->year);
-                }
-            } else {
-                try {
-                    $monthDate = Carbon::parse($monthVal);
-                    $query->whereMonth('date', $monthDate->month)
-                          ->whereYear('date', $monthDate->year);
-                } catch (\Exception $e) {
-                    // Abaikan jika format bulan tidak valid
-                }
-            }
-        }
-
-        // Summary counts (berdasarkan query bulan jika ada, sebelum filter status & search agar statistik tetap komprehensif)
-        $attendanceSummary = [
-            'total' => (clone $query)->count(),
-            'hadir' => (clone $query)->where('status', 'hadir')->count(),
-            'izin'  => (clone $query)->whereIn('status', ['izin', 'sakit'])->count(),
-            'alpa'  => (clone $query)->where('status', 'alpa')->count(),
-        ];
-
-        // Filter berdasarkan status
-        if ($request->filled('status') && in_array($request->status, ['hadir', 'izin', 'sakit', 'alpa'])) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter berdasarkan pencarian deskripsi/catatan
-        if ($request->filled('search')) {
-            $search = trim($request->search);
-            $query->where('description', 'like', "%{$search}%");
         }
 
         // Urutan

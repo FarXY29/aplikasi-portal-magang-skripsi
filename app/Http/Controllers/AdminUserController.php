@@ -52,19 +52,19 @@ class AdminUserController extends Controller
             'password' => 'required|min:8',
             'role' => ['required', Rule::in(User::PORTAL_ROLES)],
             'instansi_id' => [
-                in_array($request->input('role'), ['admin_instansi', 'pembimbing_lapangan'], true) ? 'required' : 'nullable',
+                User::usesInstansiId($request->input('role')) ? 'required' : 'nullable',
                 'integer',
                 Rule::exists('instansis', 'id'),
             ],
             'asal_instansi' => [
-                in_array($request->input('role'), ['peserta', 'pembimbing'], true) ? 'required' : 'nullable',
+                User::usesAsalInstansi($request->input('role')) ? 'required' : 'nullable',
                 'string',
                 'max:255',
             ],
         ]);
 
-        $usesInstansi = in_array($request->role, ['admin_instansi', 'pembimbing_lapangan'], true);
-        $usesAsalInstansi = in_array($request->role, ['peserta', 'pembimbing'], true);
+        $usesInstansi = User::usesInstansiId($request->role);
+        $usesAsalInstansi = User::usesAsalInstansi($request->role);
 
         $user = User::create([
             'name' => $request->name,
@@ -101,19 +101,19 @@ class AdminUserController extends Controller
             'password' => 'nullable|string|min:8',
             'role' => ['required', Rule::in(User::PORTAL_ROLES)],
             'instansi_id' => [
-                in_array($request->input('role'), ['admin_instansi', 'pembimbing_lapangan'], true) ? 'required' : 'nullable',
+                User::usesInstansiId($request->input('role')) ? 'required' : 'nullable',
                 'integer',
                 Rule::exists('instansis', 'id'),
             ],
             'asal_instansi' => [
-                in_array($request->input('role'), ['peserta', 'pembimbing'], true) ? 'required' : 'nullable',
+                User::usesAsalInstansi($request->input('role')) ? 'required' : 'nullable',
                 'string',
                 'max:255',
             ],
         ]);
 
-        $usesInstansi = in_array($request->role, ['admin_instansi', 'pembimbing_lapangan'], true);
-        $usesAsalInstansi = in_array($request->role, ['peserta', 'pembimbing'], true);
+        $usesInstansi = User::usesInstansiId($request->role);
+        $usesAsalInstansi = User::usesAsalInstansi($request->role);
 
         $data = [
             'name' => $request->name,

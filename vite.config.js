@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => {
             rollupOptions: {
                 output: {
                     manualChunks: {
-                        vendor: ['alpinejs', '@hotwired/turbo'],
+                        vendor: ['alpinejs', '@alpinejs/intersect', '@alpinejs/collapse', '@hotwired/turbo'],
                     },
                 },
             },

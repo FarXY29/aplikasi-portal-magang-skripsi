@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AdminInstansi;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminInstansi\LowonganRequest;
 use App\Models\InternshipPosition;
+use App\Models\MajorCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,7 @@ class LowonganController extends Controller
     public function indexLowongan(Request $request)
     {
         $instansiId = Auth::user()->instansi_id;
-        $query = InternshipPosition::where('instansi_id', $instansiId);
+        $query = InternshipPosition::with('requiredMajorCategory')->where('instansi_id', $instansiId);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -28,21 +29,33 @@ class LowonganController extends Controller
             $query->where('status', $request->status);
         }
 
-        $lowongans = $query->get();
+        $lowongans = $query->latest()->get();
         return view('admin_instansi.lowongan.index', compact('lowongans'));
     }
 
     public function createLowongan()
     {
-        return view('admin_instansi.lowongan.create');
+        $categories = MajorCategory::with(['majors' => fn($q) => $q->where('is_active', true)])->orderBy('name')->get();
+        return view('admin_instansi.lowongan.create', compact('categories'));
     }
 
     public function storeLowongan(LowonganRequest $request)
     {
+        $category = null;
+        if ($request->filled('required_major_category_id')) {
+            $category = MajorCategory::find($request->required_major_category_id);
+        }
+
+        $requiredMajor = $request->required_major;
+        if (empty($requiredMajor) && $category) {
+            $requiredMajor = $category->name;
+        }
+
         InternshipPosition::create([
             'instansi_id' => Auth::user()->instansi_id,
             'judul_posisi' => $request->judul_posisi,
-            'required_major' => $request->required_major,
+            'required_major_category_id' => $request->required_major_category_id,
+            'required_major' => $requiredMajor,
             'deskripsi' => $request->deskripsi,
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,
@@ -59,7 +72,9 @@ class LowonganController extends Controller
                     ->firstOrFail();
         $this->authorize('manage', $loker);
 
-        return view('admin_instansi.lowongan.edit', compact('loker'));
+        $categories = MajorCategory::with(['majors' => fn($q) => $q->where('is_active', true)])->orderBy('name')->get();
+
+        return view('admin_instansi.lowongan.edit', compact('loker', 'categories'));
     }
 
     public function updateLowongan(LowonganRequest $request, $id)
@@ -69,9 +84,20 @@ class LowonganController extends Controller
                     ->firstOrFail();
         $this->authorize('manage', $loker);
 
+        $category = null;
+        if ($request->filled('required_major_category_id')) {
+            $category = MajorCategory::find($request->required_major_category_id);
+        }
+
+        $requiredMajor = $request->required_major;
+        if (empty($requiredMajor) && $category) {
+            $requiredMajor = $category->name;
+        }
+
         $loker->update([
             'judul_posisi' => $request->judul_posisi,
-            'required_major' => $request->required_major,
+            'required_major_category_id' => $request->required_major_category_id,
+            'required_major' => $requiredMajor,
             'deskripsi' => $request->deskripsi,
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,

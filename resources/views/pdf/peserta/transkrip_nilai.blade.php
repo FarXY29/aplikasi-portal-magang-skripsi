@@ -105,9 +105,14 @@
             <td class="text-bold">{{ $app->user->name }}</td>
         </tr>
         <tr>
-            <td class="label-col">Nomor Pokok Mahasiswa (NPM)</td>
+            <td class="label-col">Nomor Pokok Mahasiswa (NPM/NIM)</td>
             <td class="sep-col">:</td>
-            <td>{{ $app->user->nim ?? '2210010154' }}</td> 
+            <td>{{ $app->user->nik ?? $app->user->nim ?? '-' }}</td> 
+        </tr>
+        <tr>
+            <td class="label-col">Program Studi / Jurusan</td>
+            <td class="sep-col">:</td>
+            <td>{{ $app->user->majorDetail?->name ?? $app->user->major ?? '-' }}</td> 
         </tr>
         <tr>
             <td class="label-col">Waktu Pelaksanaan</td>

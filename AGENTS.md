@@ -52,7 +52,7 @@ Routes split by role in `routes/`:
 `Application` is the hub: `Instansi 1—* InternshipPosition 1—* Application 1—* DailyLog` and `1—* Attendance`, `1—0..1 Certificate`. `User` links to `Instansi`, `University`/`School`, and self-referential `pembimbing_sekolah_id` (academic mentor). Application status enum: `pending → menunggu → diterima → selesai` / `dikeluarkan` / `dibatalkan` / `ditolak`. Deleting a model cascades via model boot events (User/Instansi/Position/Application).
 
 ### Services layer
-`app/Services/` holds business logic — controllers stay thin and delegate here: `ApplicationLifecycleService` (auto-finish, waiting-list promotion, transactions), `AttendanceService` (time window + Haversine GPS radius), `AuditLogService`, `CertificateService` (QR + token + unique number), `InternshipApplicationService` (quota via `lockForUpdate`, accept/reject/cancel + mails), `PdfExportService`, `ReportService` (SQL-side aggregation for reports). Small single-purpose actions live in `app/Actions/` (`GenerateCertificateNumberAction`).
+`app/Services/` holds business logic — controllers stay thin and delegate here: `AdminDashboardService` (superadmin dashboard stats + trends), `ApplicationLifecycleService` (auto-finish, waiting-list promotion, transactions), `AttendanceService` (time window + Haversine GPS radius + history filtering), `AuditLogService`, `CertificateService` (QR + token + unique number), `InternshipApplicationService` (quota via `lockForUpdate`, accept/reject/cancel + mails), `PdfExportService` (stream/download + optional signature injection), `PembimbingLogbookService` (logbook filtering + dropdown data), `ReportService` (SQL-side aggregation for reports). Small single-purpose actions live in `app/Actions/` (`GenerateCertificateNumberAction`).
 
 ### Private document access
 `StorageAccessController::serveFile($type, $filename)` resolves `surat`/`logbook`/`attendance` to owning model, calls `$this->authorize('view', $model)`, falls back to public disk if file not in private. Documents never served by raw path. Use this pattern for new document types.
@@ -66,7 +66,7 @@ Routes split by role in `routes/`:
 - Scheduled in `app/Console/Kernel.php::schedule()`. Locally requires `php artisan schedule:work`; production uses cron.
 
 ### Jobs & Mail
-`app/Jobs/CreateDatabaseBackup` (queue `maintenance`, mysqldump to private disk, writes AuditLog). Mails: `ApplicationAcceptedMail`, `ApplicationRejectedMail`, `InternshipEndingMail` are the ones in use. NOTE: `ApplicationAccepted`, `ApplicationRejected`, `InternshipCompleted` are dead duplicates (unreferenced) — do not assume both are live; check references.
+`app/Jobs/CreateDatabaseBackup` (queue `maintenance`, mysqldump to private disk, writes AuditLog). Mails in use: `ApplicationAcceptedMail` (`emails.applications.accepted`), `ApplicationRejectedMail` (`emails.applications.rejected`), `InternshipEndingMail` (`emails.internship.ending`), and `InternshipCompleted` (`emails.internship_completed`, sent from `AdminInstansi\ActiveInternController::finishIntern`).
 
 ### EnvKit debug (`app/EnvKit/`)
 EnvKit-managed debug collector (`Client.php`, `EnvKitDebugServiceProvider`), registered in `config/app.php`. Inert unless `ENVKIT_DEBUG_INGEST` env set + state file enables it. **Self-contained — do not add dependencies or edit casually; EnvKit overwrites this dir.**
@@ -82,4 +82,10 @@ EnvKit-managed debug collector (`Client.php`, `EnvKitDebugServiceProvider`), reg
 
 ## Notes
 - **Auth enumeration hardening (2026)**: Login (`LoginRequest`) and guest verification-resend (`EmailVerificationNotificationController@storeGuest`) intentionally return the same generic response for unknown/unverified/format-invalid emails to avoid acting as a user-enumeration oracle. Do NOT reintroduce distinct error messages that reveal whether an email exists — keep any new auth message constant across states.
+- **V2 documented scope**: Changes accepted during V2 release beyond the original spec — treat as intentional:
+  - PDF-only reports (Excel/CSV exports removed; see §7).
+  - Waiting-list opt-in (`is_waiting_list` flag on applications).
+  - Signature images for PDF (`ttd_kepala`, `ttd_image` on instansi/users).
+  - Auth views UI redesign (ambient orbs, Outfit/Plus Jakarta Sans fonts).
+  - Public lowongan UI overhaul (gradient badges, initials avatar).
 (Add quick notes here as they come up.)

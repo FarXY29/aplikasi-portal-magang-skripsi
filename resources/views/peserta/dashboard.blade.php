@@ -16,25 +16,7 @@
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            @php
-                $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
-            @endphp
-            @if(!empty($globalAnnouncement))
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-l-4 border-amber-500 p-4 sm:p-5 md:p-6 rounded-r-2xl sm:rounded-r-3xl shadow-xs border border-amber-200 dark:border-amber-900/60 flex gap-3 sm:gap-4 items-start relative overflow-hidden">
-                    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-amber-500 pointer-events-none">
-                        <i class="fas fa-bullhorn text-7xl sm:text-9xl"></i>
-                    </div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center flex-shrink-0 shadow-inner border border-amber-200 dark:border-amber-800/60">
-                        <i class="fas fa-bullhorn text-base sm:text-lg"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="text-xs font-black text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-1">Pengumuman Penting</h4>
-                        <div class="text-xs sm:text-sm text-amber-950 dark:text-amber-200 font-medium leading-relaxed prose prose-amber max-w-none">
-                            {!! nl2br(e($globalAnnouncement)) !!}
-                        </div>
-                    </div>
-                </div>
-            @endif
+            <x-announcement-banner audience="peserta" />
 
             @if(session('success'))
                 <x-ui.alert type="success" class="mb-4">

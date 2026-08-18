@@ -23,14 +23,6 @@ class ReportController extends Controller
         $this->pdfService = $pdfService;
     }
 
-    /**
-     * Helper untuk pencetakan laporan PDF
-     */
-    protected function exportData($view, $data, $filenameBase, $paper = 'a4', $orientation = 'portrait')
-    {
-        return $this->pdfService->stream($view, $data, $filenameBase . '.pdf', $paper, $orientation);
-    }
-
     public function laporanHub()
     {
         return view('admin_instansi.laporan_hub');
@@ -52,7 +44,7 @@ class ReportController extends Controller
         $stats = $data['stats'];
         $instansi = $user->instansi; 
 
-        return $this->exportData('pdf.admin_instansi.rekap_peserta', compact('applications', 'instansi', 'request', 'stats'), 'Laporan-Rekap-Peserta', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_instansi.rekap_peserta', compact('applications', 'instansi', 'request', 'stats'), 'Laporan-Rekap-Peserta.pdf', 'a4', 'landscape');
     }
 
     public function laporanKinerjaPeserta()
@@ -70,7 +62,7 @@ class ReportController extends Controller
         $data = $this->reportService->getKinerjaPesertaData($instansiId);
         $data['request'] = $request;
         $data['instansi'] = $instansi;
-        return $this->exportData('pdf.admin_instansi.kinerja_peserta', $data, 'Laporan-Kinerja-Peserta', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_instansi.kinerja_peserta', $data, 'Laporan-Kinerja-Peserta.pdf', 'a4', 'landscape');
     }
 
     public function laporanBebanPembimbing()
@@ -82,7 +74,7 @@ class ReportController extends Controller
     public function printBebanPembimbing()
     {
         $data = $this->getBebanPembimbingPayload();
-        return $this->exportData('pdf.admin_instansi.beban_pembimbing', $data, 'Laporan-Beban-Pembimbing', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_instansi.beban_pembimbing', $data, 'Laporan-Beban-Pembimbing.pdf', 'a4', 'landscape');
     }
 
     public function laporanDemografiKampus()
@@ -94,7 +86,7 @@ class ReportController extends Controller
     public function printDemografiKampus()
     {
         $data = $this->getDemografiKampusPayload();
-        return $this->exportData('pdf.admin_instansi.demografi_kampus', $data, 'Laporan-Demografi-Kampus', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_instansi.demografi_kampus', $data, 'Laporan-Demografi-Kampus.pdf', 'a4', 'landscape');
     }
 
     public function laporanJurnalHarian(Request $request)
@@ -106,7 +98,7 @@ class ReportController extends Controller
     public function printJurnalHarian(Request $request)
     {
         $data = $this->getJurnalHarianPayload($request);
-        return $this->exportData('pdf.admin_instansi.jurnal_harian', $data, 'Laporan-Jurnal-Harian', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_instansi.jurnal_harian', $data, 'Laporan-Jurnal-Harian.pdf', 'a4', 'landscape');
     }
 
     protected function getBebanPembimbingPayload(): array

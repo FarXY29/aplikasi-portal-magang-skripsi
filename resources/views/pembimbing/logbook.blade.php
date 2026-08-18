@@ -7,22 +7,7 @@
                 </div>
                 {{ __('Pemantauan Logbook Mahasiswa') }}
             </h2>
-            <div class="flex items-center gap-3">
-                <label for="switch_student" class="text-xs font-bold text-gray-500 dark:text-gray-400">Mahasiswa:</label>
-                @if(isset($applications) && $applications->count() > 1)
-                    <select id="switch_student" onchange="window.location.href = this.value" class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs focus:ring-teal-500 focus:border-teal-500">
-                        @foreach($applications as $item)
-                            <option value="{{ route('pembimbing.peserta.logbook', $item->id) }}" {{ $item->id == $app->id ? 'selected' : '' }}>
-                                {{ $item->user->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                @else
-                    <span class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs">
-                        {{ $app->user->name }}
-                    </span>
-                @endif
-            </div>
+            <x-pembimbing.student-switcher :applications="$applications" :current="$app" route-name="pembimbing.peserta.logbook" />
         </div>
     </x-slot>
 
@@ -46,173 +31,26 @@
 
             {{-- Filter Bar --}}
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 print:hidden space-y-5">
-                <form action="{{ route('pembimbing.peserta.logbook', $app->id) }}" method="GET"
-                      x-data="{
-                          filterType: @js($filterType),
-                          selectedDate: @js($selectedDate),
-                          monthValue: @js(\Carbon\Carbon::parse($selectedDate)->format('Y-m')),
-                          get isMonthly() { return this.filterType === 'bulanan'; },
-                          get isAll() { return this.filterType === 'semua'; },
-                          resetFilter() {
-                              window.location.href = @js(route('pembimbing.peserta.logbook', $app->id));
-                          }
-                      }"
-                      class="space-y-4">
-
-                    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-gray-100 dark:border-gray-700 pb-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 flex items-center justify-center text-teal-600 dark:text-teal-400">
-                                <i class="fas fa-filter text-xs"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200">Filter Pemantauan Logbook</h3>
-                                <p class="text-[11px] text-gray-500 dark:text-gray-400">Filter data logbook berdasarkan rentang waktu, status validasi, atau pencarian kegiatan</p>
-                            </div>
-                        </div>
-
-                        {{-- Rentang Waktu Segmented Control --}}
-                        <div class="w-full xl:w-auto">
-                            <div class="grid grid-cols-4 gap-1 bg-gray-100 dark:bg-gray-900 p-1 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="filter_type" value="semua" x-model="filterType" class="sr-only peer">
-                                    <span class="block text-center text-[10px] font-bold py-1.5 px-3 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition">
-                                        Semua
-                                    </span>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="filter_type" value="harian" x-model="filterType" class="sr-only peer">
-                                    <span class="block text-center text-[10px] font-bold py-1.5 px-3 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition">
-                                        Harian
-                                    </span>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="filter_type" value="mingguan" x-model="filterType" class="sr-only peer">
-                                    <span class="block text-center text-[10px] font-bold py-1.5 px-3 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition">
-                                        Mingguan
-                                    </span>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="filter_type" value="bulanan" x-model="filterType" class="sr-only peer">
-                                    <span class="block text-center text-[10px] font-bold py-1.5 px-3 rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition">
-                                        Bulanan
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Multi-Field Filters Grid --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-
-                        {{-- Dropdown Peserta Bimbingan --}}
-                        <div class="flex flex-col gap-1 lg:col-span-1">
-                            <label for="filter_student" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                <i class="fas fa-user-graduate text-teal-600 dark:text-teal-400"></i> Mahasiswa Bimbingan:
-                            </label>
-                            <select id="filter_student" onchange="window.location.href = this.value" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
-                                @if(isset($applications))
-                                    @foreach($applications as $item)
-                                        <option value="{{ route('pembimbing.peserta.logbook', array_merge(['id' => $item->id], request()->except('id'))) }}" {{ $item->id == $app->id ? 'selected' : '' }}>
-                                            {{ $item->user->name }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-
-                        {{-- Search Input --}}
-                        <div class="flex flex-col gap-1 lg:col-span-1">
-                            <label for="search" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                <i class="fas fa-search text-teal-600 dark:text-teal-400"></i> Cari Kegiatan Jurnal:
-                            </label>
-                            <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Cari isi deskripsi..." class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
-                        </div>
-
-                        {{-- Status Validasi Filter --}}
-                        <div class="flex flex-col gap-1 lg:col-span-1">
-                            <label for="status_validasi" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                <i class="fas fa-check-double text-teal-600 dark:text-teal-400"></i> Status Validasi:
-                            </label>
-                            <select id="status_validasi" name="status_validasi" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
-                                <option value="">Semua Validasi</option>
-                                <option value="pending" {{ request('status_validasi') == 'pending' ? 'selected' : '' }}>Pending / Menunggu</option>
-                                <option value="disetujui" {{ request('status_validasi') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
-                                <option value="revisi" {{ request('status_validasi') == 'revisi' ? 'selected' : '' }}>Perlu Revisi</option>
-                            </select>
-                        </div>
-
-                        {{-- Date / Month Picker --}}
-                        <div class="flex flex-col gap-1 lg:col-span-1">
-                            <label for="date" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
-                                <span x-text="isMonthly ? 'Periode Bulan:' : (isAll ? 'Tanggal (Dinonaktifkan):' : 'Pilih Tanggal:')"></span>
-                            </label>
-                            <div class="relative">
-                                <input type="hidden" name="date" :value="isMonthly ? monthValue + '-01' : selectedDate" :disabled="isAll">
-
-                                <template x-if="isMonthly">
-                                    <input type="month" x-model="monthValue"
-                                        class="w-full border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-2 px-3 [color-scheme:dark]">
-                                </template>
-
-                                <template x-if="!isMonthly">
-                                    <input type="date" x-model="selectedDate" :disabled="isAll"
-                                        class="w-full border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-2 px-3 [color-scheme:dark] disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800">
-                                </template>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {{-- Tombol Aksi & Active Filter Badges --}}
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                        {{-- Active Filter Badges (Left Side) --}}
-                        <div class="flex flex-wrap items-center gap-2">
-                            @if($isFiltered || (isset($applications) && $applications->count() > 1))
-                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Filter Aktif:</span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
-                                    <i class="fas fa-user-graduate text-[10px]"></i> {{ $app->user->name }}
-                                </span>
-
-                                @if(request('search'))
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
-                                        <i class="fas fa-search text-[10px]"></i> "<span>{{ request('search') }}</span>"
-                                        <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus pencarian"><i class="fas fa-times"></i></a>
-                                    </span>
-                                @endif
-
-                                @if(request('filter_type') && request('filter_type') !== 'semua')
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 capitalize">
-                                        <i class="fas fa-calendar text-[10px]"></i> Rentang: {{ request('filter_type') }}
-                                        <a href="{{ request()->fullUrlWithQuery(['filter_type' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Reset rentang"><i class="fas fa-times"></i></a>
-                                    </span>
-                                @endif
-
-                                @if(request('status_validasi'))
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 capitalize">
-                                        <i class="fas fa-check-double text-[10px]"></i> Validasi: {{ request('status_validasi') }}
-                                        <a href="{{ request()->fullUrlWithQuery(['status_validasi' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus filter validasi"><i class="fas fa-times"></i></a>
-                                    </span>
-                                @endif
-                            @endif
-                        </div>
-
-                        {{-- Tombol Aksi (Right Side) --}}
-                        <div class="flex items-center justify-end gap-2 shrink-0">
-                            <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs hover:shadow active:scale-95">
-                                <i class="fas fa-search"></i>
-                                <span>Terapkan Filter</span>
-                            </button>
-
-                            @if($isFiltered)
-                                <a href="{{ route('pembimbing.peserta.logbook', $app->id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-bold transition">
-                                    <i class="fas fa-undo"></i>
-                                    <span>Reset</span>
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                </form>
+                <x-pembimbing.filter-bar
+                    route-name="pembimbing.peserta.logbook"
+                    :app="$app"
+                    :applications="$applications"
+                    :filter-type="$filterType"
+                    :selected-date="$selectedDate"
+                    :is-filtered="$isFiltered"
+                    title="Filter Pemantauan Logbook"
+                    subtitle="Filter data logbook berdasarkan rentang waktu, status validasi, atau pencarian kegiatan"
+                    search-label="Cari Kegiatan Jurnal:"
+                    search-placeholder="Cari isi deskripsi..."
+                    status-field="status_validasi"
+                    :status-options="[
+                        ['value' => 'pending', 'label' => 'Pending / Menunggu'],
+                        ['value' => 'disetujui', 'label' => 'Disetujui'],
+                        ['value' => 'revisi', 'label' => 'Perlu Revisi'],
+                        ['value' => 'ditolak', 'label' => 'Ditolak'],
+                    ]"
+                    status-badge-label="Validasi"
+                />
             </div>
 
             @if($logs->isEmpty())
@@ -252,6 +90,8 @@
                                                     <i class="fas fa-check-circle text-emerald-500 text-xs" title="Disetujui"></i>
                                                 @elseif($log->status_validasi == 'revisi')
                                                     <i class="fas fa-exclamation-circle text-rose-500 text-xs" title="Revisi"></i>
+                                                @elseif($log->status_validasi == 'ditolak')
+                                                    <i class="fas fa-ban text-rose-500 text-xs" title="Ditolak"></i>
                                                 @else
                                                     <div class="w-2.5 h-2.5 rounded-full bg-amber-400 mt-1" title="Pending"></div>
                                                 @endif
@@ -290,12 +130,13 @@
                                     @php
                                         $statusClass = match($log->status_validasi) {
                                             'disetujui' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
-                                            'revisi' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                            'revisi', 'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
                                             default => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
                                         };
                                         $statusIcon = match($log->status_validasi) {
                                             'disetujui' => 'fa-check-circle',
                                             'revisi' => 'fa-undo',
+                                            'ditolak' => 'fa-ban',
                                             default => 'fa-clock'
                                         };
                                     @endphp
@@ -350,15 +191,8 @@
                     </div>
                 </div>
             @endif
+
+            <x-pembimbing.pagination :paginator="$logs" />
         </div>
     </div>
-
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
 </x-app-layout>

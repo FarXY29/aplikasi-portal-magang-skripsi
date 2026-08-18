@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\Certificate;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -67,7 +68,7 @@ class CertificateController extends Controller
 
         // 2. Jika belum ditemukan, cari via tabel Certificate
         if (!$app) {
-            $certificate = \App\Models\Certificate::where('nomor_sertifikat', $keyword)
+            $certificate = Certificate::where('nomor_sertifikat', $keyword)
                 ->orWhere('token_verifikasi', $keyword)
                 ->first();
 
@@ -150,26 +151,39 @@ class CertificateController extends Controller
             return redirect()->back()->with('error', 'Peserta belum dinilai oleh pembimbing_lapangan. Sertifikat tidak dapat diterbitkan.');
         }
 
-        // 1. Simpan Data Legalitas Sertifikat
+        $tokenVerifikasi = $app->token_verifikasi ?? Str::random(32);
+
+        // 1. Simpan Data Legalitas Sertifikat di Application
         $app->update([
             'nomor_sertifikat' => $request->nomor_sertifikat,
-            // Jika kolom tanggal_sertifikat belum ada di DB, pastikan buat migrationnya atau gunakan updated_at
             'updated_at' => $request->tanggal_sertifikat . ' ' . now()->format('H:i:s'), 
-            'token_verifikasi' => $app->token_verifikasi ?? Str::random(32), // Generate token jika belum ada
-            'status' => 'selesai' // Finalisasi status
+            'token_verifikasi' => $tokenVerifikasi,
+            'status' => 'selesai'
         ]);
 
-        // 2. Siapkan Data untuk View PDF
+        // 2. Simpan atau sinkronkan ke Master Certificate
+        Certificate::updateOrCreate(
+            ['application_id' => $app->id],
+            [
+                'nomor_sertifikat' => $request->nomor_sertifikat,
+                'token_verifikasi' => $tokenVerifikasi,
+                'signer_name' => $app->position?->instansi?->nama_kepala ?? 'Kepala Instansi',
+                'status' => 'active',
+                'published_at' => Carbon::parse($request->tanggal_sertifikat),
+            ]
+        );
+
+        // 3. Siapkan Data untuk View PDF
         $data = [
             'app' => $app,
             'user' => $app->user,
             'instansi' => $app->position->instansi,
             'position' => $app->position,
             'tanggal' => Carbon::parse($request->tanggal_sertifikat)->translatedFormat('d F Y'),
-            'qr_code' => route('certificate.verify', $app->token_verifikasi) // URL untuk QR Code
+            'qr_code' => route('certificate.verify', $tokenVerifikasi)
         ];
 
-        // 3. Generate PDF
+        // 4. Generate PDF
         $pdf = Pdf::loadView('pdf.peserta.sertifikat', $data);
         $pdf->setPaper('a4', 'landscape');
 
