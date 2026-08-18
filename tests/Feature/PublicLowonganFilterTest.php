@@ -189,4 +189,60 @@ class PublicLowonganFilterTest extends TestCase
         $response->assertSee('Dinas Kesehatan Test');
         $response->assertSee('Farmasi');
     }
+
+    public function test_landing_page_can_sort_lowongan(): void
+    {
+        $dinas = Instansi::create([
+            'nama_dinas' => 'Dinas Koperasi Test',
+            'alamat' => 'Jl. Koperasi No. 1',
+            'kode_unit_kerja' => 'DISKOP-FLT',
+        ]);
+
+        $lokerSmallQuota = InternshipPosition::create([
+            'instansi_id' => $dinas->id,
+            'judul_posisi' => 'Staff Pendataan UMKM',
+            'required_major' => 'Manajemen',
+            'kuota' => 1,
+            'batas_daftar' => now()->addDays(2)->format('Y-m-d'),
+            'status' => 'buka',
+        ]);
+
+        $lokerBigQuota = InternshipPosition::create([
+            'instansi_id' => $dinas->id,
+            'judul_posisi' => 'Fasilitator Inkubasi Bisnis',
+            'required_major' => 'Manajemen',
+            'kuota' => 10,
+            'batas_daftar' => now()->addDays(30)->format('Y-m-d'),
+            'status' => 'buka',
+        ]);
+
+        // Sort by quota desc
+        $responseQuota = $this->get(route('home', ['sort' => 'quota_desc']));
+        $responseQuota->assertOk();
+        $responseQuota->assertSee('Fasilitator Inkubasi Bisnis');
+        $responseQuota->assertSee('Staff Pendataan UMKM');
+
+        // Sort by deadline asc
+        $responseDeadline = $this->get(route('home', ['sort' => 'deadline_asc']));
+        $responseDeadline->assertOk();
+        $responseDeadline->assertSee('Staff Pendataan UMKM');
+    }
+
+    public function test_landing_page_returns_partial_for_ajax_request(): void
+    {
+        $response = $this->get(route('home', ['partial' => 'grid']), ['X-Alpine-Fetch' => '1']);
+        $response->assertOk();
+        $response->assertSee('lowongan-explorer-container');
+        $response->assertDontSee('<!DOCTYPE html>');
+    }
+
+    public function test_landing_page_renders_trending_tags_and_ux_elements(): void
+    {
+        $response = $this->get(route('home'));
+        $response->assertOk();
+        $response->assertSee('Tren:');
+        $response->assertSee('Informatika');
+        $response->assertSee('Akuntansi');
+        $response->assertSee('Kembali ke Atas');
+    }
 }

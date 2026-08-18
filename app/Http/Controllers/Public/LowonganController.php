@@ -146,7 +146,17 @@ class LowonganController extends Controller
             $query->where('judul_posisi', 'like', '%' . trim($request->posisi) . '%');
         }
 
-        $lowongans = $query->latest()->paginate(9);
+        // 6. Pengurutan Data (Sorting)
+        $sort = $request->get('sort', 'latest');
+        if ($sort === 'deadline_asc') {
+            $query->orderBy('batas_daftar', 'asc')->orderBy('id', 'desc');
+        } elseif ($sort === 'quota_desc') {
+            $query->orderBy('kuota', 'desc')->orderBy('id', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $lowongans = $query->paginate(9);
         $lowongans->appends($request->query())->fragment('lowongan'); 
 
         $cachedData = Cache::remember('landing_page_stats_v3', 3600, function () {
@@ -164,6 +174,13 @@ class LowonganController extends Controller
         $totalInstansi = $cachedData['totalInstansi'];
         $totalLowongan = $cachedData['totalLowongan'];
         $totalAlumni = $cachedData['totalAlumni'];
+
+        if ($request->ajax() || $request->header('X-Alpine-Fetch') || $request->query('partial') === 'grid') {
+            return view('public.welcome._lowongan-grid', compact(
+                'lowongans', 'instansis', 'majorCategories',
+                'totalInstansi', 'totalLowongan', 'totalAlumni'
+            ));
+        }
 
         return view('public.welcome', compact(
             'lowongans', 'instansis', 'majorCategories',
