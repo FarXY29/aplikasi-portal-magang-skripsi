@@ -105,25 +105,38 @@
 
                     @php
                         $app = $certificate->application;
-                        $nilai = (float) ($app?->nilai_angka ?? 0);
+                        $nilai = (float) ($app?->nilai_angka ?? $app?->nilai_rata_rata ?? 0);
                     @endphp
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-center">
                         <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold">Nilai Teknis</p>
-                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_teknis ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Kerajinan</p>
+                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_kerajinan ?? '-' }}</p>
                         </div>
                         <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
                             <p class="text-[10px] text-gray-400 uppercase font-bold">Kedisiplinan</p>
                             <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_disiplin ?? '-' }}</p>
                         </div>
                         <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
-                            <p class="text-[10px] text-gray-400 uppercase font-bold">Perilaku</p>
-                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_perilaku ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Adaptasi</p>
+                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_adaptasi ?? '-' }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Kreatifitas</p>
+                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_kreatifitas ?? '-' }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Skill & Pengetahuan</p>
+                            <p class="text-base font-black text-gray-900 dark:text-gray-100 mt-0.5">{{ $app?->nilai_skill_pengetahuan ?? '-' }}</p>
                         </div>
                         <div class="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800">
                             <p class="text-[10px] text-teal-700 dark:text-teal-400 uppercase font-bold">Rata-rata Akhir</p>
-                            <p class="text-base font-black text-teal-700 dark:text-teal-300 mt-0.5">{{ number_format($nilai, 1) }}</p>
+                            <p class="text-base font-black text-teal-700 dark:text-teal-300 mt-0.5">
+                                {{ number_format($nilai, 1) }}
+                                @if(!empty($app?->predikat))
+                                    <span class="text-xs font-bold ml-1">({{ $app->predikat }})</span>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>

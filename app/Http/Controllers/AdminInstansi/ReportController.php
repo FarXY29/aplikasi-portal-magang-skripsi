@@ -127,7 +127,7 @@ class ReportController extends Controller
 
                     $total_att = $app->attendances->count();
                     $hadir_att = $app->attendances->where('status', 'hadir')->count();
-                    $pending_att = $app->attendances->where('validation_status', 'pending')->count();
+                    $pending_att = $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count();
                     
                     return [
                         'nama' => $app->user->name ?? '-',
