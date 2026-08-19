@@ -18,6 +18,14 @@ class LogbookController extends Controller
 {
     public function index()
     {
+        $request = request();
+
+        $filters = $request->validate([
+            'status' => ['nullable', 'in:semua,pending,disetujui,revisi'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'month' => ['nullable', 'date_format:Y-m'],
+        ]);
+
         // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $activeApp = Application::with('position.instansi')
             ->where('user_id', Auth::id())
@@ -36,7 +44,23 @@ class LogbookController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif.');
         }
 
-        $logs = DailyLog::where('application_id', $activeApp->id)
+        $logsQuery = DailyLog::where('application_id', $activeApp->id);
+
+        if (!empty($filters['status']) && $filters['status'] !== 'semua') {
+            $logsQuery->where('status_validasi', $filters['status']);
+        }
+
+        if (!empty($filters['date'])) {
+            $logsQuery->whereDate('tanggal', $filters['date']);
+        }
+
+        if (!empty($filters['month'])) {
+            $month = Carbon::createFromFormat('Y-m', $filters['month']);
+            $logsQuery->whereYear('tanggal', $month->year)
+                ->whereMonth('tanggal', $month->month);
+        }
+
+        $logs = $logsQuery
             ->orderBy('tanggal', 'desc')
             ->paginate(15)
             ->withQueryString();

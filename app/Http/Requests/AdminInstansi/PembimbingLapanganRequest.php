@@ -10,7 +10,7 @@ class PembimbingLapanganRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->role === 'admin_instansi';
+        return $this->user()?->hasPortalRole('admin_instansi') ?? false;
     }
 
     public function rules(): array

@@ -53,8 +53,8 @@
             <td>: {{ $app->position->judul_posisi }}</td>
         </tr>
         <tr>
-            <td class="label">NIM/NISN</td>
-            <td>: {{ $app->user->nim ?? '-' }}</td>
+            <td class="label">NIM / NPM / NISN</td>
+            <td>: {{ $app->user->nik ?? $app->user->nim ?? '-' }}</td>
             <td class="label">Asal Instansi</td>
             <td>: {{ $app->user->asal_instansi }}</td>
         </tr>

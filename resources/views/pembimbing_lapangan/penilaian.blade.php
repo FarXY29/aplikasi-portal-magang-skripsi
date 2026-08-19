@@ -55,7 +55,7 @@
 
                 {{-- Formulir Input Kriteria --}}
                 <div class="w-full lg:w-2/3 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700">
-                    <form action="{{ route('pembimbing_lapangan.simpan_nilai', $application->id) }}" method="POST" id="gradingForm">
+                    <form action="{{ route('pembimbing_lapangan.simpan_nilai', $application->id) }}" method="POST" id="penilaianForm" onsubmit="event.submitter && (event.submitter.disabled = true)">
                         @csrf
                         
                         <div class="mb-8">
@@ -91,6 +91,7 @@
                                             oninput="this.setCustomValidity('')">
                                         <span class="absolute right-4 top-2.5 text-gray-400 dark:text-gray-500 text-xs font-bold font-mono">/ 100</span>
                                     </div>
+                                    <x-input-error :messages="$errors->get($field)" class="mt-2" />
                                 </div>
                                 @endforeach
                             </div>
@@ -103,6 +104,7 @@
                             <textarea name="catatan_pembimbing_lapangan" rows="4" 
                                 class="w-full rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-xs text-xs sm:text-sm font-medium p-4"
                                 placeholder="Tuliskan evaluasi, kesan pesan, serta saran perbaikan dan pengembangan diri untuk peserta magang...">{{ old('catatan_pembimbing_lapangan', $application->catatan_pembimbing_lapangan) }}</textarea>
+                            <x-input-error :messages="$errors->get('catatan_pembimbing_lapangan')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-700">

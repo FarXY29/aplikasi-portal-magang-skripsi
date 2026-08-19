@@ -47,8 +47,8 @@
 
                             <div>
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">Detail Pekerjaan</h4>
-                                <div class="prose prose-sm text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                                    {!! $position->deskripsi !!}
+                                <div class="prose prose-sm text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                                    {{ $position->deskripsi }}
                                 </div>
                             </div>
 
@@ -114,13 +114,21 @@
                                                 <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"><i class="fas fa-play-circle text-teal-600 dark:text-teal-400 mr-1"></i>Tanggal Mulai</label>
                                                 <input type="date" id="tanggal_mulai" name="tanggal_mulai" 
                                                     class="w-full rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 transition shadow-xs text-xs font-bold [color-scheme:dark]"
+                                                    value="{{ old('tanggal_mulai') }}"
                                                     min="{{ date('Y-m-d') }}" required>
+                                                @error('tanggal_mulai')
+                                                    <p class="text-rose-500 text-xs mt-2 font-bold">{{ $message }}</p>
+                                                @enderror
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"><i class="fas fa-stop-circle text-rose-500 mr-1"></i>Tanggal Selesai</label>
                                                 <input type="date" id="tanggal_selesai" name="tanggal_selesai" 
                                                     class="w-full rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 transition shadow-xs text-xs font-bold [color-scheme:dark]"
+                                                    value="{{ old('tanggal_selesai') }}"
                                                     min="{{ date('Y-m-d') }}" required>
+                                                @error('tanggal_selesai')
+                                                    <p class="text-rose-500 text-xs mt-2 font-bold">{{ $message }}</p>
+                                                @enderror
                                             </div>
                                         </div>
                                         <div id="duration-badge-wrap" class="mt-4 hidden">

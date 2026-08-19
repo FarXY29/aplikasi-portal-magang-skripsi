@@ -404,13 +404,19 @@ class ReportService
             $instansi->total_alpa = $totalAlpa;
             $instansi->total_terlambat = $totalTerlambat;
             $instansi->total_pelanggaran = $totalTerlambat + $totalAlpa;
-            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : 100;
+            $instansi->tingkat_disiplin = $totalAttendances > 0 ? 100 - (($instansi->total_pelanggaran / $totalAttendances) * 100) : null;
             $instansi->pelanggar_list = collect($pelanggarByInstansi[$instansi->id] ?? [])->sortByDesc(function ($p) {
                 return $p['terlambat'] + $p['alpa'];
             })->values()->all();
 
             return $instansi;
         });
+
+        // Instansi tanpa presensi belum memiliki dasar untuk dinilai dan tidak boleh
+        // masuk ranking atau menaikkan rata-rata disiplin.
+        $instansis = $instansis
+            ->filter(fn ($instansi) => $instansi->total_attendances > 0)
+            ->values();
 
         if ($request->filled('disiplin_range')) {
             $range = $request->disiplin_range;
@@ -428,17 +434,11 @@ class ReportService
         }
 
         $instansis = $instansis->sortByDesc('tingkat_disiplin')->values();
-
-        $podium = $instansis->filter(function ($i) {
-            return $i->total_attendances > 0;
-        })
-            ->sortByDesc('tingkat_disiplin')
-            ->values()
-            ->take(3);
+        $podium = $instansis->take(3);
 
         $stats = [
             'total_instansi' => $instansis->count(),
-            'avg_disiplin' => $instansis->count() > 0 ? round($instansis->avg('tingkat_disiplin'), 1) : 100,
+            'avg_disiplin' => $instansis->count() > 0 ? round($instansis->avg('tingkat_disiplin'), 1) : 0,
             'total_kehadiran' => $instansis->sum('total_attendances'),
             'total_pelanggaran' => $instansis->sum('total_pelanggaran'),
             'total_terlambat' => $instansis->sum('total_terlambat'),
@@ -455,14 +455,12 @@ class ReportService
     {
         $query = Application::with(['user', 'position.instansi']);
 
-        if ($request->has('status') && $request->status !== '') {
-            if ($request->status === 'pending') {
-                $query->whereIn('status', ['pending', 'menunggu']);
-            } elseif ($request->status !== 'semua') {
-                $query->where('status', $request->status);
-            }
-        } else {
-            $query->whereIn('status', ['diterima', 'selesai']);
+        $status = $request->input('status', 'semua');
+
+        if ($status === 'pending') {
+            $query->whereIn('applications.status', ['pending', 'menunggu']);
+        } elseif ($status !== 'semua' && $status !== '') {
+            $query->where('applications.status', $status);
         }
 
         if ($request->has('instansi_id') && $request->instansi_id != '') {

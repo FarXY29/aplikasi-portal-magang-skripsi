@@ -24,42 +24,42 @@
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah seluruh lamaran peserta yang tercatat pada laporan.">
                     <div class="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-2 border border-teal-100 dark:border-teal-900/50">
                         <i class="fas fa-file-alt text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Total Pendaftar</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah peserta magang dengan status 'diterima' yang saat ini sedang aktif melakoni program magang di instansi.">
                     <div class="w-8 h-8 rounded-full bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-2 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-user-clock text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-green-700 dark:text-green-400">{{ $stats['aktif'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Status Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah alumni peserta magang yang telah menyelesaikan seluruh periode magang dan dinyatakan lulus (status 'selesai').">
                     <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-2 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-graduation-cap text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-blue-700 dark:text-blue-400">{{ $stats['selesai'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Selesai / Lulus</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah lamaran pendaftaran magang yang masih dalam proses verifikasi atau menantikan keputusan instansi (status 'pending'/'menunggu').">
                     <div class="w-8 h-8 rounded-full bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 dark:text-yellow-400 flex items-center justify-center mx-auto mb-2 border border-yellow-100 dark:border-yellow-900/50">
                         <i class="fas fa-hourglass-half text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-yellow-600 dark:text-yellow-400">{{ $stats['pending'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Pending</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah berkas pendaftaran magang yang ditolak oleh instansi karena tidak memenuhi persyaratan atau kuota penuh.">
                     <div class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-2 border border-red-100 dark:border-red-900/50">
                         <i class="fas fa-user-times text-xs"></i>
                     </div>
                     <p class="text-xl font-black text-red-700 dark:text-red-400">{{ $stats['ditolak'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Ditolak</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Total akumulasi instansi perguruan tinggi atau sekolah unik asal peserta yang terdaftar pada laporan rekap ini.">
                     <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-2 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-university text-xs"></i>
                     </div>
@@ -69,7 +69,7 @@
             </div>
 
             {{-- Highlight Banner --}}
-            <div class="bg-gradient-to-r from-teal-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-600/20 flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-gradient-to-r from-teal-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-600/20 flex flex-col sm:flex-row items-center gap-4 cursor-help" title="Ringkasan rekapitulasi akumulasi seluruh lamaran peserta dan total instansi pendidikan/kampus yang bermitra.">
                 <div class="w-14 h-14 rounded-2xl bg-white/20 dark:bg-gray-800/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0 border border-white/20">
                     <i class="fas fa-file-contract"></i>
                 </div>
@@ -80,14 +80,8 @@
                 </div>
                 @if($applications->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('dinas.laporan.rekap.print', array_merge(request()->query(), ['format' => 'pdf'])) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
+                    <a href="{{ route('dinas.laporan.rekap.print', request()->query()) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
-                    </a>
-                    <a href="{{ route('dinas.laporan.rekap.print', array_merge(request()->query(), ['format' => 'excel'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
-                        <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
-                    </a>
-                    <a href="{{ route('dinas.laporan.rekap.print', array_merge(request()->query(), ['format' => 'csv'])) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
-                        <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>
                 @endif

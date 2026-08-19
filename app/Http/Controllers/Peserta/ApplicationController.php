@@ -30,11 +30,10 @@ class ApplicationController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya jika ingin mengajukan ke posisi baru.');
         }
 
-        // 1. Validasi Jurusan
-        $syaratJurusan = strtolower($position->required_major);
-        $jurusanPelamar = strtolower($user->major);
-        if (! str_contains($syaratJurusan, 'semua jurusan') && ! str_contains($syaratJurusan, $jurusanPelamar)) {
-            return redirect()->route('home')->with('error', "Posisi ini khusus jurusan: {$position->required_major}.");
+        // 1. Validasi Kualifikasi Jurusan & Rumpun Keilmuan
+        if (! $position->matchesUser($user)) {
+            $expected = $position->requiredMajorCategory?->name ?? $position->required_major;
+            return redirect()->route('home')->with('error', "Posisi ini khusus kualifikasi: {$expected}.");
         }
 
         // 2. Cek Kuota Master (Kapasitas Ruangan)
@@ -55,6 +54,7 @@ class ApplicationController extends Controller
 
         $reqStart = $request->tanggal_mulai;
         $reqEnd = $request->tanggal_selesai;
+        $requestedWaitingList = $request->boolean('is_waiting_list');
 
         // Cek Application Limiter (Maksimal 2 lamaran aktif)
         $activeApplicationsCount = Application::where('user_id', $user->id)
@@ -74,10 +74,16 @@ class ApplicationController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Anda sudah melamar ke posisi ini dan statusnya masih aktif/pending.');
         }
 
+        $positionCheck = InternshipPosition::with(['instansi', 'requiredMajorCategory'])->findOrFail($id);
+        if (! $positionCheck->matchesUser($user)) {
+            $expected = $positionCheck->requiredMajorCategory?->name ?? $positionCheck->required_major;
+            return redirect()->route('home')->with('error', "Posisi ini khusus kualifikasi: {$expected}.");
+        }
+
         // Upload berkas di luar transaksi agar lock database tidak tertahan oleh proses I/O storage
         $suratPath = $request->file('surat')->store('documents/surat', 'private');
 
-        $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request) {
+        $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request, $requestedWaitingList) {
             // Pessimistic Locking pada baris InternshipPosition untuk menjamin akurasi kuota instansi
             $position = InternshipPosition::where('id', $id)->lockForUpdate()->firstOrFail();
             $kapasitasMaksimal = $position->kuota;
@@ -107,7 +113,7 @@ class ApplicationController extends Controller
             }
 
             $status = 'pending';
-            if ($conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
+            if ($requestedWaitingList || $conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
                 $status = 'menunggu';
             }
 
@@ -229,23 +235,15 @@ class ApplicationController extends Controller
             return redirect()->route('peserta.dashboard')->with('error', 'Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya terlebih dahulu.');
         }
 
-        $openPositions = InternshipPosition::with('instansi')
+        $openPositions = InternshipPosition::with(['instansi', 'requiredMajorCategory'])
             ->where('status', 'buka')
             ->where('kuota', '>', 0)
             ->get();
 
-        $userMajor = strtolower(trim($user->major ?? ''));
-        $eligiblePositions = $openPositions->filter(function ($position) use ($userMajor) {
-            $reqMajor = strtolower(trim($position->required_major ?? ''));
-
-            return str_contains($reqMajor, 'semua jurusan') ||
-                   str_contains($reqMajor, $userMajor) ||
-                   $reqMajor == '' ||
-                   $reqMajor == '-';
-        });
+        $eligiblePositions = $openPositions->filter(fn($position) => $position->matchesUser($user));
 
         if ($eligiblePositions->isEmpty()) {
-            return redirect()->back()->with('error', 'Maaf, saat ini tidak ada lowongan yang dibuka yang sesuai dengan jurusan Anda ('.($user->major ?? '-').').');
+            return redirect()->back()->with('error', 'Maaf, saat ini tidak ada lowongan yang dibuka yang sesuai dengan jurusan Anda ('.($user->majorDetail?->name ?? $user->major ?? '-').').');
         }
 
         // 2 query grouped menggantikan hitungan per-posisi di dalam loop

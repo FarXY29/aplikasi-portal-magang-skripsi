@@ -156,16 +156,30 @@
         </tbody>
     </table>
 
+    @php
+        $pejabatNama = $pejabat_nama ?? \App\Models\Setting::value('pejabat_name') ?? 'H. Lukman Fadlun, SH';
+        $pejabatNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
+        $pejabatJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Bakesbangpol Kota Banjarmasin';
+        $ttdImg = \App\Models\Setting::value('ttd_image');
+        $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
+    @endphp
+
     {{-- Tanda Tangan --}}
     <div class="ttd-container">
         <div class="ttd-row">
             <div class="ttd-col-left"></div>
             <div class="ttd-col-right">
                 <p>Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                <p style="margin-top: 2px;">Kepala Bakesbangpol Kota Banjarmasin</p>
-                <div class="ttd-space"></div>
-                <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">H. Lukman Fadlun, SH</p>
-                <p style="font-size: 8px; color: #555;">NIP. ........................................</p>
+                <p style="margin-top: 2px;">{{ $pejabatJabatan }}</p>
+                @if($ttdFile && file_exists($ttdFile))
+                    <div style="margin: 5px 0;">
+                        <img src="{{ $ttdFile }}" style="max-height: 60px; max-width: 150px;">
+                    </div>
+                @else
+                    <div class="ttd-space"></div>
+                @endif
+                <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">{{ $pejabatNama }}</p>
+                <p style="font-size: 8px; color: #555;">NIP. {{ $pejabatNip }}</p>
             </div>
         </div>
     </div>

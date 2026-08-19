@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,8 +23,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (request()->header('x-forwarded-proto') === 'https' || str_contains(request()->header('host', ''), 'trycloudflare.com')) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+        $publicUrl = config('app.public_url');
+
+        if ($publicUrl) {
+            $publicUrl = rtrim($publicUrl, '/');
+            URL::forceRootUrl($publicUrl);
+            URL::forceScheme(parse_url($publicUrl, PHP_URL_SCHEME) ?: 'https');
+        } else {
+            $forwardedHost = request()->header('x-forwarded-host');
+            $forwardedProto = strtolower(trim(explode(',', request()->header('x-forwarded-proto', ''))[0]));
+
+            // Ngrok meneruskan host publik melalui X-Forwarded-Host. Pakai host
+            // tersebut agar QR yang dibuat dari request web tidak berisi localhost.
+            if ($forwardedHost && $forwardedProto === 'https') {
+                $publicHost = trim(explode(',', $forwardedHost)[0]);
+                URL::forceRootUrl('https://' . $publicHost);
+            }
+
+            if ($forwardedProto === 'https' || str_contains(request()->header('host', ''), 'trycloudflare.com')) {
+                URL::forceScheme('https');
+            }
         }
 
         ResetPassword::toMailUsing(function (object $notifiable, string $token) {

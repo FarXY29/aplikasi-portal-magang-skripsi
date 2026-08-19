@@ -84,24 +84,86 @@
             </div>
         </div>
 
-        @if ($user->role === 'pembimbing_lapangan' || $user->role === 'dinas')
-        <div class="border-t border-gray-100 dark:border-gray-700 pt-5 mt-5">
-            <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                <i class="fas fa-file-signature text-teal-600 dark:text-teal-400"></i>
-                <span>{{ __('Tanda Tangan & Paraf Digital') }}</span>
-            </h4>
-            <div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex-1 space-y-1">
-                    <label for="signature" class="text-sm font-medium text-gray-700 dark:text-gray-300">Upload Tanda Tangan (PNG/JPG Transparan)</label>
-                    <input id="signature" name="signature" type="file" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 dark:hover:file:bg-teal-900" accept="image/*" />
+        @php
+            $hasExistingSig = !empty($user->signature) && (\Illuminate\Support\Facades\Storage::disk('public')->exists($user->signature) || file_exists(public_path('storage/' . $user->signature)) || file_exists(storage_path('app/public/' . $user->signature)));
+            $sigUrl = $hasExistingSig ? asset('storage/' . $user->signature) : '';
+        @endphp
+        @if ($user->hasPortalRole(['pembimbing_lapangan', 'admin_instansi']) || in_array($user->role, ['pembimbing_lapangan', 'dinas', 'admin_instansi'], true))
+        <div class="border-t border-gray-100 dark:border-gray-700 pt-5 mt-5"
+             x-data="{
+                 initialUrl: @js($sigUrl, JSON_UNESCAPED_SLASHES),
+                 previewUrl: @js($sigUrl, JSON_UNESCAPED_SLASHES),
+                 isNew: false,
+                 handleFileChange(event) {
+                     const file = event.target.files[0];
+                     if (file) {
+                         if (file.size > 2 * 1024 * 1024) {
+                             alert('Ukuran file maksimal adalah 2MB');
+                             this.resetSelection();
+                             return;
+                         }
+                         this.previewUrl = URL.createObjectURL(file);
+                         this.isNew = true;
+                     }
+                 },
+                 resetSelection() {
+                     const input = this.$refs.sigInput;
+                     if (input) input.value = '';
+                     this.previewUrl = this.initialUrl;
+                     this.isNew = false;
+                 }
+             }">
+            <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <i class="fas fa-file-signature text-teal-600 dark:text-teal-400"></i>
+                    <span>{{ __('Tanda Tangan & Paraf Digital') }}</span>
+                </h4>
+                <template x-if="isNew">
+                    <button type="button" x-on:click="resetSelection()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold flex items-center gap-1">
+                        <i class="fas fa-undo text-[10px]"></i> Batalkan Pilihan
+                    </button>
+                </template>
+            </div>
+            
+            <div class="p-4 sm:p-5 rounded-2xl bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                <div class="flex-1 space-y-2 w-full">
+                    <label for="signature" class="text-xs font-bold text-gray-700 dark:text-gray-300 block">Unggah Tanda Tangan / Paraf (PNG Transparan Disarankan)</label>
+                    <input id="signature" name="signature" type="file" x-ref="sigInput" x-on:change="handleFileChange($event)"
+                        class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 dark:hover:file:bg-teal-900 cursor-pointer border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-2xs" 
+                        accept="image/png, image/jpeg, image/jpg" />
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500 italic">Tanda tangan ini otomatis dijadikan paraf pada rekap logbook mahasiswa dan dokumen penilaian.</p>
                     <x-input-error class="mt-1" :messages="$errors->get('signature')" />
                 </div>
-                @if ($user->signature)
-                <div class="shrink-0 text-center bg-white dark:bg-gray-900 p-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-2xs">
-                    <p class="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase mb-1">Saat Ini:</p>
-                    <img src="{{ asset('storage/' . $user->signature) }}" alt="Signature" class="h-14 mx-auto object-contain">
+
+                {{-- Preview Box --}}
+                <div class="shrink-0 text-center flex flex-col items-center">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex items-center justify-center bg-white dark:bg-gray-900 overflow-hidden p-1.5 shadow-2xs group relative">
+                        <img :src="previewUrl" x-show="Boolean(previewUrl)" alt="Signature" class="max-h-full max-w-full object-contain filter drop-shadow-xs transition-transform duration-200 group-hover:scale-105">
+                        <div x-show="!Boolean(previewUrl)" class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 text-xs p-2 text-center">
+                            <i class="fas fa-signature text-2xl mb-1 text-gray-300 dark:text-gray-600"></i>
+                            <span class="text-[10px] leading-tight font-medium">Belum ada TTD</span>
+                        </div>
+                    </div>
+                    
+                    {{-- Status Badge --}}
+                    <div class="mt-1.5">
+                        <template x-if="isNew">
+                            <span class="inline-flex items-center gap-1 text-[11px] text-teal-600 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
+                                <i class="fas fa-magic text-[10px]"></i> TTD Baru
+                            </span>
+                        </template>
+                        <template x-if="!isNew && previewUrl">
+                            <span class="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                                <i class="fas fa-check-circle text-[10px]"></i> Terpasang
+                            </span>
+                        </template>
+                        <template x-if="!isNew && !previewUrl">
+                            <span class="inline-flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 font-medium">
+                                <i class="fas fa-minus-circle text-[10px]"></i> Kosong
+                            </span>
+                        </template>
+                    </div>
                 </div>
-                @endif
             </div>
         </div>
         @endif
@@ -180,14 +242,55 @@
                     <x-input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
                 </div>
 
-                <!-- Jurusan -->
-                <div class="space-y-1.5">
-                    <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="major">
-                        <span>{{ __('Jurusan / Program Studi') }}</span> <span class="text-red-500">*</span>
-                    </label>
-                    <input id="major" name="major" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('major', $user->major) }}" placeholder="Contoh: Teknik Informatika" required />
-                    <p class="text-[11px] text-gray-400 dark:text-gray-500">Menentukan posisi magang yang bisa Anda lamar.</p>
+                <!-- Jurusan / Program Studi Terstandarisasi -->
+                <div class="space-y-1.5" x-data="{
+                    isCustom: {{ empty($user->major_id) && !empty($user->major) ? 'true' : 'false' }},
+                    customMajor: '{{ old('major', $user->major) }}',
+                    onSelectMajor(e) {
+                        if (e.target.value === 'custom') {
+                            this.isCustom = true;
+                        } else {
+                            this.isCustom = false;
+                            const opt = e.target.selectedOptions[0];
+                            if (opt && opt.getAttribute('data-name')) {
+                                this.customMajor = opt.getAttribute('data-name');
+                            }
+                        }
+                    }
+                }">
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="major_id">
+                            <span>{{ __('Jurusan / Program Studi') }}</span> <span class="text-red-500">*</span>
+                        </label>
+                        @if($user->majorDetail)
+                            <span class="text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">
+                                {{ $user->majorDetail->category->name ?? 'Terdaftar' }}
+                            </span>
+                        @endif
+                    </div>
+                    <select id="major_id" name="major_id" @change="onSelectMajor($event)" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15">
+                        <option value="">-- Pilih Jurusan / Program Studi Resmi --</option>
+                        @if(isset($categories))
+                            @foreach($categories as $category)
+                                <optgroup label="── {{ $category->name }} ({{ $category->code }}) ──">
+                                    @foreach($category->majors as $m)
+                                        <option value="{{ $m->id }}" data-name="{{ $m->name }}" {{ old('major_id', $user->major_id) == $m->id ? 'selected' : '' }}>
+                                            [{{ $m->degree_level }}] {{ $m->name }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        @endif
+                        <option value="custom" {{ (empty($user->major_id) && !empty($user->major)) || old('major_id') === 'custom' ? 'selected' : '' }}>-- Jurusan Lainnya (Tulis Manual) --</option>
+                    </select>
+
+                    <div x-show="isCustom" x-transition class="pt-1.5">
+                        <input id="major" name="major" type="text" x-model="customMajor" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" placeholder="Contoh: Teknik Informatika" />
+                    </div>
+                    <input type="hidden" name="major" :value="customMajor" x-show="!isCustom">
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500">Menentukan posisi magang yang sesuai dengan kualifikasi Anda.</p>
                     <x-input-error class="mt-1" :messages="$errors->get('major')" />
+                    <x-input-error class="mt-1" :messages="$errors->get('major_id')" />
                 </div>
 
                 <!-- Pemilihan Pembimbing Sekolah -->

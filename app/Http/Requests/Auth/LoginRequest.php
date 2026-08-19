@@ -73,8 +73,9 @@ class LoginRequest extends FormRequest
 
             Auth::logout();
 
+            // Pesan generik (tanpa mengungkap status email/akun) untuk mencegah user enumeration.
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda belum diverifikasi. Tautan verifikasi baru telah dikirimkan secara otomatis ke alamat email Anda (' . $user->email . '). Silakan cek inbox/spam untuk memverifikasi akun Anda sebelum login.',
+                'email' => 'Kredensial tidak cocok dengan catatan kami. Jika akun Anda belum diverifikasi, tautan verifikasi baru telah dikirim ke email Anda.',
             ]);
         }
 

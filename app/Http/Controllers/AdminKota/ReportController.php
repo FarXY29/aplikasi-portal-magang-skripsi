@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\AdminKota;
 
-use App\Exports\GenericViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
+use App\Models\Setting;
 use App\Services\PdfExportService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -23,20 +23,6 @@ class ReportController extends Controller
     {
         $this->reportService = $reportService;
         $this->pdfService = $pdfService;
-    }
-
-    /**
-     * Helper untuk handle multi-format (PDF, Excel, CSV)
-     */
-    protected function exportData($view, $data, $filenameBase, $paper = 'a4', $orientation = 'portrait', $format = 'pdf')
-    {
-        if ($format === 'excel') {
-            return Excel::download(new GenericViewExport($view, $data), $filenameBase.'.xlsx');
-        } elseif ($format === 'csv') {
-            return Excel::download(new GenericViewExport($view, $data), $filenameBase.'.csv', \Maatwebsite\Excel\Excel::CSV);
-        }
-
-        return $this->pdfService->stream($view, $data, $filenameBase.'.pdf', $paper, $orientation);
     }
 
     /**
@@ -58,14 +44,14 @@ class ReportController extends Controller
     }
 
     /**
-     * Cetak Laporan Statistik Rekapitulasi Umum Instansi (PDF/Excel/CSV)
+     * Cetak Laporan Statistik Rekapitulasi Umum Instansi (PDF)
      */
     public function printLaporan(Request $request)
     {
         $data = $this->getGeneralReportData($request);
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.laporan', $data, 'Laporan-Statistik-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.laporan', $data, 'Laporan-Statistik-Magang.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -75,17 +61,17 @@ class ReportController extends Controller
     {
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
 
-        return view('admin_kota.laporan_instansi', compact('instansis'));
+        return view('admin_kota.instansi.laporan_instansi', compact('instansis'));
     }
 
     /**
-     * Cetak Laporan Master Instansi (PDF/Excel/CSV)
+     * Cetak Laporan Master Instansi (PDF)
      */
-    public function printInstansi(Request $request)
+    public function printInstansi()
     {
         $instansis = Instansi::with(['positions.applications'])->orderBy('nama_dinas', 'asc')->get();
 
-        return $this->exportData('pdf.admin_kota.instansi', compact('instansis'), 'Laporan-Master-INSTANSI', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.instansi', compact('instansis'), 'Laporan-Master-INSTANSI.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -95,13 +81,13 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getGlobalInternsData($request);
         $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
-        $data['listInstansi'] = User::where('role', 'peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
+        $data['listInstansi'] = User::portalRole('peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
 
         return view('admin_kota.laporan.peserta_global', $data);
     }
 
     /**
-     * Cetak Laporan Peserta Global (PDF/Excel/CSV)
+     * Cetak Laporan Peserta Global (PDF)
      */
     public function printPesertaGlobal(Request $request)
     {
@@ -113,7 +99,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -123,14 +109,14 @@ class ReportController extends Controller
     {
         $data = $this->reportService->getGradingReportData($request);
         $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
-        $data['listCampus'] = User::where('role', 'peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
+        $data['listCampus'] = User::portalRole('peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
         $data['request'] = $request;
 
         return view('admin_kota.laporan.grading', $data);
     }
 
     /**
-     * Cetak Laporan Grading & Evaluasi (PDF/Excel/CSV)
+     * Cetak Laporan Grading & Evaluasi (PDF)
      */
     public function printGrading(Request $request)
     {
@@ -142,7 +128,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.grading', $data, 'Laporan-Grading-Peserta', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.grading', $data, 'Laporan-Grading-Peserta.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -157,7 +143,7 @@ class ReportController extends Controller
     }
 
     /**
-     * Cetak Laporan Instansi Paling Disiplin (PDF/Excel/CSV)
+     * Cetak Laporan Instansi Paling Disiplin (PDF)
      */
     public function printInstansiDisiplin(Request $request)
     {
@@ -169,7 +155,7 @@ class ReportController extends Controller
         $data['title'] = $title;
         $data['request'] = $request;
 
-        return $this->exportData('pdf.admin_kota.instansi_disiplin', $data, 'Laporan-Kedisiplinan-Instansi', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.instansi_disiplin', $data, 'Laporan-Kedisiplinan-Instansi.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -183,13 +169,13 @@ class ReportController extends Controller
     }
 
     /**
-     * Cetak Laporan Durasi Magang (PDF/Excel/CSV)
+     * Cetak Laporan Durasi Magang (PDF)
      */
     public function printDurasiMagang(Request $request)
     {
         $data = $this->reportService->getDurasiMagangData($request);
 
-        return $this->exportData('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang', 'a4', 'portrait', $request->query('format', 'pdf'));
+        return $this->pdfService->stream('pdf.admin_kota.durasi_magang', ['instansis' => $data, 'request' => $request], 'Laporan-Durasi-Magang.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -203,16 +189,16 @@ class ReportController extends Controller
     }
 
     /**
-     * Cetak Laporan Demografi Jurusan (PDF/Excel/CSV)
+     * Cetak Laporan Demografi Jurusan (PDF)
      */
     public function printDemografiJurusan(Request $request)
     {
         $data = $this->reportService->getDemografiJurusanData($request);
 
-        return $this->exportData('pdf.admin_kota.demografi_jurusan', [
+        return $this->pdfService->stream('pdf.admin_kota.demografi_jurusan', [
             'jurusans' => $data,
             'request' => $request,
-        ], 'Laporan-Demografi-Jurusan', 'a4', 'portrait', $request->query('format', 'pdf'));
+        ], 'Laporan-Demografi-Jurusan.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -226,16 +212,16 @@ class ReportController extends Controller
     }
 
     /**
-     * Cetak Laporan Penyerapan Kuota (PDF/Excel/CSV)
+     * Cetak Laporan Penyerapan Kuota (PDF)
      */
     public function printPenyerapanKuota(Request $request)
     {
         $data = $this->reportService->getPenyerapanKuotaData($request);
 
-        return $this->exportData('pdf.admin_kota.penyerapan_kuota', [
+        return $this->pdfService->stream('pdf.admin_kota.penyerapan_kuota', [
             'penyerapan' => $data,
             'request' => $request,
-        ], 'Laporan-Penyerapan-Kuota', 'a4', 'portrait', $request->query('format', 'pdf'));
+        ], 'Laporan-Penyerapan-Kuota.pdf', 'a4', 'portrait', true);
     }
 
     /**
@@ -270,11 +256,11 @@ class ReportController extends Controller
         $query = Instansi::withCount([
             'positions',
             'positions as lowongan_aktif_count' => function ($q) {
-                $q->where('status', 'buka');
+                $q->where('internship_positions.status', 'buka');
             },
             'applications as total_pelamar_count',
             'applications as total_diterima_count' => function ($q) {
-                $q->whereIn('status', ['diterima', 'selesai']);
+                $q->whereIn('applications.status', ['diterima', 'selesai']);
             },
         ]);
 

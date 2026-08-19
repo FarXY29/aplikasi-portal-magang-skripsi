@@ -79,10 +79,10 @@
                                     </span>
                                     <select name="role" id="roleSelect" onchange="toggleFields()"
                                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm cursor-pointer font-bold text-sm">
-                                        <option value="peserta">Peserta Magang</option>
-                                        <option value="pembimbing">Dosen / Guru Pembimbing</option>
-                                        <option value="pembimbing_lapangan">Pembimbing Lapangan (Pegawai)</option>
-                                        <option value="admin_instansi">Admin Instansi</option>
+                                        <option value="peserta" {{ old('role', 'peserta') === 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
+                                        <option value="pembimbing" {{ old('role') === 'pembimbing' ? 'selected' : '' }}>Dosen / Guru Pembimbing</option>
+                                        <option value="pembimbing_lapangan" {{ old('role') === 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan (Pegawai)</option>
+                                        <option value="admin_instansi" {{ old('role') === 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
                                     </select>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                                     <select name="instansi_id" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 text-sm focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">-- Pilih Instansi --</option>
                                         @foreach($instansis as $instansi)
-                                            <option value="{{ $instansi->id }}">{{ $instansi->nama_dinas }}</option>
+                                            <option value="{{ $instansi->id }}" {{ old('instansi_id') == $instansi->id ? 'selected' : '' }}>{{ $instansi->nama_dinas }}</option>
                                         @endforeach
                                     </select>
                                     <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">*Admin/Pembimbing Lapangan akan terikat pada instansi ini.</p>
@@ -113,7 +113,7 @@
 
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <x-input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
-                                    <x-text-input id="phone" name="phone" type="text" placeholder="08xxxxxxxxxx" />
+                                    <x-text-input id="phone" name="phone" type="text" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx" />
                                 </div>
 
                                 <div id="noneField" class="hidden text-center text-gray-400 dark:text-gray-500 text-sm py-2">
@@ -146,14 +146,27 @@
             const instansiDinasField = document.getElementById('instansiDinasField');
             const asalSekolahField = document.getElementById('asalSekolahField');
             const noneField = document.getElementById('noneField');
+            const instansiInput = document.querySelector('[name="instansi_id"]');
+            const asalInstansiInput = document.querySelector('[name="asal_instansi"]');
+            const needsInstansi = role === 'admin_instansi' || role === 'pembimbing_lapangan';
+            const needsAsalInstansi = role === 'pembimbing' || role === 'peserta';
 
             if (instansiDinasField) instansiDinasField.classList.add('hidden');
             if (asalSekolahField) asalSekolahField.classList.add('hidden');
             if (noneField) noneField.classList.add('hidden');
 
-            if (role === 'admin_instansi' || role === 'pembimbing_lapangan') {
+            if (instansiInput) {
+                instansiInput.disabled = !needsInstansi;
+                instansiInput.required = needsInstansi;
+            }
+            if (asalInstansiInput) {
+                asalInstansiInput.disabled = !needsAsalInstansi;
+                asalInstansiInput.required = needsAsalInstansi;
+            }
+
+            if (needsInstansi) {
                 if (instansiDinasField) instansiDinasField.classList.remove('hidden');
-            } else if (role === 'pembimbing' || role === 'peserta') {
+            } else if (needsAsalInstansi) {
                 if (asalSekolahField) asalSekolahField.classList.remove('hidden');
             } else {
                 if (noneField) noneField.classList.remove('hidden');

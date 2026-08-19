@@ -39,6 +39,9 @@
         }
     </style>
     <script>
+        // Progressive enhancement flag: enables reveal/entrance animations only with JS.
+        document.documentElement.classList.add('js');
+
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -63,6 +66,50 @@
     @include('public.welcome._alur-magang')
     @include('public.welcome._faq')
     @include('public.welcome._footer')
+
+    <!-- Floating Back to Top Button (With iOS Safe Area Offset) -->
+    <div x-data="{ showBackToTop: false }" 
+         x-init="showBackToTop = ((window.pageYOffset || window.scrollY) > 300)"
+         @scroll.window.passive="showBackToTop = ((window.pageYOffset || window.scrollY) > 300)"
+         class="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 z-40">
+        <button x-show="showBackToTop" 
+                x-cloak
+                x-transition:enter="transition ease-out duration-300 transform"
+                x-transition:enter-start="opacity-0 translate-y-4 scale-90"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-200 transform"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 scale-90"
+                @click="window.scrollTo({ top: 0, behavior: 'smooth' })" 
+                type="button" 
+                class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white shadow-xl shadow-teal-600/30 flex items-center justify-center transition-all duration-300 border border-teal-400/30 focus:outline-none group" 
+                title="Kembali ke Atas">
+            <i class="fas fa-chevron-up text-sm group-hover:-translate-y-0.5 transition-transform duration-300"></i>
+        </button>
+    </div>
+
+    <!-- Global Lightweight Toast Notification (With iOS Safe Area Offset) -->
+    <div x-data="{ open: false, message: '' }" 
+         @notify.window="message = $event.detail; open = true; setTimeout(() => open = false, 3500)"
+         class="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] left-1/2 transform -translate-x-1/2 z-[1000] pointer-events-none px-4 w-full max-w-sm">
+        <div x-show="open" 
+             x-cloak
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+             class="bg-slate-900/95 dark:bg-gray-800/95 text-white backdrop-blur-xl border border-slate-700/60 rounded-2xl p-4 shadow-2xl flex items-center gap-3 text-xs font-bold pointer-events-auto">
+            <div class="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0 border border-teal-500/30">
+                <i class="fas fa-check text-xs"></i>
+            </div>
+            <span x-text="message" class="flex-grow"></span>
+            <button @click="open = false" type="button" class="text-slate-400 hover:text-white transition shrink-0 ml-1">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+    </div>
 
 </body>
 </html>

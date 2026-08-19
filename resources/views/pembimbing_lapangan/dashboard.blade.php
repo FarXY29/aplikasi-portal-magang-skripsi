@@ -10,26 +10,6 @@
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            
-            @php
-                $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
-            @endphp
-            @if(!empty($globalAnnouncement))
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border-l-4 border-amber-500 p-6 rounded-r-2xl shadow-sm border border-amber-100 dark:border-amber-900/40 flex gap-4 items-start relative overflow-hidden">
-                    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-amber-500 pointer-events-none">
-                        <i class="fas fa-bullhorn text-9xl"></i>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 shadow-inner">
-                        <i class="fas fa-bullhorn text-lg"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="text-sm font-extrabold text-amber-800 dark:text-amber-300 uppercase tracking-wider mb-1">Pengumuman Kota Banjarmasin</h4>
-                        <div class="text-sm text-amber-950 dark:text-amber-100 font-semibold leading-relaxed prose prose-amber max-w-none">
-                            {!! nl2br(e($globalAnnouncement)) !!}
-                        </div>
-                    </div>
-                </div>
-            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-indigo-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-md transition">

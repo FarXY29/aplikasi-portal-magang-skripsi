@@ -15,7 +15,7 @@
     <table class="details-table">
         <tr>
             <td>Instansi</td>
-            <td>{{ $application->position->instansi->nama_dinas ?? '-' }}</td>
+            <td>{{ $application->position?->instansi?->nama_dinas ?? '-' }}</td>
         </tr>
         <tr>
             <td>Tanggal Selesai</td>
