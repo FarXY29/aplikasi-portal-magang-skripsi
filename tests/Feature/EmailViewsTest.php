@@ -61,7 +61,7 @@ class EmailViewsTest extends TestCase
         Mail::assertSent(ApplicationAcceptedMail::class, function (ApplicationAcceptedMail $mail) use ($app) {
             $html = $mail->render();
 
-            $this->assertStringContainsString($app->user->name, $html);
+            $this->assertStringContainsString(e($app->user->name), $html);
             $this->assertStringContainsString('Dinas Pendidikan Test', $html);
             $this->assertStringContainsString('Staf Administrasi', $html);
 
@@ -79,7 +79,7 @@ class EmailViewsTest extends TestCase
         Mail::assertSent(ApplicationRejectedMail::class, function (ApplicationRejectedMail $mail) use ($app) {
             $html = $mail->render();
 
-            $this->assertStringContainsString($app->user->name, $html);
+            $this->assertStringContainsString(e($app->user->name), $html);
             $this->assertStringContainsString('BELUM DAPAT DITERIMA', $html);
             $this->assertStringContainsString('Dinas Pendidikan Test', $html);
 
@@ -114,7 +114,7 @@ class EmailViewsTest extends TestCase
         Mail::assertSent(InternshipCompleted::class, function (InternshipCompleted $mail) use ($app) {
             $html = $mail->render();
 
-            $this->assertStringContainsString($app->user->name, $html);
+            $this->assertStringContainsString(e($app->user->name), $html);
             $this->assertStringContainsString('Selesai & Lulus', $html);
             $this->assertStringContainsString('Pertahankan kinerja yang baik.', $html);
 

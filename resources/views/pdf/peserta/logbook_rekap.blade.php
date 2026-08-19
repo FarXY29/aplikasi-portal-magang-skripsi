@@ -71,6 +71,17 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $ttdPlPath = null;
+                if (!empty($app->pembimbing_lapangan?->signature)) {
+                    $rawPl = $app->pembimbing_lapangan->signature;
+                    if (file_exists(storage_path('app/public/' . $rawPl))) {
+                        $ttdPlPath = storage_path('app/public/' . $rawPl);
+                    } elseif (file_exists(public_path('storage/' . $rawPl))) {
+                        $ttdPlPath = public_path('storage/' . $rawPl);
+                    }
+                }
+            @endphp
             @foreach($logs as $index => $log)
             <tr>
                 <td style="text-align: center;">{{ $index + 1 }}</td>
@@ -85,12 +96,10 @@
                 <td style="text-align: center; vertical-align: middle;">
                     {{-- MENAMPILKAN PARAF --}}
                     @if(in_array($log->status_validasi, ['approved', 'disetujui', 'valid']))
-                        @if($app->pembimbing_lapangan && $app->pembimbing_lapangan->signature)
-                            {{-- Menggunakan public_path() WAJIB untuk DomPDF --}}
-                            <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 35px; width: auto;">
+                        @if($ttdPlPath)
+                            <img src="{{ $ttdPlPath }}" style="max-height: 35px; max-width: 90px; display: block; margin: 0 auto;">
                         @else
-                            {{-- Fallback jika gambar belum diupload --}}
-                            <span style="font-size: 10px; font-weight: bold; color: green;">(Valid)</span>
+                            <span style="font-size: 10px; font-weight: bold; color: #0d9488;">(Disetujui)</span>
                         @endif
                     @else
                         -
@@ -102,24 +111,24 @@
     </table>
 
     {{-- Footer Tanda Tangan --}}
-    <div class="footer">
+    <div class="footer" style="page-break-inside: avoid; margin-top: 20px;">
         <table style="width: 100%; border: none;">
             <tr>
                 <td style="width: 60%; border: none;"></td>
-                <td style="width: 40%; border: none; text-align: center;">
-                    <p>Banjarmasin, {{ date('d F Y') }}</p>
-                    <p>Pembimbing Lapangan,</p>
+                <td style="width: 40%; border: none; text-align: center; vertical-align: top;">
+                    <p style="margin-bottom: 2px;">Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+                    <p style="font-weight: bold; margin-top: 0;">Pembimbing Lapangan,</p>
                     
-                    @if($app->pembimbing_lapangan && $app->pembimbing_lapangan->signature)
-                        <div style="height: 60px; display: flex; justify-content: center; align-items: center;">
-                            <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 60px; width: auto;">
-                        </div>
-                    @else
-                        <br><br><br>
-                    @endif
+                    <div style="height: 60px; margin: 4px 0; text-align: center;">
+                        @if($ttdPlPath)
+                            <img src="{{ $ttdPlPath }}" style="max-height: 58px; max-width: 150px; display: block; margin: 0 auto;">
+                        @else
+                            <div style="height: 60px;"></div>
+                        @endif
+                    </div>
 
-                    <p style="font-weight: bold; text-decoration: underline;">{{ $app->pembimbing_lapangan->name ?? '.........................' }}</p>
-                    <p>NIP/NIK. {{ $app->pembimbing_lapangan->nik ?? $app->pembimbing_lapangan->nomor_induk ?? '-' }}</p>
+                    <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">{{ $app->pembimbing_lapangan->name ?? '.........................' }}</p>
+                    <p style="margin-top: 0;">NIP/NIK. {{ $app->pembimbing_lapangan->nik ?? $app->pembimbing_lapangan->nomor_induk ?? '-' }}</p>
                 </td>
             </tr>
         </table>

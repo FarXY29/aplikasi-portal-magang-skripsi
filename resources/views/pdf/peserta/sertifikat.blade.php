@@ -210,19 +210,38 @@
 
         @php
             $instansi = $app->position->instansi; 
+            $ttdKepalaPath = null;
+            if (!empty($instansi?->ttd_kepala)) {
+                $rawK = $instansi->ttd_kepala;
+                if (file_exists(storage_path('app/public/' . $rawK))) {
+                    $ttdKepalaPath = storage_path('app/public/' . $rawK);
+                } elseif (file_exists(public_path('storage/' . $rawK))) {
+                    $ttdKepalaPath = public_path('storage/' . $rawK);
+                }
+            }
+
+            $ttdPlPath = null;
+            if (!empty($app->pembimbing_lapangan?->signature)) {
+                $rawPl = $app->pembimbing_lapangan->signature;
+                if (file_exists(storage_path('app/public/' . $rawPl))) {
+                    $ttdPlPath = storage_path('app/public/' . $rawPl);
+                } elseif (file_exists(public_path('storage/' . $rawPl))) {
+                    $ttdPlPath = public_path('storage/' . $rawPl);
+                }
+            }
         @endphp
 
         {{-- Tabel Tanda Tangan & QR Code --}}
-        <table class="signature-section">
+        <table class="signature-section" style="page-break-inside: avoid;">
             <tr>
                 {{-- Left: Pejabat / Kepala Dinas --}}
                 <td style="width: 38%;">
                     Mengetahui,<br>
                     <span style="font-weight: bold;">{{ $instansi->jabatan_pejabat ?? 'Kepala Dinas' }}</span>
                     
-                    @if($instansi->ttd_kepala && file_exists(public_path('storage/' . $instansi->ttd_kepala)))
-                        <div style="margin: 4px 0;">
-                            <img src="{{ public_path('storage/' . $instansi->ttd_kepala) }}" style="height: 52px; width: auto; display: block; margin: 0 auto;">
+                    @if($ttdKepalaPath)
+                        <div style="height: 52px; margin: 4px 0; text-align: center;">
+                            <img src="{{ $ttdKepalaPath }}" style="max-height: 52px; max-width: 140px; display: block; margin: 0 auto;">
                         </div>
                     @else
                         <div class="sign-space"></div>
@@ -247,9 +266,9 @@
                     Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>
                     <span style="font-weight: bold;">Pembimbing Lapangan</span>
                     
-                    @if($app->pembimbing_lapangan && $app->pembimbing_lapangan->signature && file_exists(public_path('storage/' . $app->pembimbing_lapangan->signature)))
-                        <div style="margin: 4px 0;">
-                            <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 52px; width: auto; display: block; margin: 0 auto;">
+                    @if($ttdPlPath)
+                        <div style="height: 52px; margin: 4px 0; text-align: center;">
+                            <img src="{{ $ttdPlPath }}" style="max-height: 52px; max-width: 140px; display: block; margin: 0 auto;">
                         </div>
                     @else
                         <div class="sign-space"></div>

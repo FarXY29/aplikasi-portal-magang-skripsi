@@ -77,33 +77,86 @@
 
                         <div class="space-y-6">
                             
-                            <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Scan Tanda Tangan Kepala Dinas</label>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Format: PNG Transparan (Disarankan). Maks 2MB.</p>
+                            <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 shadow-xs"
+                                x-data="{
+                                    previewUrl: '{{ $instansi->ttd_kepala ? asset('storage/' . $instansi->ttd_kepala) : '' }}',
+                                    originalUrl: '{{ $instansi->ttd_kepala ? asset('storage/' . $instansi->ttd_kepala) : '' }}',
+                                    isNew: false,
+                                    imgFailed: false,
+                                    handleFileChange(e) {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            if (file.size > 2 * 1024 * 1024) {
+                                                alert('Ukuran file melebihi 2MB.');
+                                                this.resetSelection();
+                                                return;
+                                            }
+                                            this.previewUrl = URL.createObjectURL(file);
+                                            this.isNew = true;
+                                            this.imgFailed = false;
+                                        }
+                                    },
+                                    resetSelection() {
+                                        const input = this.$refs.fileInput;
+                                        if (input) input.value = '';
+                                        this.previewUrl = this.originalUrl;
+                                        this.isNew = false;
+                                        this.imgFailed = false;
+                                    }
+                                }">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">Scan Tanda Tangan Kepala Dinas</label>
+                                    <template x-if="isNew">
+                                        <button type="button" x-on:click="resetSelection()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold flex items-center gap-1">
+                                            <i class="fas fa-undo text-[10px]"></i> Batalkan Pilihan
+                                        </button>
+                                    </template>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3.5">Format: PNG Transparan (Disarankan), JPG, JPEG. Maks 2MB.</p>
                                 
                                 <div class="flex items-start gap-4">
-                                    <div class="flex-shrink-0">
-                                        @if($instansi->ttd_kepala)
-                                            <div class="relative group">
-                                                <div class="w-24 h-24 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden p-1">
-                                                    <img src="{{ asset('storage/' . $instansi->ttd_kepala) }}" alt="TTD Preview" class="max-h-full max-w-full object-contain">
+                                    {{-- Preview Box --}}
+                                    <div class="flex-shrink-0 text-center">
+                                        <div class="w-24 h-24 sm:w-28 sm:h-28 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden p-1.5 transition-all duration-200 group relative">
+                                            <template x-if="previewUrl && !imgFailed">
+                                                <img :src="previewUrl" x-on:error="imgFailed = true" alt="Preview Tanda Tangan" class="max-h-full max-w-full object-contain filter drop-shadow-xs transition-transform duration-200 group-hover:scale-105">
+                                            </template>
+                                            <template x-if="!previewUrl || imgFailed">
+                                                <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 text-xs p-2 text-center">
+                                                    <i class="fas fa-signature text-2xl mb-1 text-gray-300 dark:text-gray-600"></i>
+                                                    <span class="text-[10px] leading-tight font-medium">Belum ada TTD</span>
                                                 </div>
-                                                <span class="text-[10px] text-center block mt-1 text-green-600 font-bold">Terupload <i class="fas fa-check"></i></span>
-                                            </div>
-                                        @else
-                                            <div class="w-24 h-24 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400 text-xs text-center p-2">
-                                                Belum ada TTD
-                                            </div>
-                                        @endif
+                                            </template>
+                                        </div>
+                                        
+                                        {{-- Status Badge --}}
+                                        <div class="mt-1.5">
+                                            <template x-if="isNew">
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-teal-600 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
+                                                    <i class="fas fa-magic text-[10px]"></i> TTD Baru
+                                                </span>
+                                            </template>
+                                            <template x-if="!isNew && previewUrl && !imgFailed">
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                                                    <i class="fas fa-check-circle text-[10px]"></i> Terpasang
+                                                </span>
+                                            </template>
+                                            <template x-if="!isNew && (!previewUrl || imgFailed)">
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 font-medium">
+                                                    <i class="fas fa-minus-circle text-[10px]"></i> Kosong
+                                                </span>
+                                            </template>
+                                        </div>
                                     </div>
 
-                                    <div class="flex-grow">
-                                        <input type="file" name="ttd_kepala" accept="image/png, image/jpeg"
-                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/30 file:text-teal-700 dark:file:text-teal-400 hover:file:bg-teal-100 cursor-pointer focus:outline-none border border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-lg">
-                                        <p class="text-xs text-gray-400 mt-2 italic">Biarkan kosong jika tidak ingin mengubah tanda tangan.</p>
+                                    {{-- Upload Controls --}}
+                                    <div class="flex-grow space-y-2">
+                                        <input type="file" name="ttd_kepala" x-ref="fileInput" x-on:change="handleFileChange($event)" accept="image/png, image/jpeg, image/jpg"
+                                            class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-teal-50 dark:file:bg-teal-950/40 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 dark:hover:file:bg-teal-900/50 cursor-pointer border border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl shadow-xs transition">
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 italic">Biarkan kosong jika tidak ingin mengubah tanda tangan.</p>
                                     </div>
                                 </div>
-                                @error('ttd_kepala') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                @error('ttd_kepala') <span class="text-red-500 text-xs mt-2 block font-semibold">{{ $message }}</span> @enderror
                             </div>
 
                             <!-- Akun Admin Instansi -->

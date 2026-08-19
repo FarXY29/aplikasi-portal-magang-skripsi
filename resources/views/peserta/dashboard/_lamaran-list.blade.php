@@ -105,7 +105,7 @@
                                 @endif
 
                                 <button type="button" class="min-h-[44px] justify-center px-3 sm:px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2" x-on:click.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
-                                    <i class="fas fa-download"></i> Detail
+                                    <span><i class="fas fa-clipboard-list"></i> Detail</span>
                                 </button>
                             </div>
                         </div>
@@ -154,9 +154,6 @@
                                             </a>
                                             <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2">
                                                 <i class="fas fa-file-contract"></i> Surat Balasan
-                                            </a>
-                                            <a href="{{ route('peserta.logbook.index') }}" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition shadow-xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-book-open"></i> Logbook
                                             </a>
                                             <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-gray-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition shadow-xs flex items-center justify-center gap-2">
                                                 <i class="fas fa-file-pdf"></i> Rekap Logbook

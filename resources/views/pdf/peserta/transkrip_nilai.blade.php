@@ -158,35 +158,76 @@
         </tbody>
     </table>
 
-    <div style="text-align: right; margin-bottom: 5px;">
-        Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
-    </div>
+    @php
+        $instansi = $app->position->instansi;
+        $ttdKepalaPath = null;
+        if (!empty($instansi?->ttd_kepala)) {
+            $rawK = $instansi->ttd_kepala;
+            if (file_exists(storage_path('app/public/' . $rawK))) {
+                $ttdKepalaPath = storage_path('app/public/' . $rawK);
+            } elseif (file_exists(public_path('storage/' . $rawK))) {
+                $ttdKepalaPath = public_path('storage/' . $rawK);
+            }
+        }
 
-    <table class="signature-table">
+        $ttdPlPath = null;
+        if (!empty($app->pembimbing_lapangan?->signature)) {
+            $rawPl = $app->pembimbing_lapangan->signature;
+            if (file_exists(storage_path('app/public/' . $rawPl))) {
+                $ttdPlPath = storage_path('app/public/' . $rawPl);
+            } elseif (file_exists(public_path('storage/' . $rawPl))) {
+                $ttdPlPath = public_path('storage/' . $rawPl);
+            }
+        }
+    @endphp
+
+    <table class="signature-table" style="width: 100%; border-collapse: collapse; page-break-inside: avoid; margin-top: 15px;">
         <tr>
-            <td width="50%">
+            {{-- Left Header --}}
+            <td style="width: 50%; text-align: center; vertical-align: top; padding-bottom: 5px;">
                 Mengetahui,<br>
-                <span style="font-weight: bold;">{{ $app->position->instansi->jabatan_pejabat ?? 'Kepala Dinas' }}</span><br>
-                {{ $app->position->instansi->nama_dinas }}
-                
-                {{-- Tanda Tangan Kepala Dinas --}}
-                    @if($app->position->instansi->ttd_kepala && file_exists(public_path('storage/' . $app->position->instansi->ttd_kepala)))
-                        <img src="{{ public_path('storage/' . $app->position->instansi->ttd_kepala) }}" style="height: 60px; width: auto;">
-                    @endif
-                <div class="sign-space"></div> <span class="text-bold" style="text-decoration: underline;">
-                    {{ $app->position->instansi->nama_pejabat ?? '........................................' }}
-                </span><br>
-                NIP. {{ $app->position->instansi->nip_pejabat ?? '....................' }}
+                <span class="text-bold">{{ $instansi->jabatan_pejabat ?? 'Kepala Dinas' }}</span><br>
+                <span>{{ $instansi->nama_dinas ?? '-' }}</span>
             </td>
-
-            <td width="50%">
-                Pembimbing Lapangan<br> <br>
-                {{-- Tanda Tangan Pembimbing Lapangan --}}
-                    @if($app->pembimbing_lapangan && $app->pembimbing_lapangan->signature && file_exists(public_path('storage/' . $app->pembimbing_lapangan->signature)))
-                        <img src="{{ public_path('storage/' . $app->pembimbing_lapangan->signature) }}" style="height: 60px; width: auto;">
-                    @endif
-                <div class="sign-space"></div> <span class="text-bold" style="text-decoration: underline;">{{ $app->pembimbing_lapangan->name }}</span><br>
-                NIP. ...........................
+            {{-- Right Header --}}
+            <td style="width: 50%; text-align: center; vertical-align: top; padding-bottom: 5px;">
+                Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>
+                <span class="text-bold">Pembimbing Lapangan</span><br>
+                <span style="visibility: hidden;">&nbsp;</span>
+            </td>
+        </tr>
+        <tr>
+            {{-- Left Signature Image --}}
+            <td style="width: 50%; text-align: center; vertical-align: middle; height: 65px;">
+                @if($ttdKepalaPath)
+                    <img src="{{ $ttdKepalaPath }}" style="max-height: 60px; max-width: 160px; display: block; margin: 0 auto;">
+                @else
+                    <div style="height: 60px;"></div>
+                @endif
+            </td>
+            {{-- Right Signature Image --}}
+            <td style="width: 50%; text-align: center; vertical-align: middle; height: 65px;">
+                @if($ttdPlPath)
+                    <img src="{{ $ttdPlPath }}" style="max-height: 60px; max-width: 160px; display: block; margin: 0 auto;">
+                @else
+                    <div style="height: 60px;"></div>
+                @endif
+            </td>
+        </tr>
+        <tr>
+            {{-- Left Name & NIP --}}
+            <td style="width: 50%; text-align: center; vertical-align: top; padding-top: 4px;">
+                <span class="text-bold" style="text-decoration: underline;">
+                    {{ $instansi->nama_pejabat ?? '........................................' }}
+                </span><br>
+                <span>NIP. {{ $instansi->nip_pejabat ?? '....................' }}</span>
+            </td>
+            {{-- Right Name & NIP --}}
+            <td style="width: 50%; text-align: center; vertical-align: top; padding-top: 4px;">
+                <span class="text-bold" style="text-decoration: underline;">
+                    {{ $app->pembimbing_lapangan->name ?? '........................................' }}
+                </span><br>
+                <span>NIP/NIK. {{ $app->pembimbing_lapangan->nik ?? $app->pembimbing_lapangan->nomor_induk ?? '-' }}</span>
             </td>
         </tr>
     </table>

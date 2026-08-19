@@ -51,7 +51,10 @@ class ProfileController extends Controller
         $user = $request->user();
         $validated = $request->validated();
 
-        if ($user->role === 'peserta') {
+        // Amankan photo & signature agar tidak ter-overwrite null saat fill()
+        unset($validated['photo'], $validated['signature']);
+
+        if ($user->hasPortalRole('peserta') || $user->role === 'peserta') {
             if (!empty($validated['major_id'])) {
                 $majorObj = Major::find($validated['major_id']);
                 if ($majorObj) {
@@ -66,10 +69,10 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
-        // TAMBAHAN: Handle Upload Signature
+        // Handle Upload Signature
         if ($request->hasFile('signature')) {
-            if ($user->signature && Storage::exists('public/' . $user->signature)) {
-                Storage::delete('public/' . $user->signature);
+            if ($user->signature && Storage::disk('public')->exists($user->signature)) {
+                Storage::disk('public')->delete($user->signature);
             }
             
             $path = $request->file('signature')->store('signatures', 'public');
@@ -78,8 +81,8 @@ class ProfileController extends Controller
 
         // Handle Upload Photo
         if ($request->hasFile('photo')) {
-            if ($user->photo && Storage::exists('public/' . $user->photo)) {
-                Storage::delete('public/' . $user->photo);
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
             }
             $path = $request->file('photo')->store('photos', 'public');
             $user->photo = $path;

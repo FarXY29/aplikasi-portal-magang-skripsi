@@ -56,9 +56,13 @@
                             </div>
                             
                             @if($log->bukti_foto_path)
+                                @php
+                                    $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                    $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . ($log->application->user->name ?? 'Mahasiswa') . ')';
+                                @endphp
                                 <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" 
-                                     onclick="openImageModal('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
-                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+                                     onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                    <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500" alt="Dokumentasi">
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                                         <span class="text-white text-xs font-bold flex items-center gap-1"><i class="fas fa-search-plus"></i> Zoom</span>
                                     </div>

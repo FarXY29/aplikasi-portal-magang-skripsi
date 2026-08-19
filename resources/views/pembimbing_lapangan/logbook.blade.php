@@ -366,17 +366,23 @@
                                         <div class="w-full lg:w-1/3 flex-shrink-0">
                                             <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Dokumentasi</h4>
                                             @if($log->bukti_foto_path)
-                                                <div class="relative group rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-700 cursor-zoom-in">
-                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500">
-                                                    <a href="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" target="_blank" class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
-                                                        <i class="fas fa-search-plus text-white text-xl opacity-0 group-hover:opacity-100 transition duration-200 drop-shadow"></i>
-                                                    </a>
+                                                @php
+                                                    $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                                    $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . $app->user->name . ')';
+                                                @endphp
+                                                <div class="relative group rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-700 cursor-pointer" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                    <img src="{{ $fotoUrl }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500" alt="Dokumentasi">
+                                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-center justify-center">
+                                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 text-white text-xs font-bold backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-200 drop-shadow">
+                                                            <i class="fas fa-search-plus text-xs"></i> Perbesar Foto
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">*Klik gambar untuk membuka file ukuran penuh</p>
+                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">*Klik gambar untuk melihat ukuran penuh</p>
                                             @else
                                                 <div class="w-full h-44 bg-gray-50 dark:bg-gray-900 rounded-2xl flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 text-xs border-2 border-dashed border-gray-200 dark:border-gray-700">
                                                     <i class="far fa-image text-3xl mb-2 text-gray-300 dark:text-gray-600"></i>
-                                                    <span class="font-bold">Tidak ada foto bukti</span>
+                                                    <span class="font-bold">Tidak ada bukti foto</span>
                                                 </div>
                                             @endif
                                         </div>

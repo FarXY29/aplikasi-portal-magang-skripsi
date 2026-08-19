@@ -39,9 +39,6 @@
 
     <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
 
-        {{-- PENGUMUMAN KOTA RESMI --}}
-        <x-announcement-banner audience="admin_instansi" />
-
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- HERO WELCOME BANNER WITH PERIOD FILTERS & AUTO-REFRESH --}}
         {{-- ══════════════════════════════════════════════════════════ --}}

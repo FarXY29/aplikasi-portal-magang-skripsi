@@ -82,11 +82,7 @@
                     </a>
                     <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.certificates.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
                         <i class="fas fa-certificate w-5 text-center {{ request()->routeIs('admin.certificates.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Registri Sertifikat
-                    </a>
-                    <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.announcements.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
-                        <i class="fas fa-bullhorn w-5 text-center {{ request()->routeIs('admin.announcements.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pusat Pengumuman & Broadcast
-                    </a>
-                    <a href="{{ route('admin.laporan.hub') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
+                    </a>                    <a href="{{ route('admin.laporan.hub') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
                         <i class="fas fa-chart-pie w-5 text-center {{ request()->routeIs('admin.laporan.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pusat Laporan Hub
                     </a>
                     <a href="{{ route('admin.users.logbooks') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.users.logbooks*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
