@@ -1,0 +1,710 @@
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+    <?php $__env->startPush('head'); ?>
+        <meta name="turbo-cache-control" content="no-cache">
+        <?php echo app('Illuminate\Foundation\Vite')('resources/css/peserta.css'); ?>
+        <style>
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(243, 244, 246, 1);
+            }
+            .dark .glass-effect {
+                background: rgba(31, 41, 55, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+            }
+        </style>
+    <?php $__env->stopPush(); ?>
+
+     <?php $__env->slot('header', null, []); ?> 
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
+                    <i class="fas fa-book-open text-teal-600 dark:text-teal-400 text-lg"></i>
+                </div>
+                <?php echo e(__('Logbook Harian')); ?>
+
+            </h2>
+        </div>
+     <?php $__env->endSlot(); ?>
+
+    <div x-data="logbookData()" class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            
+            <div class="mb-6 print:hidden">
+                <a href="<?php echo e(route('peserta.dashboard')); ?>" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-xs">
+                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
+                    </div>
+                    Kembali ke Dashboard
+                </a>
+            </div>
+
+            <?php if(session('success')): ?>
+                <?php if (isset($component)) { $__componentOriginal746de018ded8594083eb43be3f1332e1 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal746de018ded8594083eb43be3f1332e1 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.alert','data' => ['type' => 'success','class' => 'mb-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'success','class' => 'mb-4']); ?>
+                    <?php echo e(session('success')); ?>
+
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $attributes = $__attributesOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__attributesOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $component = $__componentOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__componentOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+            <?php endif; ?>
+
+            <?php if(session('error')): ?>
+                <?php if (isset($component)) { $__componentOriginal746de018ded8594083eb43be3f1332e1 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal746de018ded8594083eb43be3f1332e1 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.alert','data' => ['type' => 'error','class' => 'mb-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'error','class' => 'mb-4']); ?>
+                    <?php echo e(session('error')); ?>
+
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $attributes = $__attributesOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__attributesOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $component = $__componentOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__componentOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+            <?php endif; ?>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                
+                <div class="xl:col-span-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-8">
+                        <?php if($activeApp->status === 'selesai' || $activeApp->status_value === 'selesai'): ?>
+                            <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40">
+                                <h3 class="font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-2 text-base">
+                                    <i class="fas fa-lock text-amber-600 dark:text-amber-400"></i> Logbook Dikunci
+                                </h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Masa magang Anda telah selesai.</p>
+                            </div>
+                            
+                            <div class="p-6 space-y-5">
+                                <div class="p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 rounded-2xl text-xs text-amber-800 dark:text-amber-200 flex items-start gap-3">
+                                    <i class="fas fa-info-circle text-amber-600 dark:text-amber-400 text-lg shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="font-bold">Masa Magang Telah Selesai</p>
+                                        <p class="mt-1 text-amber-700 dark:text-amber-300 leading-relaxed">Anda tidak dapat lagi menulis jurnal baru atau menyimpan laporan karena status magang Anda sudah selesai.</p>
+                                    </div>
+                                </div>
+
+                                <a href="<?php echo e(route('peserta.logbook.print', $activeApp->id)); ?>" target="_blank" 
+                                    class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3.5 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                    <i class="fas fa-file-pdf text-sm"></i> Download Rekap Logbook (PDF)
+                                </a>
+                            </div>
+                        <?php else: ?>
+                            <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-950/40 dark:to-emerald-950/40">
+                                <h3 class="font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-2 text-base">
+                                    <i class="fas fa-pen-nib text-teal-600 dark:text-teal-400"></i> Tulis Jurnal Baru
+                                </h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Catat aktivitas magang Anda hari ini.</p>
+                            </div>
+                            
+                            <div class="p-6">
+                                <form action="<?php echo e(route('peserta.logbook.store')); ?>" method="POST" enctype="multipart/form-data" id="logbookForm">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="latitude" id="lat">
+                                    <input type="hidden" name="longitude" id="lng">
+
+                                    <div class="mb-5">
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
+                                        <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm shadow-xs transition hover:shadow-md resize-none font-medium" placeholder="Apa saja kegiatan yang Anda kerjakan hari ini?" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')"></textarea>
+                                        <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('kegiatan'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('kegiatan')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                    </div>
+
+                                    <div class="mb-5">
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Dokumentasi (Foto)</label>
+                                        <div class="relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 dark:hover:bg-teal-950/20 hover:border-teal-400 dark:hover:border-teal-500 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
+                                            <!-- Image Preview Container -->
+                                            <div id="image-preview" class="absolute inset-0 z-10 hidden bg-black">
+                                                <img id="preview-img" src="" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <span class="text-white text-xs font-bold bg-black/60 px-3 py-1 rounded-full"><i class="fas fa-camera mr-1"></i> Ganti Foto</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Default Empty State -->
+                                            <div id="empty-state" class="flex flex-col items-center justify-center z-0">
+                                                <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-2xl shadow-xs flex items-center justify-center mb-2 border border-gray-200 dark:border-gray-700 group-hover:scale-110 transition-transform">
+                                                    <i class="fas fa-cloud-upload-alt text-teal-600 dark:text-teal-400 text-xl"></i>
+                                                </div>
+                                                <p class="text-xs font-bold text-gray-600 dark:text-gray-300">Klik untuk upload foto</p>
+                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">PNG, JPG, JPEG maks 5MB</p>
+                                            </div>
+                                            
+                                            <input id="foto" name="foto" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" accept="image/*" onchange="previewImage(this)" />
+                                        </div>
+                                        <button type="button" id="remove-btn" onclick="removeImage()" class="hidden mt-2 text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold items-center gap-1">
+                                            <i class="fas fa-trash"></i> Hapus Foto
+                                        </button>
+                                        <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('foto'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('foto')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                    </div>
+
+                                    <div class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                                        <div class="absolute top-0 right-0 -mt-2 -mr-2 text-gray-200 dark:text-gray-800 opacity-40">
+                                            <i class="fas fa-map-marked-alt text-6xl"></i>
+                                        </div>
+                                        <p class="text-[10px] font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 relative z-10">Verifikasi Lokasi GPS</p>
+                                        <div id="loc-status" class="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 relative z-10">
+                                            <i class="fas fa-circle-notch fa-spin"></i> Mendapatkan koordinat...
+                                        </div>
+                                        <div id="coords-display" class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 hidden font-mono relative z-10 bg-white dark:bg-gray-800 inline-block px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700">
+                                            Lat: <span id="show-lat"></span>, Lng: <span id="show-lng"></span>
+                                        </div>
+                                        <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('latitude'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('latitude')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                        <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('longitude'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('longitude')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                    </div>
+
+                                    <button type="submit" id="btn-submit" disabled 
+                                        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3.5 rounded-2xl font-bold shadow-md transition active:scale-95 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                        <i class="fas fa-paper-plane"></i> Simpan Laporan
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                
+                <div class="xl:col-span-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[500px] flex flex-col xl:h-[120vh]">
+                        
+                        <!-- Header & Filters -->
+                        <div class="p-6 flex flex-col justify-between gap-4 sticky top-0 z-10 glass-effect">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h3 class="font-extrabold text-gray-800 dark:text-gray-100 text-base sm:text-lg">Riwayat Jurnal</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Catatan harian aktivitas magang Anda.</p>
+                                </div>
+                                
+                                <form method="GET" action="<?php echo e(route('peserta.logbook.index')); ?>">
+                                    <input type="hidden" name="status" x-model="filter">
+
+                                    <!-- Status Filters -->
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" @click="filter = 'semua'; $nextTick(() => $el.form.submit())" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
+                                        Semua <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]"><?php echo e($logs->total()); ?></span>
+                                    </button>
+                                    <button type="button" @click="filter = 'pending'; $nextTick(() => $el.form.submit())" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                        Pending
+                                    </button>
+                                    <button type="button" @click="filter = 'disetujui'; $nextTick(() => $el.form.submit())" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                        Disetujui
+                                    </button>
+                                    <button type="button" @click="filter = 'revisi'; $nextTick(() => $el.form.submit())" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                        Revisi
+                                    </button>
+                                </div>
+                                
+                            </div>
+                            
+                            <!-- Advanced Filters -->
+                            <div class="flex flex-wrap gap-3 items-end bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 mt-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-alt mr-1"></i> Spesifik Tanggal</label>
+                                    <input type="date" name="date" x-model="filterTanggal" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                </div>
+                                <div class="hidden sm:block text-gray-300 dark:text-gray-700 font-light mb-2">|</div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-check mr-1"></i> Filter Bulan</label>
+                                    <input type="month" name="month" x-model="filterBulan" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                </div>
+                                <div class="ml-auto flex-1 sm:flex-none flex justify-end gap-2">
+                                    <button type="button" @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-xs">
+                                        <i class="fas fa-times-circle"></i> Reset Filter
+                                    </button>
+                                    <a href="<?php echo e(route('peserta.logbook.print', $activeApp->id)); ?>" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-2">
+                                        <i class="fas fa-file-pdf"></i> Download PDF Rekap
+                                    </a>
+                                </div>
+                            </div>
+                                </form>
+                        </div>
+
+                        <!-- Card Grid -->
+                        <div class="p-6 bg-gray-50/50 dark:bg-gray-900/50 flex-1 overflow-y-auto">
+                            <?php if($logs->isEmpty()): ?>
+                                <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500 py-16">
+                                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
+                                        <i class="far fa-clipboard text-3xl text-gray-400 dark:text-gray-500"></i>
+                                    </div>
+                                    <?php if(request()->filled('status') || request()->filled('date') || request()->filled('month')): ?>
+                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Tidak Ada Jurnal Sesuai Filter</p>
+                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Coba ubah filter status atau tanggal yang dipilih.</p>
+                                    <?php else: ?>
+                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Belum Ada Jurnal</p>
+                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Mulai tulis aktivitas pertama Anda menggunakan formulir di sebelah kiri.</p>
+                                    <?php endif; ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <?php $__currentLoopData = $logs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                            $badges = [
+                                                'pending' => ['bg' => 'bg-amber-50 dark:bg-amber-950/60', 'text' => 'text-amber-700 dark:text-amber-300', 'icon' => 'fa-clock', 'border' => 'border-amber-200 dark:border-amber-800/60'],
+                                                'disetujui' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/60', 'text' => 'text-emerald-700 dark:text-emerald-300', 'icon' => 'fa-check-circle', 'border' => 'border-emerald-200 dark:border-emerald-800/60'],
+                                                'revisi' => ['bg' => 'bg-rose-50 dark:bg-rose-950/60', 'text' => 'text-rose-700 dark:text-rose-300', 'icon' => 'fa-exclamation-circle', 'border' => 'border-rose-200 dark:border-rose-800/60'],
+                                            ];
+                                            $status = $badges[$log->status_validasi] ?? $badges['pending'];
+                                        ?>
+                                        
+                                        <div class="logbook-card status-<?php echo e($log->status_validasi); ?> bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md transition duration-300 overflow-hidden flex flex-col relative group">
+                                            
+                                            <!-- Status Ribbon -->
+                                            <div class="absolute top-4 right-4 z-10">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs <?php echo e($status['bg']); ?> <?php echo e($status['text']); ?> <?php echo e($status['border']); ?> border">
+                                                    <i class="fas <?php echo e($status['icon']); ?> mr-1.5"></i> <?php echo e($log->status_validasi); ?>
+
+                                                </span>
+                                            </div>
+
+                                            <!-- Image Header -->
+                                            <?php if($log->bukti_foto_path): ?>
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" @click="openGallery('<?php echo e(route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)])); ?>')">
+                                                    <img src="<?php echo e(route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)])); ?>" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
+                                                        <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
+                                                    </div>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="h-16 w-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                                                    <span class="text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest"><i class="fas fa-image mr-1"></i> Tanpa Foto</span>
+                                                </div>
+                                            <?php endif; ?>
+
+                                            <!-- Content -->
+                                            <div class="p-6 flex-1 flex flex-col">
+                                                <div class="flex items-center gap-3 mb-4">
+                                                    <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-200 dark:border-teal-800/60 font-bold text-xs shrink-0">
+                                                        <i class="fas fa-calendar-alt text-sm"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider"><?php echo e(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('l')); ?></p>
+                                                        <p class="text-[11px] font-medium text-gray-500 dark:text-gray-400"><?php echo e(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('d M Y')); ?></p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line flex-1 font-medium"><?php echo e($log->kegiatan); ?></p>
+                                                
+                                                <?php if($log->komentar_pembimbing_lapangan): ?>
+                                                    <div class="mt-5 bg-rose-50/60 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-2xl p-4 relative overflow-hidden">
+                                                        <div class="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
+                                                        <div class="flex gap-3">
+                                                            <div class="mt-0.5">
+                                                                <i class="fas fa-comment-dots text-rose-600 dark:text-rose-400 text-lg"></i>
+                                                            </div>
+                                                            <div>
+                                                                <span class="block text-[10px] font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wider mb-1">Catatan Pembimbing Lapangan</span>
+                                                                <p class="text-xs font-medium text-rose-900 dark:text-rose-200 leading-relaxed"><?php echo e($log->komentar_pembimbing_lapangan); ?></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <!-- Action Buttons -->
+                                                <?php if($log->status_validasi === 'pending'): ?>
+                                                    <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700 flex gap-3">
+                                                        <button @click="openEditModal(<?php echo e($log->id); ?>, '<?php echo e(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y')); ?>', <?php echo e(json_encode($log->kegiatan)); ?>, '<?php echo e($log->status_validasi); ?>')" type="button" class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 rounded-2xl text-xs font-bold hover:bg-teal-600 hover:text-white transition shadow-xs">
+                                                            <i class="fas fa-edit mr-2"></i> Edit Jurnal
+                                                        </button>
+                                                        
+                                                        <form action="<?php echo e(route('peserta.logbook.destroy', $log->id)); ?>" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurnal harian ini?')">
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('DELETE'); ?>
+                                                            <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-3 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 rounded-2xl text-xs font-bold hover:bg-rose-600 hover:text-white transition shadow-xs">
+                                                                <i class="fas fa-trash-alt mr-2"></i> Hapus
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                <?php elseif($log->status_validasi === 'revisi'): ?>
+                                                    <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
+                                                        <button @click="openEditModal(<?php echo e($log->id); ?>, '<?php echo e(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y')); ?>', <?php echo e(json_encode($log->kegiatan)); ?>, '<?php echo e($log->status_validasi); ?>')" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 rounded-2xl text-xs font-bold hover:bg-rose-600 hover:text-white transition shadow-xs">
+                                                            <i class="fas fa-edit mr-2"></i> Perbaiki Jurnal Ini
+                                                        </button>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                                <div class="mt-6">
+                                    <?php echo e($logs->links()); ?>
+
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Modal Edit / Revisi Jurnal -->
+        <div x-show="showEditModal" class="fixed inset-0 z-[100] overflow-y-auto text-left" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="showEditModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="showEditModal = false" aria-hidden="true"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div x-show="showEditModal" x-transition class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-200 dark:border-gray-700">
+                    <form :action="'<?php echo e(route('peserta.logbook.index')); ?>/' + editLogId" method="POST" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?>
+                        <input type="hidden" name="log_id" x-model="editLogId">
+                        <input type="hidden" name="status_validasi" x-model="editStatusValidasi">
+                        <input type="hidden" name="tanggal" x-model="editTanggal">
+                        
+                        <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-6">
+                            <div class="flex items-center gap-4 mb-6 pb-5 border-b border-gray-100 dark:border-gray-700">
+                                <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-2xl"
+                                     :class="editStatusValidasi === 'revisi' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60' : 'bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60'">
+                                    <i class="fas text-lg" :class="editStatusValidasi === 'revisi' ? 'fa-edit' : 'fa-pen-nib'"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-gray-900 dark:text-gray-100" id="modal-title" x-text="editStatusValidasi === 'revisi' ? 'Revisi Jurnal Harian' : 'Edit Jurnal Harian'"></h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold mt-0.5" x-text="editTanggal"></p>
+                                </div>
+                            </div>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
+                                    <textarea name="kegiatan" rows="4" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm font-medium shadow-xs resize-none" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')" x-model="editKegiatan"></textarea>
+                                    <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('kegiatan'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('kegiatan')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Ganti Foto (Opsional)</label>
+                                    <input type="file" name="foto" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 border border-gray-300 dark:border-gray-700 rounded-xl p-1 bg-white dark:bg-gray-900 cursor-pointer">
+                                    <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 font-medium">Abaikan jika tidak ada perubahan bukti dokumentasi.</p>
+                                    <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->get('foto'),'class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->get('foto')),'class' => 'mt-2']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-xl shadow-xs px-6 py-2.5 bg-teal-600 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition sm:w-auto" x-text="editStatusValidasi === 'revisi' ? 'Simpan Revisi' : 'Simpan Perubahan'">
+                            </button>
+                            <button type="button" @click="showEditModal = false" class="w-full inline-flex justify-center rounded-xl shadow-xs px-6 py-2.5 bg-white dark:bg-gray-800 text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-300 dark:border-gray-700 transition sm:w-auto">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Gallery Modal -->
+        <div x-show="galleryOpen" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;" aria-labelledby="gallery-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <div x-show="galleryOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-gray-900/90 backdrop-blur-md transition-opacity" @click="galleryOpen = false" aria-hidden="true"></div>
+                <div x-show="galleryOpen" x-transition.scale.duration.300ms class="relative z-10 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
+                    <button @click="galleryOpen = false" class="absolute top-4 right-4 z-20 w-12 h-12 bg-black/50 hover:bg-rose-600 text-white rounded-full flex items-center justify-center transition backdrop-blur-sm border border-white/20">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <img :src="galleryImage" class="w-full max-h-[90vh] object-contain bg-black/50" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function previewImage(input) {
+        const preview = document.getElementById('preview-img');
+        const previewContainer = document.getElementById('image-preview');
+        const emptyState = document.getElementById('empty-state');
+        const removeBtn = document.getElementById('remove-btn');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                removeBtn.classList.remove('hidden');
+                removeBtn.classList.add('flex');
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            removeImage();
+        }
+    }
+
+    function removeImage() {
+        document.getElementById('foto').value = "";
+        document.getElementById('preview-img').src = "";
+        document.getElementById('image-preview').classList.add('hidden');
+        document.getElementById('empty-state').classList.remove('hidden');
+        const removeBtn = document.getElementById('remove-btn');
+        removeBtn.classList.add('hidden');
+        removeBtn.classList.remove('flex');
+    }
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('logbookData', () => ({
+            filter: <?php echo \Illuminate\Support\Js::from(request('status', 'semua'))->toHtml() ?>,
+            filterTanggal: <?php echo \Illuminate\Support\Js::from(request('date', ''))->toHtml() ?>,
+            filterBulan: <?php echo \Illuminate\Support\Js::from(request('month', ''))->toHtml() ?>,
+            galleryOpen: false,
+            galleryImage: '',
+            
+            // Edit Modal State
+            showEditModal: false,
+            editLogId: null,
+            editTanggal: '',
+            editKegiatan: '',
+            editStatusValidasi: '',
+            
+            init() {
+                const oldLogId = "<?php echo e(old('log_id')); ?>";
+                if (oldLogId) {
+                    this.editLogId = oldLogId;
+                    this.editKegiatan = <?php echo json_encode(old('kegiatan') ?? ''); ?>;
+                    this.editStatusValidasi = "<?php echo e(old('status_validasi')); ?>";
+                    this.editTanggal = "<?php echo e(old('tanggal')); ?>";
+                    this.showEditModal = true;
+                }
+            },
+            openEditModal(id, tanggal, kegiatan, statusValidasi) {
+                this.editLogId = id;
+                this.editTanggal = tanggal;
+                this.editKegiatan = kegiatan;
+                this.editStatusValidasi = statusValidasi;
+                this.showEditModal = true;
+            },
+            openGallery(imgUrl) {
+                this.galleryImage = imgUrl;
+                this.galleryOpen = true;
+            },
+            matchFilter(status, dateStr) {
+                if (this.filter !== 'semua' && this.filter !== status) return false;
+                if (this.filterTanggal && dateStr !== this.filterTanggal) return false;
+                if (this.filterBulan && !dateStr.startsWith(this.filterBulan)) return false;
+                return true;
+            },
+            resetFilters() {
+                window.location.href = <?php echo \Illuminate\Support\Js::from(route('peserta.logbook.index'))->toHtml() ?>;
+            }
+        }))
+    });
+
+    document.addEventListener("turbo:load", function() {
+        const statusDiv = document.getElementById("loc-status");
+        const btnSubmit = document.getElementById("btn-submit");
+        const coordsDisplay = document.getElementById("coords-display");
+        const showLat = document.getElementById("show-lat");
+        const showLng = document.getElementById("show-lng");
+
+        if (!statusDiv || !btnSubmit) return;
+
+        function requestLocation() {
+            if (navigator.geolocation) {
+                const options = {
+                    enableHighAccuracy: false, 
+                    timeout: 30000,            
+                    maximumAge: 300000         
+                };
+                navigator.geolocation.getCurrentPosition(successLocation, errorLocation, options);
+            } else {
+                showErrorMsg("Browser tidak mendukung Geolocation.");
+            }
+        }
+
+        function successLocation(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            document.getElementById("lat").value = lat;
+            document.getElementById("lng").value = lng;
+
+            statusDiv.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 flex items-center font-bold"><i class="fas fa-check-circle mr-1.5 text-base"></i> Lokasi Terkunci</span>';
+            showLat.innerText = lat.toFixed(6);
+            showLng.innerText = lng.toFixed(6);
+            coordsDisplay.classList.remove("hidden");
+            
+            btnSubmit.disabled = false;
+        }
+
+        function errorLocation(error) {
+            let msg = "Gagal mengambil lokasi.";
+            let retryBtn = '';
+
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    msg = "Izin lokasi ditolak. Buka pengaturan browser."; 
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    msg = "Sinyal lokasi tidak ditemukan. Pastikan GPS aktif."; 
+                    break;
+                case error.TIMEOUT:
+                    msg = "Waktu habis. Sinyal lemah.";
+                    retryBtn = `<button type="button" onclick="window.location.reload()" class="ml-2 underline text-teal-600 dark:text-teal-400">Coba Lagi</button>`;
+                    break;
+            }
+            showErrorMsg(msg, retryBtn);
+        }
+
+        function showErrorMsg(msg, extraHtml = '') {
+            statusDiv.innerHTML = `<div class="flex flex-col"><span class="text-rose-600 dark:text-rose-400 flex items-center font-bold text-xs"><i class="fas fa-exclamation-triangle mr-1.5"></i> ${msg}</span>${extraHtml}</div>`;
+            btnSubmit.disabled = true;
+        }
+
+        requestLocation();
+    });
+    </script>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views/peserta/logbook/index.blade.php ENDPATH**/ ?>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup - Alur Pendaftaran Magang Neo-Brutalism</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Outfit:wght@800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brutal: {
+              yellow: '#facc15',
+              teal: '#2dd4bf',
+              coral: '#ff5e57',
+              lime: '#a3e635',
+              black: '#0f172a',
+              bg: '#f8fafc',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .brutal-shadow {
+      box-shadow: 6px 6px 0px 0px #0f172a;
+    }
+    .brutal-shadow-lg {
+      box-shadow: 8px 8px 0px 0px #0f172a;
+    }
+    .brutal-shadow-sm {
+      box-shadow: 4px 4px 0px 0px #0f172a;
+    }
+    .dark .brutal-shadow, .dark .brutal-shadow-lg, .dark .brutal-shadow-sm {
+      box-shadow: 6px 6px 0px 0px #ffffff;
+    }
+    .brutal-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .brutal-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 10px 10px 0px 0px #0f172a;
+    }
+    .dark .brutal-card:hover {
+      box-shadow: 10px 10px 0px 0px #ffffff;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans p-6 sm:p-12 min-h-screen flex flex-col justify-center">
+
+  <div class="max-w-7xl mx-auto w-full">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 bg-yellow-400 dark:bg-yellow-500 text-slate-900 font-mono font-black text-xs uppercase px-4 py-1.5 border-3 border-slate-900 dark:border-white brutal-shadow-sm transform -rotate-1 mb-4">
+        <i class="fas fa-bolt"></i> PROSES TRANSPARAN & CEPAT
+      </div>
+      
+      <h2 class="text-3xl sm:text-5xl font-extrabold font-display tracking-tight text-slate-900 dark:text-white uppercase leading-none">
+        ALUR PENDAFTARAN <span class="bg-teal-300 dark:bg-teal-500 text-slate-900 px-3 py-1 border-3 border-slate-900 dark:border-white inline-block transform rotate-1 brutal-shadow-sm">MAGANG PEMKO</span>
+      </h2>
+      
+      <p class="text-slate-700 dark:text-slate-300 font-semibold mt-5 max-w-2xl mx-auto text-base sm:text-lg">
+        Hanya 4 langkah ringkas untuk memulai pengalaman magang resmi di lingkungan Pemerintah Kota Banjarmasin.
+      </p>
+    </div>
+
+    <!-- Steps Grid (Neo-Brutalist Cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+
+      <!-- Step 1 -->
+      <div class="bg-white dark:bg-slate-800 border-4 border-slate-900 dark:border-white brutal-shadow-lg brutal-card p-6 rounded-none flex flex-col justify-between relative">
+        <div class="absolute -top-5 left-6 bg-yellow-400 text-slate-900 font-mono font-black text-sm px-3 py-1 border-3 border-slate-900 dark:border-white brutal-shadow-sm">
+          01 // REGISTRASI
+        </div>
+        
+        <div class="mt-4 mb-6">
+          <div class="w-14 h-14 bg-yellow-300 dark:bg-yellow-400 border-3 border-slate-900 dark:border-white flex items-center justify-center text-slate-900 text-2xl font-black mb-5 brutal-shadow-sm">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <h3 class="text-xl font-black font-display text-slate-900 dark:text-white uppercase mb-3">Buat Akun Peserta</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm font-semibold leading-relaxed">
+            Daftarkan email aktif Anda, lengkapi identitas akademis (NIM/NISN), serta unggah berkas profil diri.
+          </p>
+        </div>
+
+        <div class="pt-4 border-t-3 border-slate-900 dark:border-white flex items-center justify-between font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+          <span>AKSES REKOMENDASI</span>
+          <span class="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 border border-slate-900 dark:border-white">VERIFIKASI EMAIL</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white dark:bg-slate-800 border-4 border-slate-900 dark:border-white brutal-shadow-lg brutal-card p-6 rounded-none flex flex-col justify-between relative">
+        <div class="absolute -top-5 left-6 bg-teal-300 text-slate-900 font-mono font-black text-sm px-3 py-1 border-3 border-slate-900 dark:border-white brutal-shadow-sm">
+          02 // EKSPLORASI
+        </div>
+        
+        <div class="mt-4 mb-6">
+          <div class="w-14 h-14 bg-teal-300 dark:bg-teal-400 border-3 border-slate-900 dark:border-white flex items-center justify-center text-slate-900 text-2xl font-black mb-5 brutal-shadow-sm">
+            <i class="fas fa-building-user"></i>
+          </div>
+          <h3 class="text-xl font-black font-display text-slate-900 dark:text-white uppercase mb-3">Pilih Lowongan Dinas</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm font-semibold leading-relaxed">
+            Cari posisi magang/PKL yang sesuai dengan program studi & minat di lebih dari 45 SKPD Pemko Banjarmasin.
+          </p>
+        </div>
+
+        <div class="pt-4 border-t-3 border-slate-900 dark:border-white flex items-center justify-between font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+          <span>KATEGORI SKPD</span>
+          <span class="bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 px-2 py-0.5 border border-slate-900 dark:border-white">45+ DISKOMINFO/DLL</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white dark:bg-slate-800 border-4 border-slate-900 dark:border-white brutal-shadow-lg brutal-card p-6 rounded-none flex flex-col justify-between relative">
+        <div class="absolute -top-5 left-6 bg-rose-400 text-slate-900 font-mono font-black text-sm px-3 py-1 border-3 border-slate-900 dark:border-white brutal-shadow-sm">
+          03 // PERIODE & KUOTA
+        </div>
+        
+        <div class="mt-4 mb-6">
+          <div class="w-14 h-14 bg-rose-300 dark:bg-rose-400 border-3 border-slate-900 dark:border-white flex items-center justify-center text-slate-900 text-2xl font-black mb-5 brutal-shadow-sm">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <h3 class="text-xl font-black font-display text-slate-900 dark:text-white uppercase mb-3">Kunci Tanggal & Kuota</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm font-semibold leading-relaxed">
+            Tentukan tanggal mulai dan berakhir magang. Sistem akan otomatis memverifikasi ketersediaan kuota slot.
+          </p>
+        </div>
+
+        <div class="pt-4 border-t-3 border-slate-900 dark:border-white flex items-center justify-between font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+          <span>VALIDASI SLOT</span>
+          <span class="bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-200 px-2 py-0.5 border border-slate-900 dark:border-white">REAL-TIME GPS</span>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="bg-white dark:bg-slate-800 border-4 border-slate-900 dark:border-white brutal-shadow-lg brutal-card p-6 rounded-none flex flex-col justify-between relative">
+        <div class="absolute -top-5 left-6 bg-lime-400 text-slate-900 font-mono font-black text-sm px-3 py-1 border-3 border-slate-900 dark:border-white brutal-shadow-sm">
+          04 // INTERNSHIP ON
+        </div>
+        
+        <div class="mt-4 mb-6">
+          <div class="w-14 h-14 bg-lime-300 dark:bg-lime-400 border-3 border-slate-900 dark:border-white flex items-center justify-center text-slate-900 text-2xl font-black mb-5 brutal-shadow-sm">
+            <i class="fas fa-paper-plane"></i>
+          </div>
+          <h3 class="text-xl font-black font-display text-slate-900 dark:text-white uppercase mb-3">Mulai Penerjunan</h3>
+          <p class="text-slate-600 dark:text-slate-300 text-sm font-semibold leading-relaxed">
+            Setelah disetujui instansi, Anda resmi ditempatkan bersama Pembimbing Lapangan dan siap mencatat logbook.
+          </p>
+        </div>
+
+        <div class="pt-4 border-t-3 border-slate-900 dark:border-white flex items-center justify-between font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+          <span>OUTCOME</span>
+          <span class="bg-lime-100 dark:bg-lime-950 text-lime-800 dark:text-lime-200 px-2 py-0.5 border border-slate-900 dark:border-white">QR SERTIFIKAT</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Brutalist Callout Footer Banner -->
+    <div class="mt-14 bg-slate-900 text-white p-6 sm:p-8 border-4 border-slate-900 dark:border-white brutal-shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-yellow-400 text-slate-900 font-black flex items-center justify-center text-2xl border-2 border-white shrink-0">
+          ?
+        </div>
+        <div>
+          <h4 class="font-black font-display text-lg uppercase">Punya Pertanyaan Mengenai Berkas Permohonan?</h4>
+          <p class="text-slate-300 text-xs sm:text-sm font-semibold">Lihat panduan pembuatan surat permohonan magang instansi atau hubungi Helpdesk Admin Kota.</p>
+        </div>
+      </div>
+
+      <a href="#faq" class="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-mono font-black text-sm uppercase px-6 py-3 border-3 border-white brutal-shadow-sm transition-transform hover:-translate-y-0.5 shrink-0">
+        BACA PANDUAN LENGKAP <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

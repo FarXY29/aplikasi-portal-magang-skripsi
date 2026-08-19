@@ -1,0 +1,298 @@
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
+        <div class="flex items-center justify-between">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
+                <i class="fas fa-cogs text-teal-600"></i>
+                <?php echo e(__('Pengaturan Sistem')); ?>
+
+            </h2>
+        </div>
+     <?php $__env->endSlot(); ?>
+
+    <div class="py-12 bg-gray-50/50 dark:bg-gray-950 min-h-screen">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+
+            <div class="mb-6">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="inline-flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition group">
+                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 shadow-sm">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </div>
+                    Kembali ke Dashboard
+                </a>
+            </div>
+
+            <?php if(session('success')): ?>
+                <?php if (isset($component)) { $__componentOriginal746de018ded8594083eb43be3f1332e1 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal746de018ded8594083eb43be3f1332e1 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.alert','data' => ['type' => 'success','class' => 'mb-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'success','class' => 'mb-4']); ?>
+                    <?php echo e(session('success')); ?>
+
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $attributes = $__attributesOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__attributesOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $component = $__componentOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__componentOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+            <?php endif; ?>
+
+            <?php if(session('error')): ?>
+                <?php if (isset($component)) { $__componentOriginal746de018ded8594083eb43be3f1332e1 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal746de018ded8594083eb43be3f1332e1 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.alert','data' => ['type' => 'error','class' => 'mb-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.alert'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['type' => 'error','class' => 'mb-4']); ?>
+                    <?php echo e(session('error')); ?>
+
+                 <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $attributes = $__attributesOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__attributesOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal746de018ded8594083eb43be3f1332e1)): ?>
+<?php $component = $__componentOriginal746de018ded8594083eb43be3f1332e1; ?>
+<?php unset($__componentOriginal746de018ded8594083eb43be3f1332e1); ?>
+<?php endif; ?>
+            <?php endif; ?>
+
+            <form id="backup-form" action="<?php echo e(route('admin.settings.backup')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+            </form>
+
+            <form action="<?php echo e(route('admin.settings.update')); ?>" method="POST" enctype="multipart/form-data">
+                <?php echo csrf_field(); ?>
+
+                <div class="space-y-8">
+
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-inner">
+                                <i class="fas fa-laptop-code text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Identitas Aplikasi</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Konfigurasi nama dan branding dasar sistem.</p>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <div class="max-w-2xl">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Aplikasi</label>
+                                <div class="relative group">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition">
+                                        <i class="fas fa-heading"></i>
+                                    </span>
+                                    <input type="text" name="app_name" value="<?php echo e(old('app_name', $settings['app_name'] ?? 'SiMagang Banjarmasin')); ?>"
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm"
+                                        placeholder="Masukkan nama aplikasi...">
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2 flex items-center">
+                                    <i class="fas fa-info-circle mr-1.5"></i> Nama ini akan tampil di halaman login, title bar browser, dan footer.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-950/40 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-inner">
+                                <i class="fas fa-user-tie text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Pejabat Penandatangan</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Data ini digunakan pada dokumen resmi yang diterbitkan sistem.</p>
+                            </div>
+                        </div>
+                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="pejabat_name" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Pejabat</label>
+                                <input id="pejabat_name" type="text" name="pejabat_name" value="<?php echo e(old('pejabat_name', $settings['pejabat_name'] ?? '')); ?>"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                <?php $__errorArgs = ['pejabat_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="mt-2 text-xs text-red-600"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                            <div>
+                                <label for="pejabat_nip" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">NIP</label>
+                                <input id="pejabat_nip" type="text" name="pejabat_nip" value="<?php echo e(old('pejabat_nip', $settings['pejabat_nip'] ?? '')); ?>"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                <?php $__errorArgs = ['pejabat_nip'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="mt-2 text-xs text-red-600"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="pejabat_jabatan" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Jabatan</label>
+                                <input id="pejabat_jabatan" type="text" name="pejabat_jabatan" value="<?php echo e(old('pejabat_jabatan', $settings['pejabat_jabatan'] ?? '')); ?>"
+                                    class="w-full py-3 px-4 rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                <?php $__errorArgs = ['pejabat_jabatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="mt-2 text-xs text-red-600"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="ttd_image" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tanda Tangan Digital / Stempel (Opsional)</label>
+                                <input id="ttd_image" type="file" name="ttd_image" accept="image/*"
+                                    class="w-full py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm">
+                                <?php if(!empty($settings['ttd_image'])): ?>
+                                    <div class="mt-3 flex items-center gap-3">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 font-semibold">Tanda Tangan Saat Ini:</span>
+                                        <img src="<?php echo e(asset('storage/' . $settings['ttd_image'])); ?>" alt="TTD Pejabat" class="h-12 object-contain bg-white p-1 border rounded-lg">
+                                    </div>
+                                <?php endif; ?>
+                                <?php $__errorArgs = ['ttd_image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="mt-2 text-xs text-red-600"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700"
+                         x-data="{ announcement: <?php echo \Illuminate\Support\Js::from(old('announcement', $settings['announcement'] ?? ''))->toHtml() ?> }">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-950/40 flex items-center justify-center text-orange-600 dark:text-orange-400 shadow-inner">
+                                <i class="fas fa-bullhorn text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Papan Pengumuman</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Informasi global untuk seluruh peserta magang.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Isi Pengumuman</label>
+                                <textarea name="announcement" x-model="announcement" rows="5"
+                                    class="w-full rounded-xl border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition shadow-sm text-sm"
+                                    placeholder="Contoh: Pendaftaran magang periode Juli dibuka mulai tanggal..."></textarea>
+                                <p class="text-xs text-gray-400 mt-2">
+                                    Kosongkan jika tidak ada pengumuman.
+                                </p>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-dashed border-gray-300 dark:border-gray-700 flex flex-col h-full">
+                                <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 block text-center">Live Preview Dashboard</span>
+
+                                <div class="bg-yellow-50 dark:bg-yellow-950/20 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded-r shadow-sm flex-grow">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-info-circle text-yellow-600 dark:text-yellow-400"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-700 dark:text-yellow-400 font-medium">
+                                                <span x-text="announcement ? announcement : 'Tidak ada pengumuman aktif saat ini.'"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-950/40 flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-inner">
+                                    <i class="fas fa-database text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Backup Database</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Mencadangkan seluruh data sistem saat ini (Format .sql).</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+                                <input type="password" name="password" form="backup-form" autocomplete="current-password" placeholder="Konfirmasi password" class="rounded-xl border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm" aria-label="Konfirmasi password untuk backup" required>
+                                <button type="submit" form="backup-form" class="inline-flex items-center justify-center px-4 py-2 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 text-white font-bold rounded-xl shadow-sm transition">
+                                    <i class="fas fa-database mr-2"></i> Antrekan Backup
+                                </button>
+                            </div>
+                            <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <p class="mt-2 text-xs text-red-600 dark:text-red-400"><?php echo e($message); ?></p>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <?php if($backups->isNotEmpty()): ?>
+                            <div class="px-6 py-4 space-y-2 text-sm border-t border-gray-100 dark:border-gray-700">
+                                <?php $__currentLoopData = $backups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $backup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <span class="text-gray-600 dark:text-gray-300"><?php echo e($backup->filename); ?> · <?php echo e(ucfirst($backup->status)); ?></span>
+                                        <?php if($backup->download_url): ?>
+                                            <a href="<?php echo e($backup->download_url); ?>" class="font-bold text-purple-600 dark:text-purple-400 hover:underline">Unduh (berlaku sampai <?php echo e($backup->expires_at->format('d M H:i')); ?>)</a>
+                                        <?php elseif($backup->status === 'failed'): ?>
+                                            <span class="text-red-600 dark:text-red-400"><?php echo e($backup->error_message); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="flex items-center justify-end">
+                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-gray-900 dark:bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-gray-800 dark:hover:bg-teal-500 hover:shadow-xl transition transform hover:-translate-y-0.5 active:scale-95">
+                            <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views\admin_kota\settings\index.blade.php ENDPATH**/ ?>

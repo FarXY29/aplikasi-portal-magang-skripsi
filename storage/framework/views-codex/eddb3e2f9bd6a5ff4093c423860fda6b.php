@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laporan Data Peserta Magang</title>
+    <style>
+        /* Setup Kertas A4 Landscape agar kolom muat banyak */
+        @page { margin: 2cm; }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+        }
+
+        /* Kop Surat */
+        .kop-surat {
+            width: 100%;
+            border-bottom: 3px double #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .kop-logo {
+            width: 80px;
+            height: auto;
+        }
+        .kop-pemerintah {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .kop-instansi {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .kop-alamat {
+            font-size: 10pt;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Judul Laporan */
+        .judul-laporan {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 14pt;
+            text-transform: uppercase;
+        }
+
+        /* Tabel Data */
+        table.data {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table.data th, table.data td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            vertical-align: middle;
+            font-size: 11pt;
+        }
+        table.data th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        table.data td {
+            vertical-align: top;
+        }
+
+        /* Tanda Tangan */
+        .ttd-container {
+            width: 100%;
+            margin-top: 40px;
+            display: table;
+            page-break-inside: avoid;
+        }
+        .ttd-box-right {
+            display: table-cell;
+            width: 40%;
+            text-align: center;
+            margin-left: auto; /* Hack alignment */
+            float: right;
+        }
+    </style>
+</head>
+<body>
+
+    <table class="kop-surat">
+        <tr>
+            <td width="15%" align="center" style="border: none;">
+                <img src="<?php echo e(public_path('images/Banjarmasin_Logo.svg.png')); ?>" class="kop-logo" alt="Logo">
+            </td>
+            <td width="85%" align="center" style="border: none;">
+                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
+                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="judul-laporan">DATA MASTER PESERTA MAGANG</div>
+
+    <table class="data">
+        <thead>
+            <tr>
+                <th width="5%">No.</th>
+                <th width="20%">Nama Peserta</th>
+                <th width="25%">Asal Instansi / Kampus</th>
+                <th width="20%">Jurusan</th>
+                <th width="30%">Kontak (Email / HP)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $__empty_1 = true; $__currentLoopData = $participants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <tr>
+                <td style="text-align: center;"><?php echo e($index + 1); ?></td>
+                <td>
+                    <strong><?php echo e($user->name); ?></strong><br>
+                    <span style="font-size: 9pt;">NIK: <?php echo e($user->nik ?? '-'); ?></span>
+                </td>
+                <td><?php echo e($user->asal_instansi ?? '-'); ?></td>
+                <td><?php echo e($user->major ?? '-'); ?></td>
+                <td>
+                    <?php echo e($user->email); ?><br>
+                    <span style="font-size: 9pt;">HP: <?php echo e($user->phone ?? '-'); ?></span>
+                </td>
+            </tr>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">Belum ada data peserta terdaftar.</td>
+            </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+
+    <?php
+        $pejabatNama = $pejabat_nama ?? \App\Models\Setting::value('pejabat_name') ?? 'H. Lukman Fadlun, SH';
+        $pejabatNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
+        $pejabatJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Bakesbangpol Kota Banjarmasin';
+        $ttdImg = \App\Models\Setting::value('ttd_image');
+        $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
+    ?>
+
+    <div class="ttd-container">
+        <div class="ttd-box-right">
+            <p>Banjarmasin, <?php echo e(\Carbon\Carbon::now()->translatedFormat('d F Y')); ?></p>
+            <p style="margin-top: 2px;"><?php echo e($pejabatJabatan); ?></p>
+            <?php if($ttdFile && file_exists($ttdFile)): ?>
+                <div style="margin: 5px 0;">
+                    <img src="<?php echo e($ttdFile); ?>" style="max-height: 60px; max-width: 150px;">
+                </div>
+            <?php else: ?>
+                <br><br><br><br>
+            <?php endif; ?>
+            <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;"><?php echo e($pejabatNama); ?></p>
+            <p style="font-size: 8px; color: #555;">NIP. <?php echo e($pejabatNip); ?></p>
+        </div>
+    </div>
+
+</body>
+</html>
+<?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views\pdf\admin_kota\peserta.blade.php ENDPATH**/ ?>
