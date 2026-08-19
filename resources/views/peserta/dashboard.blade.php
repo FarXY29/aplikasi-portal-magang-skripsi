@@ -15,8 +15,6 @@
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            <x-announcement-banner audience="peserta" />
 
             @if(session('success'))
                 <x-ui.alert type="success" class="mb-4">

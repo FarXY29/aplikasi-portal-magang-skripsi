@@ -246,8 +246,12 @@
 
                                             <!-- Image Header -->
                                             @if($log->bukti_foto_path)
-                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" @click="openGallery('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
-                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                                                @php
+                                                    $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                                    $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y');
+                                                @endphp
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                    <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Dokumentasi">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
                                                     </div>
@@ -374,17 +378,6 @@
             </div>
         </div>
 
-        <!-- Image Gallery Modal -->
-        <div x-show="galleryOpen" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;" aria-labelledby="gallery-title" role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div x-show="galleryOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-gray-900/90 backdrop-blur-md transition-opacity" @click="galleryOpen = false" aria-hidden="true"></div>
-                <div x-show="galleryOpen" x-transition.scale.duration.300ms class="relative z-10 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
-                    <button @click="galleryOpen = false" class="absolute top-4 right-4 z-20 w-12 h-12 bg-black/50 hover:bg-rose-600 text-white rounded-full flex items-center justify-center transition backdrop-blur-sm border border-white/20">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                    <img :src="galleryImage" class="w-full max-h-[90vh] object-contain bg-black/50" />
-                </div>
-            </div>
         </div>
     </div>
 
@@ -425,8 +418,6 @@
             filter: @js(request('status', 'semua')),
             filterTanggal: @js(request('date', '')),
             filterBulan: @js(request('month', '')),
-            galleryOpen: false,
-            galleryImage: '',
             
             // Edit Modal State
             showEditModal: false,
@@ -452,9 +443,8 @@
                 this.editStatusValidasi = statusValidasi;
                 this.showEditModal = true;
             },
-            openGallery(imgUrl) {
-                this.galleryImage = imgUrl;
-                this.galleryOpen = true;
+            openGallery(imgUrl, title = 'Dokumentasi Logbook') {
+                openImageModal(imgUrl, title);
             },
             matchFilter(status, dateStr) {
                 if (this.filter !== 'semua' && this.filter !== status) return false;

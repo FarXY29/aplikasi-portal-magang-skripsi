@@ -41,18 +41,6 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
         Route::post('/{id}/restore', [CertificateGovernanceController::class, 'restore'])->name('restore');
     });
 
-    // Pusat Pengumuman & Broadcast Notifikasi (Broadcast & Announcement Center)
-    Route::prefix('announcements')->name('announcements.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'destroy'])->name('destroy');
-        Route::post('/{id}/toggle-publish', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'togglePublish'])->name('toggle_publish');
-        Route::post('/{id}/broadcast', [\App\Http\Controllers\AdminKota\AnnouncementController::class, 'sendBroadcast'])->name('broadcast');
-    });
-
     // Pusat Laporan
     Route::get('/laporan', [AdminKotaReportController::class, 'report'])->name('laporan');
     Route::get('/laporan/print', [AdminKotaReportController::class, 'printLaporan'])->name('laporan.print');

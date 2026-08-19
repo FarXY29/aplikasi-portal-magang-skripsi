@@ -28,12 +28,6 @@
            <span>Registri Sertifikat Kota</span>
         </a>
 
-        <a href="{{ route('admin.announcements.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.announcements.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 hover:bg-teal-50/80 hover:text-teal-700' }}">
-           <i class="fas fa-bullhorn w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.announcements.*') ? 'text-white' : 'text-gray-400 group-hover:text-teal-600' }}"></i>
-           <span>Pusat Pengumuman & Broadcast</span>
-        </a>
-
         <a href="{{ route('admin.audit_trail') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.audit_trail') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 hover:bg-teal-50/80 hover:text-teal-700' }}">
            <i class="fas fa-shield-alt w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.audit_trail') ? 'text-white' : 'text-gray-400 group-hover:text-teal-600' }}"></i>

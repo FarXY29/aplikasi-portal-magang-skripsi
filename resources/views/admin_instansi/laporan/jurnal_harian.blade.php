@@ -154,10 +154,14 @@
 
                                 <td class="px-5 py-4 text-center">
                                     @if($log->bukti_foto_path)
-                                        <a href="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" target="_blank" class="inline-block relative group" title="Lihat Bukti Foto">
-                                            <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-10 h-10 rounded-xl object-cover border border-gray-200 dark:border-gray-700 hover:scale-110 transition shadow-xs">
+                                        @php
+                                            $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                            $fotoTitle = 'Bukti Logbook: ' . ($log->application->user->name ?? 'Mahasiswa') . ' - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d M Y');
+                                        @endphp
+                                        <button type="button" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')" class="inline-block relative group cursor-pointer focus:outline-none" title="Lihat Bukti Foto">
+                                            <img src="{{ $fotoUrl }}" class="w-10 h-10 rounded-xl object-cover border border-gray-200 dark:border-gray-700 group-hover:scale-110 transition shadow-xs">
                                             <span class="absolute -bottom-1 -right-1 bg-purple-600 dark:bg-purple-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[8px] shadow-xs"><i class="fas fa-search-plus"></i></span>
-                                        </a>
+                                        </button>
                                     @else
                                         <span class="inline-block p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-400 dark:text-gray-500" title="Tidak ada bukti foto">
                                             <i class="fas fa-image-slash text-xs"></i>
