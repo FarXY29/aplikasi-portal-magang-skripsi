@@ -199,7 +199,7 @@
                                                 </div>
                                                 <div class="flex justify-between border-t pt-1.5 border-gray-100 dark:border-gray-700 mt-1 font-bold">
                                                     <span>Izin/Sakit Pending:</span>
-                                                    @php $pendAtt = $app->attendances->where('validation_status', 'pending')->count(); @endphp
+                                                    @php $pendAtt = $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count(); @endphp
                                                     <span class="{{ $pendAtt > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendAtt }} hari</span>
                                                 </div>
                                             </div>
