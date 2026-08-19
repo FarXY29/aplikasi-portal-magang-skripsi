@@ -8,13 +8,14 @@ class LowonganRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->role === 'admin_instansi';
+        return $this->user()?->hasPortalRole('admin_instansi') ?? false;
     }
 
     public function rules(): array
     {
         $rules = [
             'judul_posisi' => ['required', 'string', 'max:255'],
+            'required_major_category_id' => ['nullable', 'exists:major_categories,id'],
             'required_major' => ['nullable', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'kuota' => ['required', 'integer', 'min:1'],

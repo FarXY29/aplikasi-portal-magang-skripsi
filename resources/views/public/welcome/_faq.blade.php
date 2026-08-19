@@ -1,7 +1,7 @@
 <!-- FAQ Section -->
      <section id="faq" class="bg-slate-100/40 dark:bg-gray-900/40 border-t border-b border-slate-200/50 dark:border-gray-800 py-20 sm:py-28 scroll-mt-20 w-full">
          <div class="max-w-4xl mx-auto px-4 sm:px-6 w-full">
-             <div class="text-center mb-12 sm:mb-20">
+             <div class="reveal text-center mb-12 sm:mb-20" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
                  <span class="text-xs font-bold text-teal-600 dark:text-teal-400 tracking-widest uppercase bg-teal-50 dark:bg-teal-950/40 px-4 py-2 rounded-full border border-teal-100 dark:border-teal-900/60">Bantuan Portal</span>
                  <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight mt-4">Pertanyaan Populer (FAQ)</h2>
                  <p class="text-slate-500 dark:text-slate-400 mt-3 text-sm sm:text-base px-2">Masih bingung? Berikut beberapa jawaban singkat untuk pertanyaan yang sering diajukan.</p>
@@ -10,7 +10,7 @@
              <!-- FAQ Accordion wrapper -->
              <div x-data="{ activeFaq: null }" class="space-y-4 w-full">
                  <!-- FAQ Item 1 -->
-                 <div class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full">
+                 <div class="reveal bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
                      <button @click="activeFaq = (activeFaq === 1 ? null : 1)" class="w-full text-left p-5 sm:p-6 font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-gray-800 active:bg-slate-100 dark:active:bg-gray-800 transition-colors focus:outline-none text-sm sm:text-base">
                          <span class="pr-6">Siapa saja yang boleh mendaftar magang di Pemkot Banjarmasin?</span>
                          <i class="fas shrink-0 transition-transform duration-300" :class="activeFaq === 1 ? 'fa-chevron-up text-teal-600 dark:text-teal-400 rotate-180' : 'fa-chevron-down text-slate-400 dark:text-slate-400'"></i>
@@ -21,7 +21,7 @@
                  </div>
 
                  <!-- FAQ Item 2 -->
-                 <div class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full">
+                 <div class="reveal bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full" style="--reveal-delay: 120ms" x-intersect.once="$el.classList.add('revealed')">
                      <button @click="activeFaq = (activeFaq === 2 ? null : 2)" class="w-full text-left p-5 sm:p-6 font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-gray-800 active:bg-slate-100 dark:active:bg-gray-800 transition-colors focus:outline-none text-sm sm:text-base">
                          <span class="pr-6">Bagaimana sistem validasi kuota magang dilakukan?</span>
                          <i class="fas shrink-0 transition-transform duration-300" :class="activeFaq === 2 ? 'fa-chevron-up text-teal-600 dark:text-teal-400 rotate-180' : 'fa-chevron-down text-slate-400 dark:text-slate-400'"></i>
@@ -32,7 +32,7 @@
                  </div>
 
                  <!-- FAQ Item 3 -->
-                 <div class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full">
+                 <div class="reveal bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/80 dark:border-gray-700/50 overflow-hidden transition-all duration-300 shadow-sm w-full" style="--reveal-delay: 240ms" x-intersect.once="$el.classList.add('revealed')">
                      <button @click="activeFaq = (activeFaq === 3 ? null : 3)" class="w-full text-left p-5 sm:p-6 font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-gray-800 active:bg-slate-100 dark:active:bg-gray-800 transition-colors focus:outline-none text-sm sm:text-base">
                          <span class="pr-6">Apakah saya akan mendapatkan sertifikat setelah magang selesai?</span>
                          <i class="fas shrink-0 transition-transform duration-300" :class="activeFaq === 3 ? 'fa-chevron-up text-teal-600 dark:text-teal-400 rotate-180' : 'fa-chevron-down text-slate-400 dark:text-slate-400'"></i>

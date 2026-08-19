@@ -74,10 +74,15 @@
                     <a href="{{ route('admin.instansi.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.instansi.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
                         <i class="fas fa-building w-5 text-center {{ request()->routeIs('admin.instansi.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Kelola Data Instansi
                     </a>
+                    <a href="{{ route('admin.master.majors.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.master.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
+                        <i class="fas fa-graduation-cap w-5 text-center {{ request()->routeIs('admin.master.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Master Rumpun & Jurusan
+                    </a>
                     <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.users.index') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
                         <i class="fas fa-users-cog w-5 text-center {{ request()->routeIs('admin.users.index') ? 'text-teal-600' : 'text-gray-400' }}"></i> Manajemen Pengguna
                     </a>
-                    <a href="{{ route('admin.laporan.hub') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
+                    <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.certificates.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
+                        <i class="fas fa-certificate w-5 text-center {{ request()->routeIs('admin.certificates.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Registri Sertifikat
+                    </a>                    <a href="{{ route('admin.laporan.hub') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">
                         <i class="fas fa-chart-pie w-5 text-center {{ request()->routeIs('admin.laporan.*') ? 'text-teal-600' : 'text-gray-400' }}"></i> Pusat Laporan Hub
                     </a>
                     <a href="{{ route('admin.users.logbooks') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.users.logbooks*') ? 'bg-teal-50 text-teal-700 border border-teal-200 shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900' }}">

@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AdminKota\AuditLogController;
+use App\Http\Controllers\AdminKota\CertificateGovernanceController;
 use App\Http\Controllers\AdminKota\DashboardController as AdminKotaDashboardController;
 use App\Http\Controllers\AdminKota\InstansiController as AdminKotaInstansiController;
+use App\Http\Controllers\AdminKota\MajorCategoryController;
+use App\Http\Controllers\AdminKota\MajorController;
 use App\Http\Controllers\AdminKota\ReportController as AdminKotaReportController;
 use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\AdminUserController;
-use App\Http\Controllers\AdminKota\AuditLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')->group(function () {
@@ -13,6 +16,7 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
 
     Route::get('/audit-trail', [AuditLogController::class, 'index'])->name('audit_trail');
 
+    // Data Master Instansi / OPD
     Route::get('/instansi', [AdminKotaInstansiController::class, 'indexInstansi'])->name('instansi.index');
     Route::get('/instansi/create', [AdminKotaInstansiController::class, 'create'])->name('instansi.create');
     Route::post('/instansi', [AdminKotaInstansiController::class, 'store'])->name('instansi.store');
@@ -21,6 +25,23 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::delete('/instansi/{id}', [AdminKotaInstansiController::class, 'destroy'])->name('instansi.destroy');
     Route::get('/instansi/cetak-pdf', [AdminKotaReportController::class, 'printInstansi'])->name('instansi.print_pdf');
 
+    // Data Master Rumpun Keilmuan & Program Studi (Prioritas Tinggi)
+    Route::prefix('master')->name('master.')->group(function () {
+        Route::resource('major-categories', MajorCategoryController::class)->except(['show']);
+        Route::resource('majors', MajorController::class)->except(['show']);
+        Route::post('majors/{id}/toggle-status', [MajorController::class, 'toggleStatus'])->name('majors.toggle');
+    });
+
+    // Registri & Tata Kelola Sertifikat Resmi Kota (Prioritas Tinggi)
+    Route::prefix('certificates')->name('certificates.')->group(function () {
+        Route::get('/', [CertificateGovernanceController::class, 'index'])->name('index');
+        Route::get('/export-pdf', [CertificateGovernanceController::class, 'exportPdf'])->name('export_pdf');
+        Route::get('/{id}', [CertificateGovernanceController::class, 'show'])->name('show');
+        Route::post('/{id}/revoke', [CertificateGovernanceController::class, 'revoke'])->name('revoke');
+        Route::post('/{id}/restore', [CertificateGovernanceController::class, 'restore'])->name('restore');
+    });
+
+    // Pusat Laporan
     Route::get('/laporan', [AdminKotaReportController::class, 'report'])->name('laporan');
     Route::get('/laporan/print', [AdminKotaReportController::class, 'printLaporan'])->name('laporan.print');
     Route::get('/pusat-laporan', [AdminKotaReportController::class, 'laporanHub'])->name('laporan.hub');
@@ -38,10 +59,12 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/laporan-penyerapan-kuota', [AdminKotaReportController::class, 'laporanPenyerapanKuota'])->name('laporan.penyerapan_kuota');
     Route::get('/laporan-penyerapan-kuota/print', [AdminKotaReportController::class, 'printPenyerapanKuota'])->name('laporan.penyerapan_kuota.print');
 
-    Route::resource('users', AdminUserController::class);
+    // Manajemen Pengguna & Monitoring Logbook
+    Route::resource('users', AdminUserController::class)->except(['show']);
     Route::get('/monitoring-logbook', [AdminUserController::class, 'logbooks'])->name('users.logbooks');
     Route::get('/monitoring-logbook/{id}', [AdminUserController::class, 'showLogbook'])->name('users.logbooks.show');
 
+    // Pengaturan Sistem & Backup
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::post('/settings/backup', [AdminSettingController::class, 'requestBackup'])->name('settings.backup');

@@ -57,6 +57,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // URL yang dapat dijangkau publik untuk QR code, email, dan link dokumen.
+    // Isi dengan URL ngrok/production tanpa slash di akhir.
+    'public_url' => env('APP_PUBLIC_URL'),
+
     'asset_url' => env('ASSET_URL'),
 
     /*

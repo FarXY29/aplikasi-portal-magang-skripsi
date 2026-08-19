@@ -40,26 +40,6 @@
     <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
 
         {{-- ══════════════════════════════════════════════════════════ --}}
-        {{-- PENGUMUMAN KOTA (JIKA ADA) --}}
-        {{-- ══════════════════════════════════════════════════════════ --}}
-        @php
-            $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
-        @endphp
-        @if(!empty($globalAnnouncement))
-            <div class="bg-white dark:bg-[#161f33] border-l-4 border-amber-500 p-5 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800/40 flex gap-4 items-start relative overflow-hidden">
-                <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-500/30">
-                    <i class="fas fa-bullhorn text-lg"></i>
-                </div>
-                <div class="flex-1">
-                    <h4 class="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1">Pengumuman Kota Banjarmasin</h4>
-                    <div class="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-                        {!! nl2br(e($globalAnnouncement)) !!}
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- HERO WELCOME BANNER WITH PERIOD FILTERS & AUTO-REFRESH --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
         <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-[#161f33] text-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-800/40 p-6 md:p-7">

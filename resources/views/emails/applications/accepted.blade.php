@@ -14,11 +14,11 @@
     <table class="details-table">
         <tr>
             <td>Instansi</td>
-            <td>{{ $application->position->instansi->nama_dinas ?? '-' }}</td>
+            <td>{{ $application->position?->instansi?->nama_dinas ?? '-' }}</td>
         </tr>
         <tr>
             <td>Posisi</td>
-            <td>{{ $application->position->judul_posisi ?? '-' }}</td>
+            <td>{{ $application->position?->judul_posisi ?? '-' }}</td>
         </tr>
         <tr>
             <td>Tanggal Mulai</td>

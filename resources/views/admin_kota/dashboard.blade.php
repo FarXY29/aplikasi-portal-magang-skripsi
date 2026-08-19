@@ -113,7 +113,7 @@
                                 <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Jumlah pendaftar per hari dalam periode terpilih</p>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 tracking-wider">
+                        <span id="chart-period-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 tracking-wider">
                             {{ strtoupper($periodText) }}
                         </span>
                     </div>
@@ -305,16 +305,39 @@
     </div>
 
     {{-- Chart.js & Realtime Refresh Script --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         (function() {
-            let currentPeriod = '{{ $period }}';
+            let currentPeriod = @js($period);
             let countdown = 60;
             let timerInterval = null;
+            let refreshInFlight = false;
+            let dashboardBootScheduled = false;
+            const chartJsUrl = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
+
+            function loadChartJs() {
+                if (typeof Chart !== 'undefined') {
+                    return Promise.resolve();
+                }
+
+                if (window.adminDashboardChartPromise) {
+                    return window.adminDashboardChartPromise;
+                }
+
+                window.adminDashboardChartPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = chartJsUrl;
+                    script.async = true;
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Chart.js gagal dimuat.'));
+                    document.head.appendChild(script);
+                });
+
+                return window.adminDashboardChartPromise;
+            }
 
             function initCharts() {
                 if (typeof Chart === 'undefined') {
-                    setTimeout(initCharts, 50);
+                    console.warn('Chart.js gagal dimuat; dashboard dilanjutkan tanpa grafik.');
                     return;
                 }
 
@@ -444,16 +467,25 @@
 
             // AJAX DATA FETCHER
             function fetchDashboardData(period, isManual = false) {
+                if (refreshInFlight) return;
+
+                refreshInFlight = true;
                 const refreshIcon = document.getElementById('refresh-icon');
                 if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
-                fetch(`{{ route('admin.dashboard') }}?period=${period}`, {
+                fetch(`{{ route('admin.dashboard') }}?period=${encodeURIComponent(period)}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     }
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Dashboard request failed with status ${res.status}`);
+                    }
+
+                    return res.json();
+                })
                 .then(data => {
                     // Update Stat Numbers
                     const elInstansi = document.getElementById('stat-instansi');
@@ -515,8 +547,12 @@
                     const timerEl = document.getElementById('countdown-timer');
                     if (timerEl) timerEl.textContent = countdown;
                 })
-                .catch(err => console.error('Error fetching dashboard data:', err))
+                .catch(err => {
+                    console.error('Error fetching dashboard data:', err);
+                    countdown = 60;
+                })
                 .finally(() => {
+                    refreshInFlight = false;
                     if (refreshIcon) refreshIcon.classList.remove('fa-spin');
                 });
             }
@@ -524,6 +560,9 @@
             // FILTER BUTTON EVENT LISTENERS
             function setupEventListeners() {
                 document.querySelectorAll('.period-btn').forEach(btn => {
+                    if (btn.dataset.dashboardListener === 'true') return;
+
+                    btn.dataset.dashboardListener = 'true';
                     btn.addEventListener('click', function() {
                         document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
@@ -533,7 +572,8 @@
                 });
 
                 const refreshBtn = document.getElementById('refresh-btn');
-                if (refreshBtn) {
+                if (refreshBtn && refreshBtn.dataset.dashboardListener !== 'true') {
+                    refreshBtn.dataset.dashboardListener = 'true';
                     refreshBtn.addEventListener('click', function() {
                         fetchDashboardData(currentPeriod, true);
                     });
@@ -544,29 +584,44 @@
             function startAutoRefreshTimer() {
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(() => {
-                    countdown--;
-                    const timerEl = document.getElementById('countdown-timer');
-                    if (timerEl) timerEl.textContent = countdown;
+                    if (countdown > 0) {
+                        countdown--;
+                        const timerEl = document.getElementById('countdown-timer');
+                        if (timerEl) timerEl.textContent = countdown;
+                    }
 
                     if (countdown <= 0) {
+                        // Guarded by refreshInFlight inside fetchDashboardData;
+                        // countdown stays at 0 (never negative) until the request
+                        // settles and resets it back to 60.
                         fetchDashboardData(currentPeriod);
                     }
                 }, 1000);
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                initCharts();
-                setupEventListeners();
-                startAutoRefreshTimer();
-            });
+            function bootDashboard() {
+                if (dashboardBootScheduled) return;
 
-            document.addEventListener('turbo:load', () => {
-                initCharts();
-                setupEventListeners();
-                startAutoRefreshTimer();
-            });
+                dashboardBootScheduled = true;
+                loadChartJs()
+                    .then(() => {
+                        initCharts();
+                        setupEventListeners();
+                        startAutoRefreshTimer();
+                    })
+                    .catch((error) => {
+                        console.warn('Dashboard tetap dimuat tanpa grafik:', error);
+                        setupEventListeners();
+                        startAutoRefreshTimer();
+                    });
+            }
+
+            bootDashboard();
+            document.addEventListener('DOMContentLoaded', bootDashboard);
+            document.addEventListener('turbo:load', bootDashboard);
 
             document.addEventListener('turbo:before-cache', () => {
+                dashboardBootScheduled = false;
                 if (timerInterval) clearInterval(timerInterval);
                 if (window.adminTrendChart) { try { window.adminTrendChart.destroy(); } catch(e) {} }
                 if (window.adminStatusChart) { try { window.adminStatusChart.destroy(); } catch(e) {} }

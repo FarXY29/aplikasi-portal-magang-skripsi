@@ -7,12 +7,7 @@
                 </div>
                 {{ __('Pemantauan Logbook Mahasiswa') }}
             </h2>
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Mahasiswa:</span>
-                <span class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs">
-                    {{ $app->user->name }}
-                </span>
-            </div>
+            <x-pembimbing.student-switcher :applications="$applications" :current="$app" route-name="pembimbing.peserta.logbook" />
         </div>
     </x-slot>
 
@@ -28,58 +23,34 @@
                 </a>
             </div>
 
+            @php
+                $isFiltered = request()->hasAny(['search', 'status_validasi'])
+                    || (request()->has('filter_type') && request('filter_type') !== 'semua')
+                    || (request()->has('date') && request('date') !== date('Y-m-d'));
+            @endphp
+
             {{-- Filter Bar --}}
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-filter text-teal-600 dark:text-teal-400"></i>
-                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Filter Logbook</span>
-                </div>
-                
-                <form action="{{ route('pembimbing.peserta.logbook', $app->id) }}" method="GET" class="w-full md:w-auto flex flex-wrap items-center gap-4">
-                    <div class="bg-gray-100 dark:bg-gray-900 p-1 rounded-xl flex items-center border border-gray-200 dark:border-gray-700">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="semua" {{ $filterType === 'semua' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Semua
-                            </span>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="mingguan" {{ $filterType === 'mingguan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Mingguan
-                            </span>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="bulanan" {{ $filterType === 'bulanan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Bulanan
-                            </span>
-                        </label>
-                    </div>
-
-                    @if($filterType !== 'semua')
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400">
-                                {{ $filterType === 'bulanan' ? 'Bulan:' : 'Tanggal:' }}
-                            </span>
-                            @if($filterType === 'bulanan')
-                                <input type="month" name="month" value="{{ \Carbon\Carbon::parse($selectedDate)->format('Y-m') }}" 
-                                    class="border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-1.5 px-3 [color-scheme:dark]"
-                                    onchange="this.form.date.value = this.value + '-01'; this.form.submit();">
-                                <input type="hidden" name="date" value="{{ $selectedDate }}">
-                            @else
-                                <input type="date" name="date" value="{{ $selectedDate }}" onchange="this.form.submit()" 
-                                    class="border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-1.5 px-3 [color-scheme:dark]">
-                            @endif
-                        </div>
-                    @endif
-
-                    @if(request('filter_type') && request('filter_type') != 'semua')
-                        <a href="{{ route('pembimbing.peserta.logbook', $app->id) }}" class="p-2 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 rounded-xl transition text-xs font-bold flex items-center gap-1.5">
-                            <i class="fas fa-times"></i> Reset
-                        </a>
-                    @endif
-                </form>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 print:hidden space-y-5">
+                <x-pembimbing.filter-bar
+                    route-name="pembimbing.peserta.logbook"
+                    :app="$app"
+                    :applications="$applications"
+                    :filter-type="$filterType"
+                    :selected-date="$selectedDate"
+                    :is-filtered="$isFiltered"
+                    title="Filter Pemantauan Logbook"
+                    subtitle="Filter data logbook berdasarkan rentang waktu, status validasi, atau pencarian kegiatan"
+                    search-label="Cari Kegiatan Jurnal:"
+                    search-placeholder="Cari isi deskripsi..."
+                    status-field="status_validasi"
+                    :status-options="[
+                        ['value' => 'pending', 'label' => 'Pending / Menunggu'],
+                        ['value' => 'disetujui', 'label' => 'Disetujui'],
+                        ['value' => 'revisi', 'label' => 'Perlu Revisi'],
+                        ['value' => 'ditolak', 'label' => 'Ditolak'],
+                    ]"
+                    status-badge-label="Validasi"
+                />
             </div>
 
             @if($logs->isEmpty())
@@ -119,6 +90,8 @@
                                                     <i class="fas fa-check-circle text-emerald-500 text-xs" title="Disetujui"></i>
                                                 @elseif($log->status_validasi == 'revisi')
                                                     <i class="fas fa-exclamation-circle text-rose-500 text-xs" title="Revisi"></i>
+                                                @elseif($log->status_validasi == 'ditolak')
+                                                    <i class="fas fa-ban text-rose-500 text-xs" title="Ditolak"></i>
                                                 @else
                                                     <div class="w-2.5 h-2.5 rounded-full bg-amber-400 mt-1" title="Pending"></div>
                                                 @endif
@@ -157,12 +130,13 @@
                                     @php
                                         $statusClass = match($log->status_validasi) {
                                             'disetujui' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
-                                            'revisi' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                                            'revisi', 'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
                                             default => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
                                         };
                                         $statusIcon = match($log->status_validasi) {
                                             'disetujui' => 'fa-check-circle',
                                             'revisi' => 'fa-undo',
+                                            'ditolak' => 'fa-ban',
                                             default => 'fa-clock'
                                         };
                                     @endphp
@@ -176,12 +150,19 @@
                                         <div class="w-full lg:w-1/3 flex-shrink-0">
                                             <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Dokumentasi</h4>
                                             @if($log->bukti_foto_path)
-                                                <div class="relative group rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-700 cursor-zoom-in">
-                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500">
-                                                    <a href="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" target="_blank" class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
-                                                        <i class="fas fa-search-plus text-white text-xl opacity-0 group-hover:opacity-100 transition duration-200 drop-shadow"></i>
-                                                    </a>
+                                                @php
+                                                    $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                                    $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . $app->user->name . ')';
+                                                @endphp
+                                                <div class="relative group rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-700 cursor-pointer" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                    <img src="{{ $fotoUrl }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500" alt="Dokumentasi">
+                                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-center justify-center">
+                                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 text-white text-xs font-bold backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-200 drop-shadow">
+                                                            <i class="fas fa-search-plus text-xs"></i> Perbesar Foto
+                                                        </span>
+                                                    </div>
                                                 </div>
+                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">*Klik gambar untuk melihat ukuran penuh</p>
                                             @else
                                                 <div class="w-full h-44 bg-gray-50 dark:bg-gray-900 rounded-2xl flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 text-xs border-2 border-dashed border-gray-200 dark:border-gray-700">
                                                     <i class="far fa-image text-3xl mb-2 text-gray-300 dark:text-gray-600"></i>
@@ -217,15 +198,8 @@
                     </div>
                 </div>
             @endif
+
+            <x-pembimbing.pagination :paginator="$logs" />
         </div>
     </div>
-
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
 </x-app-layout>
