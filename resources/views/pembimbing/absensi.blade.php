@@ -7,12 +7,7 @@
                 </div>
                 {{ __('Pemantauan Absensi Mahasiswa') }}
             </h2>
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Mahasiswa:</span>
-                <span class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs">
-                    {{ $app->user->name }}
-                </span>
-            </div>
+            <x-pembimbing.student-switcher :applications="$applications" :current="$app" route-name="pembimbing.peserta.absensi" />
         </div>
     </x-slot>
 
@@ -28,58 +23,34 @@
                 </a>
             </div>
 
+            @php
+                $isFiltered = request()->hasAny(['search', 'status'])
+                    || (request()->has('filter_type') && request('filter_type') !== 'semua')
+                    || (request()->has('date') && request('date') !== date('Y-m-d'));
+            @endphp
+
             {{-- Filter Bar --}}
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-filter text-teal-600 dark:text-teal-400"></i>
-                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Filter Absensi</span>
-                </div>
-                
-                <form action="{{ route('pembimbing.peserta.absensi', $app->id) }}" method="GET" class="w-full md:w-auto flex flex-wrap items-center gap-4">
-                    <div class="bg-gray-100 dark:bg-gray-900 p-1 rounded-xl flex items-center border border-gray-200 dark:border-gray-700">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="semua" {{ $filterType === 'semua' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Semua
-                            </span>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="mingguan" {{ $filterType === 'mingguan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Mingguan
-                            </span>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="filter_type" value="bulanan" {{ $filterType === 'bulanan' ? 'checked' : '' }} class="sr-only peer" onchange="this.form.submit()">
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 peer-checked:bg-white dark:peer-checked:bg-gray-800 peer-checked:text-teal-600 dark:peer-checked:text-teal-400 peer-checked:shadow-xs transition block">
-                                Bulanan
-                            </span>
-                        </label>
-                    </div>
-
-                    @if($filterType !== 'semua')
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400">
-                                {{ $filterType === 'bulanan' ? 'Bulan:' : 'Tanggal:' }}
-                            </span>
-                            @if($filterType === 'bulanan')
-                                <input type="month" name="month" value="{{ \Carbon\Carbon::parse($selectedDate)->format('Y-m') }}" 
-                                    class="border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-1.5 px-3 [color-scheme:dark]"
-                                    onchange="this.form.date.value = this.value + '-01'; this.form.submit();">
-                                <input type="hidden" name="date" value="{{ $selectedDate }}">
-                            @else
-                                <input type="date" name="date" value="{{ $selectedDate }}" onchange="this.form.submit()" 
-                                    class="border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-1.5 px-3 [color-scheme:dark]">
-                            @endif
-                        </div>
-                    @endif
-
-                    @if(request('filter_type') && request('filter_type') != 'semua')
-                        <a href="{{ route('pembimbing.peserta.absensi', $app->id) }}" class="p-2 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 rounded-xl transition text-xs font-bold flex items-center gap-1.5">
-                            <i class="fas fa-times"></i> Reset
-                        </a>
-                    @endif
-                </form>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 print:hidden space-y-5">
+                <x-pembimbing.filter-bar
+                    route-name="pembimbing.peserta.absensi"
+                    :app="$app"
+                    :applications="$applications"
+                    :filter-type="$filterType"
+                    :selected-date="$selectedDate"
+                    :is-filtered="$isFiltered"
+                    title="Filter Pemantauan Absensi"
+                    subtitle="Filter data absensi mahasiswa berdasarkan rentang waktu, status, atau pencarian"
+                    search-label="Cari Catatan:"
+                    search-placeholder="Cari keterangan..."
+                    status-field="status"
+                    :status-options="[
+                        ['value' => 'hadir', 'label' => 'Hadir'],
+                        ['value' => 'izin', 'label' => 'Izin'],
+                        ['value' => 'sakit', 'label' => 'Sakit'],
+                        ['value' => 'alpa', 'label' => 'Alpa'],
+                    ]"
+                    status-badge-label="Status"
+                />
             </div>
 
             {{-- Main Table Container --}}
@@ -89,7 +60,7 @@
                         <i class="fas fa-calendar-check text-teal-600 dark:text-teal-400"></i> Rekap Kehadiran
                     </h3>
                     <span class="bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 text-xs font-black px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800/60">
-                        Total Hari: {{ $attendances->count() }}
+                        Jumlah Catatan: {{ $attendances->count() }}
                     </span>
                 </div>
                 
@@ -153,7 +124,7 @@
                                                     {{ ucfirst($absen->status) }}
                                                 </span>
                                                 
-                                                @if($absen->validation_status == 'valid')
+                                                @if($absen->validation_status == 'approved')
                                                     <div class="mt-1 flex items-center justify-center text-[10px] text-emerald-600 dark:text-emerald-400 font-bold" title="Divalidasi Pembimbing Lapangan">
                                                         <i class="fas fa-check-circle mr-1"></i> Valid
                                                     </div>
@@ -175,6 +146,8 @@
                             </table>
                         </div>
                     @endif
+
+                    <x-pembimbing.pagination :paginator="$attendances" />
                 </div>
             </div>
 

@@ -30,7 +30,7 @@
                 <div class="relative z-10 max-w-3xl">
                     <h3 class="text-xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Pusat Laporan & Data Magang</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
-                        Akses cepat ke seluruh modul analitik dan laporan instansi Anda. Pilih modul laporan di bawah ini untuk melihat rekapitulasi, mengekspor data (PDF, Excel, CSV), dan menganalisis performa magang.
+                        Akses cepat ke seluruh modul analitik dan laporan instansi Anda. Pilih modul laporan di bawah ini untuk melihat rekapitulasi, mengekspor data (PDF), dan menganalisis performa magang.
                     </p>
                 </div>
             </div>

@@ -57,36 +57,111 @@
         </div>
     </div>
 
-    <!-- Mobile Drawer Side Menu -->
+    <!-- Mobile Drawer Side Overlay & Panel -->
     <div x-show="mobileMenuOpen" 
          x-cloak 
-         @click.outside="mobileMenuOpen = false" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 -translate-y-4"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-4"
-         class="md:hidden bg-white dark:bg-gray-900 border-t border-slate-100 dark:border-gray-800 shadow-2xl px-5 py-6 space-y-3 absolute w-full left-0 top-full rounded-b-3xl">
-        <a href="#lowongan" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
-            <i class="fas fa-search text-teal-600 mr-3"></i> Cari Lowongan Magang
-        </a>
-        <a href="#langkah" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
-            <i class="fas fa-route text-teal-600 mr-3"></i> Alur Pendaftaran
-        </a>
-        <a href="#faq" @click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
-            <i class="fas fa-question-circle text-teal-600 mr-3"></i> FAQ & Bantuan
-        </a>
-        <a href="{{url('/scan-qr') }}" id="scan-qr-btn"@click="mobileMenuOpen = false" class="flex items-center px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-gray-800 rounded-xl hover:text-teal-600">
-            <i class="fas fa-qrcode text-teal-600 mr-3"></i> Scan QR
-        </a>
-        <div class="pt-3 border-t border-slate-100 dark:border-gray-800 flex flex-col gap-2">
-            @auth
-                <a href="{{ url('/dashboard') }}" class="w-full text-center py-3 bg-teal-600 text-white rounded-xl font-bold text-sm shadow-md">Dashboard Saya</a>
-            @else
-                <a href="{{ route('login') }}" class="w-full text-center py-3 bg-slate-100 dark:bg-gray-800 text-slate-800 dark:text-white rounded-xl font-bold text-sm">Masuk</a>
-                <a href="{{ route('register') }}" class="w-full text-center py-3 bg-teal-600 text-white rounded-xl font-bold text-sm shadow-md">Daftar Akun Baru</a>
-            @endauth
+         class="fixed inset-0 z-50 md:hidden overflow-hidden" 
+         role="dialog" 
+         aria-modal="true">
+        
+        <!-- Backdrop Overlay -->
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition-opacity ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="mobileMenuOpen = false"
+             class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity"></div>
+
+        <!-- Slide-Down / Slide-Over Sheet -->
+        <div class="fixed inset-x-0 top-0 max-h-[85vh] overflow-y-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-2xl border-b border-slate-200/80 dark:border-gray-800 shadow-2xl rounded-b-[2.5rem] z-10 flex flex-col pt-safe"
+             x-show="mobileMenuOpen"
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 -translate-y-8"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-8">
+            
+            <!-- Drawer Header -->
+            <div class="px-6 py-5 flex items-center justify-between border-b border-slate-100 dark:border-gray-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-teal-50 dark:bg-teal-950/80 border border-teal-200 dark:border-teal-800/80 rounded-2xl p-2 flex items-center justify-center shrink-0 shadow-2xs">
+                        <x-application-logo class="w-7 h-7 fill-current text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <div>
+                        <span class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight block font-display">SiMagang</span>
+                        <span class="text-[9px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block">Kota Banjarmasin</span>
+                    </div>
+                </div>
+                <button @click="mobileMenuOpen = false" type="button" class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition active:scale-95" title="Tutup Menu">
+                    <i class="fas fa-times text-base"></i>
+                </button>
+            </div>
+
+            <!-- Drawer Links -->
+            <div class="px-5 py-6 space-y-2 flex-grow">
+                <a href="#lowongan" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                            <i class="fas fa-briefcase text-xs"></i>
+                        </div>
+                        <span>Cari Lowongan Magang</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                </a>
+
+                <a href="#langkah" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <i class="fas fa-route text-xs"></i>
+                        </div>
+                        <span>Alur Pendaftaran</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                </a>
+
+                <a href="#faq" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                            <i class="fas fa-circle-question text-xs"></i>
+                        </div>
+                        <span>FAQ & Bantuan</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                </a>
+
+                <a href="{{ url('/scan-qr') }}" id="scan-qr-btn" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                            <i class="fas fa-qrcode text-xs"></i>
+                        </div>
+                        <span>Scan QR Sertifikat</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                </a>
+            </div>
+
+            <!-- Drawer Auth & Action Footer -->
+            <div class="p-5 pt-2 pb-8 border-t border-slate-100 dark:border-gray-800 bg-slate-50/70 dark:bg-gray-900/90 rounded-b-[2.5rem] space-y-3">
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-extrabold text-sm uppercase tracking-wider shadow-lg shadow-teal-600/25 flex items-center justify-center gap-2 active:scale-98 transition">
+                        <i class="fas fa-columns text-sm"></i>
+                        <span>Buka Dashboard Saya</span>
+                    </a>
+                @else
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ route('login') }}" class="py-3.5 bg-white dark:bg-gray-800 text-slate-800 dark:text-white border border-slate-200 dark:border-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center shadow-2xs active:scale-98 transition">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}" class="py-3.5 bg-teal-600 text-white rounded-2xl font-extrabold text-xs uppercase tracking-wider text-center flex items-center justify-center shadow-md shadow-teal-600/20 active:scale-98 transition">
+                            Daftar Akun
+                        </a>
+                    </div>
+                @endauth
+            </div>
         </div>
     </div>
 </nav>

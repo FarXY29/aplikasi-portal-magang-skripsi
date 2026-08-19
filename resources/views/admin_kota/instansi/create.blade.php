@@ -82,19 +82,74 @@
                                 @error('alamat') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="md:col-span-2 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Scan Tanda Tangan Kepala Dinas</label>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
-                                        <i class="fas fa-file-signature text-xl"></i>
+                            <div class="md:col-span-2 bg-gray-50 dark:bg-gray-900 p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 shadow-xs"
+                                x-data="{
+                                    previewUrl: '',
+                                    handleFileChange(e) {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            if (file.size > 2 * 1024 * 1024) {
+                                                alert('Ukuran file melebihi 2MB.');
+                                                this.resetSelection();
+                                                return;
+                                            }
+                                            this.previewUrl = URL.createObjectURL(file);
+                                        }
+                                    },
+                                    resetSelection() {
+                                        const input = this.$refs.fileInput;
+                                        if (input) input.value = '';
+                                        this.previewUrl = '';
+                                    }
+                                }">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">Scan Tanda Tangan Kepala Dinas (Opsional)</label>
+                                    <template x-if="previewUrl">
+                                        <button type="button" x-on:click="resetSelection()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold flex items-center gap-1">
+                                            <i class="fas fa-undo text-[10px]"></i> Hapus Pilihan
+                                        </button>
+                                    </template>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-3.5">Format: PNG Transparan (Disarankan), JPG, JPEG. Maks 2MB.</p>
+                                
+                                <div class="flex items-start gap-4">
+                                    {{-- Preview Box --}}
+                                    <div class="flex-shrink-0 text-center">
+                                        <div class="w-24 h-24 sm:w-28 sm:h-28 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden p-1.5 transition-all duration-200 group relative">
+                                            <template x-if="previewUrl">
+                                                <img :src="previewUrl" alt="Preview Tanda Tangan" class="max-h-full max-w-full object-contain filter drop-shadow-xs">
+                                            </template>
+                                            <template x-if="!previewUrl">
+                                                <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 text-xs p-2 text-center">
+                                                    <i class="fas fa-signature text-2xl mb-1 text-gray-300 dark:text-gray-600"></i>
+                                                    <span class="text-[10px] leading-tight font-medium">Belum dipilih</span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        
+                                        {{-- Status Badge --}}
+                                        <div class="mt-1.5">
+                                            <template x-if="previewUrl">
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-teal-600 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-full border border-teal-200 dark:border-teal-800">
+                                                    <i class="fas fa-magic text-[10px]"></i> TTD Baru
+                                                </span>
+                                            </template>
+                                            <template x-if="!previewUrl">
+                                                <span class="inline-flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 font-medium">
+                                                    <i class="fas fa-minus-circle text-[10px]"></i> Kosong
+                                                </span>
+                                            </template>
+                                        </div>
                                     </div>
-                                    <div class="flex-grow">
-                                        <input type="file" name="ttd_kepala" accept="image/png, image/jpeg"
-                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-600 file:text-white hover:file:bg-teal-700 cursor-pointer focus:outline-none border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: PNG Transparan (Disarankan) atau JPG. Maks 2MB.</p>
+
+                                    {{-- Upload Controls --}}
+                                    <div class="flex-grow space-y-2">
+                                        <input type="file" name="ttd_kepala" x-ref="fileInput" x-on:change="handleFileChange($event)" accept="image/png, image/jpeg, image/jpg"
+                                            class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-teal-50 dark:file:bg-teal-950/40 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 dark:hover:file:bg-teal-900/50 cursor-pointer border border-gray-300 dark:border-gray-600 dark:bg-gray-900 rounded-xl shadow-xs transition">
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 italic">Dapat diunggah nanti saat mengedit data instansi.</p>
                                     </div>
                                 </div>
-                                @error('ttd_kepala') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                @error('ttd_kepala') <span class="text-red-500 text-xs mt-2 block font-semibold">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="md:col-span-2 bg-blue-50/50 dark:bg-blue-950/30 p-4 rounded-xl border border-blue-100 dark:border-blue-900/40">
@@ -217,7 +272,7 @@
 <script>
     function initLeafletMap() {
         if (typeof L === 'undefined') {
-            setTimeout(initLeafletMap, 100);
+            console.warn('Leaflet gagal dimuat; peta instansi tidak tersedia.');
             return;
         }
 

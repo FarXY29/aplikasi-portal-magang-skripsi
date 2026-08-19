@@ -196,28 +196,63 @@
             updateClock();
         });
     </script>
-    <div id="global-image-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm" onclick="closeImageModal()">
-        <div class="relative max-w-4xl max-h-[90vh] w-full flex justify-center items-center" onclick="event.stopPropagation()">
-            <button onclick="closeImageModal()" class="absolute -top-4 -right-4 md:top-4 md:right-4 bg-white dark:bg-gray-800/10 hover:bg-white dark:hover:bg-gray-800/20 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none transition backdrop-blur-md border border-white/20 z-10">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-            <img id="global-image-modal-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" alt="Preview Image">
+    <!-- Global Image Modal -->
+    <div id="global-image-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300 backdrop-blur-md" onclick="closeImageModal()">
+        <div class="relative max-w-5xl max-h-[92vh] w-full flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+            <!-- Top Controls Bar -->
+            <div class="w-full flex items-center justify-between gap-4 mb-3 text-white">
+                <div class="flex items-center gap-2.5 truncate">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 backdrop-blur-md flex items-center justify-center text-teal-400 border border-white/15">
+                        <i class="fas fa-image text-xs"></i>
+                    </div>
+                    <span id="global-image-modal-title" class="text-xs sm:text-sm font-bold tracking-wide truncate text-gray-100">Pratinjau Foto</span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a id="global-image-modal-link" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-md border border-white/15 transition flex items-center gap-1.5 shadow-xs" title="Buka berkas di tab baru">
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                        <span class="hidden sm:inline">Buka Asli</span>
+                    </a>
+                    <button type="button" onclick="closeImageModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-600/80 text-white flex items-center justify-center backdrop-blur-md border border-white/15 transition focus:outline-none shadow-xs" title="Tutup (Esc)">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Image Viewport -->
+            <div class="relative w-full flex items-center justify-center overflow-hidden rounded-2xl bg-black/40 border border-white/10 p-1.5 shadow-2xl">
+                <img id="global-image-modal-img" src="" class="max-w-full max-h-[80vh] object-contain rounded-xl select-none" alt="Preview Image">
+            </div>
         </div>
     </div>
 
     <script>
-        function openImageModal(src) {
+        function openImageModal(src, title = 'Pratinjau Foto') {
             const modal = document.getElementById('global-image-modal');
             const img = document.getElementById('global-image-modal-img');
+            const titleEl = document.getElementById('global-image-modal-title');
+            const linkEl = document.getElementById('global-image-modal-link');
+            
+            if (!modal || !img) return;
+
             img.src = src;
+            if (titleEl) titleEl.textContent = title || 'Pratinjau Foto';
+            if (linkEl) linkEl.href = src;
+
+            document.body.classList.add('overflow-hidden');
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
         
         function closeImageModal() {
             const modal = document.getElementById('global-image-modal');
+            const img = document.getElementById('global-image-modal-img');
+            
+            if (!modal) return;
+
             modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+            
             setTimeout(() => {
-                document.getElementById('global-image-modal-img').src = '';
+                if (img) img.src = '';
             }, 300);
         }
         

@@ -37,7 +37,9 @@ class AdminSettingController extends Controller
     {
         $validated = $request->validated();
         foreach (['app_name', 'announcement', 'pejabat_name', 'pejabat_nip', 'pejabat_jabatan'] as $key) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $validated[$key] ?? null]);
+            if (array_key_exists($key, $validated)) {
+                Setting::updateOrCreate(['key' => $key], ['value' => $validated[$key]]);
+            }
         }
 
         if ($request->hasFile('ttd_image')) {

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class InstansiController extends Controller
 {
@@ -16,7 +17,10 @@ class InstansiController extends Controller
      */
     public function indexInstansi(Request $request)
     {
-        $query = Instansi::with('positions')->withCount('applications');
+        $query = Instansi::with('positions')->withCount([
+            'applications' => fn ($applicationQuery) => $applicationQuery
+                ->whereIn('applications.status', ['diterima', 'selesai']),
+        ]);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -52,20 +56,28 @@ class InstansiController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'radius_absen' => 'required|numeric|min:10',
+            'ttd_kepala' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'email_admin' => 'required|email|unique:users,email',
             'password_admin' => 'required|min:8',
         ]);
 
         $instansi = DB::transaction(function () use ($request) {
-            $instansi = Instansi::create($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
+            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'alamat', 'latitude', 'longitude', 'radius_absen']);
 
-            User::create([
+            if ($request->hasFile('ttd_kepala')) {
+                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'public');
+            }
+
+            $instansi = Instansi::create($data);
+
+            $adminUser = User::create([
                 'name' => 'Admin ' . $request->nama_dinas,
                 'email' => $request->email_admin,
                 'password' => Hash::make($request->password_admin),
                 'role' => 'admin_instansi',
                 'instansi_id' => $instansi->id,
             ]);
+            $adminUser->syncPrimaryRole();
 
             return $instansi;
         });
@@ -79,7 +91,7 @@ class InstansiController extends Controller
     public function edit($id)
     {
         $instansi = Instansi::findOrFail($id);
-        $adminUser = User::where('instansi_id', $instansi->id)->where('role', 'admin_instansi')->first();
+        $adminUser = User::where('instansi_id', $instansi->id)->portalRole('admin_instansi')->first();
         return view('admin_kota.instansi.edit', compact('instansi', 'adminUser'));
     }
 
@@ -89,7 +101,7 @@ class InstansiController extends Controller
     public function update(Request $request, $id)
     {
         $instansi = Instansi::findOrFail($id);
-        $adminUser = User::where('instansi_id', $instansi->id)->where('role', 'admin_instansi')->first();
+        $adminUser = User::where('instansi_id', $instansi->id)->portalRole('admin_instansi')->first();
 
         $request->validate([
             'nama_dinas' => 'required|string|max:255',
@@ -98,12 +110,27 @@ class InstansiController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'radius_absen' => 'required|numeric|min:10',
-            'email_admin' => $adminUser ? 'required|email|unique:users,email,'.$adminUser->id : 'nullable|email|unique:users,email',
-            'password_admin' => 'nullable|min:8',
+            'ttd_kepala' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'email_admin' => $adminUser
+                ? 'required|email|unique:users,email,'.$adminUser->id
+                : 'nullable|email|unique:users,email|required_with:password_admin',
+            'password_admin' => $adminUser
+                ? 'nullable|min:8'
+                : 'nullable|min:8|required_with:email_admin',
         ]);
 
         DB::transaction(function () use ($instansi, $adminUser, $request) {
-            $instansi->update($request->only(['nama_dinas','kode_unit_kerja','alamat','latitude','longitude', 'radius_absen']));
+            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'alamat', 'latitude', 'longitude', 'radius_absen']);
+
+            if ($request->hasFile('ttd_kepala')) {
+                if ($instansi->ttd_kepala) {
+                    Storage::disk('public')->delete($instansi->ttd_kepala);
+                }
+
+                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'public');
+            }
+
+            $instansi->update($data);
 
             if ($adminUser && $request->email_admin) {
                 $adminUser->email = $request->email_admin;
@@ -111,14 +138,16 @@ class InstansiController extends Controller
                     $adminUser->password = Hash::make($request->password_admin);
                 }
                 $adminUser->save();
+                $adminUser->syncPrimaryRole();
             } elseif (!$adminUser && $request->email_admin && $request->filled('password_admin')) {
-                User::create([
+                $adminUser = User::create([
                     'name' => 'Admin ' . $request->nama_dinas,
                     'email' => $request->email_admin,
                     'password' => Hash::make($request->password_admin),
                     'role' => 'admin_instansi',
                     'instansi_id' => $instansi->id,
                 ]);
+                $adminUser->syncPrimaryRole();
             }
         });
 

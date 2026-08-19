@@ -124,4 +124,20 @@ class Application extends Model
     {
         return $this->status instanceof ApplicationStatus ? $this->status->value : (string) $this->status;
     }
+
+    /**
+     * Predikat (grade label) untuk rata-rata nilai akhir magang.
+     * Satu-satunya sumber kebenaran untuk band predikat — dipakai oleh
+     * PembimbingLapanganController (simpanNilai) dan view penilaian (JS).
+     * Bands: A >= 90, B >= 80, C >= 70, D < 70.
+     */
+    public static function predikatFor(float $avg): string
+    {
+        return match (true) {
+            $avg >= 90 => 'A (Sangat Baik)',
+            $avg >= 80 => 'B (Baik)',
+            $avg >= 70 => 'C (Cukup)',
+            default    => 'D (Kurang)',
+        };
+    }
 }

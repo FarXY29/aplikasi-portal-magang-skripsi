@@ -16,6 +16,18 @@
            <span>Manajemen Pengguna</span>
         </a>
 
+        <a href="{{ route('admin.master.majors.index') }}" 
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.master.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 hover:bg-teal-50/80 hover:text-teal-700' }}">
+           <i class="fas fa-graduation-cap w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.master.*') ? 'text-white' : 'text-gray-400 group-hover:text-teal-600' }}"></i>
+           <span>Master Rumpun & Jurusan</span>
+        </a>
+
+        <a href="{{ route('admin.certificates.index') }}" 
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.certificates.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 hover:bg-teal-50/80 hover:text-teal-700' }}">
+           <i class="fas fa-certificate w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.certificates.*') ? 'text-white' : 'text-gray-400 group-hover:text-teal-600' }}"></i>
+           <span>Registri Sertifikat Kota</span>
+        </a>
+
         <a href="{{ route('admin.audit_trail') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.audit_trail') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 hover:bg-teal-50/80 hover:text-teal-700' }}">
            <i class="fas fa-shield-alt w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.audit_trail') ? 'text-white' : 'text-gray-400 group-hover:text-teal-600' }}"></i>

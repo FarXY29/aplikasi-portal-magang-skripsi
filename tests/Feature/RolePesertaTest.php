@@ -61,10 +61,15 @@ class RolePesertaTest extends TestCase
             'tanggal_selesai' => now()->addMonths(3)->toDateString(),
         ]);
 
-        // Test download LoA
+        // Test download LoA without signature
         $responseLoa = $this->actingAs($user)->get(route('peserta.loa.download', $app->id));
         $responseLoa->assertStatus(200);
         $this->assertTrue(str_contains($responseLoa->headers->get('Content-Disposition'), 'LoA_'));
+
+        // Test download LoA with signature image
+        $instansi->update(['ttd_kepala' => 'signatures/sample.png']);
+        $responseLoaWithTtd = $this->actingAs($user)->get(route('peserta.loa.download', $app->id));
+        $responseLoaWithTtd->assertStatus(200);
 
         // Test download ID Card
         $responseIdCard = $this->actingAs($user)->get(route('peserta.id_card.download', $app->id));
@@ -400,5 +405,117 @@ class RolePesertaTest extends TestCase
         $this->assertDatabaseHas('daily_logs', [
             'id' => $log->id,
         ]);
+    }
+
+    public function test_peserta_can_download_transkrip_nilai_pdf_with_signatures()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        $pl = User::factory()->create([
+            'role' => 'pembimbing_lapangan',
+            'signature' => 'signatures/dummy_pl.png',
+        ]);
+        $pl->assignRole('pembimbing_lapangan');
+
+        $peserta = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '6371012345670001',
+            'asal_instansi' => 'Universitas Lambung Mangkurat',
+        ]);
+        $peserta->assignRole('peserta');
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Kominfo Banjarmasin',
+            'nama_pejabat' => 'Kadis Kominfo',
+            'nip_pejabat' => '198001012005011001',
+            'jabatan_pejabat' => 'Kepala Dinas Komunikasi dan Informatika',
+            'ttd_kepala' => 'signatures/dummy_kadis.png',
+            'kode_unit_kerja' => 'KOMINFO-01',
+            'alamat' => 'Jl RE Martadinata',
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'Web Developer Intern',
+            'kuota' => 5,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $peserta->id,
+            'internship_position_id' => $position->id,
+            'pembimbing_lapangan_id' => $pl->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'selesai',
+            'saran_peserta' => 'Pengalaman magang sangat baik dan bermanfaat.',
+            'tanggal_mulai' => now()->subMonths(3)->toDateString(),
+            'tanggal_selesai' => now()->toDateString(),
+            'nilai_integritas' => 90,
+            'nilai_keahlian' => 88,
+            'nilai_disiplin' => 92,
+            'nilai_kerjasama' => 85,
+            'nilai_inisiatif' => 87,
+            'nilai_kehadiran' => 95,
+            'nilai_rata_rata' => 89.5,
+        ]);
+
+        $response = $this->actingAs($peserta)->get(route('peserta.download.nilai', $app->id));
+        $response->assertStatus(200);
+        $this->assertTrue(str_contains($response->headers->get('Content-Disposition') ?? '', '.pdf') || $response->headers->get('Content-Type') === 'application/pdf');
+    }
+
+    public function test_peserta_can_download_sertifikat_pdf_with_signatures()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        $pl = User::factory()->create([
+            'role' => 'pembimbing_lapangan',
+            'signature' => 'signatures/dummy_pl.png',
+        ]);
+        $pl->assignRole('pembimbing_lapangan');
+
+        $peserta = User::factory()->create([
+            'role' => 'peserta',
+            'nik' => '6371012345670001',
+            'asal_instansi' => 'Universitas Lambung Mangkurat',
+        ]);
+        $peserta->assignRole('peserta');
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Pendidikan Banjarmasin',
+            'nama_pejabat' => 'Kadis Pendidikan',
+            'nip_pejabat' => '197501012000011002',
+            'jabatan_pejabat' => 'Kepala Dinas Pendidikan',
+            'ttd_kepala' => 'signatures/dummy_disdik.png',
+            'kode_unit_kerja' => 'DISDIK-01',
+            'alamat' => 'Jl Kapten Pierre Tendean',
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'Administrasi Pendidikan',
+            'kuota' => 5,
+            'status' => 'buka',
+        ]);
+
+        $app = \App\Models\Application::create([
+            'user_id' => $peserta->id,
+            'internship_position_id' => $position->id,
+            'pembimbing_lapangan_id' => $pl->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'selesai',
+            'saran_peserta' => 'Terima kasih atas bimbingannya.',
+            'tanggal_mulai' => now()->subMonths(3)->toDateString(),
+            'tanggal_selesai' => now()->toDateString(),
+            'nomor_sertifikat' => '001/SERTIF/2026',
+            'token_verifikasi' => 'TOKEN-TEST-12345',
+            'sertifikat_diterbitkan' => true,
+        ]);
+
+        $response = $this->actingAs($peserta)->get(route('peserta.sertifikat', $app->id));
+        $response->assertStatus(200);
+        $this->assertTrue(str_contains($response->headers->get('Content-Disposition') ?? '', '.pdf') || $response->headers->get('Content-Type') === 'application/pdf');
     }
 }

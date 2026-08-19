@@ -43,6 +43,14 @@
     background: #94a3b8; 
 }
 
+/* Custom Modern Scrollbar (thin, for logbook sidebar lists) */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
 /* Hide horizontal scrollbar but keep functionality for Quick Pills */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -50,6 +58,27 @@
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Custom slim scrollbar for inner panels (e.g. logbook activity list) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #475569;
 }
 
 /* Modern UI/UX Utilities */
@@ -96,6 +125,178 @@
     background-size: 100% 100%, 100% 100%, cover, auto;
 }
 
+/* ==========================================================================
+   Landing Page Reveal & Entrance Animation System
+   ========================================================================== */
+
+/* Elements only animate when JS is available (progressive enhancement).
+   The `js` class is added to <html> by an inline script in the <head>. */
+.js .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+.js .reveal.revealed {
+    opacity: 1;
+    transform: none;
+}
+
+/* Directional reveal variants */
+.js .reveal-left {
+    transform: translateX(-36px);
+}
+.js .reveal-right {
+    transform: translateX(36px);
+}
+.js .reveal-scale {
+    transform: translateY(14px) scale(0.96);
+}
+.js .reveal-left.revealed,
+.js .reveal-right.revealed,
+.js .reveal-scale.revealed {
+    transform: none;
+}
+
+/* Hero entrance (runs once on page load, no IntersectionObserver needed) */
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: none; }
+}
+.hero-enter {
+    animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--hero-delay, 0ms);
+}
+
+/* Gentle idle float for the ambient orbs */
+@keyframes heroFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -18px, 0); }
+}
+.hero-float {
+    animation: heroFloat 9s ease-in-out infinite;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .js .reveal,
+    .js .reveal-left,
+    .js .reveal-right,
+    .js .reveal-scale {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    .hero-enter,
+    .hero-float {
+        animation: none;
+    }
+}
+
+/* ==========================================================================
+   Auth Pages Design System
+   ========================================================================== */
+
+/* Outer shell: subtle light bg with a faint Sasirangan wash and ambient ambient radial glow */
+.auth-shell {
+    background-color: #f8fafc;
+    background-image:
+        radial-gradient(circle at 85% 15%, rgba(20, 184, 166, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(13, 148, 136, 0.08) 0%, transparent 40%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.035'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100% 100%, 100% 100%, cover, auto;
+}
+.dark .auth-shell {
+    background-color: #031c1b;
+    background-image:
+        radial-gradient(circle at 85% 15%, rgba(20, 184, 166, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(13, 148, 136, 0.12) 0%, transparent 45%),
+        linear-gradient(to bottom right, rgba(3, 28, 27, 0.98), rgba(6, 78, 59, 0.98)),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.05'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Branding panel (left/hero side of auth pages) */
+.auth-branding {
+    background-color: #0d9488;
+    background-image:
+        radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 15% 90%, rgba(4, 47, 46, 0.45) 0%, transparent 55%),
+        linear-gradient(155deg, #0d9488 0%, #0f766e 50%, #115e59 100%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: 100% 100%, 100% 100%, cover, auto;
+}
+
+/* Form card with modern glassmorphism touch */
+.auth-card {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 25px 60px -15px rgba(15, 118, 110, 0.18), 0 10px 20px -10px rgba(0, 0, 0, 0.04);
+}
+.dark .auth-card {
+    background-color: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: rgba(51, 65, 85, 0.6);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(20, 184, 166, 0.05);
+}
+
+/* Consistent auth input styling */
+.auth-input {
+    @apply w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-900/90 px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition duration-200 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-teal-500/20 focus:outline-none;
+}
+
+/* Primary auth submit button with gradient & tactile hover */
+.auth-btn {
+    @apply relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-teal-600 via-teal-500 to-emerald-600 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg shadow-teal-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-teal-600/40 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-4 focus:ring-teal-500/30 disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+/* Auth field label */
+.auth-label {
+    @apply mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300;
+}
+
+/* Keyframe animations for entrance and micro-interactions */
+@keyframes authFadeUp {
+    from { opacity: 0; transform: translateY(18px) scale(0.99); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.auth-animate-in {
+    animation: authFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Shimmer Button Effect */
+.shimmer-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0) 40%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 60%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    transition: transform 0.8s ease;
+}
+.shimmer-btn:hover::after {
+    transform: translate(37.5%, 37.5%) rotate(30deg);
+}
+
+/* Password strength bar transition */
+.pwd-strength-bar {
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.35s ease;
+}
+
 /* styling content CKEditor standard */
 .ck-content ul { list-style-type: disc; padding-left: 20px; margin-bottom: 0.75rem; }
 .ck-content ol { list-style-type: decimal; padding-left: 20px; margin-bottom: 0.75rem; }
@@ -103,9 +304,12 @@
 .ck-content h3 { font-size: 1.15em; font-weight: 600; margin-top: 1rem; color: #334155; }
 .ck-content p { margin-bottom: 0.75em; line-height: 1.7; }
 
-/* Safe area bottom navigation */
+/* Safe area utilities (iOS Notch & Dynamic Island / Home Indicator) */
 .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+.pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* ==========================================================================

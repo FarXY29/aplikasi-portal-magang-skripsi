@@ -59,9 +59,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'asal_instansi', 
         'major',
+        'major_id',
         'nama_pembimbing_sekolah',
-        'pembimbing_sekolah_id', // TAMBAHAN: Relasi langsung ke akun pembimbing
-        'signature', // Kolom Tanda Tangan Pembimbing Lapangan
+        'pembimbing_sekolah_id',
+        'signature',
         'photo',
     ];
 
@@ -100,8 +101,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(School::class);
     }
 
-    // --- TAMBAHAN PENTING: RELASI KE LAMARAN (APPLICATIONS) ---
-    // Diperlukan agar Super Admin bisa melihat logbook peserta
+    // Relasi ke Master Data Jurusan / Program Studi
+    public function majorDetail() {
+        return $this->belongsTo(Major::class, 'major_id');
+    }
+
+    // Relasi ke LAMARAN (APPLICATIONS)
     public function applications() {
         return $this->hasMany(Application::class);
     }
@@ -118,6 +123,22 @@ class User extends Authenticatable implements MustVerifyEmail
     // Relasi pembimbing sekolah ke mahasiswanya
     public function mahasiswa_bimbingan() {
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
+    }
+
+    /** Accessor agar panggilan ->nim, ->npm, atau ->nomor_induk tetap mengembalikan nomor induk/nik peserta/pembimbing */
+    public function getNimAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
+    }
+
+    public function getNpmAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
+    }
+
+    public function getNomorIndukAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
     }
 
     protected static function boot()
@@ -147,6 +168,37 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return false;
+    }
+
+    /**
+     * Ambil satu role portal yang menjadi sumber tampilan utama.
+     * Role Spatie diprioritaskan, lalu kolom legacy dipakai sebagai fallback.
+     */
+    public function getPrimaryPortalRole(): ?string
+    {
+        $roleNames = $this->relationLoaded('roles')
+            ? $this->roles->pluck('name')
+            : $this->roles()->where('guard_name', 'web')->pluck('name');
+
+        foreach (self::PORTAL_ROLES as $role) {
+            if ($roleNames->contains($role)) {
+                return $role;
+            }
+        }
+
+        return in_array($this->role, self::PORTAL_ROLES, true) ? $this->role : null;
+    }
+
+    /** Query akun berdasarkan role Spatie dengan fallback kolom role legacy. */
+    public function scopePortalRole($query, string $role)
+    {
+        return $query->where(function ($roleQuery) use ($role) {
+            $roleQuery->where($this->qualifyColumn('role'), $role)
+                ->orWhereHas('roles', function ($spatieRoleQuery) use ($role) {
+                    $spatieRoleQuery->where('name', $role)
+                        ->where('guard_name', 'web');
+                });
+        });
     }
 
     /** Sinkronkan tepat satu role utama ke Spatie tanpa menghapus data user lama. */
@@ -224,5 +276,21 @@ class User extends Authenticatable implements MustVerifyEmail
                 \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * Cek apakah role menggunakan kolom instansi_id.
+     */
+    public static function usesInstansiId(string $role): bool
+    {
+        return in_array($role, ['admin_instansi', 'pembimbing_lapangan'], true);
+    }
+
+    /**
+     * Cek apakah role menggunakan kolom asal_instansi.
+     */
+    public static function usesAsalInstansi(string $role): bool
+    {
+        return in_array($role, ['peserta', 'pembimbing'], true);
     }
 }

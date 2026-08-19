@@ -13,20 +13,23 @@ class PembimbingLapanganController extends Controller
     public function indexPembimbingLapangan()
     {
         $instansiId = Auth::user()->instansi_id;
-        $pembimbing_lapangan = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')->get();
+        $pembimbing_lapangan = User::where('instansi_id', $instansiId)
+            ->portalRole('pembimbing_lapangan')
+            ->get();
         return view('admin_instansi.pembimbing_lapangan.index', compact('pembimbing_lapangan'));
     }
 
     public function storePembimbingLapangan(PembimbingLapanganRequest $request)
     {
-        User::create([
+        $pembimbing_lapangan = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'pembimbing_lapangan',
             'instansi_id' => Auth::user()->instansi_id,
-            'nik' => $request->nip
+            'nik' => $request->nip,
         ]);
+        $pembimbing_lapangan->syncPrimaryRole();
 
         return back()->with('success', 'Akun Pembimbing Lapangan berhasil dibuat.');
     }
@@ -35,7 +38,7 @@ class PembimbingLapanganController extends Controller
     {
         $pembimbing_lapangan = User::where('id', $id)
                     ->where('instansi_id', Auth::user()->instansi_id)
-                    ->where('role', 'pembimbing_lapangan')
+                    ->portalRole('pembimbing_lapangan')
                     ->firstOrFail();
 
         return view('admin_instansi.pembimbing_lapangan.edit', compact('pembimbing_lapangan'));
@@ -45,6 +48,7 @@ class PembimbingLapanganController extends Controller
     {
         $pembimbing_lapangan = User::where('id', $id)
                     ->where('instansi_id', Auth::user()->instansi_id)
+                    ->portalRole('pembimbing_lapangan')
                     ->firstOrFail();
 
         $data = [
@@ -64,7 +68,10 @@ class PembimbingLapanganController extends Controller
 
     public function destroyPembimbingLapangan($id)
     {
-        $user = User::where('id', $id)->where('instansi_id', Auth::user()->instansi_id)->firstOrFail();
+        $user = User::where('id', $id)
+            ->where('instansi_id', Auth::user()->instansi_id)
+            ->portalRole('pembimbing_lapangan')
+            ->firstOrFail();
         $user->delete();
         return back()->with('success', 'Akun pembimbing_lapangan dihapus.');
     }

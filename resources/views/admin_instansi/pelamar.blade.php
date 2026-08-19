@@ -112,6 +112,20 @@
                                                 <span class="flex items-center"><i class="far fa-envelope mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->email }}</span>
                                                 <span class="flex items-center"><i class="fas fa-phone-alt mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->phone ?? '-' }}</span>
                                                 <span class="flex items-center"><i class="fas fa-university mr-1.5 w-3 text-gray-400 dark:text-gray-500"></i> {{ $app->user->university?->name ?? $app->user->school?->name ?? $app->user->asal_instansi ?? '-' }}</span>
+                                                <span class="flex items-center gap-1.5 font-semibold text-gray-700 dark:text-gray-300">
+                                                    <i class="fas fa-graduation-cap mr-1 w-3 text-teal-600 dark:text-teal-400"></i>
+                                                    <span>{{ $app->user->majorDetail?->name ?? ($app->user->major ?? '-') }}</span>
+                                                    @if($app->user->majorDetail?->degree_level)
+                                                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold font-mono">
+                                                            {{ $app->user->majorDetail->degree_level }}
+                                                        </span>
+                                                    @endif
+                                                    @if($app->position?->required_major_category_id && $app->user->majorDetail?->major_category_id === $app->position->required_major_category_id)
+                                                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">
+                                                            <i class="fas fa-check text-[7px] mr-0.5"></i> Sesuai Rumpun
+                                                        </span>
+                                                    @endif
+                                                </span>
                                                 @if($app->letter_number)
                                                     <span class="flex items-center font-bold text-teal-700 dark:text-teal-400 mt-0.5"><i class="fas fa-file-signature mr-1.5 w-3"></i> No. Surat: {{ $app->letter_number }}</span>
                                                 @endif
@@ -217,7 +231,7 @@
                                                     </button>
                                                 @endif
 
-                                                <button type="button" @click="openReject('{{ route('dinas.pelamar.tolak', $app->id) }}', '{{ $app->user->name }}')" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/60 text-xs font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 active:scale-95 transition shadow-xs" title="Tolak Peserta">
+                                                <button type="button" @click="openReject(@js(route('dinas.pelamar.tolak', $app->id)), @js($app->user->name))" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/60 text-xs font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 active:scale-95 transition shadow-xs" title="Tolak Peserta">
                                                     <i class="fas fa-times mr-1"></i> Tolak
                                                 </button>
                                             </div>
@@ -225,7 +239,7 @@
 
                                         <!-- Tombol In-Browser PDF Viewer -->
                                         @if($app->surat_pengantar_path)
-                                            <button type="button" @click="openPdf('{{ route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) }}', 'Surat Pengantar - {{ $app->user->name }}')" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline flex items-center cursor-pointer bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/50 transition">
+                                            <button type="button" @click="openPdf(@js(route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)])), @js('Surat Pengantar - ' . $app->user->name))" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline flex items-center cursor-pointer bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/50 transition">
                                                 <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> Lihat Surat
                                             </button>
                                         @else

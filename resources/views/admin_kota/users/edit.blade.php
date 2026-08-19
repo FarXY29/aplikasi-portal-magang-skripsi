@@ -21,6 +21,8 @@
                     @csrf
                     @method('PUT')
                     
+                    @php($currentRole = old('role', $portalRole ?? $user->role))
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
                         <div class="space-y-6">
@@ -76,31 +78,34 @@
                                     </span>
                                     <select name="role" id="roleSelect" onchange="toggleFields()"
                                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm cursor-pointer font-bold text-sm">
-                                        <option value="peserta" {{ $user->role == 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
-                                        <option value="pembimbing" {{ $user->role == 'pembimbing' ? 'selected' : '' }}>Dosen / Guru Pembimbing</option>
-                                        <option value="pembimbing_lapangan" {{ $user->role == 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan (Pegawai)</option>
-                                        <option value="admin_instansi" {{ $user->role == 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
+                                        <option value="peserta" {{ $currentRole === 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
+                                        <option value="pembimbing" {{ $currentRole === 'pembimbing' ? 'selected' : '' }}>Dosen / Guru Pembimbing</option>
+                                        <option value="pembimbing_lapangan" {{ $currentRole === 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan (Pegawai)</option>
+                                        <option value="admin_instansi" {{ $currentRole === 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
+                                        @if($portalRole === 'admin_kota')
+                                            <option value="admin_kota" {{ $currentRole === 'admin_kota' ? 'selected' : '' }}>Super Admin Kota</option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
 
                             <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300">
                                 
-                                <div id="instansiDinasField" class="{{ in_array($user->role, ['admin_instansi', 'pembimbing_lapangan']) ? '' : 'hidden' }}">
+                                <div id="instansiDinasField" class="{{ in_array($currentRole, ['admin_instansi', 'pembimbing_lapangan']) ? '' : 'hidden' }}">
                                     <label class="block text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2 tracking-wide">
                                         <i class="fas fa-building mr-1"></i> Asal Instansi
                                     </label>
                                     <select name="instansi_id" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 text-sm focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">-- Pilih Instansi --</option>
                                         @foreach($instansis as $instansi)
-                                            <option value="{{ $instansi->id }}" {{ $user->instansi_id == $instansi->id ? 'selected' : '' }}>
+                                            <option value="{{ $instansi->id }}" {{ old('instansi_id', $user->instansi_id) == $instansi->id ? 'selected' : '' }}>
                                                 {{ $instansi->nama_dinas }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <div id="asalSekolahField" class="{{ in_array($user->role, ['peserta', 'pembimbing']) ? '' : 'hidden' }}">
+                                <div id="asalSekolahField" class="{{ in_array($currentRole, ['peserta', 'pembimbing']) ? '' : 'hidden' }}">
                                     <label class="block text-xs font-bold text-green-600 dark:text-green-400 uppercase mb-2 tracking-wide">
                                         <i class="fas fa-university mr-1"></i> Asal Sekolah / Kampus
                                     </label>
@@ -109,7 +114,7 @@
                                         placeholder="Contoh: Universitas Lambung Mangkurat">
                                 </div>
 
-                                <div id="noneField" class="{{ $user->role == 'admin_kota' ? '' : 'hidden' }} text-center text-gray-400 dark:text-gray-500 text-sm py-2">
+                                <div id="noneField" class="{{ $currentRole === 'admin_kota' ? '' : 'hidden' }} text-center text-gray-400 dark:text-gray-500 text-sm py-2">
                                     <i class="fas fa-info-circle mr-1"></i> Super Admin memiliki akses penuh.
                                 </div>
                             </div>
@@ -145,14 +150,27 @@
             const instansiDinasField = document.getElementById('instansiDinasField');
             const asalSekolahField = document.getElementById('asalSekolahField');
             const noneField = document.getElementById('noneField');
+            const instansiInput = document.querySelector('[name="instansi_id"]');
+            const asalInstansiInput = document.querySelector('[name="asal_instansi"]');
+            const needsInstansi = role === 'admin_instansi' || role === 'pembimbing_lapangan';
+            const needsAsalInstansi = role === 'pembimbing' || role === 'peserta';
 
             if (instansiDinasField) instansiDinasField.classList.add('hidden');
             if (asalSekolahField) asalSekolahField.classList.add('hidden');
             if (noneField) noneField.classList.add('hidden');
 
-            if (role === 'admin_instansi' || role === 'pembimbing_lapangan') {
+            if (instansiInput) {
+                instansiInput.disabled = !needsInstansi;
+                instansiInput.required = needsInstansi;
+            }
+            if (asalInstansiInput) {
+                asalInstansiInput.disabled = !needsAsalInstansi;
+                asalInstansiInput.required = needsAsalInstansi;
+            }
+
+            if (needsInstansi) {
                 if (instansiDinasField) instansiDinasField.classList.remove('hidden');
-            } else if (role === 'pembimbing' || role === 'peserta') {
+            } else if (needsAsalInstansi) {
                 if (asalSekolahField) asalSekolahField.classList.remove('hidden');
             } else {
                 if (noneField) noneField.classList.remove('hidden');

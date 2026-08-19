@@ -15,9 +15,18 @@
         <title>{{ config('app.name', 'Portal Magang') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:300,400,500,600,700,800|outfit:300,400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            body {
+                font-family: 'Plus Jakarta Sans', 'Figtree', 'Inter', sans-serif;
+                -webkit-tap-highlight-color: transparent;
+            }
+            h1, h2, h3, h4, .font-display {
+                font-family: 'Outfit', sans-serif;
+            }
+        </style>
         <script>
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
@@ -39,15 +48,30 @@
             }
         </script>
     </head>
-    <body class="font-sans text-gray-900 dark:text-gray-100 antialiased bg-gray-100 dark:bg-gray-800 dark:bg-gray-900 transition-colors duration-300">
-        
-        <div class="min-h-screen flex flex-col justify-center items-center p-2 sm:p-4">
-            
-            <div class="w-full">
+    <body class="auth-shell relative min-h-screen font-sans text-gray-900 dark:text-gray-100 antialiased transition-colors duration-300">
+        {{-- Ambient background glowing Orbs --}}
+        <div class="pointer-events-none fixed -top-24 -left-24 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl dark:bg-teal-500/20"></div>
+        <div class="pointer-events-none fixed -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl dark:bg-emerald-500/20"></div>
+
+        {{-- Top Floating Utilities (Theme Toggle & Quick Home) --}}
+        <header class="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 sm:px-8">
+            <a href="{{ route('home') }}" class="group flex items-center gap-2.5 rounded-full border border-gray-200/80 bg-white/70 px-3.5 py-1.5 text-xs font-bold text-gray-700 shadow-sm backdrop-blur-md transition hover:border-teal-500/40 hover:bg-white dark:border-gray-800 dark:bg-gray-900/70 dark:text-gray-300 dark:hover:border-teal-500/40 dark:hover:bg-gray-900">
+                <x-application-logo class="h-4 w-4 fill-current text-teal-600 dark:text-teal-400" />
+                <span>Portal Magang</span>
+            </a>
+
+            <div class="flex items-center gap-2 rounded-full border border-gray-200/80 bg-white/70 p-1 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/70">
+                <x-theme-toggle class="!p-1.5" />
+            </div>
+        </header>
+
+        {{-- Main Content Container --}}
+        <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 lg:pt-28">
+            <div class="w-full max-w-6xl">
                 {{ $slot }}
             </div>
-
         </div>
+
         <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
         @stack('scripts')
     </body>

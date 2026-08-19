@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Peserta;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Attendance;
+use App\Services\InternshipApplicationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class DashboardController extends Controller
         $endDate = $request->input('end_date');
 
         $query = Application::where('user_id', $user->id)
-                            ->with(['position.instansi'])
+                            ->with(['position.instansi', 'certificate'])
                             ->latest();
 
         if ($statusFilter && $statusFilter !== 'semua') {
@@ -51,7 +52,7 @@ class DashboardController extends Controller
         if (!$activeApp) {
             $activeApp = Application::where('user_id', $user->id)
                             ->where('status', 'selesai')
-                            ->with(['position.instansi', 'pembimbing_lapangan'])
+                            ->with(['position.instansi', 'pembimbing_lapangan', 'certificate'])
                             ->latest('updated_at')
                             ->first();
         }
@@ -103,7 +104,7 @@ class DashboardController extends Controller
         return view('peserta.dashboard', compact('myApplications', 'activeApp', 'attendanceToday', 'jamKerja', 'stats', 'daysRemaining'));
     }
 
-    public function cancelApplication($id, \App\Services\InternshipApplicationService $applicationService)
+    public function cancelApplication($id, InternshipApplicationService $applicationService)
     {
         $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
@@ -118,18 +119,24 @@ class DashboardController extends Controller
         return back()->with('success', 'Lamaran magang berhasil dibatalkan.');
     }
 
-    public function downloadCertificate()
+    public function downloadCertificate($id = null)
     {
         $user = Auth::user();
-        
-        $finishedApp = Application::where('user_id', $user->id)
+
+        $finishedAppQuery = Application::where('user_id', $user->id)
                         ->where('status', 'selesai')
-                        ->with(['position.instansi', 'user'])
-                        ->latest('updated_at')
-                        ->first();
+                        ->with(['position.instansi', 'user', 'certificate']);
+
+        $finishedApp = $id
+            ? $finishedAppQuery->whereKey($id)->first()
+            : $finishedAppQuery->latest('updated_at')->first();
 
         if (!$finishedApp) {
             return back()->with('error', 'Anda belum menyelesaikan program magang manapun.');
+        }
+
+        if ($finishedApp->certificate?->isRevoked()) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Sertifikat ini telah dicabut / dibatalkan oleh Pemerintah Kota. Alasan: ' . ($finishedApp->certificate->revoked_reason ?? 'Pencabutan administratif.'));
         }
 
         if (empty($user->nik) || empty($user->asal_instansi)) {

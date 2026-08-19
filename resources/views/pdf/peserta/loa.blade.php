@@ -97,22 +97,36 @@
         .st-content { width: 72%; font-weight: bold; }
 
         /* TANDA TANGAN */
-        .signature-wrapper {
+        .signature-table {
             width: 100%;
-            margin-top: 30px;
-            display: table; /* Hack untuk float clearing */
+            margin-top: 25px;
+            border-collapse: collapse;
+            page-break-inside: avoid;
         }
-        .signature-box {
-            float: right;
-            width: 45%; /* Lebar area tanda tangan */
+        .signature-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        .signature-col-left {
+            width: 50%;
+        }
+        .signature-col-right {
+            width: 50%;
+            text-align: center;
+        }
+        .ttd-img-box {
+            height: 65px;
+            margin: 4px 0;
             text-align: center;
         }
         .ttd-img {
+            max-height: 65px;
+            max-width: 180px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ttd-space {
             height: 65px;
-            margin: 5px 0;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
         
         /* Helper */
@@ -183,7 +197,7 @@
         </p>
 
         <p class="paragraph">
-            Berkaitan hal tersebut di atas, maka Dinas Komunikasi, Informatika dan Statistik Kota Banjarmasin pada prinsipnya <strong>MENYETUJUI</strong> Mahasiswa yang akan Magang pada Dinas kami, yaitu atas nama:
+            Berkaitan hal tersebut di atas, maka {{ $app->position->instansi->nama_dinas }} pada prinsipnya <strong>MENYETUJUI</strong> Mahasiswa/i yang akan Magang pada Instansi kami, yaitu atas nama:
         </p>
 
         <table class="student-table">
@@ -195,15 +209,15 @@
             </tr>
             <tr>
                 <td class="st-num"></td>
-                <td class="st-label">NIM / NISN</td>
+                <td class="st-label">NIM / NPM / NISN</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->nim ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->nik ?? $app->user->nim ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
                 <td class="st-label">Prodi / Jurusan</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->major ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->majorDetail?->name ?? $app->user->major ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
@@ -224,25 +238,55 @@
         </p>
     </div>
 
-    <div class="signature-wrapper">
-        <div class="signature-box">
-            <span>a.n. KEPALA DINAS</span><br>
-            <span style="text-transform: uppercase;">{{ $app->position->instansi->jabatan_pejabat ?? 'Sekretaris' }},</span>
-            
-            <br>
-            @if(!empty($app->position->instansi->ttd_kepala))
-                <img src="{{ storage_path('app/public/' . $app->position->instansi->ttd_kepala) }}" class="ttd-img" alt="TTD">
-            @else
-                <br><br><br>
-            @endif
-            
-            <span class="bold underline" style="text-transform: uppercase;">
-                {{ $app->position->instansi->nama_pejabat ?? 'Nama Pejabat Belum Diatur' }}
-            </span><br>
-            <span>{{ $app->position->instansi->pangkat_pejabat ?? 'Pembina' }}</span><br>
-            <span>NIP. {{ $app->position->instansi->nip_pejabat ?? '-' }}</span>
-        </div>
-    </div>
+    <table class="signature-table">
+        <tr>
+            <td class="signature-col-left"></td>
+            <td class="signature-col-right">
+                @php
+                    $jabatan = trim($app->position->instansi->jabatan_pejabat ?? 'Kepala Dinas');
+                    $isKepala = stripos($jabatan, 'kepala dinas') !== false 
+                        || stripos($jabatan, 'kepala badan') !== false 
+                        || stripos($jabatan, 'kepala kantor') !== false 
+                        || stripos($jabatan, 'direktur') !== false 
+                        || stripos($jabatan, 'camat') !== false 
+                        || stripos($jabatan, 'lurah') !== false;
+                    
+                    $ttdPath = null;
+                    if (!empty($app->position->instansi->ttd_kepala)) {
+                        $rawPath = $app->position->instansi->ttd_kepala;
+                        if (file_exists(storage_path('app/public/' . $rawPath))) {
+                            $ttdPath = storage_path('app/public/' . $rawPath);
+                        } elseif (file_exists(public_path('storage/' . $rawPath))) {
+                            $ttdPath = public_path('storage/' . $rawPath);
+                        }
+                    }
+                @endphp
+
+                @if(!$isKepala && !empty($jabatan))
+                    <div style="font-weight: normal; text-transform: uppercase;">a.n. KEPALA DINAS</div>
+                    <div style="font-weight: bold; text-transform: uppercase;">{{ $jabatan }},</div>
+                @else
+                    <div style="font-weight: bold; text-transform: uppercase;">{{ $jabatan }},</div>
+                @endif
+                
+                <div class="ttd-img-box">
+                    @if($ttdPath)
+                        <img src="{{ $ttdPath }}" class="ttd-img" alt="TTD">
+                    @else
+                        <div class="ttd-space"></div>
+                    @endif
+                </div>
+                
+                <div class="bold underline" style="text-transform: uppercase; margin-bottom: 2px;">
+                    {{ $app->position->instansi->nama_pejabat ?? 'Nama Pejabat Belum Diatur' }}
+                </div>
+                @if(!empty($app->position->instansi->pangkat_pejabat))
+                    <div>{{ $app->position->instansi->pangkat_pejabat }}</div>
+                @endif
+                <div>NIP. {{ $app->position->instansi->nip_pejabat ?? '-' }}</div>
+            </td>
+        </tr>
+    </table>
 
 </body>
 </html>

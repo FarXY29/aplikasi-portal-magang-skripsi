@@ -23,6 +23,7 @@ class StoreApplicationRequest extends FormRequest
     {
         return [
             'letter_number' => ['nullable', 'string', 'max:100'],
+            'is_waiting_list' => ['nullable', 'boolean'],
             'surat' => ['required', 'file', 'mimetypes:application/pdf', 'max:2048'],
             'tanggal_mulai' => ['required', 'date', 'after_or_equal:today'],
             'tanggal_selesai' => ['required', 'date', 'after:tanggal_mulai'],

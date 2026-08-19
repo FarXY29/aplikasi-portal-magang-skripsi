@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Http\Requests\Attendance\ClockInRequest;
 use App\Http\Requests\Attendance\PermissionRequest;
 use App\Services\AuditLogService;
+use App\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
@@ -19,34 +20,25 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
-        $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->first();
 
-        if (!$application) {
-            $application = Application::where('user_id', $user->id)
-                            ->where('status', 'selesai')
-                            ->latest('updated_at')
-                            ->first();
-        }
+        $historyData = app(AttendanceService::class)->historyData($user, $request);
+        $application = $historyData['application'];
+        $periodMonths = $historyData['periodMonths'];
+        $attendanceSummary = $historyData['attendanceSummary'];
+        $query = $historyData['query'];
 
         if (!$application) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');
         }
 
-        $query = Attendance::where('application_id', $application->id)
-                           ->orderBy('date', 'desc');
+        // Urutan
+        $sort = $request->get('sort', 'desc');
+        $sort = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
+        $query->orderBy('date', $sort);
 
-        // Filter berdasarkan bulan jika ada
-        if ($request->has('month') && $request->month != '') {
-            $query->whereMonth('date', Carbon::parse($request->month)->month)
-                  ->whereYear('date', Carbon::parse($request->month)->year);
-        }
+        $attendances = $query->paginate(15)->withQueryString();
 
-        $attendances = $query->paginate(15);
-
-        return view('peserta.absensi.index', compact('attendances', 'application'));
+        return view('peserta.absensi.index', compact('attendances', 'application', 'attendanceSummary', 'periodMonths'));
     }
 
     /**
@@ -130,7 +122,7 @@ class AttendanceController extends Controller
             'longitude_in' => $request->longitude,
             'ip_address' => $request->ip(),
             'device_info' => $request->userAgent(),
-            'validation_status' => 'pending',
+            'validation_status' => 'approved',
         ]);
 
         app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [

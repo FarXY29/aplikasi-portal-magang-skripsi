@@ -113,7 +113,7 @@
         </div>
         
         <div class="footer">
-            <p>&copy; {{ date('Y') }} {{ env('APP_NAME', 'Portal Magang Banjarmasin') }}. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} {{ config('app.name', 'Portal Magang Banjarmasin') }}. All rights reserved.</p>
             <p>Pemerintah Kota Banjarmasin</p>
         </div>
     </div>

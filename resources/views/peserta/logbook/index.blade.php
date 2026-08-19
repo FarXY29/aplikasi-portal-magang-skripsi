@@ -159,24 +159,26 @@
                         
                         <!-- Header & Filters -->
                         <div class="p-6 flex flex-col justify-between gap-4 sticky top-0 z-10 glass-effect">
+                            <form method="GET" action="{{ route('peserta.logbook.index') }}">
+                                <input type="hidden" name="status" x-model="filter">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <h3 class="font-extrabold text-gray-800 dark:text-gray-100 text-base sm:text-lg">Riwayat Jurnal</h3>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Catatan harian aktivitas magang Anda.</p>
                                 </div>
                                 
-                                <!-- Status Filters -->
+                                    <!-- Status Filters -->
                                 <div class="flex flex-wrap gap-2">
-                                    <button @click="filter = 'semua'" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
-                                        Semua <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->count() }}</span>
+                                    <button type="button" @click="filter = 'semua'; $nextTick(() => $el.form.submit())" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
+                                        Semua <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->total() }}</span>
                                     </button>
-                                    <button @click="filter = 'pending'" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'pending'; $nextTick(() => $el.form.submit())" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Pending
                                     </button>
-                                    <button @click="filter = 'disetujui'" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'disetujui'; $nextTick(() => $el.form.submit())" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Disetujui
                                     </button>
-                                    <button @click="filter = 'revisi'" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'revisi'; $nextTick(() => $el.form.submit())" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Revisi
                                     </button>
                                 </div>
@@ -187,15 +189,15 @@
                             <div class="flex flex-wrap gap-3 items-end bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 mt-2">
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-alt mr-1"></i> Spesifik Tanggal</label>
-                                    <input type="date" x-model="filterTanggal" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                    <input type="date" name="date" x-model="filterTanggal" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
                                 </div>
                                 <div class="hidden sm:block text-gray-300 dark:text-gray-700 font-light mb-2">|</div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-check mr-1"></i> Filter Bulan</label>
-                                    <input type="month" x-model="filterBulan" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                    <input type="month" name="month" x-model="filterBulan" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
                                 </div>
                                 <div class="ml-auto flex-1 sm:flex-none flex justify-end gap-2">
-                                    <button @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-xs">
+                                    <button type="button" @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-xs">
                                         <i class="fas fa-times-circle"></i> Reset Filter
                                     </button>
                                     <a href="{{ route('peserta.logbook.print', $activeApp->id) }}" target="_blank" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-2">
@@ -203,6 +205,7 @@
                                     </a>
                                 </div>
                             </div>
+                                </form>
                         </div>
 
                         <!-- Card Grid -->
@@ -212,8 +215,13 @@
                                     <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
                                         <i class="far fa-clipboard text-3xl text-gray-400 dark:text-gray-500"></i>
                                     </div>
-                                    <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Belum Ada Jurnal</p>
-                                    <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Mulai tulis aktivitas pertama Anda menggunakan formulir di sebelah kiri.</p>
+                                    @if(request()->filled('status') || request()->filled('date') || request()->filled('month'))
+                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Tidak Ada Jurnal Sesuai Filter</p>
+                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Coba ubah filter status atau tanggal yang dipilih.</p>
+                                    @else
+                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Belum Ada Jurnal</p>
+                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Mulai tulis aktivitas pertama Anda menggunakan formulir di sebelah kiri.</p>
+                                    @endif
                                 </div>
                             @else
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -227,9 +235,7 @@
                                             $status = $badges[$log->status_validasi] ?? $badges['pending'];
                                         @endphp
                                         
-                                        <div x-show="matchFilter('{{ $log->status_validasi }}', '{{ \Carbon\Carbon::parse($log->tanggal)->format('Y-m-d') }}')" 
-                                             x-transition.opacity.duration.300ms
-                                             class="logbook-card status-{{ $log->status_validasi }} bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md transition duration-300 overflow-hidden flex flex-col relative group">
+                                        <div class="logbook-card status-{{ $log->status_validasi }} bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xs hover:shadow-md transition duration-300 overflow-hidden flex flex-col relative group">
                                             
                                             <!-- Status Ribbon -->
                                             <div class="absolute top-4 right-4 z-10">
@@ -240,8 +246,12 @@
 
                                             <!-- Image Header -->
                                             @if($log->bukti_foto_path)
-                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" @click="openGallery('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}')">
-                                                    <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                                                @php
+                                                    $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                                    $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y');
+                                                @endphp
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                    <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Dokumentasi">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
                                                     </div>
@@ -368,17 +378,6 @@
             </div>
         </div>
 
-        <!-- Image Gallery Modal -->
-        <div x-show="galleryOpen" class="fixed inset-0 z-[200] overflow-y-auto" style="display: none;" aria-labelledby="gallery-title" role="dialog" aria-modal="true">
-            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-                <div x-show="galleryOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-gray-900/90 backdrop-blur-md transition-opacity" @click="galleryOpen = false" aria-hidden="true"></div>
-                <div x-show="galleryOpen" x-transition.scale.duration.300ms class="relative z-10 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl">
-                    <button @click="galleryOpen = false" class="absolute top-4 right-4 z-20 w-12 h-12 bg-black/50 hover:bg-rose-600 text-white rounded-full flex items-center justify-center transition backdrop-blur-sm border border-white/20">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                    <img :src="galleryImage" class="w-full max-h-[90vh] object-contain bg-black/50" />
-                </div>
-            </div>
         </div>
     </div>
 
@@ -416,11 +415,9 @@
 
     document.addEventListener('alpine:init', () => {
         Alpine.data('logbookData', () => ({
-            filter: 'semua',
-            filterTanggal: '',
-            filterBulan: '',
-            galleryOpen: false,
-            galleryImage: '',
+            filter: @js(request('status', 'semua')),
+            filterTanggal: @js(request('date', '')),
+            filterBulan: @js(request('month', '')),
             
             // Edit Modal State
             showEditModal: false,
@@ -446,9 +443,8 @@
                 this.editStatusValidasi = statusValidasi;
                 this.showEditModal = true;
             },
-            openGallery(imgUrl) {
-                this.galleryImage = imgUrl;
-                this.galleryOpen = true;
+            openGallery(imgUrl, title = 'Dokumentasi Logbook') {
+                openImageModal(imgUrl, title);
             },
             matchFilter(status, dateStr) {
                 if (this.filter !== 'semua' && this.filter !== status) return false;
@@ -457,9 +453,7 @@
                 return true;
             },
             resetFilters() {
-                this.filter = 'semua';
-                this.filterTanggal = '';
-                this.filterBulan = '';
+                window.location.href = @js(route('peserta.logbook.index'));
             }
         }))
     });

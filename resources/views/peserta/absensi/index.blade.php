@@ -28,10 +28,10 @@
 
             {{-- Summary Stats Bar --}}
             @php
-                $totalRecords = $attendances->total();
-                $hadirCount   = $attendances->getCollection()->where('status', 'hadir')->count();
-                $izinCount    = $attendances->getCollection()->whereIn('status', ['izin','sakit'])->count();
-                $alpaCount    = $attendances->getCollection()->where('status', 'alpa')->count();
+                $totalRecords = $attendanceSummary['total'];
+                $hadirCount   = $attendanceSummary['hadir'];
+                $izinCount    = $attendanceSummary['izin'];
+                $alpaCount    = $attendanceSummary['alpa'];
             @endphp
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="glass-panel hover-lift p-5 rounded-3xl flex items-center justify-between">
@@ -76,22 +76,116 @@
             </div>
 
             {{-- Main Table Card --}}
-            <div class="glass-panel hover-lift rounded-3xl overflow-hidden">
-                <div class="p-6 border-b border-gray-100/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h3 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                            <i class="fas fa-list-check text-teal-600 dark:text-teal-400"></i> Histori Absen Saya
-                        </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Data absen Anda pada instansi <span class="font-bold text-teal-600 dark:text-teal-400">{{ $application->position->instansi->nama_dinas }}</span></p>
+            <div class="glass-panel rounded-3xl overflow-hidden">
+                <div class="p-6 border-b border-gray-100/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30 space-y-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h3 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                                <i class="fas fa-list-check text-teal-600 dark:text-teal-400"></i> Histori Absen Saya
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">Data absen Anda pada instansi <span class="font-bold text-teal-600 dark:text-teal-400">{{ $application->position->instansi->nama_dinas }}</span></p>
+                        </div>
                     </div>
 
-                    {{-- Filter Bulan --}}
-                    <x-ui.filter-bar :action="route('peserta.absensi.index')" :resetUrl="request()->has('month') ? route('peserta.absensi.index') : null">
-                        <div class="flex items-center gap-2 min-w-[200px]">
-                            <label for="month" class="text-xs font-bold text-gray-600 dark:text-gray-400 shrink-0"><i class="far fa-calendar-alt text-teal-600 dark:text-teal-400 mr-1"></i> Bulan:</label>
-                            <input type="month" id="month" name="month" value="{{ request('month') }}" class="w-full text-xs font-bold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs [color-scheme:dark]">
+                    @php
+                        $isFiltered = request()->hasAny(['month', 'status', 'search', 'sort']);
+                    @endphp
+
+                    {{-- Multi-Field Filter Bar --}}
+                    <x-ui.filter-bar :action="route('peserta.absensi.index')" :resetUrl="$isFiltered ? route('peserta.absensi.index') : null">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full">
+                            {{-- Search Input --}}
+                            <div class="flex flex-col gap-1">
+                                <label for="search" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    <i class="fas fa-search text-teal-600 dark:text-teal-400"></i> Cari Catatan:
+                                </label>
+                                <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Ketik kata kunci..." class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
+                            </div>
+
+                            {{-- Month Filter Dropdown / Picker --}}
+                            <div class="flex flex-col gap-1">
+                                <label for="month" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i> Periode Bulan:
+                                </label>
+                                @if(isset($periodMonths) && count($periodMonths) > 0)
+                                    <select id="month" name="month" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
+                                        <option value="">Semua Bulan Magang</option>
+                                        @foreach($periodMonths as $ym => $label)
+                                            <option value="{{ $ym }}" {{ request('month') == $ym ? 'selected' : '' }}>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="month" id="month" name="month" value="{{ request('month') }}" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs [color-scheme:dark]">
+                                @endif
+                            </div>
+
+                            {{-- Status Filter --}}
+                            <div class="flex flex-col gap-1">
+                                <label for="status" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    <i class="fas fa-filter text-teal-600 dark:text-teal-400"></i> Status Kehadiran:
+                                </label>
+                                <select id="status" name="status" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
+                                    <option value="">Semua Status</option>
+                                    <option value="hadir" {{ request('status') == 'hadir' ? 'selected' : '' }}>Hadir</option>
+                                    <option value="izin" {{ request('status') == 'izin' ? 'selected' : '' }}>Izin</option>
+                                    <option value="sakit" {{ request('status') == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                                    <option value="alpa" {{ request('status') == 'alpa' ? 'selected' : '' }}>Alpa</option>
+                                </select>
+                            </div>
+
+                            {{-- Sort Order --}}
+                            <div class="flex flex-col gap-1">
+                                <label for="sort" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    <i class="fas fa-sort-amount-down text-teal-600 dark:text-teal-400"></i> Urutkan Tanggal:
+                                </label>
+                                <select id="sort" name="sort" class="w-full text-xs font-semibold rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-xs">
+                                    <option value="desc" {{ request('sort') == 'desc' || !request('sort') ? 'selected' : '' }}>Terbaru → Terlama</option>
+                                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama → Terbaru</option>
+                                </select>
+                            </div>
                         </div>
                     </x-ui.filter-bar>
+
+                    {{-- Active Filter Badges --}}
+                    @if($isFiltered)
+                        <div class="flex flex-wrap items-center gap-2 pt-1">
+                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Filter Aktif:</span>
+                            @if(request('search'))
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
+                                    <i class="fas fa-search text-[10px]"></i> "<span>{{ request('search') }}</span>"
+                                    <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus pencarian"><i class="fas fa-times"></i></a>
+                                </span>
+                            @endif
+                            @if(request('month'))
+                                @php
+                                    $selectedMonthLabel = $periodMonths[request('month')] ?? null;
+                                    if (!$selectedMonthLabel) {
+                                        try {
+                                            $selectedMonthLabel = \Carbon\Carbon::parse(request('month'))->translatedFormat('F Y');
+                                        } catch (\Exception $e) {
+                                            $selectedMonthLabel = request('month');
+                                        }
+                                    }
+                                @endphp
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
+                                    <i class="far fa-calendar-alt text-[10px]"></i> {{ $selectedMonthLabel }}
+                                    <a href="{{ request()->fullUrlWithQuery(['month' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus filter bulan"><i class="fas fa-times"></i></a>
+                                </span>
+                            @endif
+                            @if(request('status'))
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 capitalize">
+                                    <i class="fas fa-tag text-[10px]"></i> Status: {{ request('status') }}
+                                    <a href="{{ request()->fullUrlWithQuery(['status' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus filter status"><i class="fas fa-times"></i></a>
+                                </span>
+                            @endif
+                            @if(request('sort') && request('sort') !== 'desc')
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
+                                    <i class="fas fa-sort text-[10px]"></i> Terlama Pertama
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => null]) }}" class="hover:text-rose-500 transition ml-1" title="Reset urutan"><i class="fas fa-times"></i></a>
+                                </span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <div class="overflow-x-auto">
@@ -158,9 +252,9 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-xs text-gray-700 dark:text-gray-300">
-                                        @if($absen->validation_status == 'disetujui' || $absen->validation_status == 'valid')
+                                        @if($absen->validation_status == 'disetujui' || $absen->validation_status == 'valid' || $absen->validation_status == 'approved')
                                             <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold"><i class="fas fa-check-circle"></i> Tervalidasi</span>
-                                        @elseif($absen->validation_status == 'ditolak')
+                                        @elseif($absen->validation_status == 'ditolak' || $absen->validation_status == 'rejected')
                                             <span class="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold"><i class="fas fa-times-circle"></i> Ditolak</span>
                                         @else
                                             <span class="inline-flex items-center gap-1 text-gray-400 dark:text-gray-500 font-bold"><i class="fas fa-clock"></i> Menunggu</span>
@@ -179,7 +273,7 @@
                                                 <i class="far fa-calendar-times text-3xl text-gray-400 dark:text-gray-500"></i>
                                             </div>
                                             <p class="font-bold text-gray-700 dark:text-gray-300 text-sm">Belum Ada Data Absensi</p>
-                                            <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Tidak ada catatan absensi pada periode yang dipilih.</p>
+                                            <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Tidak ada catatan absensi pada kriteria filter yang dipilih.</p>
                                         </div>
                                     </td>
                                 </tr>
