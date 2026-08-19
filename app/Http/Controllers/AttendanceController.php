@@ -122,7 +122,7 @@ class AttendanceController extends Controller
             'longitude_in' => $request->longitude,
             'ip_address' => $request->ip(),
             'device_info' => $request->userAgent(),
-            'validation_status' => 'pending',
+            'validation_status' => 'approved',
         ]);
 
         app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [

@@ -149,8 +149,8 @@
                                     </tr>
                                     <tr>
                                         <td>Pending:</td>
-                                        <td class="text-bold text-center" style="{{ $app->attendances->where('validation_status', 'pending')->count() > 0 ? 'color: red;' : '' }}">
-                                            {{ $app->attendances->where('validation_status', 'pending')->count() }} hari
+                                        <td class="text-bold text-center" style="{{ $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count() > 0 ? 'color: red;' : '' }}">
+                                            {{ $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count() }} hari
                                         </td>
                                     </tr>
                                 </table>
