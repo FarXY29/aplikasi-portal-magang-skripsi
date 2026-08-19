@@ -71,10 +71,28 @@
            <span>Kelola Data Instansi</span>
         </a>
 
+        <a href="{{ route('admin.master.majors.index') }}" 
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.master.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
+           <i class="fas fa-graduation-cap w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.master.*') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
+           <span>Master Jurusan & Rumpun</span>
+        </a>
+
         <a href="{{ route('admin.users.index') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.users.index') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
            <i class="fas fa-users-cog w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.users.index') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
            <span>Manajemen Pengguna</span>
+        </a>
+
+        <a href="{{ route('admin.certificates.index') }}" 
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.certificates.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
+           <i class="fas fa-certificate w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.certificates.*') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
+           <span>Registri Sertifikat</span>
+        </a>
+
+        <a href="{{ route('admin.audit_trail') }}"
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.audit_trail') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
+           <i class="fas fa-search w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.audit_trail') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
+           <span>Audit Trail</span>
         </a>
 
         <a href="{{ route('admin.laporan.hub') }}" 
@@ -129,7 +147,7 @@
         <a href="{{ route('dinas.laporan.hub') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.laporan.hub') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
            <i class="fas fa-chart-pie w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.laporan.hub') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
-           <span>Pusat Laporan Hub</span>
+           <span>Pusat Laporan</span>
         </a>
 
         <a href="{{ route('dinas.settings') }}" 
@@ -144,6 +162,12 @@
             <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
             <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Monitoring Lapangan</p>
         </div>
+
+        <a href="{{ route('pembimbing_lapangan.logbook.index') }}" 
+           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
+           <i class="fas fa-book-open w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
+           <span>Validasi Logbook</span>
+        </a>
 
         <a href="{{ route('pembimbing_lapangan.attendance.index') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">

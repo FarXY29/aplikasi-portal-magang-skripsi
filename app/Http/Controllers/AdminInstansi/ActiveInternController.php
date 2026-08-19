@@ -35,7 +35,9 @@ class ActiveInternController extends Controller
     public function activeInterns(Request $request)
     {
         $instansiId = Auth::user()->instansi_id;
-        $pembimbing_lapangan = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')->get();
+        $pembimbing_lapangan = User::where('instansi_id', $instansiId)
+            ->portalRole('pembimbing_lapangan')
+            ->get();
 
         $status = $request->input('status', 'semua');
 
@@ -72,7 +74,7 @@ class ActiveInternController extends Controller
         $mentor = User::query()
             ->whereKey($request->validated('pembimbing_lapangan_id'))
             ->where('instansi_id', auth()->user()->instansi_id)
-            ->where('role', 'pembimbing_lapangan')
+            ->portalRole('pembimbing_lapangan')
             ->firstOrFail();
 
         $app->update(['pembimbing_lapangan_id' => $mentor->id]);

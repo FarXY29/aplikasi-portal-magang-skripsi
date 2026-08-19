@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Major;
+use App\Models\MajorCategory;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -20,7 +22,11 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $categories = MajorCategory::with(['majors' => function ($q) {
+            $q->where('is_active', true)->orderBy('degree_level')->orderBy('name');
+        }])->orderBy('name')->get();
+
+        return view('auth.register', compact('categories'));
     }
 
     /**
@@ -35,17 +41,32 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'major_id' => ['nullable', 'exists:majors,id'],
             'major' => ['required_if:role,peserta', 'nullable', 'string', 'max:255'], // Validasi Jurusan
-            'asal_instansi' => ['required_if:role,pembimbing', 'nullable', 'string', 'max:255'], // Validasi Asal Instansi
+            'asal_instansi' => ['required', 'string', 'max:255'], // Validasi Asal Instansi (required for both)
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $majorId = null;
+        $majorName = null;
+
+        if ($request->role === 'peserta') {
+            if ($request->filled('major_id')) {
+                $majorId = $request->major_id;
+                $majorObj = Major::find($majorId);
+                $majorName = $majorObj ? $majorObj->name : $request->major;
+            } else {
+                $majorName = $request->major;
+            }
+        }
 
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'major' => $request->role === 'peserta' ? $request->major : null,
-            'asal_instansi' => $request->role === 'pembimbing' ? $request->asal_instansi : null,
+            'major_id' => $majorId,
+            'major' => $majorName,
+            'asal_instansi' => $request->asal_instansi,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);

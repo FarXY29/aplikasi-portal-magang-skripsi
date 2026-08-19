@@ -31,16 +31,13 @@
     <a href="{{ route('admin.laporan.peserta_global', ['status' => 'semua']) }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800/40 bg-white dark:bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-purple-500/10">
         <div class="flex flex-wrap items-start justify-between gap-2">
             <div class="min-w-0">
-                <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">PENDAFT...</p>
+                <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">PENDAFTAR</p>
                 <h3 id="stat-pendaftar" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ number_format($totalApplications) }}</h3>
                 <p class="stat-period-subtitle mt-1 text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400">{{ $periodText }}</p>
             </div>
             <div class="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl bg-purple-500 text-white shadow-md shadow-purple-500/30 transition-transform duration-300 group-hover:scale-110">
                 <i class="fas fa-file-signature text-base md:text-lg"></i>
             </div>
-        </div>
-        <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-            <i class="fas fa-chart-line text-[9px]"></i> +100%
         </div>
     </a>
 
@@ -56,9 +53,6 @@
                 <i class="fas fa-user-check text-base md:text-lg"></i>
             </div>
         </div>
-        <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-            <i class="fas fa-chart-line text-[9px]"></i> +100%
-        </div>
     </a>
 
     {{-- Card 5: Selesai --}}
@@ -73,9 +67,6 @@
                 <i class="fas fa-graduation-cap text-base md:text-lg"></i>
             </div>
         </div>
-        <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-            <i class="fas fa-chart-line text-[9px]"></i> +100%
-        </div>
     </a>
 
     {{-- Card 6: Pending --}}
@@ -89,9 +80,6 @@
             <div class="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 transition-transform duration-300 group-hover:scale-110">
                 <i class="fas fa-hourglass-half text-base md:text-lg"></i>
             </div>
-        </div>
-        <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-            <i class="fas fa-chart-line text-[9px]"></i> +100%
         </div>
     </a>
 </div>

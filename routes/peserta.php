@@ -12,7 +12,7 @@ Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')
     Route::post('/daftar/{id}', [PesertaApplicationController::class, 'storeApplication'])->name('daftar');
     Route::resource('logbook', LogbookController::class);
     Route::get('/logbook-print/{id?}', [LogbookController::class, 'print'])->name('logbook.print');
-    Route::get('/sertifikat', [PesertaDashboardController::class, 'downloadCertificate'])->name('sertifikat');
+    Route::get('/sertifikat/{id?}', [PesertaDashboardController::class, 'downloadCertificate'])->name('sertifikat');
     Route::get('/download-nilai/{id}', [PesertaDashboardController::class, 'downloadTranskrip'])->name('download.nilai');
     Route::get('/loa/{id}', [PesertaDashboardController::class, 'downloadLoA'])->name('loa.download');
     Route::get('/id-card/{id}', [PesertaDashboardController::class, 'downloadIdCard'])->name('id_card.download');

@@ -186,8 +186,12 @@
                                                 <i class="fas fa-file-pdf text-rose-500 text-sm"></i> Lihat Dokumen PDF
                                             </a>
                                         @else
-                                            <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm mt-1.5" onclick="openImageModal('{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}')">
-                                                <img src="{{ route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]) }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500">
+                                            @php
+                                                $fotoUrl = route('storage.access', ['type' => 'attendance', 'filename' => basename($log->proof_file)]);
+                                                $fotoTitle = 'Bukti Kehadiran/Izin - ' . \Carbon\Carbon::parse($log->date)->translatedFormat('d F Y') . ' (' . ($app->user->name ?? 'Peserta') . ')';
+                                            @endphp
+                                            <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm mt-1.5" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500" alt="Bukti Kehadiran">
                                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                                                     <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
                                                 </div>

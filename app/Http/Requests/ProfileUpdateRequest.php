@@ -21,13 +21,15 @@ class ProfileUpdateRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             'phone' => ['nullable', 'string', 'max:20'],
             'username' => ['nullable', 'string', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
-            'photo' => ['nullable', 'image', 'max:2048'], // Add photo validation (max 2MB)
+            'photo' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
+            'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg', 'max:2048'],
         ];
 
         // 2. Add Logic for Peserta
-        if ($this->user()->role === 'peserta') {
+        if ($this->user()->hasPortalRole('peserta') || $this->user()->role === 'peserta') {
             $rules['nik'] = ['nullable', 'string', 'max:50'];
             $rules['asal_instansi'] = ['nullable', 'string', 'max:255'];
+            $rules['major_id'] = ['nullable', 'exists:majors,id'];
             $rules['major'] = ['nullable', 'string', 'max:255'];
             $rules['pembimbing_sekolah_id'] = [
                 'nullable',
@@ -35,8 +37,8 @@ class ProfileUpdateRequest extends FormRequest
             ];
         }
 
-        // 3. Add Logic for Pembimbing Sekolah & Pembimbing Lapangan
-        if (in_array($this->user()->role, ['pembimbing', 'pembimbing_lapangan', 'dinas'], true)) {
+        // 3. Add Logic for Pembimbing Sekolah, Pembimbing Lapangan, & Admin Instansi
+        if ($this->user()->hasPortalRole(['pembimbing', 'pembimbing_lapangan', 'admin_instansi']) || in_array($this->user()->role, ['pembimbing', 'pembimbing_lapangan', 'dinas', 'admin_instansi'], true)) {
             $rules['nik'] = ['nullable', 'string', 'max:50']; // NIP / NIDN / NIK
             $rules['asal_instansi'] = ['nullable', 'string', 'max:255'];
         }

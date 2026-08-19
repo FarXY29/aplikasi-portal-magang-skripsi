@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use App\Models\DailyLog;
 use App\Models\Instansi;
+use App\Models\Setting;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('instansi');
+        $query = User::with(['instansi', 'roles']);
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -26,7 +28,7 @@ class AdminUserController extends Controller
         }
 
         if ($request->has('role') && $request->role != '') {
-            $query->where('role', $request->role);
+            $query->portalRole($request->role);
         }
 
         $users = $query->latest()->paginate(10);
@@ -48,16 +50,29 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'role' => 'required',
+            'role' => ['required', Rule::in(User::PORTAL_ROLES)],
+            'instansi_id' => [
+                User::usesInstansiId($request->input('role')) ? 'required' : 'nullable',
+                'integer',
+                Rule::exists('instansis', 'id'),
+            ],
+            'asal_instansi' => [
+                User::usesAsalInstansi($request->input('role')) ? 'required' : 'nullable',
+                'string',
+                'max:255',
+            ],
         ]);
+
+        $usesInstansi = User::usesInstansiId($request->role);
+        $usesAsalInstansi = User::usesAsalInstansi($request->role);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'instansi_id' => $request->instansi_id,
-            'asal_instansi' => $request->asal_instansi,
+            'instansi_id' => $usesInstansi ? $request->instansi_id : null,
+            'asal_instansi' => $usesAsalInstansi ? $request->asal_instansi : null,
             'nik' => $request->nik,
             'phone' => $request->phone,
         ]);
@@ -69,10 +84,11 @@ class AdminUserController extends Controller
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('roles')->findOrFail($id);
         $instansis = Instansi::all();
+        $portalRole = $user->getPrimaryPortalRole();
 
-        return view('admin_kota.users.edit', compact('user', 'instansis'));
+        return view('admin_kota.users.edit', compact('user', 'instansis', 'portalRole'));
     }
 
     public function update(Request $request, $id)
@@ -82,15 +98,29 @@ class AdminUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required',
+            'password' => 'nullable|string|min:8',
+            'role' => ['required', Rule::in(User::PORTAL_ROLES)],
+            'instansi_id' => [
+                User::usesInstansiId($request->input('role')) ? 'required' : 'nullable',
+                'integer',
+                Rule::exists('instansis', 'id'),
+            ],
+            'asal_instansi' => [
+                User::usesAsalInstansi($request->input('role')) ? 'required' : 'nullable',
+                'string',
+                'max:255',
+            ],
         ]);
+
+        $usesInstansi = User::usesInstansiId($request->role);
+        $usesAsalInstansi = User::usesAsalInstansi($request->role);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'instansi_id' => $request->instansi_id,
-            'asal_instansi' => $request->asal_instansi,
+            'instansi_id' => $usesInstansi ? $request->instansi_id : null,
+            'asal_instansi' => $usesAsalInstansi ? $request->asal_instansi : null,
             'nik' => $request->nik,
             'phone' => $request->phone,
         ];
@@ -122,11 +152,19 @@ class AdminUserController extends Controller
     public function logbooks(Request $request)
     {
         // Ambil hanya user dengan role 'peserta'
-        $query = User::where('role', 'peserta')->with('applications.position.instansi');
+        $query = User::portalRole('peserta')->with([
+            'applications' => fn ($applicationQuery) => $applicationQuery->latest('created_at'),
+            'applications.position.instansi',
+        ]);
 
         // Pencarian
-        if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', "%{$request->search}%");
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($participantQuery) use ($search) {
+                $participantQuery->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('asal_instansi', 'like', "%{$search}%");
+            });
         }
 
         $participants = $query->latest()->paginate(10);
@@ -161,13 +199,23 @@ class AdminUserController extends Controller
     {
         // Ambil hanya user dengan role 'peserta'
         // Urutkan berdasarkan nama agar rapi, hanya kolom yang dipakai template PDF
-        $participants = User::where('role', 'peserta')
+        $participants = User::portalRole('peserta')
             ->select(['name', 'nik', 'asal_instansi', 'major', 'email', 'phone'])
             ->orderBy('name', 'asc')
             ->get();
 
+        $settings = Setting::all()->pluck('value', 'key');
+        $pejabat_nama = $settings['pejabat_name'] ?? 'H. Lukman Fadlun, SH';
+        $pejabat_nip = $settings['pejabat_nip'] ?? '-';
+        $pejabat_jabatan = $settings['pejabat_jabatan'] ?? 'Kepala Bakesbangpol Kota Banjarmasin';
+
+        $ttd_image_path = null;
+        if (! empty($settings['ttd_image']) && Storage::disk('public')->exists($settings['ttd_image'])) {
+            $ttd_image_path = public_path('storage/'.$settings['ttd_image']);
+        }
+
         // Load View PDF
-        $pdf = Pdf::loadView('pdf.admin_kota.peserta', compact('participants'));
+        $pdf = Pdf::loadView('pdf.admin_kota.peserta', compact('participants', 'pejabat_nama', 'pejabat_nip', 'pejabat_jabatan', 'ttd_image_path'));
 
         // Setup Kertas A4 Landscape
         $pdf->setPaper('a4', 'landscape');

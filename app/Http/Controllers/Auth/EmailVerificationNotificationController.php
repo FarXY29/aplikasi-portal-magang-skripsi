@@ -30,9 +30,12 @@ class EmailVerificationNotificationController extends Controller
     public function storeGuest(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'max:255'],
         ]);
 
+        // Respond identically for every submitted email to avoid acting as a
+        // user-enumeration oracle. Only registered + unverified peserta/pembimbing
+        // actually receive the link.
         $user = User::where('email', $request->email)->first();
 
         if ($user && in_array($user->role, ['peserta', 'pembimbing']) && ! $user->hasVerifiedEmail()) {

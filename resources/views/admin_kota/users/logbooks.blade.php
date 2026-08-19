@@ -110,7 +110,7 @@
                             <td class="px-5 py-3.5">
                                 @if($user->applications->isNotEmpty())
                                     @php
-                                        $app = $user->applications->last();
+                                        $app = $user->applications->first();
                                         $statusColor = $app->status?->value == 'selesai' 
                                             ? 'text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/50 border-green-200 dark:border-green-800' 
                                             : 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800';
@@ -176,7 +176,7 @@
                             @if($user->applications->isNotEmpty())
                                 <p class="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-center leading-tight">
                                     <i class="fas fa-building text-teal-600 dark:text-teal-400 mr-1.5 shrink-0"></i>
-                                    {{ $user->applications->last()->position->instansi->nama_dinas }}
+                                    {{ $user->applications->first()->position->instansi->nama_dinas }}
                                 </p>
                             @else
                                 <p class="text-xs text-gray-400 dark:text-gray-500 italic">Belum ada penempatan</p>

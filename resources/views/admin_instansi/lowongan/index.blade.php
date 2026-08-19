@@ -74,8 +74,17 @@
                                         <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2" title="{{ $loker->deskripsi }}">
                                             {{ $loker->deskripsi }}
                                         </p>
-                                        <div class="flex items-center gap-1.5 text-[10px] text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-100 dark:border-teal-900/40 px-2.5 py-1 rounded-lg w-fit font-bold">
-                                            <i class="fas fa-graduation-cap text-teal-600 dark:text-teal-400"></i> {{ Str::limit($loker->required_major, 30) }}
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            @if($loker->requiredMajorCategory)
+                                                <div class="flex items-center gap-1 text-[10px] text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 px-2 py-0.5 rounded-lg font-bold">
+                                                    <i class="fas fa-layer-group text-teal-600"></i> {{ $loker->requiredMajorCategory->name }}
+                                                </div>
+                                            @endif
+                                            @if($loker->required_major && (!$loker->requiredMajorCategory || $loker->required_major !== $loker->requiredMajorCategory->name))
+                                                <div class="flex items-center gap-1 text-[10px] text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700/60 px-2 py-0.5 rounded-lg">
+                                                    <i class="fas fa-graduation-cap"></i> {{ Str::limit($loker->required_major, 30) }}
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

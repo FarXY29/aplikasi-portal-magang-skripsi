@@ -82,7 +82,9 @@ class DashboardController extends Controller
         $endDate = now()->endOfDay();
 
         $totalLowongan = InternshipPosition::where('instansi_id', $instansiId)->count();
-        $totalPembimbing = User::where('instansi_id', $instansiId)->where('role', 'pembimbing_lapangan')->count();
+        $totalPembimbing = User::where('instansi_id', $instansiId)
+            ->portalRole('pembimbing_lapangan')
+            ->count();
 
         $positionIds = InternshipPosition::where('instansi_id', $instansiId)->pluck('id');
 

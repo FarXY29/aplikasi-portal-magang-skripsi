@@ -24,42 +24,42 @@
 
             {{-- Statistik Ringkasan --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah seluruh pegawai atau pembimbing lapangan yang terdaftar aktif mengampu mahasiswa magang di instansi ini.">
                     <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mx-auto mb-2.5 border border-teal-100 dark:border-teal-900/50">
                         <i class="fas fa-chalkboard-teacher"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total_pembimbing'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Pembimbing</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah mahasiswa/peserta magang aktif (status 'diterima') yang saat ini sedang menjalani masa bimbingan.">
                     <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-2.5 border border-blue-100 dark:border-blue-900/50">
                         <i class="fas fa-user-friends"></i>
                     </div>
                     <p class="text-2xl font-black text-gray-800 dark:text-gray-100">{{ $stats['total_bimbingan_aktif'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Bimbingan Aktif</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah alumni peserta bimbingan yang telah menyelesaikan seluruh periode magang dan dinyatakan lulus.">
                     <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-2.5 border border-emerald-100 dark:border-emerald-900/50">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <p class="text-2xl font-black text-emerald-700 dark:text-emerald-400">{{ $stats['total_lulus'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Alumni Lulus</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Rata-rata nilai evaluasi dari seluruh peserta bimbingan. Rumus: (Total Nilai Akhir Peserta / Jumlah Peserta Dinilai). Nilai Akhir Peserta = (Nilai Teknis + Nilai Disiplin + Nilai Perilaku) / 3.">
                     <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-2.5 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="text-2xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['rata_nilai_semua'] > 0 ? round($stats['rata_nilai_semua'], 1) : '-' }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Rata-Rata Nilai</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Total entri jurnal/logbook harian peserta bimbingan yang masih menunggu verifikasi dan validasi dari pembimbing.">
                     <div class="w-10 h-10 rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-2.5 border border-red-100 dark:border-red-900/50">
                         <i class="fas fa-clock"></i>
                     </div>
                     <p class="text-2xl font-black text-red-700 dark:text-red-400">{{ $stats['total_logbook_tertunda'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Logbook Pending</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center">
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-xs border border-gray-100 dark:border-gray-700 text-center cursor-help transition hover:shadow-md" title="Jumlah pembimbing yang tertib menyelesaikan proses validasi logbook tanpa ada tunggakan logbook pending.">
                     <div class="w-10 h-10 rounded-2xl bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-2.5 border border-green-100 dark:border-green-900/50">
                         <i class="fas fa-check-double"></i>
                     </div>
@@ -70,7 +70,7 @@
 
             {{-- Highlight Banner --}}
             @if($stats['total_pembimbing'] > 0)
-            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-600/20 flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-600/20 flex flex-col sm:flex-row items-center gap-4 cursor-help" title="Pembimbing lapangan yang menangani alokasi peserta bimbingan aktif terbanyak pada periode saat ini.">
                 <div class="w-14 h-14 rounded-2xl bg-white/20 dark:bg-gray-800/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0 border border-white/20">
                     <i class="fas fa-award"></i>
                 </div>
@@ -81,14 +81,8 @@
                 </div>
                 @if($beban->count() > 0)
                 <div class="sm:ml-auto flex-shrink-0 flex gap-2">
-                    <a href="{{ route('dinas.laporan.beban_pembimbing.print', ['format' => 'pdf']) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
+                    <a href="{{ route('dinas.laporan.beban_pembimbing.print') }}" target="_blank" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download PDF">
                         <i class="fas fa-file-pdf mr-1.5 text-red-500"></i> PDF
-                    </a>
-                    <a href="{{ route('dinas.laporan.beban_pembimbing.print', ['format' => 'excel']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download Excel">
-                        <i class="fas fa-file-excel mr-1.5 text-green-600"></i> Excel
-                    </a>
-                    <a href="{{ route('dinas.laporan.beban_pembimbing.print', ['format' => 'csv']) }}" class="inline-flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition text-xs font-bold shadow-md border border-white/20 dark:border-gray-700" title="Download CSV">
-                        <i class="fas fa-file-csv mr-1.5 text-blue-600"></i> CSV
                     </a>
                 </div>
                 @endif
@@ -132,7 +126,8 @@
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
                             @forelse($beban as $pl)
                             <tr class="hover:bg-teal-50/15 dark:hover:bg-teal-900/20 transition cursor-pointer"
-                                x-show="!searchQuery || '{{ strtolower($pl->name . ' ' . $pl->nik . ' ' . $pl->email) }}'.includes(searchQuery.toLowerCase())"
+                                x-data="{ searchText: @js(strtolower($pl->name . ' ' . $pl->nik . ' ' . $pl->email)) }"
+                                x-show="!searchQuery || searchText.includes(searchQuery.toLowerCase())"
                                 @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
                                 <td class="px-5 py-4 text-xs text-gray-400 dark:text-gray-500 text-center font-bold">{{ $loop->iteration }}</td>
                                 <td class="px-5 py-4">

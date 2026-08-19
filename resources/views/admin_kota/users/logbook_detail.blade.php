@@ -26,7 +26,7 @@
                         <h1 class="text-lg md:text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">{{ $user->name }}</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-0.5">
                             <i class="fas fa-building mr-1.5 text-gray-400 dark:text-gray-500"></i> 
-                            {{ isset($app->position) ? $app->position->instansi->nama_dinas : 'Lokasi tidak ditemukan' }}
+                            {{ $app->position?->instansi?->nama_dinas ?? 'Lokasi tidak ditemukan' }}
                         </p>
                     </div>
                 </div>
@@ -149,12 +149,16 @@
 
                                     {{-- Dokumen Bukti Foto --}}
                                     @if($log->bukti_foto_path)
+                                    @php
+                                        $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
+                                        $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . ($user->name ?? 'Peserta') . ')';
+                                    @endphp
                                     <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-3">
                                         <h4 class="text-xs font-extrabold text-gray-400 dark:text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-2 flex items-center gap-2">
                                             <i class="fas fa-camera text-teal-500 dark:text-teal-400"></i> Dokumentasi Kegiatan
                                         </h4>
-                                        <div class="relative group w-full md:w-1/2 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="window.open('{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}', '_blank')">
-                                            <img src="{{ route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]) }}" 
+                                        <div class="relative group w-full md:w-1/2 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                            <img src="{{ $fotoUrl }}" 
                                                  alt="Bukti Kegiatan" 
                                                  class="w-full h-auto object-cover transform transition duration-500 group-hover:scale-105">
                                             <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none">

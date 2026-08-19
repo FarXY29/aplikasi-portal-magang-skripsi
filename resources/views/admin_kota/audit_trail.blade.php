@@ -68,15 +68,13 @@
                             <td class="px-6 py-4">
                                 @if($log->user)
                                     <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->user->name }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucfirst(str_replace('_', ' ', $log->user->role)) }})</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucwords(str_replace('_', ' ', $log->user->getPrimaryPortalRole() ?? $log->user->role)) }})</div>
                                 @else
                                     <span class="text-gray-400 italic">System / Unauthenticated</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
-                                    {{ strtoupper($log->action) }}
-                                </span>
+                                @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-gray-900 dark:text-gray-100 font-medium">{{ $log->auditable_type ? class_basename($log->auditable_type) : '-' }}</div>
@@ -84,7 +82,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <button type="button" 
-                                    @click="openMetadataModal('{{ addslashes(json_encode($log->metadata)) }}')" 
+                                    @click="openMetadataModal(@js(json_encode($log->metadata)))"
                                     class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                     Lihat Detail
                                 </button>
@@ -112,9 +110,7 @@
                             <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $log->ip_address }}</div>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ Str::contains($log->action, 'create') ? 'bg-green-100 text-green-700' : (Str::contains($log->action, 'update') ? 'bg-blue-100 text-blue-700' : (Str::contains($log->action, 'delete') ? 'bg-red-100 text-red-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300')) }}">
-                            {{ strtoupper($log->action) }}
-                        </span>
+                        @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
                     </div>
 
                     {{-- Detail block --}}
@@ -123,7 +119,7 @@
                             <div class="text-xs text-gray-500 dark:text-gray-400">Aktor</div>
                             @if($log->user)
                                 <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->user->name }}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucfirst(str_replace('_', ' ', $log->user->role)) }})</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $log->user->email }} ({{ ucwords(str_replace('_', ' ', $log->user->getPrimaryPortalRole() ?? $log->user->role)) }})</div>
                             @else
                                 <span class="text-gray-400 italic">System / Unauthenticated</span>
                             @endif
@@ -135,7 +131,7 @@
                         </div>
                         <div class="pt-1">
                             <button type="button"
-                                @click="openMetadataModal('{{ addslashes(json_encode($log->metadata)) }}')"
+                                @click="openMetadataModal(@js(json_encode($log->metadata)))"
                                 class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                 Lihat Detail
                             </button>
