@@ -35,7 +35,7 @@ class PembimbingLapanganController extends Controller
         // Menghitung berapa izin/sakit yang belum disetujui
         $pendingAttendance = Attendance::whereHas('application', function($q) use ($pembimbing_lapanganId) {
             $q->where('pembimbing_lapangan_id', $pembimbing_lapanganId);
-        })->where('validation_status', 'pending')->count();
+        })->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count();
 
         // 4. Pengumuman global (dipindahkan dari view agar template tidak menjalankan query)
         $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
