@@ -28,7 +28,7 @@
             text-transform: uppercase;
             text-align: center;
         }
-        .kop-instansi {
+        .kop-instansi, .kop-dinas {
             font-size: 14pt;
             font-weight: bold;
             text-transform: uppercase;
@@ -90,17 +90,7 @@
 </head>
 <body>
 
-    <table class="kop-surat">
-        <tr>
-            <td width="15%" align="center" style="border: none;">
-                <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo" alt="Logo">
-            </td>
-            <td width="85%" align="center" style="border: none;">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin</div>
-            </td>
-        </tr>
-    </table>
+    @include('pdf.partials.kop_admin_kota')
 
     <div class="judul-laporan">DATA MASTER PESERTA MAGANG</div>
 

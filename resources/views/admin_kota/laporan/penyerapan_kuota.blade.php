@@ -159,7 +159,12 @@
                                 <th class="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[220px] max-w-[320px]">Nama Instansi</th>
                                 <th class="px-4 py-4 text-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40">Kuota Disediakan</th>
                                 <th class="px-4 py-4 text-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider w-36">Total Terserap</th>
-                                <th class="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tingkat Penyerapan</th>
+                                <th class="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                    <div class="inline-flex items-center gap-1.5 cursor-help" title="Rumus: (Total Peserta Terserap / Total Kuota Disediakan) × 100%">
+                                        <span>Tingkat Penyerapan</span>
+                                        <i class="fas fa-info-circle text-[11px] text-teal-500 dark:text-teal-400"></i>
+                                    </div>
+                                </th>
                                 <th class="px-4 py-4 text-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Status</th>
                             </tr>
                         </thead>
@@ -195,10 +200,20 @@
                                         } elseif ($rate >= 50) {
                                             $barBg = 'from-blue-500 to-indigo-500';
                                         }
+                                        $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) × 100% = {$rate}%";
                                     @endphp
-                                    <div class="flex items-center gap-3">
-                                        <x-report.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
-                                        <span class="text-xs font-black font-mono text-slate-800 dark:text-white min-w-[45px] text-right">{{ $rate }}%</span>
+                                    <div class="relative group/penyerapan cursor-help" title="{{ $rumusFormula }}">
+                                        <div class="flex items-center gap-3">
+                                            <x-report.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
+                                            <span class="text-xs font-black font-mono text-slate-800 dark:text-white min-w-[45px] text-right">{{ $rate }}%</span>
+                                        </div>
+                                        {{-- Custom hover popup showing calculation details --}}
+                                        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/penyerapan:flex flex-col items-center pointer-events-none z-30 transition-all duration-200">
+                                            <div class="bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-sm text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap text-center">
+                                                <span class="text-teal-400 font-bold">Rumus:</span> ({{ $instansi->total_terserap }} / {{ $instansi->total_kuota }}) × 100% = <span class="font-mono text-emerald-300 font-bold">{{ $rate }}%</span>
+                                            </div>
+                                            <div class="w-2 h-2 bg-slate-900 dark:bg-slate-800 rotate-45 -mt-1 border-r border-b border-slate-700"></div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
@@ -231,6 +246,7 @@
                             } elseif ($rate >= 50) {
                                 $barBg = 'from-blue-500 to-indigo-500';
                             }
+                            $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) × 100% = {$rate}%";
                         @endphp
                         <div class="p-4 space-y-3.5" x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                             <div class="flex items-center gap-3">
@@ -253,12 +269,15 @@
                                     <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Terisi</p>
                                     <span class="font-mono font-black text-emerald-600 dark:text-emerald-400 text-sm">{{ $instansi->total_terserap }}</span>
                                 </div>
-                                <div class="text-center">
-                                    <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Rate</p>
+                                <div class="text-center cursor-help" title="{{ $rumusFormula }}">
+                                    <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 flex items-center justify-center gap-1">
+                                        <span>Rate</span>
+                                        <i class="fas fa-info-circle text-[8px] text-teal-500"></i>
+                                    </p>
                                     <span class="font-mono font-black text-slate-800 dark:text-white text-sm">{{ $rate }}%</span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 cursor-help" title="{{ $rumusFormula }}">
                                 <x-report.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
                                 @if($instansi->persentase_penyerapan >= 80)
                                     <x-report.pill color="emerald" class="uppercase text-[10px] font-black whitespace-nowrap">Optimal</x-report.pill>

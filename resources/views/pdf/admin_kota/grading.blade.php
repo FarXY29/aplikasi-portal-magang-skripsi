@@ -51,18 +51,7 @@
 </head>
 <body>
 
-    <table class="kop-surat" style="border: none;">
-        <tr style="border: none;">
-            <td width="10%" align="center" style="border: none; padding: 0;">
-                <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo" alt="Logo">
-            </td>
-            <td width="90%" class="kop-text" style="border: none; padding: 0;">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-dinas">BADAN KESATUAN BANGSA DAN POLITIK</div>
-                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin 70111</div>
-            </td>
-        </tr>
-    </table>
+    @include('pdf.partials.kop_admin_kota')
 
     <div class="judul-laporan">{!! nl2br(e($title)) !!}</div>
 

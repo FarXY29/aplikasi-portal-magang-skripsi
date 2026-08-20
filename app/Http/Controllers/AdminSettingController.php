@@ -19,13 +19,13 @@ class AdminSettingController extends Controller
     {
         $settings = Setting::all()->pluck('value', 'key');
         $backups = DatabaseBackup::query()
-            ->where('requested_by', auth()->id())
+            ->with('requester')
             ->latest()
-            ->take(5)
+            ->take(10)
             ->get();
 
         $backups->each(function (DatabaseBackup $backup): void {
-            $backup->download_url = $backup->status === 'completed' && $backup->expires_at?->isFuture()
+            $backup->download_url = $backup->isDownloadable()
                 ? URL::temporarySignedRoute('admin.settings.backups.download', $backup->expires_at, ['backup' => $backup])
                 : null;
         });
@@ -36,7 +36,7 @@ class AdminSettingController extends Controller
     public function update(UpdateSystemSettingsRequest $request, AuditLogService $auditLogService)
     {
         $validated = $request->validated();
-        foreach (['app_name', 'announcement', 'pejabat_name', 'pejabat_nip', 'pejabat_jabatan'] as $key) {
+        foreach (['app_name', 'announcement', 'pejabat_name', 'pejabat_nip', 'pejabat_jabatan', 'kop_line1', 'kop_line2', 'kop_line3'] as $key) {
             if (array_key_exists($key, $validated)) {
                 Setting::updateOrCreate(['key' => $key], ['value' => $validated[$key]]);
             }
@@ -50,6 +50,16 @@ class AdminSettingController extends Controller
 
             $path = $request->file('ttd_image')->store('settings', 'public');
             Setting::updateOrCreate(['key' => 'ttd_image'], ['value' => $path]);
+        }
+
+        if ($request->hasFile('kop_logo')) {
+            $oldLogo = Setting::where('key', 'kop_logo')->value('value');
+            if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
+                Storage::disk('public')->delete($oldLogo);
+            }
+
+            $path = $request->file('kop_logo')->store('settings', 'public');
+            Setting::updateOrCreate(['key' => 'kop_logo'], ['value' => $path]);
         }
 
         $auditLogService->record('system_settings.updated', null, [
@@ -68,20 +78,45 @@ class AdminSettingController extends Controller
             'status' => 'queued',
         ]);
 
-        CreateDatabaseBackup::dispatch($backup);
-        $auditLogService->record('database_backup.requested', $backup, ['filename' => $backup->filename]);
+        try {
+            CreateDatabaseBackup::dispatchSync($backup);
+            $backup->refresh();
 
-        return back()->with('success', 'Backup telah dimasukkan ke antrean. Halaman ini menampilkan tautan unduh setelah proses selesai.');
+            if ($backup->status === 'completed') {
+                $auditLogService->record('database_backup.completed', $backup, ['filename' => $backup->filename]);
+
+                return back()->with('success', 'Backup database berhasil dibuat dan siap diunduh.');
+            }
+
+            return back()->with('error', 'Backup database gagal: '.($backup->error_message ?? 'Terjadi kesalahan sistem.'));
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal memproses backup database: '.$e->getMessage());
+        }
     }
 
     public function downloadBackup(Request $request, DatabaseBackup $backup)
     {
-        abort_unless($backup->requested_by === $request->user()->id, 403);
-        abort_unless($backup->status === 'completed' && $backup->expires_at?->isFuture(), 404);
-        abort_unless($backup->stored_path && Storage::disk('private')->exists($backup->stored_path), 404);
+        abort_unless($request->user()?->hasPortalRole('admin_kota') || $backup->requested_by === $request->user()->id, 403);
+        abort_unless($backup->isDownloadable(), 404);
 
         return Storage::disk('private')->download($backup->stored_path, $backup->filename, [
             'Cache-Control' => 'private, no-store, max-age=0',
         ]);
+    }
+
+    public function destroyBackup(Request $request, DatabaseBackup $backup, AuditLogService $auditLogService)
+    {
+        abort_unless($request->user()?->hasPortalRole('admin_kota') || $backup->requested_by === $request->user()->id, 403);
+
+        if ($backup->stored_path && Storage::disk('private')->exists($backup->stored_path)) {
+            Storage::disk('private')->delete($backup->stored_path);
+        }
+
+        $filename = $backup->filename;
+        $backup->delete();
+
+        $auditLogService->record('database_backup.deleted', null, ['filename' => $filename]);
+
+        return back()->with('success', "Berkas backup '{$filename}' berhasil dihapus.");
     }
 }
