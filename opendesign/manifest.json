@@ -1,0 +1,52 @@
+{
+  "generated": "2026-08-14T23:46:18.000Z",
+  "sections": [
+    {
+      "id": "mockups",
+      "label": "Mockups",
+      "groups": [
+        {
+          "slug": "katalog-magang-banjarmasin",
+          "files": [
+            {
+              "path": "./mockups/katalog-magang-banjarmasin/index.html",
+              "label": "Katalog Lowongan Magang"
+            }
+          ]
+        },
+        {
+          "slug": "alur-magang-brutalism",
+          "files": [
+            {
+              "path": "./mockups/alur-magang-brutalism/index.html",
+              "label": "Alur Pendaftaran Magang (Neo-Brutalism)"
+            }
+          ]
+        },
+        {
+          "slug": "alur-magang-minimalism",
+          "files": [
+            {
+              "path": "./mockups/alur-magang-minimalism/index.html",
+              "label": "Alur Pendaftaran Magang (Minimalism)"
+            }
+          ]
+        },
+        {
+          "slug": "kartu-metriks-stats",
+          "files": [
+            {
+              "path": "./mockups/kartu-metriks-stats/index.html",
+              "label": "Kartu Metriks Statistik 1-4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "design-systems",
+      "label": "Design Systems",
+      "groups": []
+    }
+  ]
+}
