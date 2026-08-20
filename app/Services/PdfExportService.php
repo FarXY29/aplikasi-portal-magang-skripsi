@@ -26,6 +26,7 @@ class PdfExportService
         string $orientation = 'portrait',
         bool $withSignature = false
     ): Response {
+        $data = $this->injectKopData($data);
         if ($withSignature) {
             $data = $this->injectSignatureData($data);
         }
@@ -36,11 +37,56 @@ class PdfExportService
     }
 
     /**
+     * Inject Kop data from settings if not already present in data.
+     */
+    public function injectKopData(array $data, $settings = null): array
+    {
+        if ($settings === null) {
+            $settings = \App\Models\Setting::all()->pluck('value', 'key');
+        }
+
+        if (! array_key_exists('kop_line1', $data)) {
+            $data['kop_line1'] = ! empty($settings['kop_line1']) ? $settings['kop_line1'] : 'PEMERINTAH KOTA BANJARMASIN';
+        }
+
+        if (! array_key_exists('kop_line2', $data)) {
+            $data['kop_line2'] = ! empty($settings['kop_line2']) ? $settings['kop_line2'] : 'BADAN KESATUAN BANGSA DAN POLITIK';
+        }
+
+        if (! array_key_exists('kop_line3', $data)) {
+            $data['kop_line3'] = ! empty($settings['kop_line3']) ? $settings['kop_line3'] : 'Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin 70111';
+        }
+
+        if (! array_key_exists('kop_logo_path', $data)) {
+            $logoPath = null;
+            if (! empty($settings['kop_logo']) && \Illuminate\Support\Facades\Storage::disk('public')->exists($settings['kop_logo'])) {
+                $rawImg = $settings['kop_logo'];
+                if (file_exists(storage_path('app/public/' . $rawImg))) {
+                    $logoPath = storage_path('app/public/' . $rawImg);
+                } elseif (file_exists(public_path('storage/' . $rawImg))) {
+                    $logoPath = public_path('storage/' . $rawImg);
+                }
+            }
+
+            if (! $logoPath || ! file_exists($logoPath)) {
+                $defaultLogo = public_path('images/Banjarmasin_Logo.svg.png');
+                $logoPath = file_exists($defaultLogo) ? $defaultLogo : null;
+            }
+
+            $data['kop_logo_path'] = $logoPath;
+        }
+
+        return $data;
+    }
+
+    /**
      * Inject signature data from settings if not already present in data.
      */
-    private function injectSignatureData(array $data): array
+    public function injectSignatureData(array $data, $settings = null): array
     {
-        $settings = \App\Models\Setting::all()->pluck('value', 'key');
+        if ($settings === null) {
+            $settings = \App\Models\Setting::all()->pluck('value', 'key');
+        }
 
         if (! array_key_exists('pejabat_nama', $data) && ! array_key_exists('pejabat_nip', $data) && ! array_key_exists('pejabat_jabatan', $data)) {
             $data['pejabat_nama'] = $settings['pejabat_name'] ?? 'H. Lukman Fadlun, SH';
@@ -81,6 +127,7 @@ class PdfExportService
         string $paper = 'a4',
         string $orientation = 'portrait'
     ): Response {
+        $data = $this->injectKopData($data);
         $pdf = Pdf::loadView($view, $data)->setPaper($paper, $orientation);
 
         return $pdf->download($filename);
@@ -101,6 +148,7 @@ class PdfExportService
         string $paper = 'a4',
         string $orientation = 'portrait'
     ) {
+        $data = $this->injectKopData($data);
         return Pdf::loadView($view, $data)->setPaper($paper, $orientation);
     }
 }
