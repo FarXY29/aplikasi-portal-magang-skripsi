@@ -24,10 +24,10 @@
                     <i class="fas fa-qrcode text-2xl"></i>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-gray-100 tracking-tight font-display">
-                    Verifikasi Keabsahan Sertifikat
+                    Verifikasi Keabsahan Sertifikat & ID Card
                 </h1>
                 <p class="mt-2 text-xs sm:text-sm text-slate-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed font-medium">
-                    Pindai kode QR pada sertifikat fisik/digital, unggah dokumen PDF, atau cari berdasarkan nomor registrasi resmi Pemerintah Kota Banjarmasin.
+                    Pindai kode QR pada ID Card peserta magang, sertifikat resmi, unggah berkas, atau cari berdasarkan nomor registrasi Pemerintah Kota Banjarmasin.
                 </p>
 
                 <!-- Dual-Tab Navigation Buttons -->
@@ -139,10 +139,10 @@
                         <i class="fas fa-file-signature text-lg"></i>
                     </div>
                     <h3 class="text-base sm:text-lg font-black text-slate-800 dark:text-gray-100">
-                        Cari Nomor Registrasi Sertifikat
+                        Cari Nomor Sertifikat / ID Card
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-medium">
-                        Masukkan Nomor Sertifikat resmi atau Token Verifikasi 32 karakter untuk melihat data keabsahan.
+                        Masukkan Nomor Sertifikat resmi atau Token Verifikasi ID Card untuk melihat data keabsahan.
                     </p>
                 </div>
 
@@ -150,7 +150,7 @@
                     @csrf
                     <div>
                         <label for="nomor_sertifikat" class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-                            Nomor Sertifikat / Token
+                            Nomor Sertifikat / Token ID Card
                         </label>
                         <div class="relative">
                             <input type="text" id="nomor_sertifikat" name="nomor_sertifikat" x-model="manualInput" 
@@ -275,16 +275,25 @@
                 resultContainer.innerHTML = "<span class='text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1.5'><i class='fas fa-check-circle'></i> QR Berhasil Terdeteksi! Mengalihkan...</span>";
                 
                 stopScanning().then(() => {
-                    if (decodedText.includes('/verify-certificate/')) {
+                    if (decodedText.includes('/verify-id-card/')) {
+                        window.location.href = decodedText;
+                    } else if (decodedText.includes('/verify-certificate/')) {
                         window.location.href = decodedText;
                     } else {
-                        // Attempt to extract token from string
-                        const match = decodedText.match(/verify-certificate\/([a-zA-Z0-9_\-]+)/);
-                        if (match) {
-                            window.location.href = "{{ url('/verify-certificate') }}/" + match[1];
-                        } else {
-                            window.location.href = "{{ url('/verify-certificate') }}/" + encodeURIComponent(decodedText);
+                        const idCardMatch = decodedText.match(/verify-id-card\/([a-zA-Z0-9_\-]+)/);
+                        if (idCardMatch) {
+                            window.location.href = "{{ url('/verify-id-card') }}/" + idCardMatch[1];
+                            return;
                         }
+
+                        const certMatch = decodedText.match(/verify-certificate\/([a-zA-Z0-9_\-]+)/);
+                        if (certMatch) {
+                            window.location.href = "{{ url('/verify-certificate') }}/" + certMatch[1];
+                            return;
+                        }
+
+                        // Default attempt ID Card verification
+                        window.location.href = "{{ url('/verify-id-card') }}/" + encodeURIComponent(decodedText);
                     }
                 });
             }
