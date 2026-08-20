@@ -26,6 +26,7 @@ yarn-error.log
 /.reasonix
 /opendesign
 opendesign/
+storage\framework\views-v2
 
 # Local env files (Vite/Laravel local overrides)
 .env.local

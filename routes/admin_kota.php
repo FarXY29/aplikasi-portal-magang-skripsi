@@ -71,4 +71,5 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/settings/backups/{backup}/download', [AdminSettingController::class, 'downloadBackup'])
         ->middleware('signed')
         ->name('settings.backups.download');
+    Route::delete('/settings/backups/{backup}', [AdminSettingController::class, 'destroyBackup'])->name('settings.backups.destroy');
 });
