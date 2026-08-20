@@ -1,0 +1,118 @@
+<section>
+    <div class="border-b border-gray-100 dark:border-gray-700 pb-5 mb-6">
+        <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <i class="fas fa-shield-alt text-teal-600 dark:text-teal-400"></i>
+            <?php echo e(__('Keamanan & Kata Sandi')); ?>
+
+        </h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <?php echo e(__('Pastikan akun Anda menggunakan password yang panjang dan acak agar tetap aman.')); ?>
+
+        </p>
+    </div>
+
+    <form method="post" action="<?php echo e(route('password.update')); ?>" class="space-y-6">
+        <?php echo csrf_field(); ?>
+        <?php echo method_field('put'); ?>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Password Saat Ini -->
+            <div class="space-y-1.5 md:col-span-2">
+                <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="current_password">
+                    <span><?php echo e(__('Password Saat Ini')); ?></span> <span class="text-red-500">*</span>
+                </label>
+                <input id="current_password" name="current_password" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="current-password" />
+                <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->updatePassword->get('current_password'),'class' => 'mt-1']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->updatePassword->get('current_password')),'class' => 'mt-1']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+            </div>
+
+            <!-- Password Baru -->
+            <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="password">
+                    <span><?php echo e(__('Password Baru')); ?></span> <span class="text-red-500">*</span>
+                </label>
+                <input id="password" name="password" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="new-password" />
+                <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->updatePassword->get('password'),'class' => 'mt-1']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->updatePassword->get('password')),'class' => 'mt-1']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+            </div>
+
+            <!-- Konfirmasi Password Baru -->
+            <div class="space-y-1.5">
+                <label class="flex items-center gap-1.5 text-sm leading-none font-medium text-gray-700 dark:text-gray-300 select-none" for="password_confirmation">
+                    <span><?php echo e(__('Konfirmasi Password Baru')); ?></span> <span class="text-red-500">*</span>
+                </label>
+                <input id="password_confirmation" name="password_confirmation" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="new-password" />
+                <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['messages' => $errors->updatePassword->get('password_confirmation'),'class' => 'mt-1']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('input-error'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['messages' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($errors->updatePassword->get('password_confirmation')),'class' => 'mt-1']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $attributes = $__attributesOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__attributesOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf94ed9c5393ef72725d159fe01139746)): ?>
+<?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
+<?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
+<?php endif; ?>
+            </div>
+        </div>
+
+        <div class="pt-6 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-3 mt-6">
+            <?php if(session('status') === 'password-updated'): ?>
+                <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-semibold shadow-2xs">
+                    <i class="fas fa-check-circle text-teal-600 dark:text-teal-400"></i>
+                    <span><?php echo e(__('Kata sandi berhasil disimpan')); ?></span>
+                </div>
+            <?php endif; ?>
+
+            <button type="submit" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-teal-600/20 text-white h-9 px-5 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 active:scale-95 shadow-xs cursor-pointer">
+                <i class="fas fa-key text-xs"></i>
+                <span><?php echo e(__('Simpan Password')); ?></span>
+            </button>
+        </div>
+    </form>
+</section><?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views\profile\partials\update-password-form.blade.php ENDPATH**/ ?>

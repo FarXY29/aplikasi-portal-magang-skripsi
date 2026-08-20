@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup - Alur Pendaftaran Magang Minimalism</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .minimal-card {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .minimal-card:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(13, 148, 136, 0.3);
+      transform: translateY(-2px);
+    }
+    .dark .minimal-card:hover {
+      background-color: rgba(15, 23, 42, 0.8);
+      border-color: rgba(20, 184, 166, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 font-sans p-6 sm:p-16 min-h-screen flex flex-col justify-center">
+
+  <div class="max-w-6xl mx-auto w-full">
+    <!-- Header Section (Minimalist & Clean) -->
+    <div class="max-w-xl mb-16">
+      <span class="text-xs font-mono font-semibold tracking-[0.25em] text-teal-600 dark:text-teal-400 uppercase block mb-3">
+        ALUR PENDAFTARAN
+      </span>
+      <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+        Empat langkah sederhana menuju pengalaman magang Anda.
+      </h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base mt-3 leading-relaxed font-normal">
+        Proses pendaftaran terstruktur, transparan, dan dapat dipantau langsung secara real-time.
+      </p>
+    </div>
+
+    <!-- Connected Horizontal Steps / Grid -->
+    <div class="bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200/70 dark:divide-slate-800/80">
+
+        <!-- Step 1 -->
+        <div class="p-8 minimal-card flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-8">
+              <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">01.</span>
+              <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 transition-colors">
+                <i class="fas fa-user-plus text-xs"></i>
+              </div>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">Buat Akun Profil</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Daftarkan email aktif dan lengkapi data akademis diri serta institusi pendidikan Anda.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>TAHAP DOKUMEN</span>
+            <span class="text-slate-600 dark:text-slate-300">REGISTRASI</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-8 minimal-card flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-8">
+              <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">02.</span>
+              <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 transition-colors">
+                <i class="fas fa-search-location text-xs"></i>
+              </div>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">Pilih Lowongan SKPD</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Jelajahi posisi yang sesuai dengan bidang keahlian di berbagai kantor dinas instansi Pemko.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>EKSPLORASI</span>
+            <span class="text-slate-600 dark:text-slate-300">KATALOG</span>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-8 minimal-card flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-8">
+              <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">03.</span>
+              <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 transition-colors">
+                <i class="fas fa-calendar-alt text-xs"></i>
+              </div>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">Tentukan Periode</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Atur tanggal pelaksanaan magang. Kuota slot akan divalidasi langsung oleh sistem instansi.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>VALIDASI</span>
+            <span class="text-slate-600 dark:text-slate-300">KUOTA SLOT</span>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="p-8 minimal-card flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-8">
+              <span class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400 tracking-wider">04.</span>
+              <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:border-teal-500/40 group-hover:text-teal-600 transition-colors">
+                <i class="fas fa-paper-plane text-xs"></i>
+              </div>
+            </div>
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-2 tracking-tight">Pelaksanaan & Pembimbing</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Diterjunkan ke lokasi instansi tujuan, dibimbing mentor, serta pengisian logbook & sertifikat QR.
+            </p>
+          </div>
+          <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>PENILAIAN</span>
+            <span class="text-slate-600 dark:text-slate-300">SERTIFIKAT</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Minimal Subtle Note Footer -->
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+        <span>Seluruh proses pendaftaran tidak dipungut biaya apapun (Gratis).</span>
+      </div>
+      <a href="#faq" class="text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors inline-flex items-center gap-1.5">
+        Lihat Pertanyaan Umum (FAQ) <i class="fas fa-arrow-right text-[10px]"></i>
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

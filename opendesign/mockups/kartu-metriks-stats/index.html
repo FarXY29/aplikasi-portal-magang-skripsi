@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup - Kartu Metriks 1-4 Pemko Banjarmasin</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Outfit:wght@700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .stat-card {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans p-6 sm:p-16 min-h-screen flex flex-col justify-center">
+
+  <div class="max-w-6xl mx-auto w-full">
+    
+    <div class="text-center mb-10">
+      <span class="text-xs font-mono font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800">
+        STATISTIK PORTAL MAGANG
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 dark:text-white mt-3">
+        Metriks Utama Pemko Banjarmasin
+      </h2>
+    </div>
+
+    <!-- 4 Metrics Cards Grid (Grid 2 Cols Mobile, 4 Cols Desktop) -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+      
+      <!-- Metriks 1: Instansi Aktif -->
+      <div class="stat-card bg-white dark:bg-slate-900/90 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-teal-500/5 rounded-full blur-xl group-hover:bg-teal-500/15 transition-all"></div>
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 rounded-xl flex items-center justify-center border border-teal-100 dark:border-teal-900 group-hover:scale-110 group-hover:bg-teal-600 group-hover:text-white transition-all duration-300 shadow-sm">
+            <i class="fas fa-building text-lg sm:text-xl"></i>
+          </div>
+          <span class="text-[10px] font-mono font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/80 px-2 py-0.5 rounded-md border border-teal-200 dark:border-teal-900">
+            SKPD
+          </span>
+        </div>
+
+        <div>
+          <div class="text-2xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight leading-none mb-1.5">
+            45<span class="text-teal-600 dark:text-teal-400">+</span>
+          </div>
+          <div class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            Instansi Aktif
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2 line-clamp-1">
+            Dinas, Badan & Kecamatan
+          </p>
+        </div>
+      </div>
+
+      <!-- Metriks 2: Posisi Lowongan -->
+      <div class="stat-card bg-white dark:bg-slate-900/90 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/15 transition-all"></div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center border border-emerald-100 dark:border-emerald-900 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm">
+            <i class="fas fa-briefcase text-lg sm:text-xl"></i>
+          </div>
+          <span class="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-900">
+            OPEN
+          </span>
+        </div>
+
+        <div>
+          <div class="text-2xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight leading-none mb-1.5">
+            120<span class="text-emerald-600 dark:text-emerald-400">+</span>
+          </div>
+          <div class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            Posisi Magang
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2 line-clamp-1">
+            Kuota Terbuka Batch III
+          </p>
+        </div>
+      </div>
+
+      <!-- Metriks 3: Alumni Magang -->
+      <div class="stat-card bg-white dark:bg-slate-900/90 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-amber-500/5 rounded-full blur-xl group-hover:bg-amber-500/15 transition-all"></div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center border border-amber-100 dark:border-amber-900 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
+            <i class="fas fa-user-graduate text-lg sm:text-xl"></i>
+          </div>
+          <span class="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-900">
+            LULUS
+          </span>
+        </div>
+
+        <div>
+          <div class="text-2xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight leading-none mb-1.5">
+            1,420<span class="text-amber-500">+</span>
+          </div>
+          <div class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            Alumni Magang
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2 line-clamp-1">
+            Mahasiswa & Siswa SMK
+          </p>
+        </div>
+      </div>
+
+      <!-- Metriks 4: Sertifikat QR Digital -->
+      <div class="stat-card bg-white dark:bg-slate-900/90 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-indigo-500/5 rounded-full blur-xl group-hover:bg-indigo-500/15 transition-all"></div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center border border-indigo-100 dark:border-indigo-900 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+            <i class="fas fa-qrcode text-lg sm:text-xl"></i>
+          </div>
+          <span class="text-[10px] font-mono font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/80 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-900">
+            VERIFIED
+          </span>
+        </div>
+
+        <div>
+          <div class="text-2xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight leading-none mb-1.5">
+            100<span class="text-indigo-600 dark:text-indigo-400">%</span>
+          </div>
+          <div class="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            Sertifikat QR
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-2 line-clamp-1">
+            Digital Validasi Resmi
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

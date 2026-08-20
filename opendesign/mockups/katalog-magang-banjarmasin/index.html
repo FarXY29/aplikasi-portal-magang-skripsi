@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Lowongan Magang - Pemko Banjarmasin</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      /* Color Palette: Deep River Civic Teal & Amber Sun */
+      --primary: #0a3a40;
+      --primary-hover: #072b30;
+      --primary-light: #145961;
+      --primary-surface: #edf7f8;
+      
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --accent-surface: #fef3c7;
+      
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-sidebar: #052327;
+      
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #94a3b8;
+      
+      --border-subtle: #e2e8f0;
+      --border-focus: #145961;
+      
+      --badge-green-bg: #dcfce7;
+      --badge-green-text: #15803d;
+      --badge-blue-bg: #e0f2fe;
+      --badge-blue-text: #0369a1;
+      --badge-amber-bg: #fef3c7;
+      --badge-amber-text: #b45309;
+      
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      --shadow-glow: 0 0 20px rgba(20, 89, 97, 0.15);
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout Utility */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Top Utility Bar */
+    .top-bar {
+      background: var(--bg-sidebar);
+      color: #cbd5e1;
+      font-size: 0.8125rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .top-bar-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-bar-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background: rgba(217, 119, 6, 0.2);
+      color: #fbbf24;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    /* Header / Navigation */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 4.5rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-logo {
+      width: 2.6rem;
+      height: 2.6rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px rgba(10, 58, 64, 0.3);
+    }
+    .brand-text h1 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--primary);
+    }
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+    
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      box-shadow: 0 2px 4px rgba(10, 58, 64, 0.2);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(10, 58, 64, 0.25);
+    }
+    .btn-outline {
+      border-color: var(--border-subtle);
+      color: var(--text-main);
+      background: var(--bg-card);
+    }
+    .btn-outline:hover {
+      background: var(--bg-main);
+      border-color: var(--primary-light);
+      color: var(--primary);
+    }
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #052327 0%, #0a3a40 50%, #145961 100%);
+      color: white;
+      padding: 4.5rem 0 5.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, var(--bg-main), transparent);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title span {
+      color: #f59e0b;
+      position: relative;
+    }
+    .hero-desc {
+      font-size: 1.0625rem;
+      color: #cbd5e1;
+      max-width: 580px;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+    
+    /* Stats Bar inside Hero */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+    }
+    .stat-item {
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding-right: 1rem;
+    }
+    .stat-item:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+    .stat-num {
+      font-family: var(--font-mono);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      display: block;
+    }
+    .stat-lbl {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Live Notice Box */
+    .hero-card {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .hero-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .notice-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .notice-item {
+      display: flex;
+      gap: 0.875rem;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+    }
+    .notice-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(217, 119, 6, 0.2);
+      color: #fbbf24;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .notice-text strong {
+      display: block;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Floating Search & Filter Bar */
+    .search-filter-section {
+      margin-top: -2.5rem;
+      position: relative;
+      z-index: 30;
+      margin-bottom: 2.5rem;
+    }
+    .search-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-subtle);
+    }
+    .search-inputs {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1.2fr auto;
+      gap: 1rem;
+      align-items: center;
+    }
+    .input-group {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-subtle);
+      pointer-events: none;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 0.9375rem;
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      background-color: var(--bg-card);
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(20, 89, 97, 0.12);
+    }
+    select.form-control {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+    }
+
+    /* Tag Chips / Quick Filter */
+    .chip-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border-subtle);
+      overflow-x: auto;
+    }
+    .chip-label {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      margin-right: 0.5rem;
+    }
+    .chip {
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-main);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .chip:hover, .chip.active {
+      background: var(--primary-surface);
+      border-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Main Content Layout */
+    .content-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    /* Sidebar Filter Panel */
+    .filter-sidebar {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      border: 1px solid var(--border-subtle);
+      height: fit-content;
+      position: sticky;
+      top: 6rem;
+    }
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .filter-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filter-reset {
+      font-size: 0.8125rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-group {
+      margin-bottom: 1.5rem;
+    }
+    .filter-group-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.875rem;
+    }
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: var(--primary);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .count-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      background: var(--bg-main);
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Position Cards Grid */
+    .positions-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .results-count {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+    }
+    .results-count strong {
+      color: var(--text-main);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    /* Position Card */
+    .position-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .position-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-light);
+    }
+    
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .instansi-icon {
+      width: 3rem;
+      height: 3rem;
+      background: var(--primary-surface);
+      color: var(--primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(20, 89, 97, 0.15);
+    }
+    .card-instansi-name {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 0.15rem;
+      line-height: 1.3;
+    }
+    
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .tag-location { background: #f1f5f9; color: #475569; }
+    .tag-duration { background: #fef3c7; color: #92400e; }
+    .tag-level { background: #e0f2fe; color: #0369a1; }
+
+    /* Quota Bar */
+    .quota-box {
+      background: var(--bg-main);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .quota-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      margin-bottom: 0.5rem;
+    }
+    .quota-label { font-weight: 600; color: var(--text-muted); }
+    .quota-val { font-family: var(--font-mono); font-weight: 700; color: var(--primary); }
+    
+    .progress-bar-bg {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: var(--radius-full);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .deadline-text {
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Detail Drawer / Modal Backdrop */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .drawer-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-card);
+      z-index: 51;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-backdrop.active .drawer-panel {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 1.5rem 2rem;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .drawer-close {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,255,255,0.3); }
+
+    .drawer-content {
+      padding: 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .drawer-section {
+      margin-bottom: 2rem;
+    }
+    .drawer-section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .req-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .req-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+    }
+    .req-bullet {
+      width: 20px;
+      height: 20px;
+      background: var(--primary-surface);
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .drawer-footer {
+      padding: 1.25rem 2rem;
+      background: var(--bg-main);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-card { display: none; }
+      .content-layout { grid-template-columns: 1fr; }
+      .filter-sidebar { display: none; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .search-inputs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Utility Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-flex">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span class="top-bar-badge"><i data-lucide="shield-check" style="width: 12px;"></i> Portal Resmi Pemko Banjarmasin</span>
+        <span style="display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="map-pin" style="width: 13px;"></i> Balai Kota Banjarmasin, Jl. RE Martadinata No. 1</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <a href="#" style="color: #cbd5e1; text-decoration: none; font-size: 0.8125rem;">Cek Status Permohonan</a>
+        <a href="#" style="color: #cbd5e1; text-decoration: none; font-size: 0.8125rem;">Verifikasi Sertifikat QR</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#" class="brand">
+        <div class="brand-logo">BJM</div>
+        <div class="brand-text">
+          <h1>Portal Magang & PKL</h1>
+          <p>Pemerintah Kota Banjarmasin</p>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#" class="nav-link active">Lowongan Magang</a></li>
+        <li><a href="#" class="nav-link">Daftar Instansi / SKPD</a></li>
+        <li><a href="#" class="nav-link">Panduan & Syarat</a></li>
+        <li><a href="#" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="#" class="btn btn-outline"><i data-lucide="log-in" style="width: 16px;"></i> Masuk Peserta</a>
+        <a href="#" class="btn btn-primary"><i data-lucide="user-plus" style="width: 16px;"></i> Daftar Magang</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-pill">
+          <i data-lucide="sparkles" style="width: 14px;"></i> Periode Pendaftaran Batch III 2026 Dibuka
+        </div>
+        <h2 class="hero-title">Bangun Karir & Pengalaman Digital di <span>Pemko Banjarmasin</span></h2>
+        <p class="hero-desc">
+          Wadah resmi pendaftaran magang dan PKL mahasiswa & siswa SMA/SMK di berbagai Dinas, Badan, dan Kantor Kecamatan se-Kota Banjarmasin dengan bimbingan langsung profesional.
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">45+</span>
+            <span class="stat-lbl">Instansi / SKPD</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">120+</span>
+            <span class="stat-lbl">Kuota Posisi</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">1,420</span>
+            <span class="stat-lbl">Alumni Magang</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Notice Board Card -->
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <div class="hero-card-title">
+            <span class="live-dot"></span> Informasi Terkini Magang
+          </div>
+          <span style="font-size: 0.75rem; color: #94a3b8;">Terupdate Hari Ini</span>
+        </div>
+
+        <ul class="notice-list">
+          <li class="notice-item">
+            <div class="notice-icon"><i data-lucide="calendar" style="width: 16px;"></i></div>
+            <div class="notice-text">
+              <strong>Batas Akhir Batch III</strong>
+              Pendaftaran ditutup tanggal 30 Agustus 2026 pukul 23:59 WITA.
+            </div>
+          </li>
+          <li class="notice-item">
+            <div class="notice-icon"><i data-lucide="award" style="width: 16px;"></i></div>
+            <div class="notice-text">
+              <strong>Sertifikat Berbasis QR Code</strong>
+              Tervalidasi secara digital dan diakui resmi oleh Pemko Banjarmasin.
+            </div>
+          </li>
+          <li class="notice-item">
+            <div class="notice-icon"><i data-lucide="clock" style="width: 16px;"></i></div>
+            <div class="notice-text">
+              <strong>Presensi Lokasi GPS Real-time</strong>
+              Sistem presensi terintegrasi menggunakan radius GPS kantor instansi.
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Floating Search & Filter Section -->
+    <section class="search-filter-section">
+      <div class="search-card">
+        <div class="search-inputs">
+          <div class="input-group">
+            <i data-lucide="search" class="input-icon" style="width: 18px;"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Cari posisi, kata kunci, jurusan, atau bidang keahlian...">
+          </div>
+
+          <div class="input-group">
+            <i data-lucide="building-2" class="input-icon" style="width: 18px;"></i>
+            <select id="instansiSelect" class="form-control">
+              <option value="">Semua Instansi / Dinas</option>
+              <option value="Diskominfo">Dinas Kominfo</option>
+              <option value="Bappeda">Bappeda Litbang</option>
+              <option value="Dinas Pendidikan">Dinas Pendidikan</option>
+              <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+              <option value="Diskominfotik">Diskominfotik Kota</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <i data-lucide="graduation-cap" class="input-icon" style="width: 18px;"></i>
+            <select id="levelSelect" class="form-control">
+              <option value="">Semua Jenjang</option>
+              <option value="Mahasiswa (S1/D3)">Mahasiswa (S1/D3)</option>
+              <option value="Siswa SMK/SMA">Siswa SMK / SMA</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" onclick="filterPositions()"><i data-lucide="sliders-horizontal" style="width: 16px;"></i> Cari Posisi</button>
+        </div>
+
+        <!-- Quick Filter Chips -->
+        <div class="chip-container">
+          <span class="chip-label">Populer:</span>
+          <button class="chip active" onclick="toggleChip(this, 'all')">Semua</button>
+          <button class="chip" onclick="toggleChip(this, 'Web Developer')">💻 Web Developer</button>
+          <button class="chip" onclick="toggleChip(this, 'UI/UX Design')">🎨 UI/UX Design</button>
+          <button class="chip" onclick="toggleChip(this, 'Administrasi Publik')">📄 Administrasi Publik</button>
+          <button class="chip" onclick="toggleChip(this, 'Jaringan & Cyber')">🌐 Network & Server</button>
+          <button class="chip" onclick="toggleChip(this, 'Multimedia')">📹 Multimedia & Tim Kreatif</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Layout: Sidebar Filter & Grid -->
+    <div class="content-layout">
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="filter-header">
+          <span class="filter-title"><i data-lucide="filter" style="width: 16px;"></i> Filter Spesifik</span>
+          <a class="filter-reset" onclick="resetFilters()">Reset Filter</a>
+        </div>
+
+        <!-- Filter 1: Durasi Magang -->
+        <div class="filter-group">
+          <div class="filter-group-title">Durasi Magang</div>
+          <div class="checkbox-list">
+            <label class="checkbox-label">
+              <input type="checkbox" name="duration" value="1-2 Bulan" onchange="filterPositions()"> 1 - 2 Bulan <span class="count-badge">8</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="duration" value="3-4 Bulan" checked onchange="filterPositions()"> 3 - 4 Bulan <span class="count-badge">14</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="duration" value="6 Bulan" onchange="filterPositions()"> 6 Bulan (Kampus Merdeka) <span class="count-badge">5</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter 2: Wilayah Kecamatan -->
+        <div class="filter-group">
+          <div class="filter-group-title">Lokasi Kantor</div>
+          <div class="checkbox-list">
+            <label class="checkbox-label">
+              <input type="checkbox" name="location" value="Banjarmasin Tengah" onchange="filterPositions()"> Banjarmasin Tengah <span class="count-badge">18</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="location" value="Banjarmasin Utara" onchange="filterPositions()"> Banjarmasin Utara <span class="count-badge">6</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="location" value="Banjarmasin Selatan" onchange="filterPositions()"> Banjarmasin Selatan <span class="count-badge">4</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter 3: Status Kuota -->
+        <div class="filter-group">
+          <div class="filter-group-title">Status Kuota</div>
+          <div class="checkbox-list">
+            <label class="checkbox-label">
+              <input type="checkbox" id="availableOnly" onchange="filterPositions()"> Hanya Kuota Tersedia <span class="count-badge">22</span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Position Cards Section -->
+      <section>
+        <div class="positions-header">
+          <div class="results-count">
+            Menampilkan <strong id="visibleCount">6</strong> posisi magang tersedia
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.8125rem; color: var(--text-muted); font-weight: 600;">Urutkan:</span>
+            <select class="form-control" style="width: auto; padding-top: 0.4rem; padding-bottom: 0.4rem; font-size: 0.8125rem;">
+              <option>Paling Baru</option>
+              <option>Sisa Kuota Terbanyak</option>
+              <option>Batas Pendaftaran Terdekat</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid">
+          <!-- Card 1 -->
+          <article class="position-card" data-instansi="Diskominfo" data-level="Mahasiswa (S1/D3)" data-title="Frontend Web Developer Laravel & Tailwind">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon">DISK</div>
+                <div>
+                  <span class="card-instansi-name">Dinas Kominfo Kota Banjarmasin</span>
+                  <h3 class="card-title">Frontend Web Developer (Laravel & Tailwind)</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level"><i data-lucide="graduation-cap" style="width: 12px;"></i> S1/D3 Teknik Informatika / SI</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Tengah</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 3-4 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">3 dari 5 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 60%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 28 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('Frontend Web Developer (Laravel & Tailwind)', 'Dinas Kominfo Kota Banjarmasin', 'Mengembangkan UI/UX portal publik dan aplikasi layanan internal pemerintah berbasis Laravel 13 & Tailwind CSS.', ['Mahasiswa aktif S1/D3 Teknik Informatika / System Informasi', 'Menguasai HTML, CSS, JavaScript & dasar framework Laravel', 'Memahami Git & Blade Templates', 'Melampirkan Portofolio Project Web'])">Detail & Lamar</button>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="position-card" data-instansi="Bappeda" data-level="Mahasiswa (S1/D3)" data-title="Analis Data Perencanaan & Statistik">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon" style="background: #fef3c7; color: #b45309;">BAP</div>
+                <div>
+                  <span class="card-instansi-name" style="color: #b45309;">Bappeda Litbang Kota Banjarmasin</span>
+                  <h3 class="card-title">Analis Data Perencanaan Pembangunan</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level"><i data-lucide="graduation-cap" style="width: 12px;"></i> S1 Statistika / Perencanaan Wilayah</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Tengah</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 3-4 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">1 dari 4 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 25%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 25 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('Analis Data Perencanaan Pembangunan', 'Bappeda Litbang Kota Banjarmasin', 'Membantu pengolahan data statistik capaian indikator pembangunan daerah Banjarmasin.', ['Mahasiswa aktif S1 Statistika, Matematika, PWK, atau Ekonomi', 'Mampu mengolah data Excel / SPSS / Python', 'Memahami visualisasi data dalam bentuk chart / dashboard'])">Detail & Lamar</button>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="position-card" data-instansi="Dinas Pendidikan" data-level="Siswa SMK/SMA" data-title="Staf Administrasi & Pengarsipan Digital">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon" style="background: #e0f2fe; color: #0369a1;">DISP</div>
+                <div>
+                  <span class="card-instansi-name" style="color: #0369a1;">Dinas Pendidikan Kota Banjarmasin</span>
+                  <h3 class="card-title">Staf Administrasi & Pengarsipan Surat</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level" style="background: #dcfce7; color: #15803d;"><i data-lucide="graduation-cap" style="width: 12px;"></i> Siswa SMK (OTKP / Perkantoran)</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Utara</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 1-2 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">4 dari 6 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 66%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 30 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('Staf Administrasi & Pengarsipan Surat', 'Dinas Pendidikan Kota Banjarmasin', 'Melakukan pendataan dokumen sekolah, pengarsipan berkas dinas, dan administrasi permohonan.', ['Siswa aktif SMK Jurusan Otomatisasi Perkantoran (OTKP) / Akuntansi', 'Mampu mengoperasikan MS Office (Word, Excel)', 'Disiplin dan teliti'])">Detail & Lamar</button>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="position-card" data-instansi="Diskominfo" data-level="Mahasiswa (S1/D3)" data-title="UI/UX Designer System Layanan Publik">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon">DISK</div>
+                <div>
+                  <span class="card-instansi-name">Dinas Kominfo Kota Banjarmasin</span>
+                  <h3 class="card-title">UI/UX Designer System Layanan Publik</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level"><i data-lucide="graduation-cap" style="width: 12px;"></i> S1/D3 Desain Komunikasi / SI</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Tengah</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 3-4 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">2 dari 3 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 66%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 29 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('UI/UX Designer System Layanan Publik', 'Dinas Kominfo Kota Banjarmasin', 'Merancang wireframe, mockup responsive, dan design system aplikasi layanan masyarakat.', ['Mahasiswa D3/S1 DKV, Informatika, atau Sistem Informasi', 'Fasih menggunakan Figma / Penpot', 'Memahami accessibility & responsive design UI'])">Detail & Lamar</button>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="position-card" data-instansi="Diskominfotik" data-level="Mahasiswa (S1/D3)" data-title="Tim Kreatif & Multimedia Media Sosial">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon" style="background: #fae8ff; color: #86198f;">KRE</div>
+                <div>
+                  <span class="card-instansi-name" style="color: #86198f;">Diskominfotik Kota Banjarmasin</span>
+                  <h3 class="card-title">Tim Kreatif & Video Editor Media Sosial</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level"><i data-lucide="graduation-cap" style="width: 12px;"></i> D3/S1 Komunikasi / DKV / Broadcasting</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Tengah</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 3-4 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">2 dari 4 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 31 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('Tim Kreatif & Video Editor Media Sosial', 'Diskominfotik Kota Banjarmasin', 'Produksi konten informasi publik, liputan kegiatan walikota, dan pengolahan video pendek reels/tiktok.', ['Menguasai Premiere Pro / CapCut / After Effects', 'Mampu membuat naskah liputan singkat', 'Melampirkan contoh video hasil karya'])">Detail & Lamar</button>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="position-card" data-instansi="Dinas Kesehatan" data-level="Siswa SMK/SMA" data-title="Teknisi Komputer & Jaringan (TKJ)">
+            <div>
+              <div class="card-top">
+                <div class="instansi-icon" style="background: #fee2e2; color: #991b1b;">KES</div>
+                <div>
+                  <span class="card-instansi-name" style="color: #991b1b;">Dinas Kesehatan Kota Banjarmasin</span>
+                  <h3 class="card-title">Teknisi Jaringan & Hardware Komputer</h3>
+                </div>
+              </div>
+
+              <div class="card-tags">
+                <span class="tag tag-level" style="background: #dcfce7; color: #15803d;"><i data-lucide="graduation-cap" style="width: 12px;"></i> Siswa SMK (TKJ / Rekayasa Perangkat Lunak)</span>
+                <span class="tag tag-location"><i data-lucide="map-pin" style="width: 12px;"></i> Banjarmasin Selatan</span>
+                <span class="tag tag-duration"><i data-lucide="clock" style="width: 12px;"></i> 1-2 Bulan</span>
+              </div>
+
+              <div class="quota-box">
+                <div class="quota-info">
+                  <span class="quota-label">Sisa Kuota Magang</span>
+                  <span class="quota-val">1 dari 2 Terisi</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="deadline-text"><i data-lucide="calendar" style="width: 13px;"></i> Tutup: 27 Ags 2026</span>
+              <button class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;" onclick="openDrawer('Teknisi Jaringan & Hardware Komputer', 'Dinas Kesehatan Kota Banjarmasin', 'Maintenance jaringan LAN puskesmas, instalasi OS, dan troubleshooting komputer kerja dinas.', ['Siswa SMK Jurusan Teknik Komputer & Jaringan (TKJ)', 'Memahami Konfigurasi IP & Crimping kabel UTP', 'Disiplin dan Siap Kerja Lapangan'])">Detail & Lamar</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Interactive Detail Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer(event)">
+    <div class="drawer-panel" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #93c5fd; text-transform: uppercase;" id="drawerInstansi">Dinas Kominfo</span>
+          <h2 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.2rem;" id="drawerTitle">Frontend Web Developer</h2>
+        </div>
+        <button class="drawer-close" onclick="closeDrawerDirect()"><i data-lucide="x" style="width: 18px;"></i></button>
+      </div>
+
+      <div class="drawer-content">
+        <div class="drawer-section">
+          <h4 class="drawer-section-title"><i data-lucide="file-text" style="width: 18px;"></i> Deskripsi Pekerjaan</h4>
+          <p style="font-size: 0.9375rem; color: var(--text-muted);" id="drawerDesc">
+            Mengembangkan UI/UX portal publik dan aplikasi layanan internal pemerintah berbasis Laravel 13 & Tailwind CSS.
+          </p>
+        </div>
+
+        <div class="drawer-section">
+          <h4 class="drawer-section-title"><i data-lucide="check-circle-2" style="width: 18px;"></i> Persyaratan & Kualifikasi</h4>
+          <ul class="req-list" id="drawerReqs">
+            <!-- Dynamic items -->
+          </ul>
+        </div>
+
+        <div class="drawer-section">
+          <h4 class="drawer-section-title"><i data-lucide="map-pin" style="width: 18px;"></i> Lokasi & Bimbingan</h4>
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-size: 0.875rem;">
+            <p><strong>Kantor Utama:</strong> Balai Kota Banjarmasin, Lantai 3 Gedung Pemko</p>
+            <p style="color: var(--text-muted); margin-top: 0.3rem;"><strong>Pembimbing Lapangan:</strong> Kepala Seksi Aplikasi & Infrastruktur Digital</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-subtle); display: block;">Perlu Surat Pengantar Resmi</span>
+          <span style="font-size: 0.875rem; font-weight: 700; color: var(--primary);">Format PDF Max 2MB</span>
+        </div>
+        <a href="#" class="btn btn-primary" onclick="alert('Permohonan magang akan mengarahkan Anda ke formulir pendaftaran peserta!')">Lamar Posisi Ini <i data-lucide="arrow-right" style="width: 16px;"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Filter Logic
+    function filterPositions() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+      const instansiVal = document.getElementById('instansiSelect').value;
+      const levelVal = document.getElementById('levelSelect').value;
+
+      const cards = document.querySelectorAll('.position-card');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const instansi = card.getAttribute('data-instansi');
+        const level = card.getAttribute('data-level');
+
+        const matchesSearch = title.includes(searchVal) || instansi.toLowerCase().includes(searchVal);
+        const matchesInstansi = !instansiVal || instansi === instansiVal;
+        const matchesLevel = !levelVal || level === levelVal;
+
+        if (matchesSearch && matchesInstansi && matchesLevel) {
+          card.style.display = 'flex';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('visibleCount').textContent = visible;
+    }
+
+    function toggleChip(chip, keyword) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      const searchInput = document.getElementById('searchInput');
+      if (keyword === 'all') {
+        searchInput.value = '';
+      } else {
+        searchInput.value = keyword;
+      }
+      filterPositions();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('instansiSelect').value = '';
+      document.getElementById('levelSelect').value = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      filterPositions();
+    }
+
+    // Drawer Controls
+    function openDrawer(title, instansi, desc, reqs) {
+      document.getElementById('drawerTitle').textContent = title;
+      document.getElementById('drawerInstansi').textContent = instansi;
+      document.getElementById('drawerDesc').textContent = desc;
+
+      const reqList = document.getElementById('drawerReqs');
+      reqList.innerHTML = '';
+      reqs.forEach((req, idx) => {
+        const li = document.createElement('li');
+        li.className = 'req-item';
+        li.innerHTML = `<span class="req-bullet">${idx + 1}</span> <span>${req}</span>`;
+        reqList.appendChild(li);
+      });
+
+      document.getElementById('drawerBackdrop').classList.add('active');
+    }
+
+    function closeDrawer(e) {
+      if (e.target.id === 'drawerBackdrop') {
+        document.getElementById('drawerBackdrop').classList.remove('active');
+      }
+    }
+
+    function closeDrawerDirect() {
+      document.getElementById('drawerBackdrop').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+<img src="<?php echo e(asset('images/Banjarmasin_Logo.svg.png')); ?>" alt="Logo SiMagang" <?php echo e($attributes->merge(['class' => 'h-12 w-auto'])); ?>><?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views\components\application-logo.blade.php ENDPATH**/ ?>

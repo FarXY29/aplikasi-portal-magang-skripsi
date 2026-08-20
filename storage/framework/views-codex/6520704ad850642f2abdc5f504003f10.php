@@ -1,0 +1,156 @@
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('header', null, []); ?> 
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
+                <i class="fas fa-chalkboard-teacher text-teal-600"></i>
+                <?php echo e(__('Dashboard Pembimbing Lapangan Lapangan')); ?>
+
+            </h2>
+        </div>
+     <?php $__env->endSlot(); ?>
+
+    <div class="py-8 bg-gray-50 dark:bg-gray-900/50 min-h-screen font-sans">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-indigo-100 relative overflow-hidden group hover:shadow-md transition">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
+                        <i class="fas fa-users text-6xl text-indigo-500"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">Peserta Bimbingan</p>
+                        <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200"><?php echo e($interns->count()); ?></h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Total mahasiswa yang Anda bimbing.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-teal-100 relative overflow-hidden group hover:shadow-md transition">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
+                        <i class="fas fa-user-check text-6xl text-teal-500"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <p class="text-xs font-bold text-teal-500 uppercase tracking-widest mb-1">Status Aktif</p>
+                        <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200"><?php echo e($interns->where('status', 'diterima')->count()); ?></h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Mahasiswa yang sedang menjalani magang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="p-6 border-b border-gray-50 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                            <i class="fas fa-list text-gray-400"></i> Daftar Mahasiswa Bimbingan
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kelola dan pantau aktivitas harian peserta.</p>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Profil Peserta</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Posisi Magang</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Periode & Status</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-50">
+                            <?php $__empty_1 = true; $__currentLoopData = $interns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mhs): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition group <?php echo e($mhs->status == 'selesai' ? 'bg-gray-50 dark:bg-gray-900/60' : ''); ?>">
+                                
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-indigo-700 font-bold border border-indigo-300 shadow-sm">
+                                                <?php echo e(strtoupper(substr($mhs->user->name, 0, 1))); ?>
+
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 transition"><?php echo e($mhs->user->name); ?></div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400"><?php echo e($mhs->user->email); ?></div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg w-fit border border-gray-200 dark:border-gray-700">
+                                        <?php echo e($mhs->position->judul_posisi); ?>
+
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                            <?php echo e(\Carbon\Carbon::parse($mhs->tanggal_mulai)->format('d M')); ?> - <?php echo e(\Carbon\Carbon::parse($mhs->tanggal_selesai)->format('d M Y')); ?>
+
+                                        </div>
+                                        <div>
+                                            <?php if($mhs->status == 'diterima'): ?>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800/40">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
+                                                    Sedang Magang
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/40">
+                                                    <i class="fas fa-check-circle mr-1.5"></i> Selesai
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <?php if($mhs->status == 'diterima'): ?>
+                                        <a href="<?php echo e(route('pembimbing_lapangan.logbook', $mhs->id)); ?>" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200/50 transform hover:-translate-y-0.5">
+                                            <i class="fas fa-book-reader mr-2"></i> Periksa Logbook
+                                        </a>
+                                    <?php else: ?>
+                                        <a href="<?php echo e(route('pembimbing_lapangan.logbook', $mhs->id)); ?>" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition shadow-sm">
+                                            <i class="fas fa-history mr-2"></i> Riwayat
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center justify-center text-gray-400">
+                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3">
+                                            <i class="fas fa-user-slash text-3xl text-gray-300"></i>
+                                        </div>
+                                        <p class="font-bold text-gray-600 dark:text-gray-400">Belum ada peserta bimbingan</p>
+                                        <p class="text-xs mt-1">Anda belum ditugaskan untuk membimbing peserta magang manapun.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?><?php /**PATH C:\EnvKit\projects\aplikasi-magang\aplikasi-magang\resources\views\admin_instansi\pembimbing_lapangan\dashboard.blade.php ENDPATH**/ ?>
