@@ -21,6 +21,10 @@ class UpdateSystemSettingsRequest extends FormRequest
             'pejabat_nip' => ['nullable', 'string', 'max:50'],
             'pejabat_jabatan' => ['nullable', 'string', 'max:255'],
             'ttd_image' => ['nullable', 'image', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096'],
+            'kop_line1' => ['nullable', 'string', 'max:255'],
+            'kop_line2' => ['nullable', 'string', 'max:255'],
+            'kop_line3' => ['nullable', 'string', 'max:500'],
+            'kop_logo' => ['nullable', 'image', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048', 'dimensions:max_width=4096,max_height=4096'],
         ];
     }
 }

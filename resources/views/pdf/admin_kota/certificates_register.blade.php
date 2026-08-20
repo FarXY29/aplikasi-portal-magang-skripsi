@@ -28,7 +28,7 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .kop-instansi {
+        .kop-instansi, .kop-dinas {
             font-size: 14pt;
             font-weight: bold;
             text-transform: uppercase;
@@ -78,20 +78,7 @@
 </head>
 <body>
 
-    <table class="kop-surat">
-        <tr>
-            <td style="width: 15%; text-align: center;">
-                @if(file_exists(public_path('images/Banjarmasin_Logo.svg.png')))
-                    <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo">
-                @endif
-            </td>
-            <td class="kop-text" style="width: 85%;">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-instansi">BADAN KESATUAN BANGSA DAN POLITIK</div>
-                <div class="kop-alamat">Jl. RE Martadinata No. 1, Telp. (0511) 3354444, Banjarmasin, Kalimantan Selatan</div>
-            </td>
-        </tr>
-    </table>
+    @include('pdf.partials.kop_admin_kota')
 
     <div style="text-align: center; margin-bottom: 15px;">
         <h3 style="margin: 0; text-transform: uppercase; font-size: 12pt; text-decoration: underline;">BUKU REGISTER SERTIFIKAT MAGANG RESMI</h3>
