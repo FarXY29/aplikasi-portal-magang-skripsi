@@ -71,8 +71,10 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
         $this->get(route('password.request'))->assertOk();
         $this->get(route('password.reset', ['token' => 'dummy-token']))->assertOk();
 
-        // QR Scanner
+        // QR Scanner & Verification
         $this->get(route('qr.scanner'))->assertOk();
+        $this->get(route('certificate.verify', 'DUMMY-TOKEN'))->assertOk();
+        $this->get(route('id_card.verify', 'DUMMY-ID-CARD-TOKEN'))->assertOk();
 
         // Certificate Search
         $resSearch = $this->post(route('certificate.search'), ['nomor_sertifikat' => 'NON-EXISTENT']);
@@ -187,6 +189,12 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
         // Download LoA & ID Card
         $this->actingAs($peserta)->get(route('peserta.loa.download', $application->id))->assertOk();
         $this->actingAs($peserta)->get(route('peserta.id_card.download', $application->id))->assertOk();
+
+        // Verify ID Card Public Route
+        $resIdCardVerify = $this->get(route('id_card.verify', $application->fresh()->token_verifikasi));
+        $resIdCardVerify->assertOk();
+        $resIdCardVerify->assertSee($peserta->name);
+        $resIdCardVerify->assertSee('Peserta Magang Aktif');
 
         // Attendance Page
         $this->actingAs($peserta)->get(route('peserta.absensi.index'))->assertOk();

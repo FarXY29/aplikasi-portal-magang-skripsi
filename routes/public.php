@@ -10,6 +10,7 @@ Route::get('/lowongan/{id}', [PublicLowonganController::class, 'show'])->name('l
 
 Route::get('/scan-qr', [CertificateController::class, 'showScanner'])->name('qr.scanner');
 Route::get('/verify-certificate/{token}', [CertificateController::class, 'verify'])->name('certificate.verify');
+Route::get('/verify-id-card/{token}', [CertificateController::class, 'verifyIdCard'])->name('id_card.verify');
 Route::post('/search-certificate', [CertificateController::class, 'search'])
     ->middleware('throttle:public-search')
     ->name('certificate.search');

@@ -226,7 +226,7 @@
         </div>
 
         <div class="qr-container">
-            <img src="data:image/svg+xml;base64, {{ base64_encode(QrCode::format('svg')->size(70)->generate(route('certificate.verify', $app->token_verifikasi ?? 'invalid'))) }}" class="qr-img">
+            <img src="data:image/svg+xml;base64, {{ base64_encode(QrCode::format('svg')->size(70)->generate(route('id_card.verify', $app->token_verifikasi ?? 'invalid'))) }}" class="qr-img">
         </div>
 
         <div class="bg-bottom"></div>
