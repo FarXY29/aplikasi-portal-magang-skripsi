@@ -89,12 +89,6 @@
            <span>Registri Sertifikat</span>
         </a>
 
-        <a href="{{ route('admin.audit_trail') }}"
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.audit_trail') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
-           <i class="fas fa-search w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.audit_trail') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
-           <span>Audit Trail</span>
-        </a>
-
         <a href="{{ route('admin.laporan.hub') }}" 
            class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.laporan.*') ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md shadow-teal-600/25' : 'text-gray-600 dark:text-gray-400 dark:text-gray-300 hover:bg-teal-50/80 dark:hover:bg-gray-700 hover:text-teal-700 dark:hover:text-white' }}">
            <i class="fas fa-chart-pie w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.laporan.*') ? 'text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-white' }}"></i>
