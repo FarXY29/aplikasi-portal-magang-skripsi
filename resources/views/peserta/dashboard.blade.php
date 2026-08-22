@@ -4,16 +4,16 @@
     @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-columns text-teal-600 dark:text-teal-400 text-lg"></i>
+            <h2 class="font-extrabold text-2xl text-slate-900 dark:text-gray-100 leading-tight flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200/80 dark:border-teal-800/60 shadow-2xs">
+                    <i class="fas fa-columns text-teal-700 dark:text-teal-400 text-base"></i>
                 </div>
                 {{ __('Dashboard Peserta') }}
             </h2>
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
+    <div class="py-8 bg-slate-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if(session('success'))
@@ -55,25 +55,25 @@
             @endphp
 
             {{-- Horizontal Visual Progress Stepper --}}
-            <div class="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden mb-6">
-                <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 sm:mb-6 flex items-center gap-2">
-                    <i class="fas fa-route text-teal-600 dark:text-teal-400"></i> Alur Perjalanan Magang Anda
+            <div class="bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-2xs border border-slate-200/80 dark:border-gray-700 overflow-hidden mb-6">
+                <h3 class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-4 sm:mb-6 flex items-center gap-2">
+                    <i class="fas fa-route text-teal-700 dark:text-teal-400"></i> Alur Perjalanan Magang Anda
                 </h3>
                 <div class="relative flex md:flex-row justify-start md:justify-between items-start md:items-center gap-y-3 sm:gap-y-6 gap-x-2 overflow-x-auto md:overflow-visible no-scrollbar pb-2 md:pb-0 -mx-1 px-1">
                     @foreach($stages as $index => $stage)
                         <div class="flex items-center gap-3 md:flex-col md:text-center md:flex-1 relative shrink-0 md:shrink">
                             {{-- Connector Line Horizontal (md+) --}}
                             @if($index < 6)
-                                <div class="hidden md:block absolute top-5 left-1/2 right-[-50%] h-[3px] {{ $currentStage > $index ? 'bg-teal-500 dark:bg-teal-400' : 'bg-gray-200 dark:bg-gray-700' }} -z-0"></div>
+                                <div class="hidden md:block absolute top-5 left-1/2 right-[-50%] h-[3px] {{ $currentStage > $index ? 'bg-teal-600 dark:bg-teal-400' : 'bg-slate-200 dark:bg-gray-700' }} -z-0"></div>
                             @endif
 
                             {{-- Circle Badge --}}
                             <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 font-bold transition duration-300 relative z-10
                                 {{ $currentStage > $index 
-                                    ? 'bg-teal-600 dark:bg-teal-500 border-teal-600 dark:border-teal-500 text-white shadow-xs' 
+                                    ? 'bg-teal-700 dark:bg-teal-500 border-teal-700 dark:border-teal-500 text-white shadow-2xs' 
                                     : ($currentStage == $index 
-                                        ? 'bg-white dark:bg-gray-800 border-teal-500 text-teal-600 dark:text-teal-400 shadow-xs ring-4 ring-teal-50 dark:ring-teal-950/40' 
-                                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500') }}">
+                                        ? 'bg-white dark:bg-gray-800 border-teal-700 text-teal-800 dark:text-teal-400 shadow-2xs ring-4 ring-teal-50 dark:ring-teal-950/40' 
+                                        : 'bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-400 dark:text-gray-500') }}">
                                 @if($currentStage > $index)
                                     <i class="fas fa-check text-xs"></i>
                                 @else
@@ -83,8 +83,8 @@
 
                             {{-- Text --}}
                             <div class="md:mt-2 max-w-[140px] sm:max-w-none md:max-w-[120px] md:mx-auto">
-                                <h4 class="text-xs font-black {{ $currentStage == $index ? 'text-teal-600 dark:text-teal-400' : ($currentStage > $index ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500') }}">{{ $stage['name'] }}</h4>
-                                <p class="text-[11px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-0.5 leading-tight">{{ $stage['desc'] }}</p>
+                                <h4 class="text-xs font-black {{ $currentStage == $index ? 'text-teal-800 dark:text-teal-300' : ($currentStage > $index ? 'text-slate-800 dark:text-gray-200' : 'text-slate-400 dark:text-gray-500') }}">{{ $stage['name'] }}</h4>
+                                <p class="text-[11px] sm:text-[10px] text-slate-400 dark:text-gray-500 font-semibold mt-0.5 leading-tight">{{ $stage['desc'] }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -99,22 +99,22 @@
 
             {{-- Notifikasi H-7 Magang Berakhir --}}
             @if(isset($daysRemaining) && $daysRemaining >= 0 && $daysRemaining <= 7)
-                <div class="notification-banner bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-l-4 border-blue-500 p-4 sm:p-5 md:p-6 rounded-r-2xl sm:rounded-r-3xl shadow-xs border border-blue-200 dark:border-blue-900/60 flex gap-3 sm:gap-4 items-start relative overflow-hidden">
-                    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-blue-500 pointer-events-none">
+                <div class="notification-banner bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-l-4 border-blue-600 p-4 sm:p-5 md:p-6 rounded-r-2xl sm:rounded-r-3xl shadow-2xs border border-blue-200/80 dark:border-blue-900/60 flex gap-3 sm:gap-4 items-start relative overflow-hidden">
+                    <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-5 text-blue-600 pointer-events-none">
                         <i class="fas fa-stopwatch text-7xl sm:text-9xl"></i>
                     </div>
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 flex items-center justify-center flex-shrink-0 shadow-inner border border-blue-200 dark:border-blue-800/60">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 flex items-center justify-center flex-shrink-0 shadow-inner border border-blue-200 dark:border-blue-800/60">
                         <i class="fas fa-exclamation-triangle text-base sm:text-lg"></i>
                     </div>
                     <div class="flex-grow">
-                        <h4 class="text-xs font-extrabold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <h4 class="text-xs font-extrabold text-blue-900 dark:text-blue-300 uppercase tracking-wider mb-1 flex items-center gap-2">
                             Peringatan Berakhirnya Magang
-                            <span class="countdown-badge-pulse inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-xs">
+                            <span class="countdown-badge-pulse inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-700 text-white shadow-2xs">
                                 <i class="fas fa-clock"></i>
                                 {{ $daysRemaining == 0 ? 'HARI INI' : $daysRemaining . ' HARI LAGI' }}
                             </span>
                         </h4>
-                        <p class="text-xs sm:text-sm text-blue-900 dark:text-blue-200 font-semibold leading-relaxed">
+                        <p class="text-xs sm:text-sm text-blue-950 dark:text-blue-200 font-medium leading-relaxed">
                             Harap segera melengkapi semua logbook, absensi harian, dan memastikan penilaian dari pembimbing lapangan telah diselesaikan sebelum tanggal berakhir.
                         </p>
                     </div>
@@ -122,7 +122,7 @@
             @endif
 
             @if(empty(Auth::user()->nik) || empty(Auth::user()->asal_instansi))
-                <div class="bg-amber-50/80 dark:bg-amber-950/40 border-l-4 border-amber-500 p-4 sm:p-5 rounded-r-2xl shadow-xs border border-amber-200 dark:border-amber-900/60">
+                <div class="bg-amber-50/80 dark:bg-amber-950/40 border-l-4 border-amber-500 p-4 sm:p-5 rounded-r-2xl shadow-2xs border border-amber-200/80 dark:border-amber-900/60">
                     <div class="flex items-start gap-3">
                         <i class="fas fa-exclamation-circle text-amber-600 dark:text-amber-400 text-lg mt-0.5"></i>
                         <div>
@@ -138,46 +138,46 @@
 
             @if($activeApp && in_array($activeApp->status?->value, ['diterima', 'selesai']))
                 {{-- Banner Sambutan & Absen Harian --}}
-                <div class="welcome-banner bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden mb-6">
+                <div class="welcome-banner bg-white dark:bg-gray-800 rounded-2xl sm:rounded-3xl shadow-2xs border border-slate-200/80 dark:border-gray-700 overflow-hidden mb-6">
                     <div class="p-4 sm:p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
                         
                         <div class="w-full md:w-auto text-center md:text-left animate-fade-in-up">
                             <div class="flex flex-col md:flex-row items-center md:items-start gap-3 sm:gap-4 mb-4">
                                 {{-- Avatar Inisial --}}
-                                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-300 font-black text-xl sm:text-2xl flex items-center justify-center border border-teal-200 dark:border-teal-800/60 shadow-xs flex-shrink-0">
+                                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-black text-xl sm:text-2xl flex items-center justify-center border border-teal-200/80 dark:border-teal-800/60 shadow-2xs flex-shrink-0">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
                                 <div class="text-center md:text-left">
-                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60' : 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60') }} mb-1.5">
-                                        <span class="w-1.5 h-1.5 rounded-full {{ $activeApp->display_status == 'selesai' ? 'bg-blue-500' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-500' : 'bg-teal-500') }} mr-1.5 animate-ping-slow"></span>
+                                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-bold {{ $activeApp->display_status == 'selesai' ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200/70 dark:border-blue-800/60' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60' : 'bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/60') }} mb-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $activeApp->display_status == 'selesai' ? 'bg-blue-600' : ($activeApp->display_status == 'belum mulai' ? 'bg-indigo-600' : 'bg-teal-600') }} mr-1.5 animate-ping-slow"></span>
                                         {{ $activeApp->display_status == 'selesai' ? 'Telah Selesai' : ($activeApp->display_status == 'belum mulai' ? 'Belum Mulai' : 'Sedang Magang Aktif') }}
                                     </span>
-                                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100">Halo, {{ Auth::user()->name }}! 👋</h3>
-                                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir. Selamat!' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan mengisi logbook dan absensi setiap hari kerja.') }}</p>
+                                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-gray-100">Halo, {{ Auth::user()->name }}! 👋</h3>
+                                    <p class="text-xs sm:text-sm text-slate-500 dark:text-gray-400 mt-0.5 font-medium">{{ $activeApp->display_status == 'selesai' ? 'Program magang Anda telah berakhir. Selamat!' : ($activeApp->display_status == 'belum mulai' ? 'Magang Anda akan segera dimulai. Persiapkan diri Anda!' : 'Pastikan mengisi logbook dan absensi setiap hari kerja.') }}</p>
                                 </div>
                             </div>
                             
-                            <div class="inline-flex flex-col sm:flex-row gap-2 sm:gap-3 text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-2.5 sm:p-3 rounded-2xl border border-gray-200 dark:border-gray-700 w-full sm:w-auto">
+                            <div class="inline-flex flex-col sm:flex-row gap-2 sm:gap-3 text-xs font-bold text-slate-700 dark:text-gray-300 bg-slate-50 dark:bg-gray-900 p-2.5 sm:p-3 rounded-2xl border border-slate-200/80 dark:border-gray-700 w-full sm:w-auto shadow-2xs">
                                 <div class="flex items-center gap-2 justify-center sm:justify-start">
-                                    <span class="gps-ping-dot bg-emerald-500"></span>
-                                    Masuk: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_masuk)->format('H:i') }} WIB
+                                    <span class="gps-ping-dot bg-emerald-600"></span>
+                                    Masuk: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_masuk)->format('H:i') }} WITA
                                 </div>
-                                <div class="hidden sm:block border-l border-gray-300 dark:border-gray-700 h-4 self-center"></div>
+                                <div class="hidden sm:block border-l border-slate-300 dark:border-gray-700 h-4 self-center"></div>
                                 <div class="flex items-center gap-2 justify-center sm:justify-start">
-                                    <span class="gps-ping-dot bg-rose-500"></span>
-                                    Pulang: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_pulang)->format('H:i') }} WIB
+                                    <span class="gps-ping-dot bg-rose-600"></span>
+                                    Pulang: {{ \Carbon\Carbon::parse($jamKerja->jam_mulai_pulang)->format('H:i') }} WITA
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex flex-wrap justify-center gap-3 w-full md:w-auto">
                             @if($activeApp->display_status == 'selesai')
-                                <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded-2xl border border-blue-200 dark:border-blue-800/60 font-bold flex items-center gap-2 shadow-xs text-xs">
-                                    <i class="fas fa-flag-checkered text-blue-500"></i> Magang Selesai
+                                <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 rounded-2xl border border-blue-200/80 dark:border-blue-800/60 font-bold flex items-center gap-2 shadow-2xs text-xs">
+                                    <i class="fas fa-flag-checkered text-blue-600"></i> Magang Selesai
                                 </div>
                             @elseif($activeApp->display_status == 'belum mulai')
-                                <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 font-bold flex items-center gap-2 shadow-xs text-xs">
-                                    <i class="fas fa-hourglass-start text-indigo-500"></i> Magang Belum Dimulai
+                                <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 rounded-2xl border border-indigo-200/80 dark:border-indigo-800/60 font-bold flex items-center gap-2 shadow-2xs text-xs">
+                                    <i class="fas fa-hourglass-start text-indigo-600"></i> Magang Belum Dimulai
                                 </div>
                             @elseif(!$attendanceToday)
                                 <div class="grid grid-cols-2 sm:flex sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
@@ -185,26 +185,26 @@
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-masuk">
                                         <input type="hidden" name="longitude" id="lng-masuk">
-                                        <button type="submit" id="btn-absen-masuk" onclick="handleAbsenClick(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold shadow-md transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                        <button type="submit" id="btn-absen-masuk" onclick="handleAbsenClick(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
                                             <i class="fas fa-fingerprint text-sm"></i> Absen Datang
                                         </button>
                                     </form>
                                     
-                                    <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'modal-izin')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-white dark:bg-gray-800 border-2 border-amber-400 dark:border-amber-500 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-2xl font-bold transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                    <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'modal-izin')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-white dark:bg-gray-800 border-2 border-amber-400 dark:border-amber-500 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-2xl font-bold transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
                                         <i class="fas fa-file-medical text-sm"></i> Izin / Sakit
                                     </button>
                                 </div>
 
                              @elseif($attendanceToday->status == 'hadir' && empty($attendanceToday->clock_out))
                                 <div class="flex flex-col items-center gap-3 w-full sm:w-auto">
-                                    <div class="text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-2 rounded-xl border border-teal-200 dark:border-teal-800/60">
+                                    <div class="text-xs font-bold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/60 shadow-2xs">
                                         <i class="fas fa-check-circle mr-1"></i> Datang: {{ \Carbon\Carbon::parse($attendanceToday->clock_in)->format('H:i') }}
                                     </div>
                                     <form id="form-absen-pulang" action="{{ route('peserta.absen.pulang') }}" method="POST" class="w-full sm:w-auto">
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-pulang">
                                         <input type="hidden" name="longitude" id="lng-pulang">
-                                        <button type="submit" id="btn-absen-pulang" onclick="handleAbsenClick(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold shadow-md transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                        <button type="submit" id="btn-absen-pulang" onclick="handleAbsenClick(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-rose-700 hover:bg-rose-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
                                             <i class="fas fa-sign-out-alt text-sm"></i> Absen Pulang
                                         </button>
                                     </form>
@@ -213,16 +213,16 @@
                             @else
                                 <div class="text-center w-full sm:w-auto">
                                     @if($attendanceToday->status == 'hadir')
-                                        <div class="px-5 py-4 sm:px-6 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 font-bold flex flex-col items-center shadow-xs text-xs">
+                                        <div class="px-5 py-4 sm:px-6 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 font-bold flex flex-col items-center shadow-2xs text-xs">
                                             <span class="flex items-center gap-1"><i class="fas fa-check-double text-emerald-600 dark:text-emerald-400"></i> Kehadiran Terekam</span>
-                                            <span class="text-[11px] font-normal mt-1 text-emerald-600 dark:text-emerald-400">
+                                            <span class="text-[11px] font-medium mt-1 text-emerald-700 dark:text-emerald-400">
                                                 {{ \Carbon\Carbon::parse($attendanceToday->clock_in)->format('H:i') }} - 
                                                 {{ $attendanceToday->clock_out ? \Carbon\Carbon::parse($attendanceToday->clock_out)->format('H:i') : '?' }}
                                             </span>
                                         </div>
                                     @else
-                                        <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 rounded-2xl border border-amber-200 dark:border-amber-800/60 font-bold flex items-center gap-2 shadow-xs text-xs">
-                                            <i class="fas fa-info-circle text-amber-500"></i> Status Absen: {{ ucfirst($attendanceToday->status) }}
+                                        <div class="px-5 py-3 sm:px-6 min-h-[44px] bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-2xl border border-amber-200/80 dark:border-amber-800/60 font-bold flex items-center gap-2 shadow-2xs text-xs">
+                                            <i class="fas fa-info-circle text-amber-600"></i> Status Absen: {{ ucfirst($attendanceToday->status) }}
                                         </div>
                                     @endif
                                 </div>
@@ -235,20 +235,20 @@
 
                 {{-- Card Input Saran / Evaluasi --}}
                 @if($activeApp && $activeApp->status?->value === 'selesai' && empty($activeApp->saran_peserta))
-                    <div class="bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-indigo-200 dark:border-indigo-800/60 shadow-xs mb-6">
+                    <div class="bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-indigo-200/80 dark:border-indigo-800/60 shadow-2xs mb-6">
                         <div class="flex flex-col md:flex-row gap-4 sm:gap-6 items-start justify-between">
                             <div class="flex gap-3 sm:gap-4 items-start">
-                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 border border-indigo-200 dark:border-indigo-800/60 shadow-inner">
+                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 border border-indigo-200/80 dark:border-indigo-800/60 shadow-inner">
                                     <i class="fas fa-comment-alt text-lg sm:text-xl"></i>
                                 </div>
                                 <div class="space-y-1">
-                                    <h3 class="text-gray-900 dark:text-gray-100 font-extrabold text-base sm:text-lg md:text-xl tracking-tight flex flex-wrap items-center gap-2">
+                                    <h3 class="text-slate-900 dark:text-gray-100 font-extrabold text-base sm:text-lg md:text-xl tracking-tight flex flex-wrap items-center gap-2">
                                         Isi Evaluasi & Saran Magang
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-white shadow-xs">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-700 text-white shadow-2xs">
                                             WAJIB
                                         </span>
                                     </h3>
-                                    <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium leading-relaxed max-w-3xl">
+                                    <p class="text-slate-600 dark:text-gray-400 text-xs md:text-sm font-medium leading-relaxed max-w-3xl">
                                         Selamat! Masa magang Anda telah selesai. Mohon berikan saran dan evaluasi konstruktif untuk <strong>{{ $activeApp->position->instansi->nama_dinas }}</strong>. Evaluasi Anda bersifat <strong>anonim</strong> dan wajib diisi sebelum mengunduh Sertifikat & Transkrip Nilai Anda.
                                     </p>
                                 </div>
@@ -258,10 +258,10 @@
                         <form action="{{ route('peserta.saran.store', $activeApp->id) }}" method="POST" class="mt-4 sm:mt-6 space-y-4">
                             @csrf
                             <div>
-                                <textarea name="saran_peserta" rows="4" required class="w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-2xl shadow-xs focus:border-indigo-500 focus:ring-indigo-500 text-xs sm:text-sm font-medium" placeholder="Tuliskan evaluasi, kritik, atau saran perbaikan untuk instansi tempat magang Anda..."></textarea>
+                                <textarea name="saran_peserta" rows="4" required class="w-full border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 rounded-2xl shadow-2xs focus:border-indigo-600 focus:ring-indigo-600 text-xs sm:text-sm font-medium" placeholder="Tuliskan evaluasi, kritik, atau saran perbaikan untuk instansi tempat magang Anda..."></textarea>
                             </div>
                             <div class="flex justify-end">
-                                <button type="submit" class="w-full sm:w-auto min-h-[44px] px-5 sm:px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-md active:scale-95 transition flex items-center justify-center gap-2">
+                                <button type="submit" class="w-full sm:w-auto min-h-[44px] px-5 sm:px-6 py-3 bg-indigo-700 hover:bg-indigo-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-2xs active:scale-95 transition flex items-center justify-center gap-2">
                                     <i class="fas fa-paper-plane"></i> Kirim Evaluasi & Buka Sertifikat
                                 </button>
                             </div>
@@ -281,36 +281,36 @@
                 </div>
 
                 <x-modal name="modal-izin" focusable>
-                    <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 pb-3 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
-                            <i class="fas fa-file-alt text-amber-500"></i> Form Pengajuan Izin / Sakit
+                    <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 text-slate-900 dark:text-gray-100">
+                        <h2 class="text-base font-bold text-slate-900 dark:text-gray-100 mb-4 pb-3 border-b border-slate-100 dark:border-gray-700 flex items-center gap-2">
+                            <i class="fas fa-file-alt text-amber-600"></i> Form Pengajuan Izin / Sakit
                         </h2>
                         <form action="{{ route('peserta.absen.izin') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Jenis Keterangan</label>
-                                    <select name="status" class="w-full min-h-[44px] border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-xs focus:border-teal-500 focus:ring-teal-500 text-xs font-bold [color-scheme:dark]">
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 uppercase mb-2">Jenis Keterangan</label>
+                                    <select name="status" class="w-full min-h-[44px] border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 rounded-xl shadow-2xs focus:border-teal-600 focus:ring-teal-600 text-xs font-bold [color-scheme:dark]">
                                         <option value="sakit">Sakit (Upload Surat Dokter)</option>
                                         <option value="izin">Izin (Keperluan Mendesak)</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Alasan Detail</label>
-                                    <textarea name="description" rows="3" class="w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-xs focus:border-teal-500 focus:ring-teal-500 text-xs font-medium" required placeholder="Jelaskan alasan pengajuan Anda..."></textarea>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 uppercase mb-2">Alasan Detail</label>
+                                    <textarea name="description" rows="3" class="w-full border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 rounded-xl shadow-2xs focus:border-teal-600 focus:ring-teal-600 text-xs font-medium" required placeholder="Jelaskan alasan pengajuan Anda..."></textarea>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Bukti Foto / Surat (PNG / JPG / PDF)</label>
-                                    <input type="file" name="proof_file" class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 border border-gray-300 dark:border-gray-700 rounded-xl p-1 bg-white dark:bg-gray-900" required>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 uppercase mb-2">Bukti Foto / Surat (PNG / JPG / PDF)</label>
+                                    <input type="file" name="proof_file" class="w-full text-xs text-slate-500 dark:text-gray-400 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-800 dark:file:text-teal-300 hover:file:bg-teal-100/80 border border-slate-300 dark:border-gray-700 rounded-xl p-1 bg-white dark:bg-gray-900" required>
                                 </div>
                             </div>
 
                             <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
-                                <button type="button" x-on:click.prevent="$dispatch('close')" class="min-h-[44px] px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-xl font-bold text-xs transition uppercase tracking-wider">Batal</button>
-                                <button type="submit" class="min-h-[44px] px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs shadow-md transition uppercase tracking-wider">Kirim Pengajuan</button>
+                                <button type="button" x-on:click.prevent="$dispatch('close')" class="min-h-[44px] px-5 py-2.5 bg-white dark:bg-gray-800 border border-slate-300 dark:border-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-900 rounded-xl font-bold text-xs transition uppercase tracking-wider">Batal</button>
+                                <button type="submit" class="min-h-[44px] px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold text-xs shadow-2xs transition uppercase tracking-wider">Kirim Pengajuan</button>
                             </div>
                         </form>
                     </div>
@@ -333,7 +333,7 @@
                                 </p>
                             </div>
                         </div>
-                        <a href="{{ route('peserta.apply_automatic.form') }}" class="shrink-0 w-full sm:w-auto min-h-[44px] text-center bg-white dark:bg-gray-800 text-teal-800 dark:text-teal-300 hover:bg-teal-50 px-5 sm:px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 active:scale-95 text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                        <a href="{{ route('peserta.apply_automatic.form') }}" class="shrink-0 w-full sm:w-auto min-h-[44px] text-center bg-white dark:bg-gray-800 text-teal-800 dark:text-teal-300 hover:bg-teal-50 px-5 sm:px-6 py-3 rounded-xl font-bold shadow-2xs hover:shadow-xs transition transform hover:-translate-y-0.5 active:scale-95 text-xs uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fas fa-magic"></i> Daftar Penempatan Otomatis
                         </a>
                     </div>
@@ -341,8 +341,8 @@
             @endif
 
             @if($hasApplications)
-                <div class="bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/60 rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex items-start gap-3 mb-6">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-teal-100 dark:bg-teal-900/60 text-teal-600 dark:text-teal-300 flex items-center justify-center flex-shrink-0 border border-teal-200 dark:border-teal-800/60">
+                <div class="bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/80 dark:border-teal-800/60 rounded-2xl sm:rounded-3xl p-4 sm:p-5 flex items-start gap-3 mb-6 shadow-2xs">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-teal-100/80 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300 flex items-center justify-center flex-shrink-0 border border-teal-200/80 dark:border-teal-800/60">
                         <i class="fas fa-file-download text-base sm:text-lg"></i>
                     </div>
                     <div class="flex-grow">

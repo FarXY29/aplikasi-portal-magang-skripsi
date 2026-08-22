@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="theme-color" content="#0d9488">
+        <meta name="theme-color" content="#0f766e">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -48,19 +48,19 @@
             }
         </script>
     </head>
-    <body class="auth-shell relative min-h-screen font-sans text-gray-900 dark:text-gray-100 antialiased transition-colors duration-300">
+    <body class="auth-shell relative min-h-screen font-sans text-slate-900 dark:text-gray-100 antialiased transition-colors duration-300">
         {{-- Ambient background glowing Orbs --}}
-        <div class="pointer-events-none fixed -top-24 -left-24 h-96 w-96 rounded-full bg-teal-500/10 blur-3xl dark:bg-teal-500/20"></div>
-        <div class="pointer-events-none fixed -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl dark:bg-emerald-500/20"></div>
+        <div class="pointer-events-none fixed -top-24 -left-24 h-96 w-96 rounded-full bg-teal-600/10 blur-3xl dark:bg-teal-500/20"></div>
+        <div class="pointer-events-none fixed -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-600/10 blur-3xl dark:bg-emerald-500/20"></div>
 
         {{-- Top Floating Utilities (Theme Toggle & Quick Home) --}}
         <header class="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 sm:px-8">
-            <a href="{{ route('home') }}" class="group flex items-center gap-2.5 rounded-full border border-gray-200/80 bg-white/70 px-3.5 py-1.5 text-xs font-bold text-gray-700 shadow-sm backdrop-blur-md transition hover:border-teal-500/40 hover:bg-white dark:border-gray-800 dark:bg-gray-900/70 dark:text-gray-300 dark:hover:border-teal-500/40 dark:hover:bg-gray-900">
-                <x-application-logo class="h-4 w-4 fill-current text-teal-600 dark:text-teal-400" />
+            <a href="{{ route('home') }}" class="group flex items-center gap-2.5 rounded-full border border-slate-200/80 bg-white/80 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs backdrop-blur-md transition hover:border-teal-600/40 hover:bg-white dark:border-gray-800 dark:bg-gray-900/70 dark:text-gray-300 dark:hover:border-teal-500/40 dark:hover:bg-gray-900">
+                <x-application-logo class="h-4 w-4 fill-current text-teal-700 dark:text-teal-400" />
                 <span>Portal Magang</span>
             </a>
 
-            <div class="flex items-center gap-2 rounded-full border border-gray-200/80 bg-white/70 p-1 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/70">
+            <div class="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 p-1 shadow-2xs backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/70">
                 <x-theme-toggle class="!p-1.5" />
             </div>
         </header>

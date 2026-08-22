@@ -1,19 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Laporan Demografi Kampus</title>
+    <meta charset="UTF-8">
+    <title>Laporan Demografi Asal Kampus / Sekolah</title>
     <style>
-        body { font-family: sans-serif; font-size: 10px; color: #333; }
-        .header { text-align: center; margin-bottom: 15px; border-bottom: 3px double #333; padding-bottom: 12px; }
-        .header h2 { margin: 0; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
-        .header h3 { margin: 3px 0; font-size: 12px; }
-        .header p { margin: 2px 0; font-size: 10px; color: #555; }
+        @page {
+            margin: 1.2cm 1.5cm 1.5cm 1.5cm;
+            size: A4 landscape;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 9.5pt;
+            color: #111;
+            line-height: 1.3;
+        }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #999; padding: 5px 6px; text-align: left; vertical-align: top; }
-        th { background-color: #e8e8e8; text-align: center; font-weight: bold; font-size: 9px; text-transform: uppercase; }
+        .judul-laporan {
+            text-align: center;
+            margin: 10px 0 12px 0;
+            font-weight: bold;
+            font-size: 12pt;
+            text-transform: uppercase;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
+        }
         
-        .meta-info { margin-bottom: 12px; font-size: 10px; }
+        .meta-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 8.5pt;
+            color: #333;
+        }
+        .meta-info td {
+            border: none;
+            padding: 1px 0;
+        }
+        
+        .section-title { 
+            font-size: 9.5pt;
+            font-weight: bold;
+            margin: 14px 0 6px 0; 
+            padding: 3px 6px;
+            background-color: #f3f4f6;
+            border-left: 3px solid #ea580c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+        .stats-table td {
+            border: 1px solid #555;
+            padding: 5px 3px;
+            text-align: center;
+        }
+        .stats-table .label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+            font-weight: bold;
+        }
+        .stats-table .value {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #111;
+            margin-top: 1px;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            margin-bottom: 10px;
+        }
+        table.data-table thead {
+            display: table-header-group;
+        }
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333;
+            padding: 5px 6px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 8.5pt;
+        }
+        table.data-table th {
+            background-color: #e5e7eb;
+            text-align: center;
+            font-weight: bold;
+            font-size: 8pt;
+            text-transform: uppercase;
+        }
+        
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-bold { font-weight: bold; }
@@ -22,41 +107,29 @@
         .text-orange { color: #ea580c; }
         .text-blue { color: #2563eb; }
         
-        .section-title { 
-            font-size: 11px; font-weight: bold; margin: 20px 0 8px 0; 
-            padding: 6px 10px; background-color: #f3f4f6; border-left: 4px solid #ea580c;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        
-        .stats-table { margin-bottom: 15px; }
-        .stats-table td { border: 1px solid #ccc; padding: 8px 10px; text-align: center; }
-        .stats-table .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
-        .stats-table .value { font-size: 16px; font-weight: bold; color: #111; }
-        
-        .sub-detail { font-size: 9px; color: #555; padding-left: 10px; }
-        .sub-detail span { display: inline-block; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; margin: 1px 2px; font-size: 8px; }
-        
-        .bar-container { display: inline-block; width: 60px; height: 8px; background: #e5e7eb; border-radius: 4px; vertical-align: middle; }
-        .bar-fill { display: inline-block; height: 8px; background: #ea580c; border-radius: 4px; }
-        
-        .footer { margin-top: 20px; font-size: 9px; color: #888; border-top: 1px solid #ccc; padding-top: 8px; }
-        .page-break { page-break-before: always; }
+        .sub-detail span { display: inline-block; background: #f3f4f6; padding: 1px 4px; border: 1px solid #ddd; border-radius: 2px; margin: 1px; font-size: 7pt; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>PEMERINTAH KOTA BANJARMASIN</h2>
-        <h3>{{ Auth::user()->instansi->nama_dinas ?? 'DINAS TERKAIT' }}</h3>
-        <p>Laporan Demografi Asal Kampus / Sekolah Pendaftar Magang</p>
-    </div>
+    @include('pdf.partials.kop_admin_instansi')
 
-    <div class="meta-info">
-        <p><strong>Dicetak Tanggal:</strong> {{ date('d F Y') }} &nbsp;|&nbsp; <em>Oleh: {{ Auth::user()->name }}</em></p>
-    </div>
+    <div class="judul-laporan">LAPORAN DEMOGRAFI ASAL KAMPUS / SEKOLAH PENDAFTAR MAGANG</div>
+
+    <table class="meta-info">
+        <tr>
+            <td style="width: 50%;">
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
+                <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
+            </td>
+            <td style="width: 50%; text-align: right; vertical-align: top;">
+                <strong>Total Kampus Terlibat:</strong> {{ $stats['total_kampus'] ?? count($demografi) }} Institusi
+            </td>
+        </tr>
+    </table>
 
     {{-- Ringkasan Statistik --}}
-    <div class="section-title">Ringkasan Statistik</div>
+    <div class="section-title">Ringkasan Statistik Demografi</div>
     <table class="stats-table">
         <tr>
             <td style="width: 20%">
@@ -64,7 +137,7 @@
                 <div class="value">{{ $stats['total_kampus'] }}</div>
             </td>
             <td style="width: 20%">
-                <div class="label">Jurusan</div>
+                <div class="label">Total Jurusan</div>
                 <div class="value">{{ $stats['total_jurusan'] }}</div>
             </td>
             <td style="width: 20%">
@@ -84,7 +157,7 @@
 
     {{-- Tabel Demografi per Kampus --}}
     <div class="section-title">Distribusi Pendaftar per Kampus / Sekolah</div>
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 4%">No</th>
@@ -94,8 +167,8 @@
                 <th style="width: 8%">Selesai</th>
                 <th style="width: 8%">Ditolak</th>
                 <th style="width: 8%">Pending</th>
-                <th style="width: 7%">Rasio</th>
-                <th style="width: 25%">Jurusan Pendaftar</th>
+                <th style="width: 8%">Rasio</th>
+                <th style="width: 24%">Jurusan Pendaftar</th>
             </tr>
         </thead>
         <tbody>
@@ -111,10 +184,10 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
-                        <strong>{{ $kampus }}</strong>
+                        <strong class="text-bold">{{ $kampus }}</strong>
                         @if($data['peserta']->count() > 0)
-                        <div class="sub-detail" style="margin-top: 3px; font-size: 8px; color: #16a34a;">
-                            &#10003; Peserta: 
+                        <div style="margin-top: 2px; font-size: 7pt; color: #15803d;">
+                            Peserta: 
                             @foreach($data['peserta'] as $p)
                                 {{ $p['nama'] }}{{ !$loop->last ? ', ' : '' }}
                             @endforeach
@@ -133,7 +206,7 @@
                         @endif
                     ">{{ $data['acceptance_rate'] }}%</td>
                     <td>
-                        <div class="sub-detail" style="padding-left: 0;">
+                        <div class="sub-detail">
                             @foreach($data['jurusan'] as $jurusan => $count)
                                 <span>{{ $jurusan }} ({{ $count }})</span>
                             @endforeach
@@ -142,21 +215,21 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" class="text-center" style="padding: 20px;">Tidak ada data pendaftar.</td>
+                    <td colspan="9" class="text-center" style="padding: 15px;">Tidak ada data pendaftar.</td>
                 </tr>
             @endforelse
 
             @if($demografi->count() > 0)
-                <tr style="background-color: #e5e7eb; font-weight: bold;">
-                    <td colspan="2" class="text-right"><strong>TOTAL KESELURUHAN</strong></td>
-                    <td class="text-center"><strong>{{ $t_pelamar }}</strong></td>
-                    <td class="text-center text-green"><strong>{{ $t_diterima }}</strong></td>
-                    <td class="text-center" style="color: #059669;"><strong>{{ $t_selesai }}</strong></td>
-                    <td class="text-center text-red"><strong>{{ $t_ditolak }}</strong></td>
-                    <td class="text-center text-orange"><strong>{{ $t_pending }}</strong></td>
+                <tr style="background-color: #f3f4f6; font-weight: bold;">
+                    <td colspan="2" class="text-right">TOTAL KESELURUHAN</td>
+                    <td class="text-center">{{ $t_pelamar }}</td>
+                    <td class="text-center text-green">{{ $t_diterima }}</td>
+                    <td class="text-center" style="color: #059669;">{{ $t_selesai }}</td>
+                    <td class="text-center text-red">{{ $t_ditolak }}</td>
+                    <td class="text-center text-orange">{{ $t_pending }}</td>
                     <td class="text-center" colspan="2">
                         @php $overall = $t_pelamar > 0 ? round(($t_diterima / $t_pelamar) * 100) : 0; @endphp
-                        <strong>{{ $overall }}%</strong>
+                        {{ $overall }}%
                     </td>
                 </tr>
             @endif
@@ -164,9 +237,9 @@
     </table>
 
     {{-- Tabel Demografi per Jurusan --}}
-    @if($demografiJurusan->count() > 0)
-    <div class="section-title" style="margin-top: 25px;">Distribusi Pendaftar per Jurusan / Program Studi</div>
-    <table>
+    @if(isset($demografiJurusan) && $demografiJurusan->count() > 0)
+    <div class="section-title">Distribusi Pendaftar per Jurusan / Program Studi</div>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 5%">No</th>
@@ -180,7 +253,7 @@
             @foreach($demografiJurusan as $jurusan => $data)
             <tr>
                 <td class="text-center">{{ $loop->iteration }}</td>
-                <td><strong>{{ $jurusan }}</strong></td>
+                <td class="text-bold">{{ $jurusan }}</td>
                 <td class="text-center text-bold">{{ $data['total'] }}</td>
                 <td class="text-center text-bold text-green">{{ $data['diterima'] }}</td>
                 <td class="text-center text-bold" style="
@@ -195,9 +268,11 @@
     </table>
     @endif
 
-    <div class="footer">
-        <p>Dokumen ini dicetak secara otomatis oleh Sistem Portal Magang Pemerintah Kota Banjarmasin. &copy; {{ date('Y') }}</p>
-    </div>
+    {{-- Blok Tanda Tangan --}}
+    @include('pdf.partials.ttd_admin_instansi')
+
+    {{-- Penomoran Halaman & Catatan Kaki --}}
+    @include('pdf.partials.footer_page_number')
 
 </body>
 </html>
