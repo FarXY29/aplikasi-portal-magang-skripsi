@@ -12,10 +12,15 @@ class QrScannerTest extends TestCase
         $response = $this->get(route('qr.scanner'));
 
         $response->assertOk()
+            ->assertSee('x-data="qrScannerManager()"', false)
+            ->assertSee('@click="startScanning()"', false)
+            ->assertSee('@click="triggerUpload()"', false)
             ->assertSee('id="btn-start-scan"', false)
+            ->assertSee('id="btn-upload-file"', false)
             ->assertSee('facingMode: "environment"', false)
             ->assertSee('window.Html5Qrcode', false)
-            ->assertSee('HTTPS', false);
+            ->assertSee('HTTPS', false)
+            ->assertDontSee("document.addEventListener('DOMContentLoaded'", false);
     }
 
     public function test_https_forwarded_host_is_used_for_public_links(): void
