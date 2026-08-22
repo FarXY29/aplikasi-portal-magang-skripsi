@@ -83,11 +83,11 @@
 
 /* Modern UI/UX Utilities */
 .glass-panel {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(248, 250, 252, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.85);
+    box-shadow: 0 4px 20px 0 rgba(15, 23, 42, 0.04);
 }
 .dark .glass-panel {
     background: rgba(31, 41, 55, 0.7);
@@ -100,15 +100,15 @@
 }
 .hover-lift:hover {
     transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 12px 24px -10px rgba(20, 184, 166, 0.3);
+    box-shadow: 0 12px 24px -10px rgba(15, 118, 110, 0.2);
 }
 
 .table-row-hover {
     transition: all 0.2s ease-in-out;
 }
 .table-row-hover:hover {
-    background-color: rgba(20, 184, 166, 0.04);
-    transform: scale(1.002);
+    background-color: rgba(15, 118, 110, 0.035);
+    transform: scale(1.001);
 }
 .dark .table-row-hover:hover {
     background-color: rgba(20, 184, 166, 0.1);
@@ -204,9 +204,9 @@
 .auth-shell {
     background-color: #f8fafc;
     background-image:
-        radial-gradient(circle at 85% 15%, rgba(20, 184, 166, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 15% 85%, rgba(13, 148, 136, 0.08) 0%, transparent 40%),
-        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.035'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        radial-gradient(circle at 85% 15%, rgba(15, 118, 110, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(13, 148, 136, 0.06) 0%, transparent 40%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230f766e' fill-opacity='0.025'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     background-size: 100% 100%, 100% 100%, cover, auto;
 }
 .dark .auth-shell {
@@ -220,22 +220,22 @@
 
 /* Branding panel (left/hero side of auth pages) */
 .auth-branding {
-    background-color: #0d9488;
+    background-color: #0f766e;
     background-image:
         radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.18) 0%, transparent 50%),
         radial-gradient(circle at 15% 90%, rgba(4, 47, 46, 0.45) 0%, transparent 55%),
-        linear-gradient(155deg, #0d9488 0%, #0f766e 50%, #115e59 100%),
+        linear-gradient(155deg, #0f766e 0%, #115e59 50%, #134e4a 100%),
         url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     background-size: 100% 100%, 100% 100%, cover, auto;
 }
 
 /* Form card with modern glassmorphism touch */
 .auth-card {
-    background-color: rgba(255, 255, 255, 0.92);
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 25px 60px -15px rgba(15, 118, 110, 0.18), 0 10px 20px -10px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 20px 45px -15px rgba(15, 118, 110, 0.12), 0 8px 16px -8px rgba(15, 23, 42, 0.04);
 }
 .dark .auth-card {
     background-color: rgba(15, 23, 42, 0.88);
@@ -247,17 +247,17 @@
 
 /* Consistent auth input styling */
 .auth-input {
-    @apply w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-900/90 px-4 py-3 text-sm font-medium text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition duration-200 focus:border-teal-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-teal-500/20 focus:outline-none;
+    @apply w-full rounded-xl border border-slate-300 dark:border-gray-700 bg-white/90 dark:bg-gray-900/90 px-4 py-3 text-sm font-medium text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 transition duration-200 focus:border-teal-600 focus:bg-white dark:focus:bg-gray-900 focus:ring-4 focus:ring-teal-600/15 focus:outline-none;
 }
 
 /* Primary auth submit button with gradient & tactile hover */
 .auth-btn {
-    @apply relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-teal-600 via-teal-500 to-emerald-600 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg shadow-teal-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-teal-600/40 active:translate-y-0 active:shadow-md focus:outline-none focus:ring-4 focus:ring-teal-500/30 disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-teal-700 via-teal-600 to-teal-800 px-6 py-3.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-md shadow-teal-700/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-teal-700/35 active:translate-y-0 active:shadow-sm focus:outline-none focus:ring-4 focus:ring-teal-600/25 disabled:opacity-60 disabled:cursor-not-allowed;
 }
 
 /* Auth field label */
 .auth-label {
-    @apply mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300;
+    @apply mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-gray-300;
 }
 
 /* Keyframe animations for entrance and micro-interactions */
