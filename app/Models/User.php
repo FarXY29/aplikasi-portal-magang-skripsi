@@ -227,6 +227,29 @@ class User extends Authenticatable implements MustVerifyEmail
      * Permission Spatie berlaku penuh setelah user memiliki role Spatie.
      * Fallback hanya digunakan sementara untuk akun legacy yang belum dibackfill.
      */
+    /**
+     * Sensor nomor NIK untuk proteksi data pribadi di tampilan publik.
+     */
+    public function getMaskedNikAttribute(): ?string
+    {
+        if (empty($this->nik)) {
+            return null;
+        }
+
+        $nik = (string) $this->nik;
+        $len = strlen($nik);
+
+        if ($len <= 4) {
+            return str_repeat('*', $len);
+        }
+
+        if ($len <= 8) {
+            return substr($nik, 0, 2) . str_repeat('*', $len - 4) . substr($nik, -2);
+        }
+
+        return substr($nik, 0, 4) . str_repeat('*', max(4, $len - 8)) . substr($nik, -4);
+    }
+
     public function hasPortalPermission(string $permission): bool
     {
         if ($this->role === 'admin_kota') {
@@ -252,29 +275,22 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Tentukan apakah email pengguna telah diverifikasi.
-     * Hanya role 'peserta' dan 'pembimbing' (pembimbing sekolah/akademik) yang wajib verifikasi email.
-     * Role lain (admin_kota, admin_instansi, pembimbing_lapangan) otomatis dianggap sudah terverifikasi.
+     * Seluruh interactive user harus terverifikasi untuk keamanan akun.
      */
-    public function hasVerifiedEmail()
+    public function hasVerifiedEmail(): bool
     {
-        if (! $this->hasPortalRole(['peserta', 'pembimbing'])) {
-            return true;
-        }
-
         return ! is_null($this->email_verified_at);
     }
 
     /**
-     * Kirim notifikasi verifikasi email hanya jika role membutuhkan verifikasi.
+     * Kirim notifikasi verifikasi email.
      */
     public function sendEmailVerificationNotification()
     {
-        if ($this->hasPortalRole(['peserta', 'pembimbing'])) {
-            try {
-                $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
-            }
+        try {
+            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
         }
     }
 

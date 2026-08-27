@@ -25,10 +25,13 @@ class StorageAccessController extends Controller
             'surat' => $this->applicationDocument($filename),
             'logbook' => $this->logbookDocument($filename),
             'attendance' => $this->attendanceDocument($filename),
+            'signature' => $this->signatureDocument($filename),
             default => abort(404),
         };
 
-        $this->authorize('view', $model);
+        if ($type !== 'signature') {
+            $this->authorize('view', $model);
+        }
 
         $disk = Storage::disk('private')->exists($path) ? 'private' : 'public';
         abort_unless(Storage::disk($disk)->exists($path), 404, 'Berkas tidak ditemukan.');
@@ -71,5 +74,46 @@ class StorageAccessController extends Controller
             ->firstOrFail();
 
         return [$attendance->proof_file, $attendance];
+    }
+
+    /** @return array{string, object} */
+    private function signatureDocument(string $filename): array
+    {
+        $user = auth()->user();
+        abort_unless($user, 401);
+
+        // 1. Check Instansi ttd_kepala
+        $instansi = \App\Models\Instansi::where('ttd_kepala', 'like', '%/'.$this->like($filename))->first();
+        if ($instansi) {
+            abort_unless(
+                $user->hasPortalRole('admin_kota') ||
+                ($user->hasPortalRole('admin_instansi') && (int) $user->instansi_id === (int) $instansi->id),
+                403
+            );
+            return [$instansi->ttd_kepala, $instansi];
+        }
+
+        // 2. Check Setting ttd_image
+        $setting = \App\Models\Setting::where('key', 'ttd_image')
+            ->where('value', 'like', '%/'.$this->like($filename))
+            ->first();
+        if ($setting) {
+            abort_unless($user->hasPortalRole('admin_kota'), 403);
+            return [$setting->value, $setting];
+        }
+
+        // 3. Check User signature
+        $targetUser = \App\Models\User::where('signature', 'like', '%/'.$this->like($filename))->first();
+        if ($targetUser) {
+            abort_unless(
+                $user->hasPortalRole('admin_kota') ||
+                $user->id === $targetUser->id ||
+                ($user->hasPortalRole('admin_instansi') && (int) $user->instansi_id === (int) $targetUser->instansi_id),
+                403
+            );
+            return [$targetUser->signature, $targetUser];
+        }
+
+        abort(404, 'Berkas tanda tangan tidak ditemukan.');
     }
 }

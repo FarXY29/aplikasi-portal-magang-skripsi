@@ -149,7 +149,7 @@
                         </p>
                         @if(!empty($app->user->nik))
                             <span class="inline-block font-mono text-[11px] bg-slate-100 dark:bg-gray-900 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-lg mt-1 font-bold">
-                                NIK / NIM: {{ $app->user->nik }}
+                                NIK / NIM: {{ $app->user->masked_nik }}
                             </span>
                         @endif
                     </div>

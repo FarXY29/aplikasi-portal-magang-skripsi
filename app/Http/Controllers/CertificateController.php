@@ -42,6 +42,47 @@ class CertificateController extends Controller
         ]);
     }
 
+    /**
+     * Halaman Publik Hasil Scan QR Code ID Card Peserta Magang
+     */
+    public function verifyIdCard($token)
+    {
+        $token = trim($token);
+
+        $app = Application::with([
+            'user.majorDetail.category',
+            'position.instansi',
+            'pembimbing_lapangan',
+            'certificate',
+        ])
+        ->where('token_verifikasi', $token)
+        ->first();
+
+        $idCardStatus = 'invalid';
+        if ($app) {
+            $statusValue = $app->status_value;
+            $today = Carbon::today();
+            $endDate = $app->tanggal_selesai ? Carbon::parse($app->tanggal_selesai)->endOfDay() : null;
+
+            if (in_array($statusValue, ['dibatalkan', 'dikeluarkan'])) {
+                $idCardStatus = 'revoked';
+            } elseif ($statusValue === 'selesai' || ($endDate && $today->gt($endDate))) {
+                $idCardStatus = 'finished';
+            } elseif ($statusValue === 'diterima') {
+                $idCardStatus = 'active';
+            } else {
+                $idCardStatus = 'pending';
+            }
+        }
+
+        return view('public.verifikasi.id_card', [
+            'app' => $app,
+            'searchedToken' => $token,
+            'isValid' => !is_null($app),
+            'idCardStatus' => $idCardStatus,
+        ]);
+    }
+
     public function showScanner()
     {
         return view('public.verifikasi.scanner');
@@ -58,31 +99,31 @@ class CertificateController extends Controller
 
         $keyword = trim($request->input('nomor_sertifikat'));
 
-        // 1. Cari berdasarkan nomor_sertifikat atau token_verifikasi di Applications
-        $app = Application::where(function ($q) use ($keyword) {
-                    $q->where('nomor_sertifikat', $keyword)
-                      ->orWhere('token_verifikasi', $keyword);
-                })
-                ->whereIn('status', ['diterima', 'selesai'])
-                ->first();
+        // 1. Cek tabel Certificate terlebih dahulu (Nomor Sertifikat atau Token Sertifikat)
+        $certificate = Certificate::where('nomor_sertifikat', $keyword)
+            ->orWhere('token_verifikasi', $keyword)
+            ->first();
 
-        // 2. Jika belum ditemukan, cari via tabel Certificate
-        if (!$app) {
-            $certificate = Certificate::where('nomor_sertifikat', $keyword)
-                ->orWhere('token_verifikasi', $keyword)
-                ->first();
+        if ($certificate) {
+            return redirect()->route('certificate.verify', $certificate->token_verifikasi);
+        }
 
-            if ($certificate && $certificate->application) {
-                $app = $certificate->application;
+        // 2. Cek tabel Application
+        $app = Application::where('nomor_sertifikat', $keyword)
+            ->orWhere('token_verifikasi', $keyword)
+            ->first();
+
+        if ($app) {
+            // Jika aplikasi sudah memiliki nomor sertifikat atau berstatus selesai, arahkan ke sertifikat
+            if (!empty($app->nomor_sertifikat) || $app->status_value === 'selesai') {
+                return redirect()->route('certificate.verify', $app->token_verifikasi ?? $keyword);
             }
+
+            // Jika peserta aktif atau ID card token
+            return redirect()->route('id_card.verify', $app->token_verifikasi ?? $keyword);
         }
 
-        if (!$app) {
-            return back()->with('error', 'Sertifikat atau data peserta tidak ditemukan. Pastikan Nomor Sertifikat atau Token yang dimasukkan sudah benar.')->withInput();
-        }
-
-        $targetToken = $app->token_verifikasi ?? ($app->certificate?->token_verifikasi ?? $keyword);
-        return redirect()->route('certificate.verify', $targetToken);
+        return back()->with('error', 'Data sertifikat atau ID Card tidak ditemukan. Pastikan Nomor Sertifikat atau Token yang dimasukkan sudah benar.')->withInput();
     }
 
     /**

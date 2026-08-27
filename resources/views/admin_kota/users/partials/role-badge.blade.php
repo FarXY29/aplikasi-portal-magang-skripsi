@@ -11,7 +11,7 @@
         'admin_instansi' => 'Admin Instansi',
         'pembimbing_lapangan' => 'Pembimbing Lapangan',
         'peserta'    => 'Peserta',
-        'pembimbing' => 'Pembimbing Sekolah',
+        'pembimbing' => 'Pembimbing Akademik',
     ][$role] ?? ucwords(str_replace('_', ' ', $role));
 @endphp
 <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full border {{ $colors[$role] ?? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700' }}">
