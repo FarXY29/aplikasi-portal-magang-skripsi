@@ -74,7 +74,7 @@ class CreateDatabaseBackup implements ShouldQueue
                 'stored_path' => $path,
                 'status' => 'completed',
                 'completed_at' => now(),
-                'expires_at' => now()->addDays(7),
+                'expires_at' => now()->addMinutes(30),
             ]);
 
             AuditLog::create([

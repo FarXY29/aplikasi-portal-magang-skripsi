@@ -50,7 +50,7 @@
         }
     </script>
 </head>
-<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 dark:text-gray-100 transition-colors duration-300" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
+<body class="font-sans antialiased bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-gray-100 transition-colors duration-300" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
     
     <div class="flex h-screen overflow-hidden">
 
@@ -63,32 +63,32 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="sidebarOpen = false" 
-             class="fixed inset-0 z-40 bg-gray-900/60 lg:hidden backdrop-blur-xs">
+             class="fixed inset-0 z-40 bg-slate-900/60 lg:hidden backdrop-blur-xs">
         </div>
 
         <!-- MAIN SIDEBAR (Desktop & Drawer Slide-Over) -->
         <aside x-cloak 
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 z-50 w-64 md:w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 transform h-full flex flex-col flex-shrink-0">
+               class="fixed inset-y-0 left-0 z-50 w-64 md:w-72 bg-white dark:bg-gray-800 border-r border-slate-200/90 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 transform h-full flex flex-col flex-shrink-0">
             @include('layouts.navigation')
         </aside>
 
         <!-- MAIN CONTENT WRAPPER -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50 dark:bg-gray-900">
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 dark:bg-gray-900">
             
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
-            <header class="hidden md:flex glass-panel border-b border-gray-200/50 dark:border-gray-700/50 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-sm sticky top-0">
+            <header class="hidden md:flex glass-panel border-b border-slate-200/80 dark:border-gray-700/50 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0">
                 
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
-                    <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-teal-50/80 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
+                    <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-slate-600 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-slate-100/90 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
                     <div class="flex-1 min-w-0">
                         @if(isset($header))
                             {{ $header }}
                         @else
-                            <h2 class="font-black text-xl text-gray-800 dark:text-gray-200 dark:text-gray-100 leading-tight truncate">
+                            <h2 class="font-black text-xl text-slate-800 dark:text-gray-100 leading-tight truncate">
                                 Dashboard
                             </h2>
                         @endif
@@ -96,12 +96,14 @@
                 </div>
 
                 <div class="flex items-center gap-3 print:hidden">
-                    <div class="flex items-center gap-2 text-xs font-bold text-gray-600 dark:text-gray-400 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/80 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700/60 shadow-2xs">
-                        <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
+                    @include('layouts.partials._notification-bell')
+
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-gray-300 bg-slate-100/90 dark:bg-gray-800/80 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs">
+                        <i class="far fa-calendar-alt text-teal-700 dark:text-teal-400"></i>
                         <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
                     </div>
                     
-                    <div id="realtime-clock" class="flex items-center gap-2 text-xs font-mono font-black text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-3.5 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/80 shadow-2xs">
+                    <div id="realtime-clock" class="flex items-center gap-2 text-xs font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-3.5 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/80 shadow-2xs">
                         <i class="far fa-clock"></i>
                         <span id="clock-span">00:00:00</span>
                     </div>
@@ -109,40 +111,42 @@
             </header>
 
             <!-- MOBILE NATIVE TOP BAR (Android & iOS < md) -->
-            <header class="md:hidden sticky top-0 z-30 glass-panel border-b border-gray-200/50 dark:border-gray-700/50 px-4 py-3 flex items-center justify-between shadow-sm">
+            <header class="md:hidden sticky top-0 z-30 glass-panel border-b border-slate-200/80 dark:border-gray-700/50 px-4 py-3 flex items-center justify-between shadow-2xs">
                 <div class="flex items-center gap-3 min-w-0">
                     <!-- Tombol Hamburger di pojok kiri atas mobile -->
-                    <button @click="sidebarOpen = true" class="p-2 -ml-1 text-gray-700 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 focus:outline-none active:scale-95 transition" title="Buka Sidebar">
+                    <button @click="sidebarOpen = true" class="p-2 -ml-1 text-slate-700 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400 focus:outline-none active:scale-95 transition" title="Buka Sidebar">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center p-1 shadow-xs flex-shrink-0">
+                        <div class="w-8 h-8 rounded-lg bg-teal-700 text-white flex items-center justify-center p-1 shadow-2xs flex-shrink-0">
                             <x-application-logo class="w-full h-full fill-current text-white" />
                         </div>
                         <div class="min-w-0">
-                            <h1 class="text-sm font-black text-gray-900 dark:text-gray-100 leading-none truncate">Portal<span class="text-teal-600 dark:text-teal-400">Magang</span></h1>
-                            <span class="inline-block mt-0.5 px-1.5 py-0.5 text-[8px] font-black uppercase bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded border border-teal-200/60 dark:border-teal-800 tracking-wider">
+                            <h1 class="text-sm font-black text-slate-900 dark:text-gray-100 leading-none truncate">Portal<span class="text-teal-700 dark:text-teal-400">Magang</span></h1>
+                            <span class="inline-block mt-0.5 px-1.5 py-0.5 text-[8px] font-black uppercase bg-teal-50 dark:bg-teal-900/30 text-teal-800 dark:text-teal-400 rounded border border-teal-200/70 dark:border-teal-800 tracking-wider">
                                 {{ str_replace('_', ' ', Auth::user()->role) }}
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <div class="flex items-center gap-2.5">
-                    <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/60 dark:border-teal-800/80 shadow-2xs">
-                        <i class="far fa-clock mr-1 text-teal-600 dark:text-teal-400"></i><span id="mobile-clock-span">00:00:00</span>
+                <div class="flex items-center gap-2">
+                    @include('layouts.partials._notification-bell')
+
+                    <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/70 dark:border-teal-800/80 shadow-2xs">
+                        <i class="far fa-clock mr-1 text-teal-700 dark:text-teal-400"></i><span id="mobile-clock-span">00:00:00</span>
                     </div>
 
                     <!-- Tombol Menu Cepat / Profil -->
-                    <button @click="$dispatch('open-mobile-menu')" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-teal-500 text-white flex items-center justify-center font-black text-xs shadow-sm ring-2 ring-teal-100 active:scale-95 transition flex-shrink-0" title="Menu Navigasi Mobile">
+                    <button @click="$dispatch('open-mobile-menu')" class="w-9 h-9 rounded-xl bg-teal-700 hover:bg-teal-800 text-white flex items-center justify-center font-black text-xs shadow-2xs ring-2 ring-teal-100 dark:ring-teal-900/50 active:scale-95 transition flex-shrink-0" title="Menu Navigasi Mobile">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </button>
                 </div>
             </header>
 
             <!-- MAIN BODY SLOT -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 custom-scrollbar p-4 pb-24 md:p-6 lg:p-8 md:pb-8">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-gray-900 custom-scrollbar p-4 pb-24 md:p-6 lg:p-8 md:pb-8">
                 {{ $slot }}
             </main>
 

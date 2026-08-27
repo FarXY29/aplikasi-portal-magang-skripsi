@@ -49,6 +49,7 @@
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">Detail Pekerjaan</h4>
                                 <div class="prose prose-sm text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                                     {{ $position->deskripsi }}
+                                    {!! \App\Services\HtmlSanitizer::clean($position->deskripsi) !!}
                                 </div>
                             </div>
 
@@ -107,7 +108,50 @@
                                 </div>
 
                                 <div class="mb-6">
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-3">Rencana Periode Magang</label>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                            Rencana Periode Magang
+                                        </label>
+                                        <span class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 hidden sm:inline">Pilih durasi cepat atau atur tanggal manual</span>
+                                    </div>
+
+                                    {{-- Quick Preset Duration Buttons --}}
+                                    <div class="mb-4">
+                                        <label class="block text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                            <i class="fas fa-bolt text-amber-500"></i> Pilihan Cepat Periode
+                                        </label>
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="preset-buttons-group">
+                                            <button type="button" data-months="1" class="preset-duration-btn group px-3.5 py-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-500 dark:hover:border-teal-400 text-gray-700 dark:text-gray-300 font-bold text-xs transition flex items-center justify-between shadow-xs cursor-pointer">
+                                                <span class="flex items-center gap-2">
+                                                    <span class="w-6 h-6 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[10px] font-black group-hover:scale-105 transition">1B</span>
+                                                    <span>1 Bulan</span>
+                                                </span>
+                                                <i class="fas fa-check text-[10px] text-teal-600 dark:text-teal-400 opacity-0 group-[.active]:opacity-100 transition"></i>
+                                            </button>
+                                            <button type="button" data-months="2" class="preset-duration-btn group px-3.5 py-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-500 dark:hover:border-teal-400 text-gray-700 dark:text-gray-300 font-bold text-xs transition flex items-center justify-between shadow-xs cursor-pointer">
+                                                <span class="flex items-center gap-2">
+                                                    <span class="w-6 h-6 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[10px] font-black group-hover:scale-105 transition">2B</span>
+                                                    <span>2 Bulan</span>
+                                                </span>
+                                                <i class="fas fa-check text-[10px] text-teal-600 dark:text-teal-400 opacity-0 group-[.active]:opacity-100 transition"></i>
+                                            </button>
+                                            <button type="button" data-months="3" class="preset-duration-btn group px-3.5 py-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-500 dark:hover:border-teal-400 text-gray-700 dark:text-gray-300 font-bold text-xs transition flex items-center justify-between shadow-xs cursor-pointer">
+                                                <span class="flex items-center gap-2">
+                                                    <span class="w-6 h-6 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[10px] font-black group-hover:scale-105 transition">3B</span>
+                                                    <span>3 Bulan</span>
+                                                </span>
+                                                <i class="fas fa-check text-[10px] text-teal-600 dark:text-teal-400 opacity-0 group-[.active]:opacity-100 transition"></i>
+                                            </button>
+                                            <button type="button" data-months="6" class="preset-duration-btn group px-3.5 py-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-teal-500 dark:hover:border-teal-400 text-gray-700 dark:text-gray-300 font-bold text-xs transition flex items-center justify-between shadow-xs cursor-pointer">
+                                                <span class="flex items-center gap-2">
+                                                    <span class="w-6 h-6 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[10px] font-black group-hover:scale-105 transition">6B</span>
+                                                    <span>6 Bulan</span>
+                                                </span>
+                                                <i class="fas fa-check text-[10px] text-teal-600 dark:text-teal-400 opacity-0 group-[.active]:opacity-100 transition"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     <div class="date-timeline-wrapper bg-gray-50/50 dark:bg-gray-900/50 p-5 rounded-3xl border border-gray-200 dark:border-gray-700">
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                             <div>
@@ -131,8 +175,9 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div id="duration-badge-wrap" class="mt-4 hidden">
+                                        <div id="duration-badge-wrap" class="mt-4 hidden flex items-center flex-wrap gap-2">
                                             <span id="duration-badge" class="px-3.5 py-1.5 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 rounded-full text-xs font-bold text-teal-700 dark:text-teal-300 inline-flex items-center gap-1.5 shadow-xs"><i class="fas fa-clock"></i> <span id="duration-text"></span></span>
+                                            <span id="duration-preset-indicator" class="px-3 py-1 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-[11px] font-bold text-gray-600 dark:text-gray-400 hidden"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -170,6 +215,8 @@
         const fileNameText  = document.getElementById('file-name-text');
         const durationWrap  = document.getElementById('duration-badge-wrap');
         const durationText  = document.getElementById('duration-text');
+        const presetIndicator = document.getElementById('duration-preset-indicator');
+        const presetBtns    = document.querySelectorAll('.preset-duration-btn');
         const positionId = "{{ $position->id }}"; 
 
         if (!startInput || !endInput) return;
@@ -202,20 +249,107 @@
             });
         }
 
-        // Duration Calculator
+        // Helper hitung tanggal selesai berdasarkan penambahan bulan kalender (Mulai + X Bulan - 1 Hari)
+        function calculateEndDateFromMonths(startDateStr, monthsCount) {
+            const parts = startDateStr.split('-').map(Number);
+            let year = parts[0];
+            let month = parts[1] - 1 + monthsCount;
+            let day = parts[2];
+
+            year += Math.floor(month / 12);
+            month = ((month % 12) + 12) % 12;
+
+            const daysInTargetMonth = new Date(year, month + 1, 0).getDate();
+            const clampedDay = Math.min(day, daysInTargetMonth);
+
+            const targetDate = new Date(year, month, clampedDay);
+            targetDate.setDate(targetDate.getDate() - 1);
+
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${targetDate.getFullYear()}-${pad(targetDate.getMonth() + 1)}-${pad(targetDate.getDate())}`;
+        }
+
+        function setActivePresetButton(activeMonths) {
+            presetBtns.forEach(btn => {
+                const m = parseInt(btn.getAttribute('data-months'), 10);
+                if (m === activeMonths) {
+                    btn.classList.add('active', 'border-teal-500', 'dark:border-teal-400', 'bg-teal-50/50', 'dark:bg-teal-950/40', 'ring-2', 'ring-teal-500/20');
+                    btn.classList.remove('border-gray-200', 'dark:border-gray-700', 'bg-white', 'dark:bg-gray-800');
+                } else {
+                    btn.classList.remove('active', 'border-teal-500', 'dark:border-teal-400', 'bg-teal-50/50', 'dark:bg-teal-950/40', 'ring-2', 'ring-teal-500/20');
+                    btn.classList.add('border-gray-200', 'dark:border-gray-700', 'bg-white', 'dark:bg-gray-800');
+                }
+            });
+        }
+
+        // Preset Button Click Event
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const months = parseInt(this.getAttribute('data-months'), 10);
+                
+                // Jika tanggal mulai belum diisi, gunakan minimal tanggal hari ini
+                if (!startInput.value) {
+                    const today = new Date();
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const todayStr = startInput.min || `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+                    startInput.value = todayStr;
+                }
+
+                const computedEnd = calculateEndDateFromMonths(startInput.value, months);
+                endInput.value = computedEnd;
+                setActivePresetButton(months);
+                validateDates();
+            });
+        });
+
+        // Duration Calculator & Preset Matching
         function updateDuration() {
             const s = startInput.value, e = endInput.value;
             if(startInput.value) endInput.min = startInput.value;
             if(s && e) {
                 const days = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
                 if(days > 0) {
-                    durationText.textContent = days + ' hari (' + Math.round(days/7) + ' minggu)';
+                    const weeks = Math.round(days / 7);
+                    const approxMonths = Math.round(days / 30.4);
+                    
+                    let durationSummary = `${days} hari`;
+                    if (approxMonths >= 1) {
+                        durationSummary += ` (~${approxMonths} bulan / ${weeks} minggu)`;
+                    } else if (weeks >= 1) {
+                        durationSummary += ` (~${weeks} minggu)`;
+                    }
+
+                    durationText.textContent = durationSummary;
                     durationWrap.classList.remove('hidden');
+
+                    // Cek apakah rentang tanggal cocok dengan preset
+                    let matchedPreset = null;
+                    [1, 2, 3, 6].forEach(m => {
+                        if (calculateEndDateFromMonths(s, m) === e) {
+                            matchedPreset = m;
+                        }
+                    });
+
+                    if (matchedPreset !== null) {
+                        setActivePresetButton(matchedPreset);
+                        if (presetIndicator) {
+                            presetIndicator.textContent = `Preset: ${matchedPreset} Bulan`;
+                            presetIndicator.classList.remove('hidden');
+                        }
+                    } else {
+                        setActivePresetButton(null);
+                        if (presetIndicator) {
+                            presetIndicator.textContent = 'Durasi Kustom';
+                            presetIndicator.classList.remove('hidden');
+                        }
+                    }
                 } else {
                     durationWrap.classList.add('hidden');
+                    setActivePresetButton(null);
                 }
             } else {
                 durationWrap.classList.add('hidden');
+                setActivePresetButton(null);
             }
         }
 
@@ -352,6 +486,11 @@
 
         startInput.addEventListener('change', validateDates);
         endInput.addEventListener('change', validateDates);
+
+        // Inisialisasi jika ada old values (misal validation error dari server)
+        if (startInput.value && endInput.value) {
+            validateDates();
+        }
     });
     </script>
 </x-app-layout>

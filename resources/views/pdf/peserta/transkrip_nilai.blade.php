@@ -163,7 +163,11 @@
         $ttdKepalaPath = null;
         if (!empty($instansi?->ttd_kepala)) {
             $rawK = $instansi->ttd_kepala;
-            if (file_exists(storage_path('app/public/' . $rawK))) {
+            if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawK)) {
+                $ttdKepalaPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawK);
+            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawK)) {
+                $ttdKepalaPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawK);
+            } elseif (file_exists(storage_path('app/public/' . $rawK))) {
                 $ttdKepalaPath = storage_path('app/public/' . $rawK);
             } elseif (file_exists(public_path('storage/' . $rawK))) {
                 $ttdKepalaPath = public_path('storage/' . $rawK);
@@ -173,7 +177,11 @@
         $ttdPlPath = null;
         if (!empty($app->pembimbing_lapangan?->signature)) {
             $rawPl = $app->pembimbing_lapangan->signature;
-            if (file_exists(storage_path('app/public/' . $rawPl))) {
+            if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawPl)) {
+                $ttdPlPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawPl);
+            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawPl)) {
+                $ttdPlPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawPl);
+            } elseif (file_exists(storage_path('app/public/' . $rawPl))) {
                 $ttdPlPath = storage_path('app/public/' . $rawPl);
             } elseif (file_exists(public_path('storage/' . $rawPl))) {
                 $ttdPlPath = public_path('storage/' . $rawPl);

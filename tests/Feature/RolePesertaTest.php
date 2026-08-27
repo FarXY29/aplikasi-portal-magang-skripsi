@@ -518,4 +518,48 @@ class RolePesertaTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue(str_contains($response->headers->get('Content-Disposition') ?? '', '.pdf') || $response->headers->get('Content-Type') === 'application/pdf');
     }
+
+    public function test_peserta_can_submit_automatic_application()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+
+        \Illuminate\Support\Facades\Storage::fake('private');
+
+        $user = User::factory()->create([
+            'role' => 'peserta',
+            'major' => 'Teknik Informatika',
+        ]);
+
+        $instansi = \App\Models\Instansi::create([
+            'nama_dinas' => 'Dinas Komunikasi dan Informatika',
+            'kode_unit_kerja' => 'DISKOMINFO-' . uniqid(),
+            'alamat' => 'Jl. Pangeran Samudra',
+            'max_total_quota' => 10,
+        ]);
+
+        $position = \App\Models\InternshipPosition::create([
+            'instansi_id' => $instansi->id,
+            'judul_posisi' => 'Programmer',
+            'required_major' => 'Teknik Informatika',
+            'kuota' => 5,
+            'status' => 'buka',
+        ]);
+
+        $file = \Illuminate\Http\UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf');
+
+        $response = $this->actingAs($user)->post(route('peserta.apply_automatic.store'), [
+            'surat' => $file,
+            'tanggal_mulai' => now()->addDays(5)->format('Y-m-d'),
+            'tanggal_selesai' => now()->addMonths(2)->format('Y-m-d'),
+        ]);
+
+        $response->assertRedirect(route('peserta.dashboard'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'is_automatic_placement' => true,
+        ]);
+    }
 }

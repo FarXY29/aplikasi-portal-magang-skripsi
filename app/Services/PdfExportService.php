@@ -96,9 +96,13 @@ class PdfExportService
 
         if (! array_key_exists('ttd_image_path', $data)) {
             $ttdPath = null;
-            if (! empty($settings['ttd_image']) && \Illuminate\Support\Facades\Storage::disk('public')->exists($settings['ttd_image'])) {
+            if (! empty($settings['ttd_image'])) {
                 $rawImg = $settings['ttd_image'];
-                if (file_exists(storage_path('app/public/' . $rawImg))) {
+                if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawImg)) {
+                    $ttdPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawImg);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawImg)) {
+                    $ttdPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawImg);
+                } elseif (file_exists(storage_path('app/public/' . $rawImg))) {
                     $ttdPath = storage_path('app/public/' . $rawImg);
                 } elseif (file_exists(public_path('storage/' . $rawImg))) {
                     $ttdPath = public_path('storage/' . $rawImg);

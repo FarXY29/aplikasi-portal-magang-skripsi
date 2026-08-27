@@ -44,18 +44,26 @@ class AdminSettingController extends Controller
 
         if ($request->hasFile('ttd_image')) {
             $oldImage = Setting::where('key', 'ttd_image')->value('value');
-            if ($oldImage && Storage::disk('public')->exists($oldImage)) {
-                Storage::disk('public')->delete($oldImage);
+            if ($oldImage) {
+                if (Storage::disk('private')->exists($oldImage)) {
+                    Storage::disk('private')->delete($oldImage);
+                } elseif (Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
             }
 
-            $path = $request->file('ttd_image')->store('settings', 'public');
+            $path = $request->file('ttd_image')->store('signatures', 'private');
             Setting::updateOrCreate(['key' => 'ttd_image'], ['value' => $path]);
         }
 
         if ($request->hasFile('kop_logo')) {
             $oldLogo = Setting::where('key', 'kop_logo')->value('value');
-            if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
-                Storage::disk('public')->delete($oldLogo);
+            if ($oldLogo) {
+                if (Storage::disk('private')->exists($oldLogo)) {
+                    Storage::disk('private')->delete($oldLogo);
+                } elseif (Storage::disk('public')->exists($oldLogo)) {
+                    Storage::disk('public')->delete($oldLogo);
+                }
             }
 
             $path = $request->file('kop_logo')->store('settings', 'public');
