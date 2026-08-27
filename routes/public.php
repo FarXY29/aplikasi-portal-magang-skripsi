@@ -2,11 +2,17 @@
 
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\Public\LowonganController as PublicLowonganController;
+use App\Http\Controllers\Public\TrackingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicLowonganController::class, 'index'])->name('home');
 Route::get('/lowongan', [PublicLowonganController::class, 'index'])->name('lowongan.index');
 Route::get('/lowongan/{id}', [PublicLowonganController::class, 'show'])->name('lowongan.show');
+
+Route::get('/lacak-permohonan', [TrackingController::class, 'index'])->name('tracking.index');
+Route::match(['GET', 'POST'], '/lacak-permohonan/cari', [TrackingController::class, 'search'])
+    ->middleware('throttle:public-search')
+    ->name('tracking.search');
 
 Route::get('/scan-qr', [CertificateController::class, 'showScanner'])->name('qr.scanner');
 Route::get('/verify-certificate/{token}', [CertificateController::class, 'verify'])->name('certificate.verify');
@@ -14,3 +20,4 @@ Route::get('/verify-id-card/{token}', [CertificateController::class, 'verifyIdCa
 Route::post('/search-certificate', [CertificateController::class, 'search'])
     ->middleware('throttle:public-search')
     ->name('certificate.search');
+

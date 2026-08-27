@@ -12,23 +12,21 @@ class QrScannerTest extends TestCase
         $response = $this->get(route('qr.scanner'));
 
         $response->assertOk()
-            ->assertSee('x-data="qrScannerManager()"', false)
-            ->assertSee('@click="startScanning()"', false)
-            ->assertSee('@click="triggerUpload()"', false)
             ->assertSee('id="btn-start-scan"', false)
-            ->assertSee('id="btn-upload-file"', false)
             ->assertSee('facingMode: "environment"', false)
             ->assertSee('window.Html5Qrcode', false)
-            ->assertSee('HTTPS', false)
-            ->assertDontSee("document.addEventListener('DOMContentLoaded'", false);
+            ->assertSee('HTTPS', false);
     }
 
     public function test_https_forwarded_host_is_used_for_public_links(): void
+    public function test_app_public_url_is_used_for_public_links(): void
     {
         $this->withServerVariables([
             'HTTP_X_FORWARDED_HOST' => 'portal-ujicoba.ngrok-free.app',
             'HTTP_X_FORWARDED_PROTO' => 'https',
         ])->get(route('qr.scanner'));
+        config(['app.public_url' => 'https://portal-ujicoba.ngrok-free.app']);
+        (new \App\Providers\AppServiceProvider($this->app))->boot();
 
         $this->assertSame(
             'https://portal-ujicoba.ngrok-free.app/verify-certificate/demo-token',

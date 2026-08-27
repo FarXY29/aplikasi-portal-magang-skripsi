@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminInstansi\LowonganRequest;
 use App\Models\InternshipPosition;
 use App\Models\MajorCategory;
+use App\Services\HtmlSanitizer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -57,6 +58,7 @@ class LowonganController extends Controller
             'required_major_category_id' => $request->required_major_category_id,
             'required_major' => $requiredMajor,
             'deskripsi' => $request->deskripsi,
+            'deskripsi' => HtmlSanitizer::clean($request->deskripsi),
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,
             'status' => 'buka'
@@ -99,6 +101,7 @@ class LowonganController extends Controller
             'required_major_category_id' => $request->required_major_category_id,
             'required_major' => $requiredMajor,
             'deskripsi' => $request->deskripsi,
+            'deskripsi' => HtmlSanitizer::clean($request->deskripsi),
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,
             'status' => $request->status

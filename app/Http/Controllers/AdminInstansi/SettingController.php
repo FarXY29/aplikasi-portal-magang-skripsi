@@ -33,11 +33,13 @@ class SettingController extends Controller
         ];
 
         if ($request->hasFile('ttd_kepala')) {
-            if ($instansi->ttd_kepala && Storage::exists('public/' . $instansi->ttd_kepala)) {
-                Storage::delete('public/' . $instansi->ttd_kepala);
+            if ($instansi->ttd_kepala && Storage::disk('private')->exists($instansi->ttd_kepala)) {
+                Storage::disk('private')->delete($instansi->ttd_kepala);
+            } elseif ($instansi->ttd_kepala && Storage::disk('public')->exists($instansi->ttd_kepala)) {
+                Storage::disk('public')->delete($instansi->ttd_kepala);
             }
 
-            $path = $request->file('ttd_kepala')->store('signatures', 'public');
+            $path = $request->file('ttd_kepala')->store('signatures', 'private');
             $dataToUpdate['ttd_kepala'] = $path;
         }
 

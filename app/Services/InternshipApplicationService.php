@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationAcceptedMail;
 use App\Mail\ApplicationRejectedMail;
+use App\Notifications\ApplicationStatusNotification;
 use App\Services\AuditLogService;
 
 class InternshipApplicationService
@@ -111,6 +112,20 @@ class InternshipApplicationService
             // Log mail failure gracefully without aborting database update
         }
 
+        try {
+            if ($application->user) {
+                $instansiName = $application->position?->instansi?->nama_dinas ?? 'Instansi';
+                $application->user->notify(new ApplicationStatusNotification(
+                    $application,
+                    'Lamaran Diterima! 🎉',
+                    "Selamat! Pengajuan magang Anda di {$instansiName} telah DITERIMA. Silakan cek dashboard untuk mengunduh LoA & ID Card.",
+                    'success'
+                ));
+            }
+        } catch (\Exception $e) {
+            // Log notification error gracefully
+        }
+
         $this->auditLogService->record('application.accepted', $application, [
             'applicant_user_id' => $application->user_id,
             'position_id' => $application->internship_position_id,
@@ -144,6 +159,21 @@ class InternshipApplicationService
             // Log mail failure gracefully without aborting database update
         }
 
+        try {
+            if ($application->user) {
+                $instansiName = $application->position?->instansi?->nama_dinas ?? 'Instansi';
+                $reasonText = $alasan ? " Alasan: {$alasan}" : '';
+                $application->user->notify(new ApplicationStatusNotification(
+                    $application,
+                    'Pemberitahuan Status Lamaran',
+                    "Mohon maaf, lamaran magang Anda di {$instansiName} belum dapat diterima.{$reasonText}",
+                    'danger'
+                ));
+            }
+        } catch (\Exception $e) {
+            // Log notification error gracefully
+        }
+
         $this->auditLogService->record('application.rejected', $application, [
             'applicant_user_id' => $application->user_id,
             'position_id' => $application->internship_position_id,
@@ -168,6 +198,20 @@ class InternshipApplicationService
 
         if ($oldStatus === 'diterima') {
             $this->autoReallocateQuota($application->internship_position_id);
+        }
+
+        try {
+            if ($application->user) {
+                $instansiName = $application->position?->instansi?->nama_dinas ?? 'Instansi';
+                $application->user->notify(new ApplicationStatusNotification(
+                    $application,
+                    'Lamaran Dibatalkan',
+                    "Lamaran magang Anda di {$instansiName} telah berhasil dibatalkan.",
+                    'warning'
+                ));
+            }
+        } catch (\Exception $e) {
+            // Log notification error gracefully
         }
 
         $this->auditLogService->record('application.cancelled', $application, [
@@ -228,6 +272,21 @@ class InternshipApplicationService
                 }
 
                 $candidate->update(['status' => 'pending']);
+
+                try {
+                    if ($candidate->user) {
+                        $instansiName = $position->instansi?->nama_dinas ?? 'Instansi';
+                        $candidate->user->notify(new ApplicationStatusNotification(
+                            $candidate,
+                            'Kabar Baik: Kuota Tersedia! 🔔',
+                            "Ada slot yang terbuka di {$instansiName}. Lamaran Anda telah dipromosikan dari Daftar Tunggu ke tahap Peninjauan.",
+                            'info'
+                        ));
+                    }
+                } catch (\Exception $e) {
+                    // Ignore notification errors
+                }
+
                 $this->auditLogService->record('application.promoted_from_waiting_list', $candidate, [
                     'position_id' => $position->id,
                 ]);

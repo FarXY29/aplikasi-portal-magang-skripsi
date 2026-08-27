@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Peserta\StoreApplicationRequest;
 use App\Models\Application;
 use App\Models\InternshipPosition;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ApplicationController extends Controller
 {
@@ -56,80 +58,85 @@ class ApplicationController extends Controller
         $reqEnd = $request->tanggal_selesai;
         $requestedWaitingList = $request->boolean('is_waiting_list');
 
-        // Cek Application Limiter (Maksimal 2 lamaran aktif)
-        $activeApplicationsCount = Application::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'menunggu', 'diterima'])
-            ->count();
-
-        if ($activeApplicationsCount >= 2) {
-            return redirect()->route('peserta.dashboard')->with('error', 'Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya jika ingin mengajukan ke posisi baru.');
-        }
-
-        $existingApp = Application::where('user_id', $user->id)
-            ->where('internship_position_id', $id)
-            ->whereIn('status', ['pending', 'menunggu', 'diterima'])
-            ->exists();
-
-        if ($existingApp) {
-            return redirect()->route('peserta.dashboard')->with('error', 'Anda sudah melamar ke posisi ini dan statusnya masih aktif/pending.');
-        }
-
-        $positionCheck = InternshipPosition::with(['instansi', 'requiredMajorCategory'])->findOrFail($id);
-        if (! $positionCheck->matchesUser($user)) {
-            $expected = $positionCheck->requiredMajorCategory?->name ?? $positionCheck->required_major;
-            return redirect()->route('home')->with('error', "Posisi ini khusus kualifikasi: {$expected}.");
-        }
-
         // Upload berkas di luar transaksi agar lock database tidak tertahan oleh proses I/O storage
         $suratPath = $request->file('surat')->store('documents/surat', 'private');
 
-        $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request, $requestedWaitingList) {
-            // Pessimistic Locking pada baris InternshipPosition untuk menjamin akurasi kuota instansi
-            $position = InternshipPosition::where('id', $id)->lockForUpdate()->firstOrFail();
-            $kapasitasMaksimal = $position->kuota;
+        try {
+            $status = DB::transaction(function () use ($id, $user, $reqStart, $reqEnd, $suratPath, $request, $requestedWaitingList) {
+                // Lock user record to prevent concurrent duplicate/overflow submissions
+                User::where('id', $user->id)->lockForUpdate()->first();
 
-            $conflictingAppsCount = Application::where('internship_position_id', $id)
-                ->whereIn('status', ['diterima', 'pending'])
-                ->where(function ($q) use ($reqStart, $reqEnd) {
-                    $q->where('tanggal_mulai', '<=', $reqEnd)
-                        ->where('tanggal_selesai', '>=', $reqStart);
-                })
-                ->count();
+                // Cek Application Limiter (Maksimal 2 lamaran aktif) inside locked transaction
+                $activeApplicationsCount = Application::where('user_id', $user->id)
+                    ->whereIn('status', ['pending', 'menunggu', 'diterima'])
+                    ->count();
 
-            // Cek juga kuota global instansi jika diatur (max_total_quota > 0)
-            $instansi = $position->instansi()->lockForUpdate()->first();
-            $instansiFull = false;
-            if ($instansi && $instansi->max_total_quota > 0) {
-                $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
+                if ($activeApplicationsCount >= 2) {
+                    throw new \RuntimeException('Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya jika ingin mengajukan ke posisi baru.');
+                }
+
+                $existingApp = Application::where('user_id', $user->id)
+                    ->where('internship_position_id', $id)
+                    ->whereIn('status', ['pending', 'menunggu', 'diterima'])
+                    ->exists();
+
+                if ($existingApp) {
+                    throw new \RuntimeException('Anda sudah melamar ke posisi ini dan statusnya masih aktif/pending.');
+                }
+
+                // Pessimistic Locking pada baris InternshipPosition untuk menjamin akurasi kuota instansi
+                $position = InternshipPosition::where('id', $id)->lockForUpdate()->firstOrFail();
+                $kapasitasMaksimal = $position->kuota;
+
+                $conflictingAppsCount = Application::where('internship_position_id', $id)
                     ->whereIn('status', ['diterima', 'pending'])
                     ->where(function ($q) use ($reqStart, $reqEnd) {
                         $q->where('tanggal_mulai', '<=', $reqEnd)
                             ->where('tanggal_selesai', '>=', $reqStart);
                     })
                     ->count();
-                if ($instansiActiveCount >= $instansi->max_total_quota) {
-                    $instansiFull = true;
+
+                // Cek juga kuota global instansi jika diatur (max_total_quota > 0)
+                $instansi = $position->instansi()->lockForUpdate()->first();
+                $instansiFull = false;
+                if ($instansi && $instansi->max_total_quota > 0) {
+                    $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
+                        ->whereIn('status', ['diterima', 'pending'])
+                        ->where(function ($q) use ($reqStart, $reqEnd) {
+                            $q->where('tanggal_mulai', '<=', $reqEnd)
+                                ->where('tanggal_selesai', '>=', $reqStart);
+                        })
+                        ->count();
+                    if ($instansiActiveCount >= $instansi->max_total_quota) {
+                        $instansiFull = true;
+                    }
                 }
+
+                $status = 'pending';
+                if ($requestedWaitingList || $conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
+                    $status = 'menunggu';
+                }
+
+                Application::create([
+                    'user_id' => $user->id,
+                    'internship_position_id' => $id,
+                    'letter_number' => $request->letter_number ?? null,
+                    'cv_path' => '-',
+                    'surat_pengantar_path' => $suratPath,
+                    'status' => $status,
+                    'tanggal_mulai' => $reqStart,
+                    'tanggal_selesai' => $reqEnd,
+                ]);
+
+                return $status;
+            });
+        } catch (\RuntimeException $e) {
+            if (Storage::disk('private')->exists($suratPath)) {
+                Storage::disk('private')->delete($suratPath);
             }
 
-            $status = 'pending';
-            if ($requestedWaitingList || $conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
-                $status = 'menunggu';
-            }
-
-            Application::create([
-                'user_id' => $user->id,
-                'internship_position_id' => $id,
-                'letter_number' => $request->letter_number ?? null,
-                'cv_path' => '-',
-                'surat_pengantar_path' => $suratPath,
-                'status' => $status,
-                'tanggal_mulai' => $reqStart,
-                'tanggal_selesai' => $reqEnd,
-            ]);
-
-            return $status;
-        });
+            return redirect()->route('peserta.dashboard')->with('error', $e->getMessage());
+        }
 
         $successMessage = $status === 'menunggu'
             ? 'Anda berhasil masuk Daftar Tunggu! Anda akan otomatis diterima dan jadwal disesuaikan saat ada peserta yang selesai.'
@@ -274,7 +281,7 @@ class ApplicationController extends Controller
 
         $instansiIds = collect($availablePositions)->pluck('instansi_id')->unique()->values();
 
-        $instansiInternsCounts = Application::whereIn('status', ['diterima', 'pending'])
+        $instansiInternsCounts = Application::whereIn('applications.status', ['diterima', 'pending'])
             ->join('internship_positions', 'applications.internship_position_id', '=', 'internship_positions.id')
             ->whereIn('internship_positions.instansi_id', $instansiIds)
             ->select('internship_positions.instansi_id', DB::raw('count(*) as total'))
@@ -296,52 +303,70 @@ class ApplicationController extends Controller
 
         $suratPath = $request->file('surat')->store('documents/surat', 'private');
 
-        $status = DB::transaction(function () use ($selectedPosition, $user, $reqStart, $reqEnd, $suratPath, $request) {
-            $position = InternshipPosition::where('id', $selectedPosition->id)->lockForUpdate()->firstOrFail();
-            $kapasitasMaksimal = $position->kuota;
+        try {
+            $status = DB::transaction(function () use ($selectedPosition, $user, $reqStart, $reqEnd, $suratPath, $request) {
+                User::where('id', $user->id)->lockForUpdate()->first();
 
-            $conflictingAppsCount = Application::where('internship_position_id', $position->id)
-                ->whereIn('status', ['diterima', 'pending'])
-                ->where(function ($q) use ($reqStart, $reqEnd) {
-                    $q->where('tanggal_mulai', '<=', $reqEnd)
-                        ->where('tanggal_selesai', '>=', $reqStart);
-                })
-                ->count();
+                $activeApplicationsCount = Application::where('user_id', $user->id)
+                    ->whereIn('status', ['pending', 'menunggu', 'diterima'])
+                    ->count();
 
-            $instansi = $position->instansi()->lockForUpdate()->first();
-            $instansiFull = false;
-            if ($instansi && $instansi->max_total_quota > 0) {
-                $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
+                if ($activeApplicationsCount >= 2) {
+                    throw new \RuntimeException('Peringatan: Anda telah mencapai batas maksimal 2 lamaran aktif bersamaan (pending/menunggu/diterima). Batalkan lamaran sebelumnya terlebih dahulu.');
+                }
+
+                $position = InternshipPosition::where('id', $selectedPosition->id)->lockForUpdate()->firstOrFail();
+                $kapasitasMaksimal = $position->kuota;
+
+                $conflictingAppsCount = Application::where('internship_position_id', $position->id)
                     ->whereIn('status', ['diterima', 'pending'])
                     ->where(function ($q) use ($reqStart, $reqEnd) {
                         $q->where('tanggal_mulai', '<=', $reqEnd)
                             ->where('tanggal_selesai', '>=', $reqStart);
                     })
                     ->count();
-                if ($instansiActiveCount >= $instansi->max_total_quota) {
-                    $instansiFull = true;
+
+                $instansi = $position->instansi()->lockForUpdate()->first();
+                $instansiFull = false;
+                if ($instansi && $instansi->max_total_quota > 0) {
+                    $instansiActiveCount = Application::whereHas('position', fn ($q) => $q->where('instansi_id', $instansi->id))
+                        ->whereIn('status', ['diterima', 'pending'])
+                        ->where(function ($q) use ($reqStart, $reqEnd) {
+                            $q->where('tanggal_mulai', '<=', $reqEnd)
+                                ->where('tanggal_selesai', '>=', $reqStart);
+                        })
+                        ->count();
+                    if ($instansiActiveCount >= $instansi->max_total_quota) {
+                        $instansiFull = true;
+                    }
                 }
+
+                $status = 'pending';
+                if ($conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
+                    $status = 'menunggu';
+                }
+
+                Application::create([
+                    'user_id' => $user->id,
+                    'internship_position_id' => $position->id,
+                    'letter_number' => $request->letter_number ?? null,
+                    'cv_path' => '-',
+                    'surat_pengantar_path' => $suratPath,
+                    'status' => $status,
+                    'tanggal_mulai' => $reqStart,
+                    'tanggal_selesai' => $reqEnd,
+                    'is_automatic_placement' => true,
+                ]);
+
+                return $status;
+            });
+        } catch (\RuntimeException $e) {
+            if (Storage::disk('private')->exists($suratPath)) {
+                Storage::disk('private')->delete($suratPath);
             }
 
-            $status = 'pending';
-            if ($conflictingAppsCount >= $kapasitasMaksimal || $instansiFull) {
-                $status = 'menunggu';
-            }
-
-            Application::create([
-                'user_id' => $user->id,
-                'internship_position_id' => $position->id,
-                'letter_number' => $request->letter_number ?? null,
-                'cv_path' => '-',
-                'surat_pengantar_path' => $suratPath,
-                'status' => $status,
-                'tanggal_mulai' => $reqStart,
-                'tanggal_selesai' => $reqEnd,
-                'is_automatic_placement' => true,
-            ]);
-
-            return $status;
-        });
+            return redirect()->route('peserta.dashboard')->with('error', $e->getMessage());
+        }
 
         $msg = $status === 'menunggu'
             ? 'Pendaftaran berhasil! Anda masuk daftar tunggu di '.$selectedPosition->instansi->nama_dinas.' karena kuota terisi.'

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
 
 class InstansiController extends Controller
 {
@@ -30,8 +31,7 @@ class InstansiController extends Controller
             });
         }
 
-        $instansis = $query->orderBy('nama_dinas', 'asc')
-                    ->paginate(10)->withQueryString();
+        $instansis = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin_kota.instansi.index', compact('instansis'));
     }
@@ -45,7 +45,7 @@ class InstansiController extends Controller
     }
 
     /**
-     * Simpan Instansi & Akun Admin OPD
+     * Simpan Instansi Baru & Buat Akun Admin Instansi
      */
     public function store(Request $request)
     {
@@ -58,14 +58,14 @@ class InstansiController extends Controller
             'radius_absen' => 'required|numeric|min:10',
             'ttd_kepala' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'email_admin' => 'required|email|unique:users,email',
-            'password_admin' => 'required|min:8',
+            'password_admin' => ['required', Password::defaults()],
         ]);
 
         $instansi = DB::transaction(function () use ($request) {
             $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'alamat', 'latitude', 'longitude', 'radius_absen']);
 
             if ($request->hasFile('ttd_kepala')) {
-                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'public');
+                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'private');
             }
 
             $instansi = Instansi::create($data);
@@ -76,6 +76,7 @@ class InstansiController extends Controller
                 'password' => Hash::make($request->password_admin),
                 'role' => 'admin_instansi',
                 'instansi_id' => $instansi->id,
+                'email_verified_at' => now(),
             ]);
             $adminUser->syncPrimaryRole();
 
@@ -115,8 +116,8 @@ class InstansiController extends Controller
                 ? 'required|email|unique:users,email,'.$adminUser->id
                 : 'nullable|email|unique:users,email|required_with:password_admin',
             'password_admin' => $adminUser
-                ? 'nullable|min:8'
-                : 'nullable|min:8|required_with:email_admin',
+                ? ['nullable', Password::defaults()]
+                : ['nullable', Password::defaults(), 'required_with:email_admin'],
         ]);
 
         DB::transaction(function () use ($instansi, $adminUser, $request) {
@@ -124,10 +125,14 @@ class InstansiController extends Controller
 
             if ($request->hasFile('ttd_kepala')) {
                 if ($instansi->ttd_kepala) {
-                    Storage::disk('public')->delete($instansi->ttd_kepala);
+                    if (Storage::disk('private')->exists($instansi->ttd_kepala)) {
+                        Storage::disk('private')->delete($instansi->ttd_kepala);
+                    } elseif (Storage::disk('public')->exists($instansi->ttd_kepala)) {
+                        Storage::disk('public')->delete($instansi->ttd_kepala);
+                    }
                 }
 
-                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'public');
+                $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'private');
             }
 
             $instansi->update($data);
@@ -146,6 +151,7 @@ class InstansiController extends Controller
                     'password' => Hash::make($request->password_admin),
                     'role' => 'admin_instansi',
                     'instansi_id' => $instansi->id,
+                    'email_verified_at' => now(),
                 ]);
                 $adminUser->syncPrimaryRole();
             }

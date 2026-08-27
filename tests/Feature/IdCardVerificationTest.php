@@ -86,7 +86,8 @@ class IdCardVerificationTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('public.verifikasi.id_card');
         $response->assertSee('Muhammad Rifqi');
-        $response->assertSee('6371012304950001');
+        $response->assertSee('6371********0001');
+        $response->assertDontSee('6371012304950001');
         $response->assertSee('Universitas Lambung Mangkurat');
         $response->assertSee('Dinas Komunikasi dan Informatika Banjarmasin');
         $response->assertSee('Fullstack Developer Intern');

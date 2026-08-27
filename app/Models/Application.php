@@ -38,6 +38,7 @@ class Application extends Model
         'catatan_pembimbing_lapangan',
         'saran_peserta',
         'saran_pembimbing',
+        'nomor_registrasi',
         'nomor_sertifikat',
         'token_verifikasi',
     ];
@@ -52,8 +53,24 @@ class Application extends Model
         parent::boot();
 
         static::creating(function ($model) {
+            if (empty($model->nomor_registrasi)) {
+                $prefix = 'REG-' . now()->format('Ym') . '-';
+                do {
+                    $regNumber = $prefix . strtoupper(Str::random(5));
+                } while (static::where('nomor_registrasi', $regNumber)->exists());
+                $model->nomor_registrasi = $regNumber;
+            }
+
             if (empty($model->token_verifikasi)) {
                 $model->token_verifikasi = Str::random(32);
+            }
+
+            if (empty($model->cv_path)) {
+                $model->cv_path = '-';
+            }
+
+            if (empty($model->surat_pengantar_path)) {
+                $model->surat_pengantar_path = '-';
             }
         });
 

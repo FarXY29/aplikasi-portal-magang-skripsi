@@ -120,12 +120,24 @@
             <td style="width: 50%;">
                 <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Super Admin' }} (Super Admin Kota)
+                @if(isset($request) && $request->filled('status') && $request->status !== 'semua')
+                    <br><strong>Filter Status:</strong> {{ ucfirst($request->status) }}
+                @endif
             </td>
             <td style="width: 50%; text-align: right; vertical-align: top;">
-                <strong>Asal Kampus:</strong> {{ $request->instansi ?: 'Semua' }} &nbsp;|&nbsp;
-                <strong>Lokasi Dinas:</strong> {{ $request->instansi_id ? 'Filter Terpilih' : 'Semua Dinas' }}
+                <strong>Asal Kampus:</strong> {{ $request->instansi ?: 'Semua Sekolah/Kampus' }} &nbsp;|&nbsp;
+                <strong>Dinas:</strong> {{ $request->instansi_id ? (\App\Models\Instansi::find($request->instansi_id)?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas' }}
                 @if(isset($request) && $request->filled('start_date') && $request->filled('end_date'))
-                    <br><strong>Periode:</strong> {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                    <br><strong>Periode Magang:</strong> {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                @elseif(isset($request) && $request->filled('start_date'))
+                    <br><strong>Periode Magang:</strong> Mulai &ge; {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }}
+                @elseif(isset($request) && $request->filled('end_date'))
+                    <br><strong>Periode Magang:</strong> Selesai &le; {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                @else
+                    <br><strong>Periode Magang:</strong> Semua Periode
+                @endif
+                @if(isset($request) && $request->filled('posisi'))
+                    <br><strong>Posisi / Formasi:</strong> {{ $request->posisi }}
                 @endif
             </td>
         </tr>
@@ -192,9 +204,15 @@
                         <span style="font-size: 7.5pt; color: #444;">Posisi: {{ $data->position->judul_posisi ?? '-' }}</span>
                     </td>
                     <td>
-                        {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} s/d<br>
-                        {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}<br>
-                        <small style="color: #0d9488; font-weight: bold;">({{ \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_selesai)) }} Hari)</small>
+                        @if($data->tanggal_mulai && $data->tanggal_selesai)
+                            {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }} s/d<br>
+                            {{ \Carbon\Carbon::parse($data->tanggal_selesai)->format('d M Y') }}<br>
+                            <small style="color: #0d9488; font-weight: bold;">({{ \Carbon\Carbon::parse($data->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($data->tanggal_selesai)) }} Hari)</small>
+                        @elseif($data->tanggal_mulai)
+                            Mulai: {{ \Carbon\Carbon::parse($data->tanggal_mulai)->format('d M Y') }}
+                        @else
+                            <span style="color: #888; font-style: italic;">Belum ditentukan</span>
+                        @endif
                     </td>
                     <td class="text-center text-bold">
                         @php

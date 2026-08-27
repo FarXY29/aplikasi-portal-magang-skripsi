@@ -66,6 +66,9 @@
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase whitespace-nowrap border {{ $badges[$app->display_status] ?? 'bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-gray-700' }}">
                                         {{ $app->display_status }}
                                     </span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600 flex items-center gap-1 whitespace-nowrap font-mono">
+                                        <i class="fas fa-barcode text-[10px]"></i> {{ $app->nomor_registrasi ?? ('REG-' . $app->id) }}
+                                    </span>
                                     @if($app->is_automatic_placement)
                                         <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800/60 flex items-center gap-1 whitespace-nowrap">
                                             <i class="fas fa-magic text-[10px]"></i> Penempatan Otomatis
@@ -125,6 +128,10 @@
                                     <p class="text-xs text-teal-700 dark:text-teal-400 font-bold mb-4">{{ $app->position->judul_posisi }}</p>
                                     
                                     <div class="grid grid-cols-2 gap-3 sm:gap-4 text-xs">
+                                        <div>
+                                            <p class="text-slate-500 dark:text-gray-400 mb-1 text-[10px] font-bold uppercase">No. Registrasi</p>
+                                            <p class="font-mono font-black text-teal-700 dark:text-teal-400">{{ $app->nomor_registrasi ?? ('REG-' . $app->id) }}</p>
+                                        </div>
                                         <div>
                                             <p class="text-slate-500 dark:text-gray-400 mb-1 text-[10px] font-bold uppercase">Status Akhir</p>
                                             <p><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $badges[$app->display_status] ?? 'bg-slate-200' }}">{{ $app->display_status }}</span></p>
