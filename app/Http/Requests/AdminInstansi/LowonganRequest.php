@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AdminInstansi;
 
+use App\Services\HtmlSanitizer;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LowonganRequest extends FormRequest
@@ -9,6 +10,15 @@ class LowonganRequest extends FormRequest
     public function authorize(): bool
     {
         return $this->user()?->hasPortalRole('admin_instansi') ?? false;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('deskripsi')) {
+            $this->merge([
+                'deskripsi' => HtmlSanitizer::clean($this->input('deskripsi')),
+            ]);
+        }
     }
 
     public function rules(): array

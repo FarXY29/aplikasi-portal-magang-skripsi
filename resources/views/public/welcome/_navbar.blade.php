@@ -22,6 +22,7 @@
             <div class="hidden md:flex items-center gap-8">
                 <a href="#lowongan" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Cari Lowongan</a>
                 <a href="#langkah" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Alur Magang</a>
+                <a href="{{ route('tracking.index') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Lacak Permohonan</a>
                 <a href="#faq" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">FAQ</a>
                 <a href="{{url('/scan-qr') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Scan QR</a>
 
@@ -119,6 +120,16 @@
                             <i class="fas fa-route text-xs"></i>
                         </div>
                         <span>Alur Pendaftaran</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                </a>
+
+                <a href="{{ route('tracking.index') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                            <i class="fas fa-search-location text-xs"></i>
+                        </div>
+                        <span>Lacak Status Permohonan</span>
                     </div>
                     <i class="fas fa-chevron-right text-xs text-slate-400"></i>
                 </a>

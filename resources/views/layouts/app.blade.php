@@ -96,6 +96,8 @@
                 </div>
 
                 <div class="flex items-center gap-3 print:hidden">
+                    @include('layouts.partials._notification-bell')
+
                     <div class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-gray-300 bg-slate-100/90 dark:bg-gray-800/80 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs">
                         <i class="far fa-calendar-alt text-teal-700 dark:text-teal-400"></i>
                         <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
@@ -129,7 +131,9 @@
                     </a>
                 </div>
 
-                <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-2">
+                    @include('layouts.partials._notification-bell')
+
                     <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/70 dark:border-teal-800/80 shadow-2xs">
                         <i class="far fa-clock mr-1 text-teal-700 dark:text-teal-400"></i><span id="mobile-clock-span">00:00:00</span>
                     </div>

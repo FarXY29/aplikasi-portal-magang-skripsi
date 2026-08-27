@@ -35,6 +35,7 @@ Route::middleware('guest')->group(function () {
                 ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
+                ->middleware('throttle:auth-sensitive')
                 ->name('password.store');
 });
 

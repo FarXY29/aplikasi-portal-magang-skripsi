@@ -501,13 +501,22 @@ class ReportService
             $start = $request->start_date;
             $end = $request->end_date;
             $query->where(function ($q) use ($start, $end) {
-                $q->whereBetween('tanggal_mulai', [$start, $end])
-                    ->orWhereBetween('tanggal_selesai', [$start, $end]);
+                $q->where(function ($sub) use ($start, $end) {
+                    $sub->where('tanggal_mulai', '<=', $end)
+                        ->where('tanggal_selesai', '>=', $start);
+                })->orWhereBetween('tanggal_mulai', [$start, $end])
+                  ->orWhereBetween('tanggal_selesai', [$start, $end]);
             });
         } elseif ($request->filled('start_date')) {
-            $query->where('tanggal_mulai', '>=', $request->start_date);
+            $query->where(function ($q) use ($request) {
+                $q->where('tanggal_selesai', '>=', $request->start_date)
+                    ->orWhere('tanggal_mulai', '>=', $request->start_date);
+            });
         } elseif ($request->filled('end_date')) {
-            $query->where('tanggal_selesai', '<=', $request->end_date);
+            $query->where(function ($q) use ($request) {
+                $q->where('tanggal_mulai', '<=', $request->end_date)
+                    ->orWhere('tanggal_selesai', '<=', $request->end_date);
+            });
         }
 
         // Statistik dihitung via agregasi SQL, bukan load seluruh tabel ke memori

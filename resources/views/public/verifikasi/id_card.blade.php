@@ -136,7 +136,7 @@
                             <p class="text-xs font-semibold text-slate-500 dark:text-gray-400">{{ $app->user->asal_instansi ?? '-' }}</p>
                             @if(!empty($app->user->nik))
                                 <span class="inline-block font-mono text-[10px] bg-white dark:bg-gray-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded border border-slate-200 dark:border-gray-700 font-bold">
-                                    NIK / NIM: {{ $app->user->nik }}
+                                    NIK / NIM: {{ $app->user->masked_nik }}
                                 </span>
                             @endif
                         </div>
@@ -231,7 +231,7 @@
                             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
                                 @if(!empty($app->user->nik))
                                     <span class="inline-block font-mono text-[11px] bg-white dark:bg-gray-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-gray-700 font-bold">
-                                        NIK/NIM: {{ $app->user->nik }}
+                                        NIK/NIM: {{ $app->user->masked_nik }}
                                     </span>
                                 @endif
                                 @if(!empty($app->user->majorDetail?->name) || !empty($app->user->major))
