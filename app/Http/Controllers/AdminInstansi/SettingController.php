@@ -62,7 +62,6 @@ class SettingController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'radius_absen' => 'nullable|integer|min:10|max:10000',
-            'allowed_wifi_ips' => 'nullable|string|max:2000',
         ]);
 
         $instansi = Auth::user()->instansi;
@@ -73,7 +72,6 @@ class SettingController extends Controller
         if ($request->has('latitude')) $data['latitude'] = $request->latitude;
         if ($request->has('longitude')) $data['longitude'] = $request->longitude;
         if ($request->has('radius_absen')) $data['radius_absen'] = $request->radius_absen;
-        if ($request->has('allowed_wifi_ips')) $data['allowed_wifi_ips'] = $request->allowed_wifi_ips;
 
         $instansi->update($data);
 
