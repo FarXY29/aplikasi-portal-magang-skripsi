@@ -117,6 +117,22 @@
                     </div>
                 </a>
 
+                <!-- Monitoring Fraud Absensi -->
+                <a href="{{ route('dinas.monitoring.fraud') }}" class="group bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xs border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-amber-300 dark:hover:border-amber-700/80 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 dark:bg-amber-950/30 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center text-xl mb-4 group-hover:bg-amber-600 group-hover:text-white dark:group-hover:bg-amber-500 transition-colors border border-amber-200/60 dark:border-amber-800/60">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">Monitoring Fraud Absensi</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Pantau dan selidiki percobaan absensi yang ditandai mencurigakan oleh sistem anti-fraud (fake GPS, replay, anomali lokasi/waktu).</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700/60 flex items-center text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
+                        <span>Buka Monitoring</span>
+                        <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
+                    </div>
+                </a>
+
             </div>
         </div>
     </div>

@@ -191,6 +191,30 @@
             </a>
         </div>
 
+        {{-- Banner Fraud: Perlu Review (hanya bila ada attendance/attemit flagged di period) --}}
+        @if(($flaggedAttendances ?? 0) > 0 || ($flaggedAttempts ?? 0) > 0)
+        @php $fraudUrl = Route::has('dinas.monitoring.fraud') ? route('dinas.monitoring.fraud') : '#'; @endphp
+        <a href="{{ $fraudUrl }}" class="group block mt-4 md:mt-5 relative overflow-hidden rounded-2xl md:rounded-3xl border border-amber-300/60 dark:border-amber-600/40 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/30 p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-amber-500/20">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/30 transition-transform duration-300 group-hover:scale-110">
+                        <i class="fas fa-shield-alt text-lg"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">PERLU REVIEW</p>
+                        <h3 class="mt-0.5 text-lg md:text-xl font-extrabold tracking-tight text-amber-900 dark:text-amber-200">
+                            <span id="stat-flagged-attendance">{{ number_format($flaggedAttendances) }}</span> absensi ditandai
+                        </h3>
+                        <p class="mt-0.5 text-[10px] md:text-xs font-semibold text-amber-700/80 dark:text-amber-400/80">
+                            <span id="stat-flagged-attempts">{{ number_format($flaggedAttempts) }}</span> attempt mencurigakan pada {{ $periodText }} — Klik untuk selidiki
+                        </p>
+                    </div>
+                </div>
+                <i class="fas fa-arrow-right text-amber-600 dark:text-amber-400 transition-transform duration-300 group-hover:translate-x-1"></i>
+            </div>
+        </a>
+        @endif
+
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- MAIN CHARTS ROW (TREN PENDAFTARAN + STATUS LAMARAN) --}}
         {{-- ══════════════════════════════════════════════════════════ --}}
@@ -516,6 +540,12 @@
                     if (elAktif) elAktif.textContent = data.activeInterns;
                     if (elSelesai) elSelesai.textContent = data.completedInterns;
                     if (elPending) elPending.textContent = data.pendingApplications;
+
+                    // Update Fraud Banner (bila ada)
+                    const elFlaggedAtt = document.getElementById('stat-flagged-attendance');
+                    const elFlaggedAtt2 = document.getElementById('stat-flagged-attempts');
+                    if (elFlaggedAtt) elFlaggedAtt.textContent = data.flaggedAttendances;
+                    if (elFlaggedAtt2) elFlaggedAtt2.textContent = data.flaggedAttempts;
 
                     // Update Subtitles & Badges
                     const periodMap = {
