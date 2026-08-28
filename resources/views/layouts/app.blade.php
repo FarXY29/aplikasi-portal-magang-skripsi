@@ -77,7 +77,7 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 dark:bg-gray-900">
             
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
-            <header class="hidden md:flex glass-panel border-b border-slate-200/80 dark:border-gray-700/50 min-h-[4rem] py-3 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0">
+            <header class="hidden md:flex bg-slate-50/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-slate-200/90 dark:border-gray-700/80 h-16 min-h-[4rem] max-h-16 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0 flex-shrink-0 box-border">
                 
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
