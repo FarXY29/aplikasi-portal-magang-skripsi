@@ -47,6 +47,8 @@ Route::middleware(['auth', 'role:admin_instansi'])->prefix('dinas')->name('dinas
     Route::get('/monitoring-fraud-export', [AdminInstansiFraudMonitoringController::class, 'export'])->name('monitoring.fraud.export');
     Route::get('/monitoring-fraud', [AdminInstansiFraudMonitoringController::class, 'index'])->name('monitoring.fraud');
     Route::get('/monitoring-fraud/{id}', [AdminInstansiFraudMonitoringController::class, 'show'])->name('monitoring.fraud.show');
+    Route::get('/laporan/pendaftaran', [AdminInstansiReportController::class, 'laporanPendaftaran'])->name('laporan.pendaftaran');
+    Route::get('/laporan/pendaftaran/print', [AdminInstansiReportController::class, 'printPendaftaran'])->name('laporan.pendaftaran.print');
     Route::get('/laporan/rekap', [AdminInstansiReportController::class, 'laporanRekap'])->name('laporan.rekap');
     Route::get('/laporan/rekap/print', [AdminInstansiReportController::class, 'printRekap'])->name('laporan.rekap.print');
     Route::get('/laporan/kinerja-peserta', [AdminInstansiReportController::class, 'laporanKinerjaPeserta'])->name('laporan.kinerja_peserta');
