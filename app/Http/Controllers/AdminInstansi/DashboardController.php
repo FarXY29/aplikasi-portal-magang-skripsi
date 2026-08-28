@@ -4,6 +4,8 @@ namespace App\Http\Controllers\AdminInstansi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Application;
+use App\Models\Attendance;
+use App\Models\AttendanceAttempt;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -56,6 +58,8 @@ class DashboardController extends Controller
                 'periodText' => $periodText,
                 'period' => $period,
                 'updatedAt' => now()->translatedFormat('l, d F Y - H:i:s'),
+                'flaggedAttendances' => number_format($data['flaggedAttendances']),
+                'flaggedAttempts' => number_format($data['flaggedAttempts']),
             ]);
         }
 
@@ -131,6 +135,21 @@ class DashboardController extends Controller
 
         $recentPositions = InternshipPosition::where('instansi_id', $instansiId)->latest()->take(5)->get();
 
+        // Ringkasan fraud: attendance ditandai (medium ke atas) + attempt mencurigakan.
+        $flaggedAttendances = Attendance::whereHas('application', function ($q) use ($positionIds) {
+                $q->whereIn('internship_position_id', $positionIds);
+            })
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereNotNull('fraud_status')
+            ->where('fraud_status', '!=', 'low')
+            ->count();
+
+        $flaggedAttempts = AttendanceAttempt::where('instance_id', $instansiId)
+            ->whereBetween('server_received_at', [$startDate, $endDate])
+            ->whereNotNull('fraud_status')
+            ->where('fraud_status', '!=', 'low')
+            ->count();
+
         return compact(
             'totalLowongan',
             'totalPembimbing',
@@ -146,7 +165,9 @@ class DashboardController extends Controller
             'trendLabels',
             'trendData',
             'topInstansi',
-            'recentPositions'
+            'recentPositions',
+            'flaggedAttendances',
+            'flaggedAttempts'
         );
     }
 

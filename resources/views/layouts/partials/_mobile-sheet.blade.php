@@ -108,6 +108,9 @@
                     <a href="{{ route('dinas.laporan.hub') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('dinas.laporan.hub') ? 'bg-teal-50/90 text-teal-800 border border-teal-200/80 shadow-2xs dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800/60' : 'text-slate-700 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700' }}">
                         <i class="fas fa-chart-pie w-5 text-center {{ request()->routeIs('dinas.laporan.hub') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400' }}"></i> Pusat Laporan Hub
                     </a>
+                    <a href="{{ route('dinas.monitoring.fraud') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('dinas.monitoring.fraud*') ? 'bg-amber-50/90 text-amber-800 border border-amber-200/80 shadow-2xs dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60' : 'text-slate-700 dark:text-gray-300 hover:bg-amber-100/80 dark:hover:bg-amber-950/40' }}">
+                        <i class="fas fa-shield-alt w-5 text-center {{ request()->routeIs('dinas.monitoring.fraud*') ? 'text-amber-700 dark:text-amber-400' : 'text-slate-400' }}"></i> Monitoring Fraud
+                    </a>
                     <a href="{{ route('dinas.settings') }}" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-bold {{ request()->routeIs('dinas.settings') ? 'bg-teal-50/90 text-teal-800 border border-teal-200/80 shadow-2xs dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800/60' : 'text-slate-700 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700' }}">
                         <i class="fas fa-sliders-h w-5 text-center {{ request()->routeIs('dinas.settings') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400' }}"></i> Pengaturan
                     </a>

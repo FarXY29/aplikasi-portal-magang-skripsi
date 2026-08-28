@@ -103,6 +103,15 @@
                                 <option value="12" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('bulan') == '12' ? 'selected' : '' }}>Desember</option>
                             </select>
                         </div>
+
+                        <div class="relative">
+                            <i class="fas fa-shield-alt absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 text-xs"></i>
+                            <select name="status_fraud" onchange="this.form.submit()" class="pl-9 pr-8 py-2 text-xs font-bold border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 rounded-xl shadow-xs cursor-pointer [color-scheme:dark]">
+                                <option value="" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">Semua Status Risiko</option>
+                                <option value="flagged" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('status_fraud') == 'flagged' ? 'selected' : '' }}>Hanya Ditandai</option>
+                                <option value="clean" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('status_fraud') == 'clean' ? 'selected' : '' }}>Hanya Bersih</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
 
@@ -204,57 +213,31 @@
                                 {{-- Indikator risiko fraud (hanya render bila data tersedia — record lama tampil kosong) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @php
-                                        $attemptIn = $log->attempts()->where('attendance_type', 'clock_in')->latest('id')->first();
-                                        $attemptOut = $log->attempts()->where('attendance_type', 'clock_out')->latest('id')->first();
-                                        $worstAttempt = collect([$attemptIn, $attemptOut])->filter()->sortByDesc('risk_score')->first();
+                                        // attempts sudah eager-loaded di controller (anti N+1).
+                                        $worstAttempt = $log->attempts
+                                            ->whereNotNull('fraud_status')
+                                            ->sortByDesc('risk_score')
+                                            ->first()
+                                            ?? $log->attempts->sortByDesc('risk_score')->first();
                                         $fraudEnum = $worstAttempt && $worstAttempt->fraud_status
                                             ? \App\Enums\AttendanceFraudStatus::tryFrom($worstAttempt->fraud_status)
                                             : null;
+                                        $indicatorLabels = collect($worstAttempt?->risk_indicators ?? [])
+                                            ->reject(fn ($i) => $i === 'accepted')
+                                            ->all();
                                     @endphp
                                     @if($worstAttempt && $fraudEnum)
                                         <div class="flex flex-col items-center gap-1.5">
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border {{ $fraudEnum->badgeClass() }} gap-1.5" title="Risk Score: {{ $worstAttempt->risk_score }}">
                                                 <i class="fas fa-shield-alt text-[10px]"></i> {{ $worstAttempt->risk_score }} — {{ $fraudEnum->label() }}
                                             </span>
-                                            @php
-                                                $indicatorLabels = collect($worstAttempt->risk_indicators ?? [])
-                                                    ->reject(fn($i) => $i === 'accepted')
-                                                    ->map(fn($code) => \App\Services\Attendance\FraudSignal::class ? $code : $code)
-                                                    ->all();
-                                            @endphp
                                             @if(!empty($indicatorLabels))
-                                                <details class="text-left">
-                                                    <summary class="text-[11px] text-gray-500 dark:text-gray-400 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 font-medium select-none">
-                                                        Lihat {{ count($indicatorLabels) }} indikator
-                                                    </summary>
-                                                    <ul class="mt-1.5 space-y-1">
-                                                        @foreach($indicatorLabels as $indicator)
-                                                            @php
-                                                                $desc = match($indicator) {
-                                                                    'INVALID_NONCE' => 'Token keamanan tidak valid/dipakai ulang',
-                                                                    'ACCURACY_VERY_HIGH' => 'Akurasi GPS sangat buruk (>200m)',
-                                                                    'ACCURACY_SUSPICIOUS' => 'Akurasi GPS buruk (100-200m)',
-                                                                    'ACCURACY_LOW_CONCERN' => 'Akurasi GPS kurang baik (50-100m)',
-                                                                    'BOUNDARY_UNCERTAINTY' => 'Posisi dekat batas radius, confidence rendah',
-                                                                    'IMPOSSIBLE_TRAVEL' => 'Perpindahan lokasi mustahil',
-                                                                    'STATIC_COORDINATE_PATTERN' => 'Koordinat identik berulang',
-                                                                    'CLIENT_TIME_DRIFT' => 'Waktu perangkat tidak sinkron',
-                                                                    'FUTURE_CLIENT_TIMESTAMP' => 'Waktu perangkat di masa depan',
-                                                                    'MULTIPLE_ATTEMPTS' => 'Beberapa percobaan absensi',
-                                                                    'EXCESSIVE_ATTEMPTS' => 'Percobaan absensi sangat sering',
-                                                                    'IP_CHANGE' => 'Perubahan alamat IP',
-                                                                    'UA_CHANGE' => 'Perubahan User-Agent',
-                                                                    'blocked' => 'Diblokir sistem',
-                                                                    'rejected' => 'Ditolak sistem',
-                                                                    default => $indicator,
-                                                                };
-                                                            @endphp
-                                                            <li class="text-[11px] text-gray-600 dark:text-gray-300 font-medium flex items-start gap-1">
-                                                                <i class="fas fa-angle-right text-gray-400 mt-0.5"></i> {{ $desc }}
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </details>
+                                                <button type="button"
+                                                        x-data
+                                                        @click="$dispatch('open-fraud-detail', { id: {{ $worstAttempt->id }} })"
+                                                        class="text-[11px] text-teal-600 dark:text-teal-400 hover:underline font-medium select-none">
+                                                    Lihat {{ count($indicatorLabels) }} indikator <i class="fas fa-external-link-alt text-[9px] ml-0.5"></i>
+                                                </button>
                                             @endif
                                         </div>
                                     @else
@@ -286,4 +269,6 @@
 
         </div>
     </div>
+
+    @includeIf('admin_instansi.partials._fraud-detail-modal')
 </x-app-layout>

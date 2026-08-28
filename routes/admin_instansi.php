@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminInstansi\ActiveInternController as AdminInstansiActiveInternController;
 use App\Http\Controllers\AdminInstansi\ApplicantController as AdminInstansiApplicantController;
 use App\Http\Controllers\AdminInstansi\DashboardController as AdminInstansiDashboardController;
+use App\Http\Controllers\AdminInstansi\FraudMonitoringController as AdminInstansiFraudMonitoringController;
 use App\Http\Controllers\AdminInstansi\LowonganController as AdminInstansiLowonganController;
 use App\Http\Controllers\AdminInstansi\PembimbingLapanganController as AdminInstansiPLController;
 use App\Http\Controllers\AdminInstansi\ReportController as AdminInstansiReportController;
@@ -41,6 +42,11 @@ Route::middleware(['auth', 'role:admin_instansi'])->prefix('dinas')->name('dinas
     Route::get('/peserta/{id}/absensi/pdf', [AdminInstansiActiveInternController::class, 'printAbsensi'])->name('peserta.absensi.pdf');
 
     Route::get('/pusat-laporan', [AdminInstansiReportController::class, 'laporanHub'])->name('laporan.hub');
+
+    // Monitoring fraud absensi (scoping per instansi).
+    Route::get('/monitoring-fraud-export', [AdminInstansiFraudMonitoringController::class, 'export'])->name('monitoring.fraud.export');
+    Route::get('/monitoring-fraud', [AdminInstansiFraudMonitoringController::class, 'index'])->name('monitoring.fraud');
+    Route::get('/monitoring-fraud/{id}', [AdminInstansiFraudMonitoringController::class, 'show'])->name('monitoring.fraud.show');
     Route::get('/laporan/rekap', [AdminInstansiReportController::class, 'laporanRekap'])->name('laporan.rekap');
     Route::get('/laporan/rekap/print', [AdminInstansiReportController::class, 'printRekap'])->name('laporan.rekap.print');
     Route::get('/laporan/kinerja-peserta', [AdminInstansiReportController::class, 'laporanKinerjaPeserta'])->name('laporan.kinerja_peserta');
