@@ -28,6 +28,26 @@ class ReportController extends Controller
         return view('admin_instansi.laporan_hub');
     }
 
+    public function laporanPendaftaran(Request $request)
+    {
+        $user = Auth::user();
+        $data = $this->reportService->getApplicationTrackingReportData($user->instansi_id, $request);
+        $data['request'] = $request;
+
+        return view('admin_instansi.laporan.pendaftaran', $data);
+    }
+
+    public function printPendaftaran(Request $request)
+    {
+        $user = Auth::user();
+        $data = $this->reportService->getApplicationTrackingReportData($user->instansi_id, $request, false);
+        $applications = $data['applications'];
+        $stats = $data['stats'];
+        $instansi = $user->instansi;
+
+        return $this->pdfService->stream('pdf.admin_instansi.pendaftaran', compact('applications', 'instansi', 'request', 'stats'), 'Laporan-Pendaftaran-Magang.pdf', 'a4', 'landscape');
+    }
+
     public function laporanRekap(Request $request)
     {
         $user = Auth::user();
