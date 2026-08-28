@@ -28,6 +28,7 @@ class PembimbingLapanganController extends Controller
             'role' => 'pembimbing_lapangan',
             'instansi_id' => Auth::user()->instansi_id,
             'nik' => $request->nip,
+            'email_verified_at' => now(),
         ]);
         $pembimbing_lapangan->syncPrimaryRole();
 

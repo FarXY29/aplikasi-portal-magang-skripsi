@@ -18,8 +18,7 @@ class QrScannerTest extends TestCase
             ->assertSee('HTTPS', false);
     }
 
-    public function test_https_forwarded_host_is_used_for_public_links(): void
-    public function test_app_public_url_is_used_for_public_links(): void
+    public function test_https_forwarded_host_and_app_public_url_is_used_for_public_links(): void
     {
         $this->withServerVariables([
             'HTTP_X_FORWARDED_HOST' => 'portal-ujicoba.ngrok-free.app',

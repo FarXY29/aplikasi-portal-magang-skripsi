@@ -361,7 +361,10 @@
 
     @push('scripts')
     <script>
-    function autoDetectGPS() {
+    let latestGpsPosition = null;
+    let latestGpsTimestamp = 0;
+
+    function updateGpsStatusUI(lat, lng) {
         const banner = document.getElementById('gps-status-banner');
         if (!banner) return;
 
@@ -374,21 +377,92 @@
         const desc = document.getElementById('gps-desc');
         const badge = document.getElementById('gps-badge');
 
+        const R = 6371000;
+        const dLat = (officeLat - lat) * Math.PI / 180;
+        const dLon = (officeLng - lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat * Math.PI / 180) * Math.cos(officeLat * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = Math.round(R * c);
+
+        if (distance <= radius) {
+            banner.className = "px-4 py-3 sm:px-6 sm:py-4 bg-emerald-50/80 dark:bg-emerald-950/20 border-t border-emerald-200/60 dark:border-emerald-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+            if (iconWrapper) {
+                iconWrapper.className = "w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-500/20 shrink-0";
+                iconWrapper.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
+            }
+            if (title) {
+                title.className = "text-xs font-extrabold text-emerald-900 dark:text-emerald-300 uppercase tracking-wider";
+                title.innerText = "Lokasi Terverifikasi (Dalam Radius)";
+            }
+            if (desc) {
+                desc.className = "text-xs text-emerald-700 dark:text-emerald-400 font-medium";
+                desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Anda siap melakukan absensi!`;
+            }
+            if (badge) {
+                badge.className = "min-h-[44px] px-3.5 py-2 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 text-emerald-700 dark:text-emerald-400 text-xs font-extrabold shadow-sm border border-emerald-200/60 dark:border-emerald-900/50 flex items-center gap-1.5 shrink-0";
+                badge.innerHTML = '<i class="fas fa-check-circle text-emerald-500"></i> Siap Absen';
+                badge.onclick = null;
+            }
+        } else {
+            banner.className = "px-4 py-3 sm:px-6 sm:py-4 bg-amber-50/80 dark:bg-amber-950/20 border-t border-amber-200/60 dark:border-amber-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+            if (iconWrapper) {
+                iconWrapper.className = "w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-md shadow-amber-500/20 shrink-0";
+                iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            }
+            if (title) {
+                title.className = "text-xs font-extrabold text-amber-900 dark:text-amber-300 uppercase tracking-wider";
+                title.innerText = "Di Luar Radius Kantor";
+            }
+            if (desc) {
+                desc.className = "text-xs text-amber-700 dark:text-amber-400 font-medium";
+                desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Mendekatlah ke kantor untuk absen.`;
+            }
+            if (badge) {
+                badge.className = "min-h-[44px] px-3.5 py-2 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 text-amber-700 dark:text-amber-400 text-xs font-extrabold shadow-sm border border-amber-200/60 dark:border-amber-900/50 flex items-center gap-1.5 shrink-0";
+                badge.innerHTML = `<i class="fas fa-ruler-horizontal text-amber-500"></i> Jarak: ${distance}m`;
+                badge.onclick = null;
+            }
+        }
+    }
+
+    function autoDetectGPS() {
+        const banner = document.getElementById('gps-status-banner');
+        if (!banner) return;
+
+        const iconWrapper = document.getElementById('gps-icon-wrapper');
+        const title = document.getElementById('gps-title');
+        const desc = document.getElementById('gps-desc');
+        const badge = document.getElementById('gps-badge');
+
         if (!navigator.geolocation) {
-            banner.className = "px-6 py-4 bg-rose-50/60 dark:bg-rose-950/20 border-t border-rose-100 dark:border-rose-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
-            iconWrapper.className = "w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20";
-            iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-            title.className = "text-xs font-extrabold text-rose-900 dark:text-rose-300 uppercase tracking-wider";
-            title.innerText = "GPS Tidak Didukung";
-            desc.className = "text-xs text-rose-600 dark:text-rose-400 font-medium";
-            desc.innerText = "Browser Anda tidak mendukung fitur geolokasi GPS.";
-            badge.className = "px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-rose-700 dark:text-rose-400 text-xs font-extrabold shadow-sm border border-rose-200/60 dark:border-rose-900/50 flex items-center gap-1.5";
-            badge.innerHTML = '<i class="fas fa-times"></i> Gagal';
+            banner.className = "px-4 py-3 sm:px-6 sm:py-4 bg-rose-50/60 dark:bg-rose-950/20 border-t border-rose-100 dark:border-rose-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+            if (iconWrapper) {
+                iconWrapper.className = "w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20 shrink-0";
+                iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            }
+            if (title) {
+                title.className = "text-xs font-extrabold text-rose-900 dark:text-rose-300 uppercase tracking-wider";
+                title.innerText = "GPS Tidak Didukung";
+            }
+            if (desc) {
+                desc.className = "text-xs text-rose-600 dark:text-rose-400 font-medium";
+                desc.innerText = "Browser Anda tidak mendukung fitur geolokasi GPS.";
+            }
+            if (badge) {
+                badge.className = "min-h-[44px] px-3.5 py-2 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 text-rose-700 dark:text-rose-400 text-xs font-extrabold shadow-sm border border-rose-200/60 dark:border-rose-900/50 flex items-center gap-1.5 shrink-0";
+                badge.innerHTML = '<i class="fas fa-times"></i> Gagal';
+                badge.onclick = null;
+            }
             return;
         }
 
         navigator.geolocation.getCurrentPosition(
             function(position) {
+                latestGpsPosition = position;
+                latestGpsTimestamp = Date.now();
+
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
 
@@ -406,54 +480,33 @@
                     lngPulang.value = lng.toFixed(6);
                 }
 
-                const R = 6371000;
-                const dLat = (officeLat - lat) * Math.PI / 180;
-                const dLon = (officeLng - lng) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                          Math.cos(lat * Math.PI / 180) * Math.cos(officeLat * Math.PI / 180) *
-                          Math.sin(dLon/2) * Math.sin(dLon/2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                const distance = Math.round(R * c);
-
-                if (distance <= radius) {
-                    banner.className = "px-6 py-4 bg-emerald-50/80 dark:bg-emerald-950/20 border-t border-emerald-200/60 dark:border-emerald-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
-                    iconWrapper.className = "w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-500/20";
-                    iconWrapper.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
-                    title.className = "text-xs font-extrabold text-emerald-900 dark:text-emerald-300 uppercase tracking-wider";
-                    title.innerText = "Lokasi Terverifikasi (Dalam Radius)";
-                    desc.className = "text-xs text-emerald-700 dark:text-emerald-400 font-medium";
-                    desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Anda siap melakukan absensi!`;
-                    badge.className = "px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-emerald-700 dark:text-emerald-400 text-xs font-extrabold shadow-sm border border-emerald-200/60 dark:border-emerald-900/50 flex items-center gap-1.5";
-                    badge.innerHTML = '<i class="fas fa-check-circle text-emerald-500"></i> Siap Absen';
-                } else {
-                    banner.className = "px-6 py-4 bg-amber-50/80 dark:bg-amber-950/20 border-t border-amber-200/60 dark:border-amber-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
-                    iconWrapper.className = "w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-md shadow-amber-500/20";
-                    iconWrapper.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-                    title.className = "text-xs font-extrabold text-amber-900 dark:text-amber-300 uppercase tracking-wider";
-                    title.innerText = "Di Luar Radius Kantor";
-                    desc.className = "text-xs text-amber-700 dark:text-amber-400 font-medium";
-                    desc.innerText = `Jarak Anda: ${distance} meter dari kantor (Batas maksimal ${radius}m). Mendekatlah ke kantor untuk absen.`;
-                    badge.className = "px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-amber-700 dark:text-amber-400 text-xs font-extrabold shadow-sm border border-amber-200/60 dark:border-amber-900/50 flex items-center gap-1.5";
-                    badge.innerHTML = `<i class="fas fa-ruler-horizontal text-amber-500"></i> Jarak: ${distance}m`;
-                }
+                updateGpsStatusUI(lat, lng);
             },
             function(error) {
-                banner.className = "px-6 py-4 bg-rose-50/80 dark:bg-rose-950/20 border-t border-rose-200/60 dark:border-rose-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
-                iconWrapper.className = "w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20";
-                iconWrapper.innerHTML = '<i class="fas fa-map-pin"></i>';
-                title.className = "text-xs font-extrabold text-rose-900 dark:text-rose-300 uppercase tracking-wider";
-                title.innerText = "Izin Lokasi (GPS) Diperlukan";
+                banner.className = "px-4 py-3 sm:px-6 sm:py-4 bg-rose-50/80 dark:bg-rose-950/20 border-t border-rose-200/60 dark:border-rose-900/50 flex items-center justify-between flex-wrap gap-3 transition-all duration-300";
+                if (iconWrapper) {
+                    iconWrapper.className = "w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-500/20 shrink-0";
+                    iconWrapper.innerHTML = '<i class="fas fa-map-pin"></i>';
+                }
+                if (title) {
+                    title.className = "text-xs font-extrabold text-rose-900 dark:text-rose-300 uppercase tracking-wider";
+                    title.innerText = "Izin Lokasi (GPS) Diperlukan";
+                }
                 
                 let errorMsg = "Sistem gagal mengambil lokasi GPS Anda. Pastikan GPS aktif.";
                 if (error.code === 1) errorMsg = "Akses lokasi ditolak! Silakan izinkan akses lokasi (GPS) pada browser/HP Anda.";
                 else if (error.code === 2) errorMsg = "Sinyal GPS tidak ditemukan. Pastikan GPS HP/perangkat Anda aktif.";
                 else if (error.code === 3) errorMsg = "Waktu permintaan lokasi habis (timeout). Silakan coba lagi.";
 
-                desc.className = "text-xs text-rose-700 dark:text-rose-400 font-medium";
-                desc.innerText = errorMsg;
-                badge.className = "px-3.5 py-1.5 rounded-xl bg-white dark:bg-gray-800 text-rose-700 dark:text-rose-400 text-xs font-extrabold shadow-sm border border-rose-200/60 dark:border-rose-900/50 flex items-center gap-1.5 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/20";
-                badge.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Coba Deteksi Ulang';
-                badge.onclick = autoDetectGPS;
+                if (desc) {
+                    desc.className = "text-xs text-rose-700 dark:text-rose-400 font-medium";
+                    desc.innerText = errorMsg;
+                }
+                if (badge) {
+                    badge.className = "min-h-[44px] px-3.5 py-2 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 text-rose-700 dark:text-rose-400 text-xs font-extrabold shadow-sm border border-rose-200/60 dark:border-rose-900/50 flex items-center gap-1.5 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/20 shrink-0";
+                    badge.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Coba Deteksi Ulang';
+                    badge.onclick = autoDetectGPS;
+                }
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
@@ -476,50 +529,123 @@
     function handleAbsenClick(event, formId, latId, lngId, btnId) {
         event.preventDefault();
         const btn = document.getElementById(btnId);
-        addRipple(btn, event);
-        const originalHtml = btn.innerHTML;
+        if (btn) addRipple(btn, event);
+        const originalHtml = btn ? btn.innerHTML : '';
         const form = document.getElementById(formId);
-        const latVal = document.getElementById(latId)?.value;
-        const lngVal = document.getElementById(lngId)?.value;
 
-        if (latVal && lngVal && latVal !== '' && lngVal !== '') {
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Mengirim Absensi...</span>';
-            btn.disabled = true;
-            btn.classList.add('opacity-75', 'cursor-not-allowed');
-            form.submit();
-            return;
-        }
+        if (!form) return;
 
         if (!navigator.geolocation) {
             alert('Browser Anda tidak mendukung fitur geolokasi GPS. Silakan gunakan browser/HP lain.');
             return;
         }
 
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Mendeteksi GPS...</span>';
-        btn.disabled = true;
-        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Menyiapkan Sesi Aman...</span>';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+        }
 
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                document.getElementById(latId).value = lat.toFixed(6);
-                document.getElementById(lngId).value = lng.toFixed(6);
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Lokasi Terkunci! Mengirim...</span>';
-                setTimeout(() => form.submit(), 400);
-            },
-            function(error) {
+        function restoreButton() {
+            if (btn) {
                 btn.innerHTML = originalHtml;
                 btn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                let msg = 'Gagal mengambil lokasi GPS Anda.';
-                if (error.code === 1) msg = 'Akses Lokasi (GPS) ditolak! Izinkan akses lokasi pada browser Anda.';
-                else if (error.code === 2) msg = 'Sinyal GPS tidak ditemukan. Pastikan GPS aktif.';
-                else if (error.code === 3) msg = 'Waktu permintaan lokasi habis. Silakan coba lagi.';
-                alert(msg);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-        );
+            }
+        }
+
+        function submitWithPosition(position, challenge) {
+            latestGpsPosition = position;
+            latestGpsTimestamp = Date.now();
+            fillAntiFraudFields(form, latId, lngId, position, challenge);
+            updateGpsStatusUI(position.coords.latitude, position.coords.longitude);
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Lokasi Terkunci! Mengirim...</span>';
+            }
+            setTimeout(() => form.submit(), 300);
+        }
+
+        // Anti-fraud: minta challenge nonce dari server SEBELUM mengirim absensi.
+        // Nonce single-use & berumur pendek → mencegah replay request absensi.
+        fetch('{{ route('peserta.absensi.challenge') }}', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(res) {
+            if (!res.ok) throw new Error('challenge_failed_' + res.status);
+            return res.json();
+        })
+        .then(function(challenge) {
+            // Jika posisi GPS baru saja dideteksi (< 20 detik yang lalu), langsung gunakan
+            if (latestGpsPosition && (Date.now() - latestGpsTimestamp) < 20000) {
+                submitWithPosition(latestGpsPosition, challenge);
+                return;
+            }
+
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Mendeteksi GPS...</span>';
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    submitWithPosition(position, challenge);
+                },
+                function(error) {
+                    restoreButton();
+                    let msg = 'Gagal mengambil lokasi GPS Anda.';
+                    if (error.code === 1) msg = 'Akses Lokasi (GPS) ditolak! Izinkan akses lokasi pada browser Anda.';
+                    else if (error.code === 2) msg = 'Sinyal GPS tidak ditemukan. Pastikan GPS aktif.';
+                    else if (error.code === 3) msg = 'Waktu permintaan lokasi habis. Silakan coba lagi.';
+                    alert(msg);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+        })
+        .catch(function() {
+            restoreButton();
+            alert('Gagal menyiapkan sesi keamanan absensi. Periksa koneksi internet Anda lalu coba lagi.');
+        });
+    }
+
+    function formatNumericCoord(val) {
+        if (val === null || val === undefined || isNaN(val)) return '';
+        return String(Math.round(val));
+    }
+
+    // Isi hidden fields anti-fraud: koordinat + metadata GPS + nonce +
+    // idempotency key (UUID per klik tombol — duplicate click tidak
+    // menghasilkan absensi kedua).
+    function fillAntiFraudFields(form, latId, lngId, position, challenge) {
+        const c = position.coords;
+        if (typeof c.latitude === 'number' && !isNaN(c.latitude)) {
+            const latEl = document.getElementById(latId);
+            if (latEl) latEl.value = c.latitude.toFixed(6);
+        }
+        if (typeof c.longitude === 'number' && !isNaN(c.longitude)) {
+            const lngEl = document.getElementById(lngId);
+            if (lngEl) lngEl.value = c.longitude.toFixed(6);
+        }
+
+        setOrCreateHidden(form, 'nonce', challenge.nonce);
+        setOrCreateHidden(form, 'idempotency_key',
+            (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'abs-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+        
+        const ts = (position.timestamp && !isNaN(position.timestamp)) ? Math.round(position.timestamp) : Date.now();
+        setOrCreateHidden(form, 'client_timestamp', String(ts));
+        setOrCreateHidden(form, 'accuracy', formatNumericCoord(c.accuracy));
+        setOrCreateHidden(form, 'altitude', formatNumericCoord(c.altitude));
+        setOrCreateHidden(form, 'speed', formatNumericCoord(c.speed));
+        setOrCreateHidden(form, 'heading', formatNumericCoord(c.heading));
+    }
+
+    function setOrCreateHidden(form, name, value) {
+        let input = form.querySelector('input[name="' + name + '"]');
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            form.appendChild(input);
+        }
+        input.value = value;
     }
     </script>
     @endpush
