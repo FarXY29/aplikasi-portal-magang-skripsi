@@ -1,6 +1,18 @@
 <x-app-layout>
     @push('styles')
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+        <style>
+            #map-instansi {
+                height: 320px;
+                width: 100%;
+                z-index: 10;
+            }
+            @media (min-width: 640px) {
+                #map-instansi {
+                    height: 384px;
+                }
+            }
+        </style>
     @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -321,107 +333,155 @@
     </script>
 
     @push('scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script>
         let adminMap = null;
         let adminMarker = null;
         let adminCircle = null;
 
-        function initAdminMap() {
-            const mapContainer = document.getElementById('map-instansi');
-            if (!mapContainer) return;
-
-            if (mapContainer._leaflet_id && adminMap) {
+        function ensureLeaflet(callback, maxWaitMs = 5000) {
+            if (typeof L !== 'undefined') {
+                callback();
                 return;
             }
+            const startTime = Date.now();
+            const interval = setInterval(function() {
+                if (typeof L !== 'undefined') {
+                    clearInterval(interval);
+                    callback();
+                } else if (Date.now() - startTime > maxWaitMs) {
+                    clearInterval(interval);
+                    console.warn('Leaflet JS gagal dimuat dalam waktu 5 detik.');
+                }
+            }, 50);
+        }
 
-            if (adminMap) {
-                adminMap.remove();
-                adminMap = null;
-            }
-            mapContainer._leaflet_id = null;
+        function initAdminMap() {
+            ensureLeaflet(function() {
+                const mapContainer = document.getElementById('map-instansi');
+                if (!mapContainer) return;
 
-            const latInput = document.getElementById('input_latitude');
-            const lngInput = document.getElementById('input_longitude');
-            const radiusInput = document.getElementById('input_radius');
-            const radiusSlider = document.getElementById('input_radius_slider');
-            const radiusDisplay = document.getElementById('radius-display');
+                if (adminMap) {
+                    try {
+                        adminMap.remove();
+                    } catch (e) {}
+                    adminMap = null;
+                }
+                mapContainer._leaflet_id = null;
 
-            let initialLat = parseFloat(latInput.value) || -3.316694;
-            let initialLng = parseFloat(lngInput.value) || 114.590111;
-            let initialRadius = parseInt(radiusInput.value) || 100;
+                const latInput = document.getElementById('input_latitude');
+                const lngInput = document.getElementById('input_longitude');
+                const radiusInput = document.getElementById('input_radius');
+                const radiusSlider = document.getElementById('input_radius_slider');
+                const radiusDisplay = document.getElementById('radius-display');
 
-            adminMap = L.map('map-instansi').setView([initialLat, initialLng], 16);
+                if (!latInput || !lngInput) return;
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(adminMap);
+                let initialLat = parseFloat(latInput.value) || -3.316694;
+                let initialLng = parseFloat(lngInput.value) || 114.590111;
+                let initialRadius = parseInt(radiusInput ? radiusInput.value : 100) || 100;
 
-            adminMarker = L.marker([initialLat, initialLng], {
-                draggable: true
-            }).addTo(adminMap);
+                try {
+                    adminMap = L.map('map-instansi', {
+                        center: [initialLat, initialLng],
+                        zoom: 16,
+                        scrollWheelZoom: true
+                    });
 
-            adminCircle = L.circle([initialLat, initialLng], {
-                color: '#dc2626',
-                fillColor: '#f87171',
-                fillOpacity: 0.25,
-                radius: initialRadius
-            }).addTo(adminMap);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(adminMap);
 
-            function updatePosition(lat, lng) {
-                lat = parseFloat(lat.toFixed(6));
-                lng = parseFloat(lng.toFixed(6));
-                latInput.value = lat;
-                lngInput.value = lng;
-                adminMarker.setLatLng([lat, lng]);
-                adminCircle.setLatLng([lat, lng]);
-            }
+                    adminMarker = L.marker([initialLat, initialLng], {
+                        draggable: true
+                    }).addTo(adminMap);
 
-            adminMarker.on('dragend', function (e) {
-                const pos = adminMarker.getLatLng();
-                updatePosition(pos.lat, pos.lng);
+                    adminCircle = L.circle([initialLat, initialLng], {
+                        color: '#dc2626',
+                        fillColor: '#f87171',
+                        fillOpacity: 0.25,
+                        radius: initialRadius
+                    }).addTo(adminMap);
+
+                    function updatePosition(lat, lng) {
+                        lat = parseFloat(Number(lat).toFixed(6));
+                        lng = parseFloat(Number(lng).toFixed(6));
+                        latInput.value = lat;
+                        lngInput.value = lng;
+                        if (adminMarker) adminMarker.setLatLng([lat, lng]);
+                        if (adminCircle) adminCircle.setLatLng([lat, lng]);
+                    }
+
+                    adminMarker.on('dragend', function (e) {
+                        const pos = adminMarker.getLatLng();
+                        updatePosition(pos.lat, pos.lng);
+                    });
+
+                    adminMap.on('click', function (e) {
+                        updatePosition(e.latlng.lat, e.latlng.lng);
+                    });
+
+                    latInput.addEventListener('input', function() {
+                        const lat = parseFloat(latInput.value);
+                        const lng = parseFloat(lngInput.value);
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            if (adminMarker) adminMarker.setLatLng([lat, lng]);
+                            if (adminCircle) adminCircle.setLatLng([lat, lng]);
+                            if (adminMap) adminMap.setView([lat, lng], adminMap.getZoom());
+                        }
+                    });
+
+                    lngInput.addEventListener('input', function() {
+                        const lat = parseFloat(latInput.value);
+                        const lng = parseFloat(lngInput.value);
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            if (adminMarker) adminMarker.setLatLng([lat, lng]);
+                            if (adminCircle) adminCircle.setLatLng([lat, lng]);
+                            if (adminMap) adminMap.setView([lat, lng], adminMap.getZoom());
+                        }
+                    });
+
+                    function updateRadius(val) {
+                        val = parseInt(val) || 100;
+                        if (radiusInput) radiusInput.value = val;
+                        if (radiusSlider) radiusSlider.value = val <= 2000 ? val : 2000;
+                        if (radiusDisplay) radiusDisplay.innerText = val + ' Meter';
+                        if (adminCircle) adminCircle.setRadius(val);
+                    }
+
+                    if (radiusInput) {
+                        radiusInput.addEventListener('input', function() {
+                            updateRadius(this.value);
+                        });
+                    }
+
+                    if (radiusSlider) {
+                        radiusSlider.addEventListener('input', function() {
+                            updateRadius(this.value);
+                        });
+                    }
+
+                    const refreshMapSize = function() {
+                        if (adminMap) {
+                            adminMap.invalidateSize();
+                        }
+                    };
+
+                    [50, 150, 300, 600, 1000].forEach(function(delay) {
+                        setTimeout(refreshMapSize, delay);
+                    });
+
+                    if (window.ResizeObserver) {
+                        const resizeObserver = new ResizeObserver(function() {
+                            refreshMapSize();
+                        });
+                        resizeObserver.observe(mapContainer);
+                    }
+                } catch (err) {
+                    console.error('Error saat inisialisasi Leaflet map:', err);
+                }
             });
-
-            adminMap.on('click', function (e) {
-                updatePosition(e.latlng.lat, e.latlng.lng);
-            });
-
-            latInput.addEventListener('change', function() {
-                const lat = parseFloat(latInput.value) || initialLat;
-                const lng = parseFloat(lngInput.value) || initialLng;
-                updatePosition(lat, lng);
-                adminMap.setView([lat, lng], adminMap.getZoom());
-            });
-
-            lngInput.addEventListener('change', function() {
-                const lat = parseFloat(latInput.value) || initialLat;
-                const lng = parseFloat(lngInput.value) || initialLng;
-                updatePosition(lat, lng);
-                adminMap.setView([lat, lng], adminMap.getZoom());
-            });
-
-            function updateRadius(val) {
-                val = parseInt(val) || 100;
-                radiusInput.value = val;
-                if (radiusSlider) radiusSlider.value = val <= 2000 ? val : 2000;
-                if (radiusDisplay) radiusDisplay.innerText = val + ' Meter';
-                if (adminCircle) adminCircle.setRadius(val);
-            }
-
-            radiusInput.addEventListener('input', function() {
-                updateRadius(this.value);
-            });
-
-            if (radiusSlider) {
-                radiusSlider.addEventListener('input', function() {
-                    updateRadius(this.value);
-                });
-            }
-
-            setTimeout(() => {
-                if (adminMap) adminMap.invalidateSize();
-            }, 300);
         }
 
         function useCurrentLocation(e) {
@@ -444,8 +504,8 @@
                     
                     const latInput = document.getElementById('input_latitude');
                     const lngInput = document.getElementById('input_longitude');
-                    if (latInput) latInput.value = lat.toFixed(6);
-                    if (lngInput) lngInput.value = lng.toFixed(6);
+                    if (latInput) latInput.value = Number(lat).toFixed(6);
+                    if (lngInput) lngInput.value = Number(lng).toFixed(6);
 
                     if (adminMarker && adminCircle && adminMap) {
                         adminMarker.setLatLng([lat, lng]);
@@ -477,7 +537,10 @@
         } else {
             initAdminMap();
         }
+        window.addEventListener('load', initAdminMap);
         document.addEventListener('turbo:load', initAdminMap);
+        document.addEventListener('turbo:render', initAdminMap);
+        document.addEventListener('livewire:navigated', initAdminMap);
     </script>
     @endpush
 </x-app-layout>
