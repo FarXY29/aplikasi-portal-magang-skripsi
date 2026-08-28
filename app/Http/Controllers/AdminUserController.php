@@ -75,6 +75,7 @@ class AdminUserController extends Controller
             'asal_instansi' => $usesAsalInstansi ? $request->asal_instansi : null,
             'nik' => $request->nik,
             'phone' => $request->phone,
+            'email_verified_at' => in_array($request->role, User::EMAIL_VERIFICATION_EXEMPT_ROLES, true) ? now() : null,
         ]);
 
         $user->syncPrimaryRole();

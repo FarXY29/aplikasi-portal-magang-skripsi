@@ -10,6 +10,21 @@ class RolePesertaTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Anti-fraud layer aktif (shadow). Rate limit dinaikkan agar test
+        // lain di file ini tidak terganggu limiter.
+        config([
+            'attendance.enabled' => true,
+            'attendance.require_nonce' => true,
+            'attendance.mode' => 'shadow',
+            'attendance.challenge_rate_limit' => 1000,
+            'attendance.clock_rate_limit' => 1000,
+        ]);
+    }
+
     public function test_peserta_can_access_their_dashboard()
     {
         $user = User::factory()->create(['role' => 'peserta']);

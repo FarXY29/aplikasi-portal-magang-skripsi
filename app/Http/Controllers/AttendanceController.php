@@ -5,15 +5,36 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\Application;
+use App\Models\Instansi;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Http\Requests\Attendance\ClockInRequest;
 use App\Http\Requests\Attendance\PermissionRequest;
 use App\Services\AuditLogService;
 use App\Services\AttendanceService;
+use App\Services\Attendance\AttendanceChallengeService;
+use App\Services\Attendance\AttendanceIdempotencyService;
+use App\Services\Attendance\AttendanceLockService;
+use App\Services\Attendance\AttendanceFraudContext;
+use App\Services\Attendance\AttendanceFraudDetector;
+use App\Services\Attendance\AttendanceFraudResult;
+use App\Services\Attendance\AttendanceAttemptService;
+use App\Services\Attendance\GeoDistanceService;
+use Illuminate\Database\QueryException;
+use Throwable;
 
 class AttendanceController extends Controller
 {
+    public function __construct(
+        private readonly AttendanceChallengeService $challenge,
+        private readonly AttendanceIdempotencyService $idempotency,
+        private readonly AttendanceLockService $lock,
+        private readonly AttendanceFraudDetector $fraudDetector,
+        private readonly AttendanceAttemptService $attempts,
+        private readonly GeoDistanceService $geo,
+    ) {
+    }
+
     /**
      * Tampilkan riwayat absen (Attendance History) untuk Peserta
      */
@@ -42,95 +63,39 @@ class AttendanceController extends Controller
     }
 
     /**
+     * ATTENDANCE CHALLENGE (P0 §5.3)
+     *
+     * Server menerbitkan nonce cryptographically secure, single-use,
+     * short-lived, dan terikat user. Browser mengambilnya SEBELUM
+     * mengambil geolocation, lalu mengirimkannya bersama absensi.
+     *
+     * Nonce BUKAN bukti GPS asli — hanya pengurang replay/old-request abuse.
+     */
+    public function challenge(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user || $user->role !== 'peserta') {
+            return response()->json(['message' => 'Tidak diizinkan.'], 403);
+        }
+
+        $data = $this->challenge->issue($user);
+
+        return response()->json([
+            'nonce' => $data['nonce'],
+            'expires_at' => $data['expires_at'],
+            'ttl' => $data['ttl'],
+            'server_time' => now()->getTimestamp(),
+        ]);
+    }
+
+    /**
      * ABSEN DATANG (Clock In)
      * Mengecek jam mulai masuk dari tabel INSTANSI.
      */
     public function store(ClockInRequest $request)
     {
-        $user = Auth::user();
-        $now = Carbon::now();
-        $today = $now->format('Y-m-d');
-
-        // 1. Cari Aplikasi Magang yang Aktif
-        $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->with('position.instansi') // Load Relasi INSTANSI untuk ambil jam kerja
-                        ->first();
-
-        if (!$application) {
-            return back()->with('error', 'Anda tidak memiliki status magang aktif untuk melakukan absensi.');
-        }
-
-        $today = Carbon::today();
-        $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
-        $endDate = Carbon::parse($application->tanggal_selesai)->endOfDay();
-
-        if ($today->lt($startDate)) {
-            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.');
-        }
-
-        if ($today->gt($endDate)) {
-            return back()->with('error', 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.');
-        }
-
-        // 2. CEK JADWAL MASUK (DINAMIS DARI DB)
-        // Ambil jam masuk dari INSTANSI, misal "08:00:00"
-        $jamMasukINSTANSI = $application->position->instansi->jam_mulai_masuk ?? '07:30:00'; // Default jika null
-        
-        // Buat objek Carbon untuk jam masuk hari ini
-        $waktuBukaAbsen = Carbon::parse($jamMasukINSTANSI);
-
-        // Validasi: Jika sekarang lebih awal dari jam buka absen
-        if ($now->lessThan($waktuBukaAbsen)) {
-            return back()->with('error', 'Absen datang belum dibuka. Jadwal absen masuk dimulai pukul ' . $waktuBukaAbsen->format('H:i'));
-        }
-
-        // 2.5 CEK LOKASI GPS & RADIUS ABSEN
-        $kantorLat = $application->position->instansi->latitude ?? null;
-        $kantorLng = $application->position->instansi->longitude ?? null;
-        $radiusAbsen = $application->position->instansi->radius_absen ?? 100;
-
-        if ($kantorLat && $kantorLng) {
-            if (!$request->has('latitude') || !$request->has('longitude') || $request->latitude == null || $request->longitude == null) {
-                return back()->with('error', 'Gagal Absen Datang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.');
-            }
-
-            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
-            $jarakMeter = $jarakKm * 1000;
-
-            if ($jarakMeter > $radiusAbsen) {
-                return back()->with('error', 'Gagal Absen Datang! Posisi Anda berada di luar radius kantor (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
-            }
-        }
-
-        // 3. Cek Duplikasi (Sudah absen hari ini?)
-        $existing = Attendance::where('application_id', $application->id)
-                        ->where('date', $today)
-                        ->first();
-
-        if ($existing) {
-            return back()->with('error', 'Anda sudah mengisi data absensi hari ini.');
-        }
-
-        // 4. Simpan Data
-        $attendance = Attendance::create([
-            'application_id' => $application->id,
-            'date' => $today,
-            'status' => 'hadir',
-            'clock_in' => $now->format('H:i:s'),
-            'latitude_in' => $request->latitude,
-            'longitude_in' => $request->longitude,
-            'ip_address' => $request->ip(),
-            'device_info' => $request->userAgent(),
-            'validation_status' => 'approved',
-        ]);
-
-        app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [
-            'application_id' => $application->id,
-            'date' => $today,
-        ]);
-
-        return back()->with('success', 'Berhasil Absen Datang! Selamat beraktivitas.');
+        return $this->processAttendance($request, 'clock_in');
     }
 
     /**
@@ -139,86 +104,302 @@ class AttendanceController extends Controller
      */
     public function clockOut(ClockInRequest $request)
     {
+        return $this->processAttendance($request, 'clock_out');
+    }
+
+    /**
+     * ORCHESTRATION P0 + fraud layer (§26).
+     *
+     * Flow: validate → user → application → instansi → jadwal → nonce →
+     * idempotency → lock → geofence existing → fraud detector → attempt →
+     * attendance decision → evidence.
+     *
+     * Pesan sukses/error tetap identik dengan versi existing agar UX
+     * user normal tidak berubah.
+     */
+    private function processAttendance(ClockInRequest $request, string $type)
+    {
         $user = Auth::user();
         $now = Carbon::now();
         $today = $now->format('Y-m-d');
 
-        // 1. Cari Aplikasi
+        $fraudEnabled = (bool) config('attendance.enabled', true);
+        $mode = (string) config('attendance.mode', 'shadow');
+
+        // 1. Resolve Aplikasi Magang Aktif
         $application = Application::where('user_id', $user->id)
                         ->where('status', 'diterima')
                         ->with('position.instansi')
                         ->first();
 
         if (!$application) {
-            return back()->with('error', 'Status magang tidak aktif.');
+            return back()->with('error', $type === 'clock_in'
+                ? 'Anda tidak memiliki status magang aktif untuk melakukan absensi.'
+                : 'Status magang tidak aktif.');
         }
 
-        $today = Carbon::today();
+        $instansi = $application->position?->instansi;
+
+        $todayCarbon = Carbon::today();
         $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
         $endDate = Carbon::parse($application->tanggal_selesai)->endOfDay();
 
-        if ($today->lt($startDate)) {
-            return back()->with('error', 'Masa magang Anda belum dimulai.');
+        if ($todayCarbon->lt($startDate)) {
+            return back()->with('error', $type === 'clock_in'
+                ? 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.'
+                : 'Masa magang Anda belum dimulai.');
         }
 
-        if ($today->gt($endDate)) {
-            return back()->with('error', 'Masa magang Anda telah berakhir.');
+        if ($todayCarbon->gt($endDate)) {
+            return back()->with('error', $type === 'clock_in'
+                ? 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.'
+                : 'Masa magang Anda telah berakhir.');
         }
 
-        // 2. CEK JADWAL PULANG (DINAMIS DARI DB)
-        $jamPulangINSTANSI = $application->position->instansi->jam_mulai_pulang ?? '16:00:00';
-        $waktuBolehPulang = Carbon::parse($jamPulangINSTANSI);
+        // 2. Jadwal (dinamis dari DB) — behavior existing dipertahankan.
+        if ($type === 'clock_in') {
+            $jamMulai = $instansi->jam_mulai_masuk ?? '07:30:00';
+            $waktuBuka = Carbon::parse($jamMulai);
 
-        // Validasi: Jika sekarang belum waktunya pulang
-        if ($now->lessThan($waktuBolehPulang)) {
-            return back()->with('error', 'Belum waktunya pulang! Absen pulang baru dibuka pukul ' . $waktuBolehPulang->format('H:i'));
-        }
-
-        // 2.5 CEK LOKASI GPS & RADIUS ABSEN
-        $kantorLat = $application->position->instansi->latitude ?? null;
-        $kantorLng = $application->position->instansi->longitude ?? null;
-        $radiusAbsen = $application->position->instansi->radius_absen ?? 100;
-
-        if ($kantorLat && $kantorLng) {
-            if (!$request->has('latitude') || !$request->has('longitude') || $request->latitude == null || $request->longitude == null) {
-                return back()->with('error', 'Gagal Absen Pulang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.');
+            if ($now->lessThan($waktuBuka)) {
+                return back()->with('error', 'Absen datang belum dibuka. Jadwal absen masuk dimulai pukul ' . $waktuBuka->format('H:i'));
             }
+        } else {
+            $jamPulang = $instansi->jam_mulai_pulang ?? '16:00:00';
+            $waktuBolehPulang = Carbon::parse($jamPulang);
 
-            $jarakKm = $this->calculateDistance($request->latitude, $request->longitude, $kantorLat, $kantorLng);
-            $jarakMeter = $jarakKm * 1000;
-
-            if ($jarakMeter > $radiusAbsen) {
-                return back()->with('error', 'Gagal Absen Pulang! Posisi Anda berada di luar radius kantor (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            if ($now->lessThan($waktuBolehPulang)) {
+                return back()->with('error', 'Belum waktunya pulang! Absen pulang baru dibuka pukul ' . $waktuBolehPulang->format('H:i'));
             }
         }
 
-        // 3. Cari Data Absen Pagi Tadi
-        $attendance = Attendance::where('application_id', $application->id)
-                        ->where('date', $today)
-                        ->where('status', 'hadir')
-                        ->first();
+        // 3. Geofence koordinat instansi (existing — TIDAK diubah).
+        $kantorLat = $instansi->latitude ?? null;
+        $kantorLng = $instansi->longitude ?? null;
+        $radiusAbsen = $instansi->radius_absen ?? 100;
+        $hasGeofence = ($kantorLat !== null && $kantorLng !== null);
 
-        if (!$attendance) {
-            return back()->with('error', 'Anda belum melakukan absen datang hari ini.');
+        $latitude = $request->filled('latitude') ? (float) $request->latitude : null;
+        $longitude = $request->filled('longitude') ? (float) $request->longitude : null;
+
+        $distanceMeters = null;
+
+        if ($hasGeofence) {
+            // User TIDAK boleh menghindari geofence dengan menghilangkan
+            // latitude/longitude (§6).
+            if ($latitude === null || $longitude === null) {
+                return back()->with('error', $type === 'clock_in'
+                    ? 'Gagal Absen Datang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.'
+                    : 'Gagal Absen Pulang! Lokasi GPS Anda tidak ditemukan. Pastikan izin lokasi (Location/GPS) diaktifkan di browser/HP Anda.');
+            }
+
+            $distanceMeters = $this->geo->distanceMeters($latitude, $longitude, (float) $kantorLat, (float) $kantorLng);
+
+            if ($distanceMeters > $radiusAbsen) {
+                return back()->with('error', ($type === 'clock_in' ? 'Gagal Absen Datang!' : 'Gagal Absen Pulang!')
+                    . ' Posisi Anda berada di luar radius kantor (' . number_format($distanceMeters, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            }
         }
 
-        if ($attendance->clock_out != null) {
-            return back()->with('error', 'Anda sudah melakukan absen pulang sebelumnya.');
+        // 4. NONCE / replay protection (P0 §5.3).
+        $nonce = $request->input('nonce');
+        $requireNonce = $fraudEnabled && (bool) config('attendance.require_nonce', true);
+
+        $nonceResult = null;
+        if ($fraudEnabled) {
+            $consumed = $this->challenge->consume($user, $nonce);
+
+            // Hanya bila nonce GAGAL dikonsumsi → signal hard INVALID_NONCE.
+            if (!$consumed) {
+                $nonceResult = $this->fraudDetector->scoreNonceInvalid([
+                    'nonce_present' => is_string($nonce) && $nonce !== '',
+                    'consumed' => false,
+                ]);
+            }
+
+            if ($requireNonce && !$consumed) {
+                // Attempt replay/nonce invalid tetap tercatat sebagai bukti.
+                $context = $this->buildContext($request, $user, $application, $instansi, $type, $now, $latitude, $longitude, $distanceMeters);
+                $this->attempts->record($context, $nonceResult, null, 'rejected');
+                $this->auditReplay($application, $nonceResult, $request);
+
+                return back()->with('error', 'Sesi keamanan absensi tidak valid atau sudah kedaluwarsa. Silakan muat ulang halaman lalu coba lagi.');
+            }
         }
 
-        // 4. Update Jam Pulang
-        $attendance->update([
-            'clock_out' => $now->format('H:i:s'),
-            'latitude_out' => $request->latitude,
-            'longitude_out' => $request->longitude,
-        ]);
+        // 5. IDEMPOTENCY (P0 §5.2) — duplicate request → hasil sebelumnya.
+        $idemKey = $this->idempotency->resolveKey($request);
+        if ($idemKey !== null && $this->idempotency->isProcessed($idemKey)) {
+            $previous = $this->idempotency->getResult($idemKey);
 
-        app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
-            'application_id' => $application->id,
-            'date' => $today,
-        ]);
+            return back()->with($previous['type'] ?? 'error', $previous['message'] ?? 'Permintaan absensi sudah diproses sebelumnya.');
+        }
 
-        return back()->with('success', 'Berhasil Absen Pulang! Hati-hati di jalan.');
+        // 6. ATOMIC LOCK (P0 §5.5) — double-click / multi-tab / race.
+        $lockAcquired = $this->lock->acquire($user);
+        if (!$lockAcquired) {
+            return back()->with('error', 'Permintaan absensi Anda sedang diproses. Mohon tunggu beberapa saat.');
+        }
+
+        try {
+            return $this->finalizeAttendance(
+                $request, $user, $application, $instansi, $type, $now, $today,
+                $latitude, $longitude, $distanceMeters, $radiusAbsen,
+                $fraudEnabled, $mode, $nonceResult, $idemKey,
+            );
+        } finally {
+            $this->lock->release($user);
+        }
+    }
+
+    private function finalizeAttendance(
+        ClockInRequest $request,
+        $user,
+        $application,
+        ?Instansi $instansi,
+        string $type,
+        Carbon $now,
+        string $today,
+        ?float $latitude,
+        ?float $longitude,
+        ?float $distanceMeters,
+        int $radiusAbsen,
+        bool $fraudEnabled,
+        string $mode,
+        ?AttendanceFraudResult $nonceResult,
+        ?string $idemKey,
+    ) {
+        // 7. Pre-check duplicate & record existing (behavior existing).
+        if ($type === 'clock_in') {
+            $existing = Attendance::where('application_id', $application->id)
+                            ->where('date', $today)
+                            ->first();
+
+            if ($existing) {
+                return back()->with('error', 'Anda sudah mengisi data absensi hari ini.');
+            }
+        } else {
+            $attendance = Attendance::where('application_id', $application->id)
+                            ->where('date', $today)
+                            ->where('status', 'hadir')
+                            ->first();
+
+            if (!$attendance) {
+                return back()->with('error', 'Anda belum melakukan absen datang hari ini.');
+            }
+
+            if ($attendance->clock_out != null) {
+                return back()->with('error', 'Anda sudah melakukan absen pulang sebelumnya.');
+            }
+        }
+
+        // 8. FRAUD DETECTOR (server-side, §9-§22).
+        $fraudResult = AttendanceFraudResult::clean();
+
+        if ($fraudEnabled) {
+            $context = $this->buildContext($request, $user, $application, $instansi, $type, $now, $latitude, $longitude, $distanceMeters);
+
+            // Bila nonce valid namun ada signal lain → jalankan full detector.
+            $fraudResult = $this->fraudDetector->detect($context);
+
+            // Nonce divalidasi di langkah 4 — bila invalid tapi non-required,
+            // signal CRITICAL tetap digabung (shadow/soft mencatat).
+            if ($nonceResult !== null && $nonceResult->isCritical()) {
+                $fraudResult = $nonceResult;
+            }
+        }
+
+        // 9. Keputusan berdasarkan mode (§23, §24).
+        $blocked = $fraudEnabled && $fraudResult->shouldBlock($mode);
+
+        // 10. Persist attendance + attempt evidence.
+        try {
+            if ($type === 'clock_in') {
+                $attendance = Attendance::create([
+                    'application_id' => $application->id,
+                    'date' => $today,
+                    'status' => 'hadir',
+                    'clock_in' => $now->format('H:i:s'), // SERVER time authoritative
+                    'latitude_in' => $latitude,
+                    'longitude_in' => $longitude,
+                    'ip_address' => $request->ip(),
+                    'device_info' => $request->userAgent(),
+                    'validation_status' => 'approved',
+                    'risk_score' => $fraudEnabled ? $fraudResult->score : null,
+                    'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
+                ]);
+
+                app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [
+                    'application_id' => $application->id,
+                    'date' => $today,
+                ]);
+
+                $successMessage = 'Berhasil Absen Datang! Selamat beraktivitas.';
+            } else {
+                // Guard race: hanya update bila clock_out masih null.
+                $updated = Attendance::where('application_id', $application->id)
+                            ->where('date', $today)
+                            ->where('status', 'hadir')
+                            ->whereNull('clock_out')
+                            ->update([
+                                'clock_out' => $now->format('H:i:s'), // SERVER time authoritative
+                                'latitude_out' => $latitude,
+                                'longitude_out' => $longitude,
+                                'risk_score' => $fraudEnabled ? $fraudResult->score : null,
+                                'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
+                            ]);
+
+                if ($updated === 0) {
+                    return back()->with('error', 'Anda sudah melakukan absen pulang sebelumnya.');
+                }
+
+                $attendance = $attendance->refresh();
+
+                app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
+                    'application_id' => $application->id,
+                    'date' => $today,
+                ]);
+
+                $successMessage = 'Berhasil Absen Pulang! Hati-hati di jalan.';
+            }
+
+            // Bila fraud layer aktif: simpan attempt sukses + events.
+            if ($fraudEnabled) {
+                $context = $this->buildContext($request, $user, $application, $instansi, $type, $now, $latitude, $longitude, $distanceMeters);
+                $attempt = $this->attempts->record($context, $fraudResult, $attendance, $blocked ? 'blocked' : 'accepted');
+
+                if ($attempt && $idemKey) {
+                    $this->attempts->attachIdempotencyKey($attempt, $idemKey);
+                }
+            }
+
+            // Idempotency: simpan hasil agar duplicate mengembalikan hasil sama.
+            if ($idemKey !== null) {
+                $this->idempotency->storeResult($idemKey, 'success', $successMessage);
+            }
+
+            // Blocked (enforce) TIDAK menghapus record yang sudah dibuat di atas;
+            // kebijakan enforce-pasca-insert: attendance tetap valid, ditandai
+            // critical untuk review admin. (Block-before-insert terjadi di
+            // langkah nonce di atas untuk hard rule replay.)
+            return back()->with('success', $successMessage);
+        } catch (QueryException $e) {
+            // 11. Database uniqueness = protection terakhir race condition
+            // (unique application_id+date) → pesan ramah, bukan HTTP 500.
+            if ($this->isDuplicateEntry($e)) {
+                $message = $type === 'clock_in'
+                    ? 'Anda sudah mengisi data absensi hari ini.'
+                    : 'Anda sudah melakukan absen pulang sebelumnya.';
+
+                if ($idemKey !== null) {
+                    $this->idempotency->storeResult($idemKey, 'error', $message);
+                }
+
+                return back()->with('error', $message);
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -282,23 +463,89 @@ class AttendanceController extends Controller
         return back()->with('success', 'Pengajuan Izin/Sakit berhasil dikirim.');
     }
 
-    /**
-     * Fungsi Matematika Haversine (Menghitung Jarak 2 Titik Koordinat dalam KM)
-     */
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2) 
+    // -----------------------------------------------------------------
+    // Helper anti-fraud
+    // -----------------------------------------------------------------
+
+    private function buildContext(
+        ClockInRequest $request,
+        $user,
+        $application,
+        ?Instansi $instansi,
+        string $type,
+        Carbon $now,
+        ?float $latitude,
+        ?float $longitude,
+        ?float $distanceMeters,
+    ): AttendanceFraudContext {
+        $historyCount = (int) config('attendance.location_history_count', 10);
+
+        // Histori terbaru milik user (lintas application untuk deteksi pola).
+        $history = Attendance::whereHas('application', fn ($q) => $q->where('user_id', $user->id))
+            ->whereDate('date', '<=', $now->toDateString())
+            ->latest('date')
+            ->limit($historyCount)
+            ->get();
+
+        // Attendance terakhir SEBELUM request ini untuk impossible travel.
+        $previous = Attendance::whereHas('application', fn ($q) => $q->where('user_id', $user->id))
+            ->whereDate('date', '<=', $now->toDateString())
+            ->orderByDesc('date')
+            ->first();
+
+        $lastNetwork = $this->attempts->lastAttemptNetwork($user->id);
+
+        $sessionHash = null;
+        try {
+            $sessionId = $request->session()->getId();
+            $sessionHash = $sessionId ? hash('sha256', $sessionId) : null;
+        } catch (Throwable) {
+            // session tidak tersedia (stateless) — abaikan.
+        }
+
+        return new AttendanceFraudContext(
+            user: $user,
+            application: $application,
+            instansi: $instansi,
+            attendanceType: $type,
+            latitude: $latitude,
+            longitude: $longitude,
+            accuracy: $request->filled('accuracy') ? (float) $request->accuracy : null,
+            altitude: $request->filled('altitude') ? (float) $request->altitude : null,
+            speed: $request->filled('speed') ? (float) $request->speed : null,
+            heading: $request->filled('heading') ? (float) $request->heading : null,
+            clientTimestampMs: $request->filled('client_timestamp') ? (int) $request->client_timestamp : null,
+            serverReceivedAt: $now->copy(),
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+            sessionHash: $sessionHash,
+            previousIpAddress: $lastNetwork['ip'],
+            previousUserAgent: $lastNetwork['user_agent'],
+            previousAttendance: $previous,
+            attendanceHistory: $history,
+            recentAttemptCount: $this->attempts->recentAttemptCount($user->id),
+            distanceToInstance: $distanceMeters,
+        );
+    }
+
+    private function auditReplay($application, AttendanceFraudResult $result, Request $request): void
     {
-        $earthRadius = 6371; // Radius bumi dalam KM
+        try {
+            app(AuditLogService::class)->record('attendance.request.replayed', null, [
+                'application_id' => $application->id,
+                'risk_score' => $result->score,
+                'indicators' => $result->indicatorCodes(),
+                'ip' => $request->ip(),
+            ]);
+        } catch (Throwable) {
+            // audit tidak boleh merusak flow
+        }
+    }
 
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($dLat/2) * sin($dLat/2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon/2) * sin($dLon/2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
-        $distance = $earthRadius * $c;
-
-        return $distance;
+    private function isDuplicateEntry(QueryException $e): bool
+    {
+        // MySQL duplicate entry (1062) / PostgreSQL unique violation (23505).
+        return in_array($e->getCode(), [23000, 23505], true)
+            && str_contains($e->getMessage(), 'Duplicate entry');
     }
 }

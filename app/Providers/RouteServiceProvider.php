@@ -40,6 +40,18 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by($request->user()?->id ?: $request->ip());
         });
 
+        // Rate limit attendance (P0 §5.4): by user ID, fallback IP.
+        // Jangan IP-only — banyak peserta dapat berbagi jaringan kantor yang sama.
+        RateLimiter::for('attendance-challenge', function (Request $request) {
+            return Limit::perMinute((int) config('attendance.challenge_rate_limit', 10))
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('attendance-clock', function (Request $request) {
+            return Limit::perMinute((int) config('attendance.clock_rate_limit', 6))
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

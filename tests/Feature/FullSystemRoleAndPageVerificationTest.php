@@ -29,6 +29,25 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
         $this->seed(RoleAndPermissionSeeder::class);
         Storage::fake('local');
         Storage::fake('public');
+
+        // Anti-fraud layer aktif (shadow) — absensi wajib nonce challenge.
+        config([
+            'attendance.enabled' => true,
+            'attendance.require_nonce' => true,
+            'attendance.mode' => 'shadow',
+            'attendance.challenge_rate_limit' => 1000,
+            'attendance.clock_rate_limit' => 1000,
+        ]);
+    }
+
+    /**
+     * Helper: ambil nonce challenge absensi untuk peserta (anti replay).
+     */
+    private function attendanceChallenge($user): string
+    {
+        return $this->actingAs($user)
+            ->getJson(route('peserta.absensi.challenge'))
+            ->json('nonce');
     }
 
     // ==========================================
@@ -204,6 +223,8 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
             'latitude' => -3.316694,
             'longitude' => 114.590111,
             'keterangan' => 'Hadir tepat waktu',
+            'nonce' => $this->attendanceChallenge($peserta),
+            'idempotency_key' => 'full-sys-clockin-' . uniqid(),
         ]);
         $resAbsen->assertSessionHas('success');
 
@@ -211,6 +232,8 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
         $resPulang = $this->actingAs($peserta)->post(route('peserta.absen.pulang'), [
             'latitude' => -3.316694,
             'longitude' => 114.590111,
+            'nonce' => $this->attendanceChallenge($peserta),
+            'idempotency_key' => 'full-sys-clockout-' . uniqid(),
         ]);
         $resPulang->assertSessionHas('success');
 

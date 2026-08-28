@@ -23,6 +23,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'peserta',
     ];
 
+    public const EMAIL_VERIFICATION_EXEMPT_ROLES = [
+        'admin_kota',
+        'admin_instansi',
+        'pembimbing_lapangan',
+    ];
+
     private const LEGACY_PERMISSIONS = [
         'admin_instansi' => [
             'create-lowongan', 'edit-lowongan', 'delete-lowongan', 'view-lowongan',
@@ -144,6 +150,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static function boot()
     {
         parent::boot();
+
+        static::saving(function ($user) {
+            if ($user->isEmailVerificationExempt() && empty($user->email_verified_at)) {
+                $user->email_verified_at = now();
+            }
+        });
 
         static::deleting(function ($user) {
             Application::where('pembimbing_lapangan_id', $user->id)->update(['pembimbing_lapangan_id' => null]);
@@ -274,19 +286,39 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Tentukan apakah role pengguna dikecualikan dari kewajiban verifikasi email.
+     * Super Admin (admin_kota), Admin Instansi (admin_instansi), dan Pembimbing Lapangan (pembimbing_lapangan)
+     * tidak memerlukan verifikasi email.
+     */
+    public function isEmailVerificationExempt(): bool
+    {
+        return $this->hasPortalRole(self::EMAIL_VERIFICATION_EXEMPT_ROLES)
+            || in_array($this->role, self::EMAIL_VERIFICATION_EXEMPT_ROLES, true);
+    }
+
+    /**
      * Tentukan apakah email pengguna telah diverifikasi.
-     * Seluruh interactive user harus terverifikasi untuk keamanan akun.
+     * Role internal (Super Admin, Admin Instansi, Pembimbing Lapangan) selalu dianggap terverifikasi.
      */
     public function hasVerifiedEmail(): bool
     {
+        if ($this->isEmailVerificationExempt()) {
+            return true;
+        }
+
         return ! is_null($this->email_verified_at);
     }
 
     /**
      * Kirim notifikasi verifikasi email.
+     * Tidak mengirim ke role yang dikecualikan dari verifikasi email.
      */
     public function sendEmailVerificationNotification()
     {
+        if ($this->isEmailVerificationExempt()) {
+            return;
+        }
+
         try {
             $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
         } catch (\Throwable $e) {

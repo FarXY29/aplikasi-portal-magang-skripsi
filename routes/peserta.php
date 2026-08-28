@@ -22,8 +22,18 @@ Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')
     Route::post('/lamaran/{id}/batal', [PesertaDashboardController::class, 'cancelApplication'])->name('lamaran.batal');
 
     Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi.index');
-    Route::post('/absen/masuk', [AttendanceController::class, 'store'])->name('absen.masuk');
-    Route::post('/absen/pulang', [AttendanceController::class, 'clockOut'])->name('absen.pulang');
+
+    // Anti-fraud: challenge nonce untuk clock-in/clock-out (single-use, short-lived)
+    Route::get('/absensi/challenge', [AttendanceController::class, 'challenge'])
+        ->middleware('throttle:attendance-challenge')
+        ->name('absensi.challenge');
+
+    Route::post('/absen/masuk', [AttendanceController::class, 'store'])
+        ->middleware('throttle:attendance-clock')
+        ->name('absen.masuk');
+    Route::post('/absen/pulang', [AttendanceController::class, 'clockOut'])
+        ->middleware('throttle:attendance-clock')
+        ->name('absen.pulang');
     Route::post('/absen/izin', [AttendanceController::class, 'permission'])->name('absen.izin');
 });
 

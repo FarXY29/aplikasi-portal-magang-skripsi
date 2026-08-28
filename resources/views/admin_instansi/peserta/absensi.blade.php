@@ -115,6 +115,7 @@
                                 <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jam Pulang</th>
                                 <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Catatan / Bukti</th>
+                                <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Indikator Risiko</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
@@ -199,10 +200,71 @@
                                         @endif
                                     @endif
                                 </td>
+
+                                {{-- Indikator risiko fraud (hanya render bila data tersedia — record lama tampil kosong) --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    @php
+                                        $attemptIn = $log->attempts()->where('attendance_type', 'clock_in')->latest('id')->first();
+                                        $attemptOut = $log->attempts()->where('attendance_type', 'clock_out')->latest('id')->first();
+                                        $worstAttempt = collect([$attemptIn, $attemptOut])->filter()->sortByDesc('risk_score')->first();
+                                        $fraudEnum = $worstAttempt && $worstAttempt->fraud_status
+                                            ? \App\Enums\AttendanceFraudStatus::tryFrom($worstAttempt->fraud_status)
+                                            : null;
+                                    @endphp
+                                    @if($worstAttempt && $fraudEnum)
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border {{ $fraudEnum->badgeClass() }} gap-1.5" title="Risk Score: {{ $worstAttempt->risk_score }}">
+                                                <i class="fas fa-shield-alt text-[10px]"></i> {{ $worstAttempt->risk_score }} — {{ $fraudEnum->label() }}
+                                            </span>
+                                            @php
+                                                $indicatorLabels = collect($worstAttempt->risk_indicators ?? [])
+                                                    ->reject(fn($i) => $i === 'accepted')
+                                                    ->map(fn($code) => \App\Services\Attendance\FraudSignal::class ? $code : $code)
+                                                    ->all();
+                                            @endphp
+                                            @if(!empty($indicatorLabels))
+                                                <details class="text-left">
+                                                    <summary class="text-[11px] text-gray-500 dark:text-gray-400 cursor-pointer hover:text-teal-600 dark:hover:text-teal-400 font-medium select-none">
+                                                        Lihat {{ count($indicatorLabels) }} indikator
+                                                    </summary>
+                                                    <ul class="mt-1.5 space-y-1">
+                                                        @foreach($indicatorLabels as $indicator)
+                                                            @php
+                                                                $desc = match($indicator) {
+                                                                    'INVALID_NONCE' => 'Token keamanan tidak valid/dipakai ulang',
+                                                                    'ACCURACY_VERY_HIGH' => 'Akurasi GPS sangat buruk (>200m)',
+                                                                    'ACCURACY_SUSPICIOUS' => 'Akurasi GPS buruk (100-200m)',
+                                                                    'ACCURACY_LOW_CONCERN' => 'Akurasi GPS kurang baik (50-100m)',
+                                                                    'BOUNDARY_UNCERTAINTY' => 'Posisi dekat batas radius, confidence rendah',
+                                                                    'IMPOSSIBLE_TRAVEL' => 'Perpindahan lokasi mustahil',
+                                                                    'STATIC_COORDINATE_PATTERN' => 'Koordinat identik berulang',
+                                                                    'CLIENT_TIME_DRIFT' => 'Waktu perangkat tidak sinkron',
+                                                                    'FUTURE_CLIENT_TIMESTAMP' => 'Waktu perangkat di masa depan',
+                                                                    'MULTIPLE_ATTEMPTS' => 'Beberapa percobaan absensi',
+                                                                    'EXCESSIVE_ATTEMPTS' => 'Percobaan absensi sangat sering',
+                                                                    'IP_CHANGE' => 'Perubahan alamat IP',
+                                                                    'UA_CHANGE' => 'Perubahan User-Agent',
+                                                                    'blocked' => 'Diblokir sistem',
+                                                                    'rejected' => 'Ditolak sistem',
+                                                                    default => $indicator,
+                                                                };
+                                                            @endphp
+                                                            <li class="text-[11px] text-gray-600 dark:text-gray-300 font-medium flex items-start gap-1">
+                                                                <i class="fas fa-angle-right text-gray-400 mt-0.5"></i> {{ $desc }}
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </details>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 dark:text-gray-500 text-xs">-</span>
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center">
+                                <td colspan="6" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
                                         <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
                                             <i class="far fa-calendar-times text-3xl text-gray-400 dark:text-gray-500"></i>
