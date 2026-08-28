@@ -1,5 +1,5 @@
 <!-- 1. TOP LOGO & HEADER BRANDING -->
-<div class="flex items-center justify-between h-16 px-6 bg-slate-50/90 dark:bg-gray-900/90 text-slate-800 dark:text-white border-b border-slate-200/90 dark:border-gray-700/80 flex-shrink-0">
+<div class="flex items-center justify-between h-16 min-h-[4rem] max-h-16 px-6 bg-slate-50/90 dark:bg-gray-900/90 text-slate-800 dark:text-white border-b border-slate-200/90 dark:border-gray-700/80 flex-shrink-0 box-border">
     <a href="{{ route('home') }}" class="flex items-center gap-3 group min-w-0">
         <div class="w-9 h-9 rounded-xl bg-teal-700 text-white flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
             <x-application-logo class="w-full h-full fill-current text-white" />
