@@ -28,6 +28,7 @@ yarn-error.log
 /opendesign
 opendesign/
 storage\framework\views-v2
+/graphify-out/cache
 
 # Local env files (Vite/Laravel local overrides)
 .env.local
@@ -66,3 +67,5 @@ junit.xml
 # Local database backups and dumps
 *.sql
 *.sqlite
+
+

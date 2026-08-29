@@ -83,7 +83,6 @@ class FraudMonitoringController extends Controller
         $instansiId = Auth::user()->instansi_id;
 
         $query = $this->attemptsQuery($request, $instansiId)->with(['user', 'fraudEvents']);
-
         // Batas aman: bila terlalu banyak, minta filter lebih sempit.
         if ($query->count() > 50000) {
             return back()->with('error', 'Data terlalu banyak (>50.000 baris). Persempit filter rentang waktu atau peserta.');
