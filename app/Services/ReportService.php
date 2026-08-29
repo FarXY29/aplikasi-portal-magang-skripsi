@@ -68,7 +68,7 @@ class ReportService
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        // Pencarian Cepat (Nama, Email, Phone, NIM, No. Registrasi)
+        // Pencarian Cepat (Nama, Email, Phone, Asal Instansi, Jurusan/Major, No. Registrasi)
         if ($request->filled('search')) {
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
@@ -78,9 +78,8 @@ class ReportService
                       $u->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
                         ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('nim', 'like', "%{$search}%")
                         ->orWhere('asal_instansi', 'like', "%{$search}%")
-                        ->orWhere('jurusan', 'like', "%{$search}%");
+                        ->orWhere('major', 'like', "%{$search}%");
                   });
             });
         }
