@@ -154,9 +154,12 @@ class CertificateController extends Controller
 
         // Generate Nomor Sertifikat Otomatis (Suggestion)
         // Format: 001/MAGANG/NAMA-DINAS/TAHUN
-        $count = Application::whereNotNull('nomor_sertifikat')->count() + 1;
+        $year = date('Y');
+        $count = Application::whereNotNull('nomor_sertifikat')
+            ->whereYear('created_at', $year)
+            ->count() + 1;
         $kodeDinas = $app->position->instansi->kode_instansi ?? strtoupper(Str::slug($app->position->instansi->nama_dinas));
-        $autoNumber = sprintf("%03d/MAGANG/%s/%s", $count, $kodeDinas, date('Y'));
+        $autoNumber = sprintf("%03d/MAGANG/%s/%s", $count, $kodeDinas, $year);
 
         return view('admin_instansi.sertifikat.create', compact('app', 'autoNumber'));
     }
