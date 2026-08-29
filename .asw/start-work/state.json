@@ -1,0 +1,24 @@
+{
+  "plan": ".asw/plans/refactor-pembimbing-lapangan-views.md",
+  "activeTask": "Completed",
+  "completed": [
+    "Task 1: Characterization Tests",
+    "Task 2: Refactor dashboard.blade.php & partials",
+    "Task 3: Refactor attendance.blade.php & modal partials",
+    "Task 4: Refactor logbook.blade.php",
+    "Task 5: Refactor penilaian.blade.php",
+    "Task 6: Full Verification Wave"
+  ],
+  "artifacts": [
+    ".asw/plans/refactor-pembimbing-lapangan-views.md",
+    "tests/Feature/PembimbingLapanganViewsTest.php",
+    "resources/views/pembimbing_lapangan/partials/_stats-grid.blade.php",
+    "resources/views/pembimbing_lapangan/dashboard.blade.php",
+    "resources/views/pembimbing_lapangan/partials/_attendance-modals.blade.php",
+    "resources/views/pembimbing_lapangan/attendance.blade.php",
+    "resources/views/pembimbing_lapangan/logbook.blade.php",
+    "resources/views/pembimbing_lapangan/penilaian.blade.php"
+  ],
+  "cleanup": [],
+  "blockers": []
+}

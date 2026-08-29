@@ -8,9 +8,9 @@
                 {{ __('Validasi Logbook') }}
             </h2>
             <div class="flex items-center gap-3">
-                <label for="switch_student" class="text-xs font-bold text-gray-500 dark:text-gray-400">Mahasiswa:</label>
+                <label for="switch_student_header" class="text-xs font-bold text-gray-500 dark:text-gray-400">Mahasiswa:</label>
                 @if(isset($interns) && $interns->count() > 1)
-                    <select id="switch_student" onchange="window.location.href = this.value" class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs focus:ring-teal-500 focus:border-teal-500">
+                    <select id="switch_student_header" onchange="window.location.href = this.value" class="px-3.5 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xs focus:ring-teal-500 focus:border-teal-500">
                         @foreach($interns as $intern)
                             <option value="{{ route('pembimbing_lapangan.logbook', $intern->id) }}" {{ $intern->id == $app->id ? 'selected' : '' }}>
                                 {{ $intern->user->name }}
@@ -149,7 +149,7 @@
 
                         {{-- Date / Month Picker --}}
                         <div class="flex flex-col gap-1 lg:col-span-1">
-                            <label for="date" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                            <label for="date_filter_input" class="text-[11px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
                                 <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400"></i>
                                 <span x-text="isMonthly ? 'Periode Bulan:' : (isAll ? 'Tanggal (Dinonaktifkan):' : 'Pilih Tanggal:')"></span>
                             </label>
@@ -157,12 +157,12 @@
                                 <input type="hidden" name="date" :value="isMonthly ? monthValue + '-01' : selectedDate" :disabled="isAll">
 
                                 <template x-if="isMonthly">
-                                    <input type="month" x-model="monthValue"
+                                    <input type="month" id="date_filter_input" x-model="monthValue"
                                         class="w-full border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-2 px-3 [color-scheme:dark]">
                                 </template>
 
                                 <template x-if="!isMonthly">
-                                    <input type="date" x-model="selectedDate" :disabled="isAll"
+                                    <input type="date" id="date_filter_input" x-model="selectedDate" :disabled="isAll"
                                         class="w-full border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold shadow-xs focus:border-teal-500 focus:ring-teal-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition py-2 px-3 [color-scheme:dark] disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800">
                                 </template>
                             </div>
@@ -262,7 +262,7 @@
                                         <li class="flex items-center pr-2 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition duration-150 group">
                                             @if($log->status_validasi != 'disetujui')
                                                 <div class="pl-4 pr-1">
-                                                    <input type="checkbox" name="log_ids[]" value="{{ $log->id }}" class="rounded border-gray-300 dark:border-gray-700 text-teal-600 focus:ring-teal-500 cursor-pointer">
+                                                    <input type="checkbox" name="log_ids[]" value="{{ $log->id }}" class="rounded border-gray-300 dark:border-gray-700 text-teal-600 focus:ring-teal-500 cursor-pointer" aria-label="Pilih logbook {{ $log->tanggal }}">
                                                 </div>
                                             @else
                                                 <div class="pl-4 pr-1 opacity-0 w-5"></div>
@@ -299,6 +299,7 @@
                                 
                                 {{-- Batch Action Buttons --}}
                                 <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex flex-col gap-2">
+                                    <label for="batch-komentar" class="sr-only">Catatan Revisi Massal</label>
                                     <textarea name="komentar" id="batch-komentar" rows="2" placeholder="Catatan revisi (wajib jika memilih Revisi)..." class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs px-3 py-2"></textarea>
                                     @error('komentar')
                                         <p class="text-[10px] text-rose-600 dark:text-rose-400 font-bold">{{ $message }}</p>
@@ -332,7 +333,7 @@
                              x-transition:enter-end="opacity-100 translate-y-0"
                              style="display: none;">
                             
-                            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
+                            <article class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">
                                 
                                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                     <div>
@@ -371,7 +372,7 @@
                                                     $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . $app->user->name . ')';
                                                 @endphp
                                                 <div class="relative group rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-700 cursor-pointer" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
-                                                    <img src="{{ $fotoUrl }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500" alt="Dokumentasi">
+                                                    <img src="{{ $fotoUrl }}" class="w-full h-48 object-cover transition transform group-hover:scale-105 duration-500" alt="Dokumentasi Kegiatan">
                                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-center justify-center">
                                                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 text-white text-xs font-bold backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-200 drop-shadow">
                                                             <i class="fas fa-search-plus text-xs"></i> Perbesar Foto
@@ -415,7 +416,8 @@
                                                 </h4>
                                                 
                                                 <div class="flex flex-col sm:flex-row gap-3">
-                                                    <input type="text" name="komentar" 
+                                                    <label for="single_komentar_{{ $log->id }}" class="sr-only">Catatan Validasi Logbook</label>
+                                                    <input type="text" id="single_komentar_{{ $log->id }}" name="komentar" 
                                                         class="flex-grow rounded-xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs" 
                                                         placeholder="Tulis catatan revisi atau apresiasi (Opsional)..."
                                                         value="{{ $log->status_validasi == 'revisi' ? $log->komentar_pembimbing_lapangan : '' }}">
@@ -441,7 +443,7 @@
 
                                     </div>
                                 </div>
-                            </div>
+                            </article>
                         </div>
                         @endforeach
                     </div>

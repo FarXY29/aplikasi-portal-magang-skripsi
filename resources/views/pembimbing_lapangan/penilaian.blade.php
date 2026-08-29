@@ -28,13 +28,18 @@
             <div class="flex flex-col lg:flex-row gap-8 items-start">
                 
                 {{-- Sidebar Identitas & Live Score --}}
-                <div class="w-full lg:w-1/3 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 lg:sticky lg:top-8 space-y-6">
+                <aside class="w-full lg:w-1/3 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 lg:sticky lg:top-8 space-y-6">
                     <div class="text-center">
                         <div class="w-20 h-20 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-black text-3xl mx-auto shadow-md mb-3 border-4 border-teal-50 dark:border-teal-900/50">
                             {{ strtoupper(substr($application->user->name, 0, 1)) }}
                         </div>
                         <h3 class="font-black text-gray-900 dark:text-gray-100 text-lg">{{ $application->user->name }}</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $application->user->email }}</p>
+                        @if($application->position)
+                            <span class="inline-block mt-2 px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-[11px] font-bold">
+                                {{ $application->position->judul_posisi }}
+                            </span>
+                        @endif
                     </div>
                     
                     <div class="space-y-4">
@@ -51,10 +56,10 @@
                         <h2 class="text-5xl font-black text-teal-600 dark:text-teal-400 font-mono" id="avg-score">0</h2>
                         <span class="inline-block mt-3 px-3.5 py-1 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 text-xs font-bold rounded-full" id="grade-label">-</span>
                     </div>
-                </div>
+                </aside>
 
                 {{-- Formulir Input Kriteria --}}
-                <div class="w-full lg:w-2/3 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700">
+                <main class="w-full lg:w-2/3 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700">
                     <form action="{{ route('pembimbing_lapangan.simpan_nilai', $application->id) }}" method="POST" id="penilaianForm" onsubmit="event.submitter && (event.submitter.disabled = true)">
                         @csrf
                         
@@ -80,11 +85,11 @@
 
                                 @foreach($kriteria as $field => $data)
                                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 focus-within:ring-2 focus-within:ring-teal-500 transition">
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2 flex items-center gap-2">
+                                    <label for="{{ $field }}" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2 flex items-center gap-2">
                                         <i class="fas {{ $data['icon'] }} text-teal-600 dark:text-teal-400"></i> {{ $data['label'] }}
                                     </label>
                                     <div class="relative">
-                                        <input type="number" name="{{ $field }}" min="0" max="100" required
+                                        <input type="number" id="{{ $field }}" name="{{ $field }}" min="0" max="100" required
                                             class="score-input w-full pl-4 pr-12 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition font-bold font-mono text-lg shadow-xs [color-scheme:dark]"
                                             placeholder="0" value="{{ old($field, $application->$field ?? '') }}"
                                             oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
@@ -101,7 +106,8 @@
                             <h3 class="font-bold text-gray-800 dark:text-gray-100 text-lg border-b border-gray-100 dark:border-gray-700 pb-3 mb-4 flex items-center gap-2">
                                 <i class="fas fa-comment-alt text-teal-600 dark:text-teal-400"></i> Catatan & Evaluasi Pembimbing
                             </h3>
-                            <textarea name="catatan_pembimbing_lapangan" rows="4" 
+                            <label for="catatan_pembimbing_lapangan" class="sr-only">Catatan & Evaluasi Pembimbing</label>
+                            <textarea id="catatan_pembimbing_lapangan" name="catatan_pembimbing_lapangan" rows="4" 
                                 class="w-full rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-xs text-xs sm:text-sm font-medium p-4"
                                 placeholder="Tuliskan evaluasi, kesan pesan, serta saran perbaikan dan pengembangan diri untuk peserta magang...">{{ old('catatan_pembimbing_lapangan', $application->catatan_pembimbing_lapangan) }}</textarea>
                             <x-input-error :messages="$errors->get('catatan_pembimbing_lapangan')" class="mt-2" />
@@ -117,7 +123,7 @@
                         </div>
 
                     </form>
-                </div>
+                </main>
 
             </div>
         </div>
@@ -160,6 +166,7 @@
             calculateAverage();
 
             inputs.forEach(input => {
+                input.removeEventListener('input', calculateAverage);
                 input.addEventListener('input', calculateAverage);
             });
         }
