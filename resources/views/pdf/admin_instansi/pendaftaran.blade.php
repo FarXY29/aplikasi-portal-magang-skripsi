@@ -129,8 +129,13 @@
                 <strong>Posisi Magang:</strong> {{ !empty($request->posisi_id) ? ($applications->first()?->position->judul_posisi ?? 'Dipilih') : 'Semua Posisi' }}
                 @if(!empty($request->start_date) || !empty($request->end_date))
                     <br><strong>Rentang Pendaftaran:</strong> 
-                    {{ !empty($request->start_date) ? \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') : 'Awal' }} s/d 
-                    {{ !empty($request->end_date) ? \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') : 'Sekarang' }}
+                    @if(!empty($request->start_date) && !empty($request->end_date))
+                        {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                    @elseif(!empty($request->start_date))
+                        Mulai {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }}
+                    @elseif(!empty($request->end_date))
+                        Sampai {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                    @endif
                 @endif
                 @if(!empty($request->search))
                     <br><strong>Kata Kunci:</strong> "{{ $request->search }}"
