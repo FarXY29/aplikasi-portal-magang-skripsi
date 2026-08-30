@@ -25,18 +25,6 @@
         </style>
     @endpush
 
-    <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-teal-500 text-white flex items-center justify-center shadow-md shadow-teal-500/20">
-                <i class="fas fa-building text-sm"></i>
-            </div>
-            <div>
-                <h2 class="font-black text-xl text-gray-800 dark:text-slate-100 leading-tight">Dashboard Admin Instansi</h2>
-                <p class="text-xs text-gray-500 dark:text-slate-400 font-medium hidden md:block">Pusat Pengelolaan & Monitoring Magang — {{ $instansi->nama_dinas }}</p>
-            </div>
-        </div>
-    </x-slot>
-
     <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
 
         {{-- ══════════════════════════════════════════════════════════ --}}
@@ -98,7 +86,7 @@
             <a href="{{ route('dinas.lowongan.index') }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800/40 bg-white dark:bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-teal-500/40 hover:shadow-teal-500/10">
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">LOWONG...</p>
+                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate" title="Lowongan">LOWONGAN</p>
                         <h3 id="stat-lowongan" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ number_format($totalLowongan) }}</h3>
                         <p class="mt-1 text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400">Posisi magang</p>
                     </div>
@@ -112,7 +100,7 @@
             <a href="{{ route('dinas.pembimbing_lapangan.index') }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800/40 bg-white dark:bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/10">
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">PEMBIMBI...</p>
+                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate" title="Pembimbing">PEMBIMBING</p>
                         <h3 id="stat-pembimbing" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ number_format($totalPembimbing) }}</h3>
                         <p class="mt-1 text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400">Pembimbing lapangan</p>
                     </div>
@@ -126,7 +114,7 @@
             <a href="{{ route('dinas.pelamar') }}" class="group block relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800/40 bg-white dark:bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-purple-500/10">
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">PENDAFT...</p>
+                        <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate" title="Pendaftar">PENDAFTAR</p>
                         <h3 id="stat-pendaftar" class="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{{ number_format($totalApplications) }}</h3>
                         <p class="stat-period-subtitle mt-1 text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400">{{ $periodText }}</p>
                     </div>
@@ -134,8 +122,8 @@
                         <i class="fas fa-file-signature text-base md:text-lg"></i>
                     </div>
                 </div>
-                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-                    <i class="fas fa-chart-line text-[9px]"></i> +100%
+                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-purple-50 dark:bg-purple-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/30">
+                    <i class="fas fa-inbox text-[9px]"></i> Total Masuk
                 </div>
             </a>
 
@@ -152,7 +140,7 @@
                     </div>
                 </div>
                 <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-                    <i class="fas fa-chart-line text-[9px]"></i> +100%
+                    <i class="fas fa-user-clock text-[9px]"></i> Sedang Berjalan
                 </div>
             </a>
 
@@ -168,8 +156,8 @@
                         <i class="fas fa-graduation-cap text-base md:text-lg"></i>
                     </div>
                 </div>
-                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-                    <i class="fas fa-chart-line text-[9px]"></i> +100%
+                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30">
+                    <i class="fas fa-check-circle text-[9px]"></i> Alumni
                 </div>
             </a>
 
@@ -185,8 +173,8 @@
                         <i class="fas fa-hourglass-half text-base md:text-lg"></i>
                     </div>
                 </div>
-                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
-                    <i class="fas fa-chart-line text-[9px]"></i> +100%
+                <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-500/15 px-2 py-0.5 text-[9px] md:text-[10px] font-black text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30">
+                    <i class="fas fa-clock text-[9px]"></i> Perlu Review
                 </div>
             </a>
         </div>
@@ -240,8 +228,8 @@
 
                     <div class="relative w-full mt-4" style="height: 280px;">
                         <canvas id="trendChart"
-                            data-labels="{{ json_encode($trendLabels) }}"
-                            data-values="{{ json_encode($trendData) }}">
+                            data-labels="{{ \Illuminate\Support\Js::from($trendLabels) }}"
+                            data-values="{{ \Illuminate\Support\Js::from($trendData) }}">
                         </canvas>
                     </div>
                 </div>
@@ -262,8 +250,8 @@
 
                     <div class="relative flex items-center justify-center" style="height: 210px;">
                         <canvas id="statusChart"
-                            data-labels="{{ json_encode($statusLabels) }}"
-                            data-values="{{ json_encode($statusData) }}">
+                            data-labels="{{ \Illuminate\Support\Js::from($statusLabels) }}"
+                            data-values="{{ \Illuminate\Support\Js::from($statusData) }}">
                         </canvas>
                     </div>
                 </div>

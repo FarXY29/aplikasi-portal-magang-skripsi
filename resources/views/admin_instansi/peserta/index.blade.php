@@ -1,32 +1,34 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-users-cog text-teal-600 dark:text-teal-400"></i>
-                {{ __('Kelola Peserta Magang') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Peserta Aktif: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $activeCount }}</span>
-            </div>
-        </div>
+        <x-ui.page-header 
+            title="Kelola Peserta Magang"
+            subtitle="Daftar peserta aktif, penugasan pembimbing lapangan, dan riwayat alumni."
+            icon="fas fa-users-cog"
+            :breadcrumbs="[
+                ['label' => 'Peserta Magang']
+            ]">
+            <x-slot name="badge">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 border border-teal-200/70 dark:border-teal-800 shadow-2xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Peserta Aktif: <strong class="text-teal-800 dark:text-teal-300 font-black">{{ $activeCount }}</strong>
+                </span>
+            </x-slot>
+            <x-slot name="actions">
+                <a href="{{ route('dinas.dashboard') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-xs font-bold text-slate-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400 hover:border-teal-500 dark:hover:border-teal-500 transition shadow-2xs group">
+                    <i class="fas fa-arrow-left text-[11px] text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors"></i>
+                    Kembali ke Dashboard
+                </a>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{
+    <div class="py-2 bg-transparent min-h-screen font-sans" x-data="{
         showAssignModal: false,
         assignActionUrl: '',
         assignApplicantName: '',
         currentPembimbingId: ''
     }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 print:hidden">
-                <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
-                    </div>
-                    Kembali ke Dashboard
-                </a>
-            </div>
+        <div class="max-w-7xl mx-auto space-y-6">
 
             <!-- Filter Status using x-ui.filter-bar -->
             <x-ui.filter-bar :action="route('dinas.peserta.index')" :resetUrl="route('dinas.peserta.index', ['status' => 'semua'])">

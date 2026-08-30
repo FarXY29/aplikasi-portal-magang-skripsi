@@ -1,17 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Dashboard Pembimbing Akademik') }}
-            </h2>
-        </div>
+        <x-ui.page-header 
+            title="Dashboard Pembimbing Akademik"
+            subtitle="Monitoring aktivitas mahasiswa, verifikasi logbook harian, dan pantauan absensi magang."
+            icon="fas fa-chalkboard-teacher"
+        />
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-2 bg-transparent min-h-screen font-sans">
+        <div class="max-w-7xl mx-auto space-y-6">
 
             {{-- Welcome Card --}}
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden">

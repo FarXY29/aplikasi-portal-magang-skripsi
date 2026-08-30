@@ -25,18 +25,6 @@
         </style>
     @endpush
 
-    <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-teal-500 text-white flex items-center justify-center shadow-md shadow-teal-500/20">
-                <i class="fas fa-shield-alt text-sm"></i>
-            </div>
-            <div>
-                <h2 class="font-black text-xl text-gray-800 dark:text-slate-100 leading-tight">Super Admin Dashboard</h2>
-                <p class="text-xs text-gray-500 dark:text-slate-500 dark:text-slate-400 font-medium hidden md:block">Pusat Kontrol & Monitoring Portal Magang</p>
-            </div>
-        </div>
-    </x-slot>
-
     <div class="space-y-5 md:space-y-6 font-[Inter] py-2 bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 min-h-screen">
 
         {{-- ══════════════════════════════════════════════════════════ --}}

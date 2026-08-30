@@ -1,24 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-user-edit text-teal-600 dark:text-teal-400"></i>
-                {{ __('Edit Data Pembimbing') }}
-            </h2>
-        </div>
+        <x-ui.page-header 
+            title="Edit Data Pembimbing"
+            subtitle="Perbarui data akun dan informasi pegawai pembimbing lapangan."
+            icon="fas fa-user-edit"
+            :breadcrumbs="[
+                ['label' => 'Kelola Pembimbing', 'url' => route('dinas.pembimbing_lapangan.index')],
+                ['label' => 'Edit']
+            ]">
+            <x-slot name="actions">
+                <a href="{{ route('dinas.pembimbing_lapangan.index') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-xs font-bold text-slate-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400 hover:border-teal-500 dark:hover:border-teal-500 transition shadow-2xs group">
+                    <i class="fas fa-arrow-left text-[11px] text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors"></i>
+                    Kembali ke Daftar
+                </a>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="mb-6">
-                <a href="{{ route('dinas.pembimbing_lapangan.index') }}" class="group inline-flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
-                    </div>
-                    Kembali ke Daftar Pembimbing Lapangan
-                </a>
-            </div>
+    <div class="py-2 bg-transparent min-h-screen font-sans">
+        <div class="max-w-3xl mx-auto">
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 

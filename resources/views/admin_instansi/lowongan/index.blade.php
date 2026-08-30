@@ -1,36 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-briefcase text-teal-600 dark:text-teal-400"></i>
-                {{ __('Kelola Lowongan Magang') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Total Posisi: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $lowongans->count() }}</span>
-            </div>
-        </div>
-    </x-slot>
-
-    <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            <div class="flex flex-col gap-4 mb-6 print:hidden">
-                <div class="flex justify-between items-center">
-                    <a href="{{ route('dinas.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                        <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
-                            <i class="fas fa-arrow-left text-xs"></i>
-                        </div>
-                        Kembali ke Dashboard
-                    </a>
-                </div>
-
-                <x-ui.filter-bar :action="route('dinas.lowongan.index')" :resetUrl="request()->hasAny(['search', 'status']) ? route('dinas.lowongan.index') : null">
+        <x-ui.page-header 
+            title="Kelola Lowongan Magang"
+            subtitle="Daftar formasi posisi lowongan, kuota penerimaan, dan status pendaftaran."
+            icon="fas fa-briefcase"
+            :breadcrumbs="[
+                ['label' => 'Lowongan Magang']
+            ]">
+            <x-slot name="badge">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 border border-teal-200/70 dark:border-teal-800 shadow-2xs">
                     <div class="flex-grow min-w-[200px]">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari posisi, syarat, atau deskripsi..." class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
                     </div>
 
-                    <div class="min-w-[150px]">
-                        <select name="status" class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 focus:border-teal-500 focus:ring-teal-500 py-2 pl-3 pr-8 cursor-pointer shadow-sm font-bold">
                             <option value="">Semua Status</option>
                             <option value="buka" {{ request('status') == 'buka' ? 'selected' : '' }}>Buka</option>
                             <option value="tutup" {{ request('status') == 'tutup' ? 'selected' : '' }}>Tutup</option>
@@ -42,7 +24,6 @@
                             <i class="fas fa-plus mr-2 text-[10px]"></i> Buat Lowongan
                         </a>
                     </div>
-                </x-ui.filter-bar>
             </div>
 
             @if(session('success'))

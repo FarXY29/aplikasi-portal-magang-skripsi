@@ -166,7 +166,7 @@
                                         <i class="far fa-calendar-alt text-indigo-500 dark:text-indigo-400"></i> Batas Akhir Pendaftaran
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
-                                        <input type="date" name="batas_daftar" id="batas_daftar" value="{{ old('batas_daftar', \Carbon\Carbon::parse($loker->batas_daftar)->format('Y-m-d')) }}" 
+                                        <input type="date" name="batas_daftar" id="batas_daftar" value="{{ old('batas_daftar', $loker->batas_daftar ? \Carbon\Carbon::parse($loker->batas_daftar)->format('Y-m-d') : '') }}" 
                                             class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('batas_daftar') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-medium text-slate-800 dark:text-gray-100 [color-scheme:light] dark:[color-scheme:dark]">
                                         @error('batas_daftar')
                                             <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-red-500">
