@@ -1,12 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400"></i>
-                {{ __('Kelola Pembimbing Lapangan') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Total Pembimbing Lapangan: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $pembimbing_lapangan->count() }}</span>
+        <div class="flex items-center justify-between gap-4 w-full">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60 shrink-0">
+                    <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400 text-sm md:text-base"></i>
+                </div>
+                <div class="min-w-0">
+                    <h2 class="font-extrabold text-lg md:text-xl text-gray-800 dark:text-gray-200 leading-tight truncate">
+                        {{ __('Kelola Pembimbing Lapangan') }}
+                    </h2>
+                </div>
+            </div>
+            <div class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-gray-800 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs shrink-0">
+                Total Pembimbing: <span class="font-black text-teal-600 dark:text-teal-400 font-mono">{{ $pembimbing_lapangan->count() }}</span>
             </div>
         </div>
     </x-slot>
@@ -116,33 +122,33 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 dark:divide-gray-700/60 bg-white dark:bg-gray-800">
-                                @forelse($pembimbing_lapangan as $pembimbing_lapangan)
+                                @forelse($pembimbing_lapangan as $mentor)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition group">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
                                             <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                                                {{ strtoupper(substr($pembimbing_lapangan->name, 0, 1)) }}
+                                                {{ strtoupper(substr($mentor->name, 0, 1)) }}
                                             </div>
                                             <div>
-                                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $pembimbing_lapangan->name }}</div>
+                                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $mentor->name }}</div>
                                                 <div class="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-900 px-1.5 rounded w-fit mt-0.5 border border-transparent dark:border-gray-700">
-                                                    NIP: {{ $pembimbing_lapangan->nik ?? '-' }}
+                                                    NIP: {{ $mentor->nik ?? '-' }}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         <div class="flex items-center gap-2">
-                                            <i class="far fa-envelope text-gray-400 dark:text-gray-500"></i> {{ $pembimbing_lapangan->email }}
+                                            <i class="far fa-envelope text-gray-400 dark:text-gray-500"></i> {{ $mentor->email }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-                                            <a href="{{ route('dinas.pembimbing_lapangan.edit', $pembimbing_lapangan->id) }}" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 hover:border-indigo-200 dark:hover:border-indigo-800/50 transition shadow-sm" title="Edit Data">
+                                            <a href="{{ route('dinas.pembimbing_lapangan.edit', $mentor->id) }}" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 hover:border-indigo-200 dark:hover:border-indigo-800/50 transition shadow-sm" title="Edit Data">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             
-                                            <form action="{{ route('dinas.pembimbing_lapangan.destroy', $pembimbing_lapangan->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.', onConfirm: () => $el.submit() })">
+                                            <form action="{{ route('dinas.pembimbing_lapangan.destroy', $mentor->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Hapus akun ini? Pembimbing ini akan hilang dari data peserta yang dibimbingnya.', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-200 dark:hover:border-red-900/50 transition shadow-sm" title="Hapus Akun">

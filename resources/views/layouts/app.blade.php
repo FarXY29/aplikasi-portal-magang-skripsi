@@ -77,36 +77,44 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 dark:bg-gray-900">
             
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
-            <header class="hidden md:flex bg-slate-50/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-slate-200/90 dark:border-gray-700/80 h-16 min-h-[4rem] max-h-16 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0 flex-shrink-0 box-border">
+            <header class="hidden md:flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-slate-200/90 dark:border-gray-700/80 h-16 min-h-[4rem] max-h-16 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0 flex-shrink-0 box-border">
                 
+                <!-- Sisi Kiri: Hamburger + Breadcrumb / Status Peran -->
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
                     <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-slate-600 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-slate-100/90 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
-                    <div class="flex-1 min-w-0">
-                        @if(isset($header))
-                            {{ $header }}
-                        @else
-                            <h2 class="font-black text-xl text-slate-800 dark:text-gray-100 leading-tight truncate">
-                                Dashboard
-                            </h2>
-                        @endif
+                    
+                    <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-500 dark:text-gray-400 truncate">
+                        <span class="inline-flex items-center gap-1.5 font-black text-slate-800 dark:text-gray-200">
+                            <i class="fas fa-layer-group text-teal-600 dark:text-teal-400 text-xs"></i>
+                            {{ config('app.name', 'Portal Magang') }}
+                        </span>
+                        <i class="fas fa-chevron-right text-[9px] text-slate-300 dark:text-gray-600"></i>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800 tracking-wider">
+                            {{ str_replace('_', ' ', Auth::user()->role) }}
+                        </span>
                     </div>
                 </div>
 
+                <!-- Sisi Kanan: Combined Date & Time Pill + Notification Bell -->
                 <div class="flex items-center gap-3 print:hidden">
-                    @include('layouts.partials._notification-bell')
-
-                    <div class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-gray-300 bg-slate-100/90 dark:bg-gray-800/80 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs">
-                        <i class="far fa-calendar-alt text-teal-700 dark:text-teal-400"></i>
-                        <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
-                    </div>
                     
-                    <div id="realtime-clock" class="flex items-center gap-2 text-xs font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-3.5 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/80 shadow-2xs">
-                        <i class="far fa-clock"></i>
-                        <span id="clock-span">00:00:00</span>
+                    <!-- Combined Date & Time Pill -->
+                    <div class="flex items-center gap-3 bg-slate-100/90 dark:bg-gray-800/80 px-3.5 py-1.5 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs text-xs">
+                        <div class="flex items-center gap-1.5 font-bold text-slate-600 dark:text-gray-300">
+                            <i class="far fa-calendar-alt text-teal-600 dark:text-teal-400 text-xs"></i>
+                            <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
+                        </div>
+                        <div class="h-3.5 w-px bg-slate-300 dark:bg-gray-600"></div>
+                        <div id="realtime-clock" class="flex items-center gap-1.5 font-mono font-black text-teal-700 dark:text-teal-400">
+                            <i class="far fa-clock text-xs"></i>
+                            <span id="clock-span">00:00:00</span>
+                        </div>
                     </div>
+
+                    @include('layouts.partials._notification-bell')
                 </div>
             </header>
 
@@ -147,6 +155,11 @@
 
             <!-- MAIN BODY SLOT -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-gray-900 custom-scrollbar p-4 pb-24 md:p-6 lg:p-8 md:pb-8">
+                @if(isset($header))
+                    <div class="max-w-7xl mx-auto mb-6">
+                        {{ $header }}
+                    </div>
+                @endif
                 {{ $slot }}
             </main>
 
