@@ -1,80 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Laporan Rata-rata Durasi Magang</title>
     <style>
-        @page { margin: 2cm; }
-        body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.5; }
-        .kop-surat { width: 100%; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 20px; }
-        .kop-logo { width: 80px; height: auto; }
-        .kop-pemerintah { font-size: 16pt; font-weight: bold; text-transform: uppercase; }
-        .kop-alamat { font-size: 10pt; font-style: italic; }
-        .judul-laporan { text-align: center; margin-bottom: 20px; font-weight: bold; text-decoration: underline; font-size: 14pt; text-transform: uppercase; }
-        table.data { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        table.data th, table.data td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; font-size: 11pt; }
-        table.data th { background-color: #f0f0f0; text-align: center; font-weight: bold; text-transform: uppercase; }
-        .ttd-container { width: 100%; margin-top: 40px; display: table; page-break-inside: avoid; }
-        .ttd-box-right { display: table-cell; width: 40%; text-align: center; float: right; margin-left: auto; }
+        @page {
+            margin: 1.2cm 1.5cm 1.5cm 1.5cm;
+            size: A4 portrait;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 10pt;
+            color: #111;
+            line-height: 1.3;
+        }
+        
+        .judul-laporan {
+            text-align: center;
+            margin: 10px 0 12px 0;
+            font-weight: bold;
+            font-size: 12pt;
+            text-transform: uppercase;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
+        }
+        
+        .meta-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 8.5pt;
+            color: #333;
+        }
+        .meta-info td {
+            border: none;
+            padding: 1px 0;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            margin-bottom: 10px;
+        }
+        table.data-table thead {
+            display: table-header-group;
+        }
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 9pt;
+        }
+        table.data-table th {
+            background-color: #e5e7eb;
+            text-align: center;
+            font-weight: bold;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+        }
+        
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-bold { font-weight: bold; }
     </style>
 </head>
 <body>
-    <table class="kop-surat">
+
+    @include('pdf.partials.kop_admin_kota')
+
+    <div class="judul-laporan">LAPORAN RATA-RATA DURASI MAGANG</div>
+
+    <table class="meta-info">
         <tr>
-            <td width="15%" align="center" style="border: none;">
-                <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo" alt="Logo">
+            <td style="width: 50%;">
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
+                <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Super Admin' }} (Super Admin Kota)
             </td>
-            <td width="85%" align="center" style="border: none;">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin</div>
+            <td style="width: 50%; text-align: right; vertical-align: top;">
+                <strong>Total Instansi:</strong> {{ count($instansis) }} Instansi
             </td>
         </tr>
     </table>
 
-    <div class="judul-laporan">LAPORAN RATA-RATA DURASI MAGANG</div>
-
-    <table class="data">
+    <table class="data-table">
         <thead>
             <tr>
-                <th width="5%">No</th>
-                <th>Nama Instansi</th>
-                <th>Rata-rata Durasi (Hari)</th>
-                <th>Estimasi Bulan</th>
+                <th style="width: 5%">No</th>
+                <th style="width: 55%">Nama Instansi / Perangkat Daerah</th>
+                <th style="width: 20%">Rata-rata Durasi (Hari)</th>
+                <th style="width: 20%">Estimasi (Bulan)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($instansis as $index => $data)
-            <tr>
-                <td style="text-align: center;">{{ $index + 1 }}</td>
-                <td>{{ $data->nama_dinas }}</td>
-                <td style="text-align: center;">{{ $data->avg_durasi_hari }} Hari</td>
-                <td style="text-align: center;">{{ $data->avg_durasi_bulan }} Bulan</td>
-            </tr>
-            @endforeach
+            @forelse($instansis as $index => $data)
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-bold">{{ $data->nama_dinas }}</td>
+                    <td class="text-center">{{ $data->avg_durasi_hari }} Hari</td>
+                    <td class="text-center">{{ $data->avg_durasi_bulan }} Bulan</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center" style="padding: 15px;">Belum ada data durasi magang.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
-    @php
-        $pejabatNama = $pejabat_nama ?? \App\Models\Setting::value('pejabat_name') ?? 'H. Lukman Fadlun, SH';
-        $pejabatNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
-        $pejabatJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Bakesbangpol Kota Banjarmasin';
-        $ttdImg = \App\Models\Setting::value('ttd_image');
-        $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
-    @endphp
+    {{-- Blok Tanda Tangan --}}
+    @include('pdf.partials.ttd_admin_kota')
 
-    <div class="ttd-container">
-        <div class="ttd-box-right">
-            <p>Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-            <p style="margin-top: 2px;">{{ $pejabatJabatan }}</p>
-            @if($ttdFile && file_exists($ttdFile))
-                <div style="margin: 5px 0;">
-                    <img src="{{ $ttdFile }}" style="max-height: 60px; max-width: 150px;">
-                </div>
-            @else
-                <br><br><br><br>
-            @endif
-            <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">{{ $pejabatNama }}</p>
-            <p style="font-size: 8px; color: #555;">NIP. {{ $pejabatNip }}</p>
-        </div>
-    </div>
+    {{-- Penomoran Halaman & Catatan Kaki --}}
+    @include('pdf.partials.footer_page_number')
+
 </body>
 </html>

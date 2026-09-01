@@ -23,6 +23,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'peserta',
     ];
 
+    public const EMAIL_VERIFICATION_EXEMPT_ROLES = [
+        'admin_kota',
+        'admin_instansi',
+        'pembimbing_lapangan',
+    ];
+
     private const LEGACY_PERMISSIONS = [
         'admin_instansi' => [
             'create-lowongan', 'edit-lowongan', 'delete-lowongan', 'view-lowongan',
@@ -145,6 +151,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         parent::boot();
 
+        static::saving(function ($user) {
+            if ($user->isEmailVerificationExempt() && empty($user->email_verified_at)) {
+                $user->email_verified_at = now();
+            }
+        });
+
         static::deleting(function ($user) {
             Application::where('pembimbing_lapangan_id', $user->id)->update(['pembimbing_lapangan_id' => null]);
             User::where('pembimbing_sekolah_id', $user->id)->update(['pembimbing_sekolah_id' => null]);
@@ -227,6 +239,29 @@ class User extends Authenticatable implements MustVerifyEmail
      * Permission Spatie berlaku penuh setelah user memiliki role Spatie.
      * Fallback hanya digunakan sementara untuk akun legacy yang belum dibackfill.
      */
+    /**
+     * Sensor nomor NIK untuk proteksi data pribadi di tampilan publik.
+     */
+    public function getMaskedNikAttribute(): ?string
+    {
+        if (empty($this->nik)) {
+            return null;
+        }
+
+        $nik = (string) $this->nik;
+        $len = strlen($nik);
+
+        if ($len <= 4) {
+            return str_repeat('*', $len);
+        }
+
+        if ($len <= 8) {
+            return substr($nik, 0, 2) . str_repeat('*', $len - 4) . substr($nik, -2);
+        }
+
+        return substr($nik, 0, 4) . str_repeat('*', max(4, $len - 8)) . substr($nik, -4);
+    }
+
     public function hasPortalPermission(string $permission): bool
     {
         if ($this->role === 'admin_kota') {
@@ -251,13 +286,23 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Tentukan apakah email pengguna telah diverifikasi.
-     * Hanya role 'peserta' dan 'pembimbing' (pembimbing sekolah/akademik) yang wajib verifikasi email.
-     * Role lain (admin_kota, admin_instansi, pembimbing_lapangan) otomatis dianggap sudah terverifikasi.
+     * Tentukan apakah role pengguna dikecualikan dari kewajiban verifikasi email.
+     * Super Admin (admin_kota), Admin Instansi (admin_instansi), dan Pembimbing Lapangan (pembimbing_lapangan)
+     * tidak memerlukan verifikasi email.
      */
-    public function hasVerifiedEmail()
+    public function isEmailVerificationExempt(): bool
     {
-        if (! $this->hasPortalRole(['peserta', 'pembimbing'])) {
+        return $this->hasPortalRole(self::EMAIL_VERIFICATION_EXEMPT_ROLES)
+            || in_array($this->role, self::EMAIL_VERIFICATION_EXEMPT_ROLES, true);
+    }
+
+    /**
+     * Tentukan apakah email pengguna telah diverifikasi.
+     * Role internal (Super Admin, Admin Instansi, Pembimbing Lapangan) selalu dianggap terverifikasi.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        if ($this->isEmailVerificationExempt()) {
             return true;
         }
 
@@ -265,16 +310,19 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Kirim notifikasi verifikasi email hanya jika role membutuhkan verifikasi.
+     * Kirim notifikasi verifikasi email.
+     * Tidak mengirim ke role yang dikecualikan dari verifikasi email.
      */
     public function sendEmailVerificationNotification()
     {
-        if ($this->hasPortalRole(['peserta', 'pembimbing'])) {
-            try {
-                $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
-            }
+        if ($this->isEmailVerificationExempt()) {
+            return;
+        }
+
+        try {
+            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
         }
     }
 

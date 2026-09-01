@@ -104,6 +104,7 @@
                     </h3>
                     <div class="prose prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-slate-100 dark:border-gray-700/70 text-xs sm:text-sm font-medium leading-relaxed">
                         {!! $position->deskripsi ? (str_contains($position->deskripsi, '<') ? $position->deskripsi : nl2br(e($position->deskripsi))) : '<p>Tidak ada deskripsi rinci.</p>' !!}
+                        {!! $position->deskripsi ? (str_contains($position->deskripsi, '<') ? \App\Services\HtmlSanitizer::clean($position->deskripsi) : nl2br(e($position->deskripsi))) : '<p>Tidak ada deskripsi rinci.</p>' !!}
                     </div>
                 </div>
 

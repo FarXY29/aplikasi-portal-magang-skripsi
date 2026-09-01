@@ -155,10 +155,24 @@ class ActiveInternController extends Controller
         $app = Application::with(['user', 'position'])->findOrFail($id);
         $this->authorize('view', $app);
 
-        $query = Attendance::where('application_id', $id)->orderBy('date', 'desc');
+        $query = Attendance::where('application_id', $id)
+            ->with(['attempts' => fn ($q) => $q->latest('id'), 'attempts.fraudEvents'])
+            ->orderBy('date', 'desc');
 
         if ($request->has('bulan') && $request->bulan != '') {
             $query->whereMonth('date', $request->bulan);
+        }
+
+        // Filter fraud: flagged (risk medium ke atas) / clean (null atau low).
+        $fraudFilter = $request->input('status_fraud');
+        if (in_array($fraudFilter, ['flagged', 'clean'], true)) {
+            if ($fraudFilter === 'flagged') {
+                $query->whereNotNull('fraud_status')->where('fraud_status', '!=', 'low');
+            } else {
+                $query->where(function ($q) {
+                    $q->whereNull('fraud_status')->orWhere('fraud_status', 'low');
+                });
+            }
         }
 
         $absensi = $query->paginate(15)->withQueryString();

@@ -28,6 +28,26 @@ class ReportController extends Controller
         return view('admin_instansi.laporan_hub');
     }
 
+    public function laporanPendaftaran(Request $request)
+    {
+        $user = Auth::user();
+        $data = $this->reportService->getApplicationTrackingReportData($user->instansi_id, $request);
+        $data['request'] = $request;
+
+        return view('admin_instansi.laporan.pendaftaran', $data);
+    }
+
+    public function printPendaftaran(Request $request)
+    {
+        $user = Auth::user();
+        $data = $this->reportService->getApplicationTrackingReportData($user->instansi_id, $request, false);
+        $applications = $data['applications'];
+        $stats = $data['stats'];
+        $instansi = $user->instansi;
+
+        return $this->pdfService->stream('pdf.admin_instansi.pendaftaran', compact('applications', 'instansi', 'request', 'stats'), 'Laporan-Pendaftaran-Magang.pdf', 'a4', 'landscape');
+    }
+
     public function laporanRekap(Request $request)
     {
         $user = Auth::user();
@@ -71,9 +91,11 @@ class ReportController extends Controller
         return view('admin_instansi.laporan.beban_pembimbing', $data);
     }
 
-    public function printBebanPembimbing()
+    public function printBebanPembimbing(Request $request)
     {
         $data = $this->getBebanPembimbingPayload();
+        $data['instansi'] = Auth::user()->instansi;
+        $data['request'] = $request;
         return $this->pdfService->stream('pdf.admin_instansi.beban_pembimbing', $data, 'Laporan-Beban-Pembimbing.pdf', 'a4', 'landscape');
     }
 
@@ -83,9 +105,11 @@ class ReportController extends Controller
         return view('admin_instansi.laporan.demografi_kampus', $data);
     }
 
-    public function printDemografiKampus()
+    public function printDemografiKampus(Request $request)
     {
         $data = $this->getDemografiKampusPayload();
+        $data['instansi'] = Auth::user()->instansi;
+        $data['request'] = $request;
         return $this->pdfService->stream('pdf.admin_instansi.demografi_kampus', $data, 'Laporan-Demografi-Kampus.pdf', 'a4', 'landscape');
     }
 
@@ -98,6 +122,8 @@ class ReportController extends Controller
     public function printJurnalHarian(Request $request)
     {
         $data = $this->getJurnalHarianPayload($request);
+        $data['instansi'] = Auth::user()->instansi;
+        $data['request'] = $request;
         return $this->pdfService->stream('pdf.admin_instansi.jurnal_harian', $data, 'Laporan-Jurnal-Harian.pdf', 'a4', 'landscape');
     }
 

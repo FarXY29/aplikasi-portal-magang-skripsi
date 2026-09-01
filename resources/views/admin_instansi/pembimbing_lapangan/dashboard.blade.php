@@ -3,7 +3,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
                 <i class="fas fa-chalkboard-teacher text-teal-600"></i>
-                {{ __('Dashboard Pembimbing Lapangan Lapangan') }}
+                {{ __('Dashboard Pembimbing Lapangan') }}
             </h2>
         </div>
     </x-slot>

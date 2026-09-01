@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'superadmin',
                 'password' => Hash::make('password'),
                 'role' => 'admin_kota',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -88,6 +89,7 @@ class DatabaseSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'role' => 'admin_instansi',
                     'instansi_id' => $instansi->id,
+                    'email_verified_at' => now(),
                 ]
             );
 
@@ -102,6 +104,7 @@ class DatabaseSeeder extends Seeder
                         'password' => Hash::make('password'),
                         'role' => 'pembimbing_lapangan',
                         'instansi_id' => $instansi->id,
+                        'email_verified_at' => now(),
                     ]
                 );
                 $pembimbings[$instansi->id][] = $pembimbingLapangan;

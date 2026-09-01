@@ -46,14 +46,35 @@ class CreateDatabaseBackup implements ShouldQueue
                 $settings['database'],
             );
 
-            $dump = new \Ifsnop\Mysqldump\Mysqldump($dsn, $settings['username'], $settings['password']);
+            $dumpSettings = [
+                'add-drop-table' => true,
+                'add-locks' => true,
+                'extended-insert' => true,
+                'single-transaction' => true,
+                'lock-tables' => false,
+                'add-drop-trigger' => true,
+                'disable-foreign-keys-check' => true,
+                'compress' => \Ifsnop\Mysqldump\Mysqldump::NONE,
+            ];
+
+            $pdoSettings = [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            ];
+
+            $dump = new \Ifsnop\Mysqldump\Mysqldump(
+                $dsn,
+                $settings['username'],
+                $settings['password'],
+                $dumpSettings,
+                $pdoSettings
+            );
             $dump->start(Storage::disk('private')->path($path));
 
             $this->backup->update([
                 'stored_path' => $path,
                 'status' => 'completed',
                 'completed_at' => now(),
-                'expires_at' => now()->addDay(),
+                'expires_at' => now()->addMinutes(30),
             ]);
 
             AuditLog::create([
@@ -66,7 +87,7 @@ class CreateDatabaseBackup implements ShouldQueue
         } catch (\Throwable $exception) {
             $this->backup->update([
                 'status' => 'failed',
-                'error_message' => 'Backup gagal dibuat. Periksa log aplikasi untuk detail.',
+                'error_message' => $exception->getMessage() ?: 'Backup gagal dibuat. Periksa log sistem untuk detail.',
             ]);
 
             Log::error('Database backup failed.', [

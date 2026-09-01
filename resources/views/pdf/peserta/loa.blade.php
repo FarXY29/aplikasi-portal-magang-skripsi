@@ -254,7 +254,11 @@
                     $ttdPath = null;
                     if (!empty($app->position->instansi->ttd_kepala)) {
                         $rawPath = $app->position->instansi->ttd_kepala;
-                        if (file_exists(storage_path('app/public/' . $rawPath))) {
+                        if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawPath)) {
+                            $ttdPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawPath);
+                        } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawPath)) {
+                            $ttdPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawPath);
+                        } elseif (file_exists(storage_path('app/public/' . $rawPath))) {
                             $ttdPath = storage_path('app/public/' . $rawPath);
                         } elseif (file_exists(public_path('storage/' . $rawPath))) {
                             $ttdPath = public_path('storage/' . $rawPath);

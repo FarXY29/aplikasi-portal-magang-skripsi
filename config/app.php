@@ -159,12 +159,10 @@ return [
     |
     */
 
-    'providers' => ServiceProvider::defaultProviders()->merge([
-        App\EnvKit\EnvKitDebugServiceProvider::class,
-        /*
-         * Package Service Providers...
-         */
-
+    'providers' => ServiceProvider::defaultProviders()->merge(array_values(array_filter([
+        (env('APP_ENV') === 'local' && class_exists(App\EnvKit\EnvKitDebugServiceProvider::class))
+            ? App\EnvKit\EnvKitDebugServiceProvider::class
+            : null,
         /*
          * Application Service Providers...
          */
@@ -173,7 +171,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-    ])->toArray(),
+    ])))->toArray(),
 
     /*
     |--------------------------------------------------------------------------

@@ -103,6 +103,15 @@
                                 <option value="12" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('bulan') == '12' ? 'selected' : '' }}>Desember</option>
                             </select>
                         </div>
+
+                        <div class="relative">
+                            <i class="fas fa-shield-alt absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 text-xs"></i>
+                            <select name="status_fraud" onchange="this.form.submit()" class="pl-9 pr-8 py-2 text-xs font-bold border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 rounded-xl shadow-xs cursor-pointer [color-scheme:dark]">
+                                <option value="" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">Semua Status Risiko</option>
+                                <option value="flagged" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('status_fraud') == 'flagged' ? 'selected' : '' }}>Hanya Ditandai</option>
+                                <option value="clean" class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100" {{ request('status_fraud') == 'clean' ? 'selected' : '' }}>Hanya Bersih</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
 
@@ -115,6 +124,7 @@
                                 <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jam Pulang</th>
                                 <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 text-left text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Catatan / Bukti</th>
+                                <th class="px-6 py-4 text-center text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Indikator Risiko</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm">
@@ -199,10 +209,45 @@
                                         @endif
                                     @endif
                                 </td>
+
+                                {{-- Indikator risiko fraud (hanya render bila data tersedia — record lama tampil kosong) --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    @php
+                                        // attempts sudah eager-loaded di controller (anti N+1).
+                                        $worstAttempt = $log->attempts
+                                            ->whereNotNull('fraud_status')
+                                            ->sortByDesc('risk_score')
+                                            ->first()
+                                            ?? $log->attempts->sortByDesc('risk_score')->first();
+                                        $fraudEnum = $worstAttempt && $worstAttempt->fraud_status
+                                            ? \App\Enums\AttendanceFraudStatus::tryFrom($worstAttempt->fraud_status)
+                                            : null;
+                                        $indicatorLabels = collect($worstAttempt?->risk_indicators ?? [])
+                                            ->reject(fn ($i) => $i === 'accepted')
+                                            ->all();
+                                    @endphp
+                                    @if($worstAttempt && $fraudEnum)
+                                        <div class="flex flex-col items-center gap-1.5">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border {{ $fraudEnum->badgeClass() }} gap-1.5" title="Risk Score: {{ $worstAttempt->risk_score }}">
+                                                <i class="fas fa-shield-alt text-[10px]"></i> {{ $worstAttempt->risk_score }} — {{ $fraudEnum->label() }}
+                                            </span>
+                                            @if(!empty($indicatorLabels))
+                                                <button type="button"
+                                                        x-data
+                                                        @click="$dispatch('open-fraud-detail', { id: {{ $worstAttempt->id }} })"
+                                                        class="text-[11px] text-teal-600 dark:text-teal-400 hover:underline font-medium select-none">
+                                                    Lihat {{ count($indicatorLabels) }} indikator <i class="fas fa-external-link-alt text-[9px] ml-0.5"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 dark:text-gray-500 text-xs">-</span>
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center">
+                                <td colspan="6" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
                                         <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
                                             <i class="far fa-calendar-times text-3xl text-gray-400 dark:text-gray-500"></i>
@@ -224,4 +269,6 @@
 
         </div>
     </div>
+
+    @includeIf('admin_instansi.partials._fraud-detail-modal')
 </x-app-layout>

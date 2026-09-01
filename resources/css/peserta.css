@@ -100,7 +100,7 @@
 
 .progress-bar-track {
     width: 100%;
-    background-color: #e5e7eb;
+    background-color: #e2e8f0;
     border-radius: 9999px;
     height: 10px;
     overflow: hidden;
@@ -113,7 +113,7 @@
 .progress-bar-fill {
     height: 100%;
     border-radius: 9999px;
-    background: linear-gradient(90deg, #14b8a6, #0d9488, #059669);
+    background: linear-gradient(90deg, #0f766e, #0d9488, #059669);
     background-size: 200% 100%;
     animation: progressFill 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
                shimmer 2s linear infinite 1.2s;
@@ -126,9 +126,9 @@
 .upload-zone {
     position: relative;
     width: 100%;
-    border: 2px dashed #d1d5db;
+    border: 2px dashed #cbd5e1;
     border-radius: 1rem;
-    background-color: #f9fafb;
+    background-color: #f8fafc;
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
@@ -279,8 +279,8 @@
     background: white;
     border-radius: 1rem;
     padding: 1.25rem;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     animation: fadeInUp 0.45s ease-out both;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -291,7 +291,7 @@
 }
 
 .stat-summary-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
     transform: translateY(-2px);
 }
 
@@ -307,7 +307,8 @@
    -------------------------------------------------------------------------- */
 
 .welcome-banner {
-    background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 45%, #ccfbf1 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f0fdfa 100%);
+    border: 1px solid #e2e8f0;
     border-radius: 1.5rem;
     position: relative;
     overflow: hidden;
@@ -321,7 +322,7 @@
     width: 52px;
     height: 52px;
     border-radius: 1rem;
-    background: linear-gradient(135deg, #14b8a6, #059669);
+    background: linear-gradient(135deg, #0f766e, #115e59);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -329,7 +330,7 @@
     font-weight: 900;
     color: white;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
     animation: pulse-ring 2.5s ease-out infinite;
 }
 

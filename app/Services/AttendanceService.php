@@ -63,22 +63,14 @@ class AttendanceService
 
     /**
      * Fungsi Matematika Haversine (Menghitung Jarak 2 Titik Koordinat dalam KM).
+     *
+     * Delegasi ke GeoDistanceService terpusat — behavior identik,
+     * hanya deduplikasi implementasi (§27).
      */
     public function calculateDistance($lat1, $lon1, $lat2, $lon2): float
     {
-        $earthRadius = 6371; // Radius bumi dalam KM
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon / 2) * sin($dLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        $distance = $earthRadius * $c;
-
-        return $distance;
+        return app(\App\Services\Attendance\GeoDistanceService::class)
+            ->distanceKm((float) $lat1, (float) $lon1, (float) $lat2, (float) $lon2);
     }
 
     /**

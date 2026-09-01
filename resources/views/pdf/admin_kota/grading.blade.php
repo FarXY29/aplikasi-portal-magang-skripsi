@@ -1,24 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Laporan Analisis Kompetensi &amp; Performa</title>
+    <meta charset="UTF-8">
+    <title>Laporan Evaluasi &amp; Penilaian Peserta</title>
     <style>
-        body { font-family: sans-serif; font-size: 8px; color: #333; line-height: 1.3; }
-        .kop-surat { width: 100%; border-bottom: 3px double #333; padding-bottom: 10px; margin-bottom: 15px; }
-        .kop-logo { width: 60px; height: auto; }
-        .kop-text { text-align: center; }
-        .kop-pemerintah { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-        .kop-dinas { font-size: 15px; font-weight: 800; text-transform: uppercase; margin-top: 2px; }
-        .kop-alamat { font-size: 8px; color: #555; margin-top: 3px; font-style: italic; }
+        @page {
+            margin: 1.2cm 1.5cm 1.5cm 1.5cm;
+            size: A4 portrait;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 9.5pt;
+            color: #111;
+            line-height: 1.3;
+        }
         
-        .judul-laporan { text-align: center; margin: 15px 0 10px 0; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .judul-laporan {
+            text-align: center;
+            margin: 10px 0 12px 0;
+            font-weight: bold;
+            font-size: 12pt;
+            text-transform: uppercase;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
+        }
         
-        .meta-info { margin-bottom: 12px; font-size: 9px; }
-        .meta-info td { border: none; padding: 2px 0; }
+        .meta-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 8.5pt;
+            color: #333;
+        }
+        .meta-info td {
+            border: none;
+            padding: 1px 0;
+        }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #aaa; padding: 4px 5px; text-align: left; vertical-align: top; }
-        th { background-color: #f3f4f6; text-align: center; font-weight: bold; font-size: 8px; text-transform: uppercase; }
+        .section-title { 
+            font-size: 9.5pt;
+            font-weight: bold;
+            margin: 12px 0 6px 0; 
+            padding: 3px 6px;
+            background-color: #f3f4f6;
+            border-left: 3px solid #0d9488;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+        .stats-table td {
+            border: 1px solid #555;
+            padding: 5px 3px;
+            text-align: center;
+        }
+        .stats-table .label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+            font-weight: bold;
+        }
+        .stats-table .value {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #111;
+            margin-top: 1px;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            margin-bottom: 10px;
+        }
+        table.data-table thead {
+            display: table-header-group;
+        }
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333;
+            padding: 5px 6px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 8.5pt;
+        }
+        table.data-table th {
+            background-color: #e5e7eb;
+            text-align: center;
+            font-weight: bold;
+            font-size: 8pt;
+            text-transform: uppercase;
+        }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
@@ -28,59 +107,27 @@
         .predikat-baik { color: #2563eb; font-weight: bold; }
         .predikat-cukup { color: #d97706; font-weight: bold; }
         .predikat-kurang { color: #dc2626; font-weight: bold; }
-        
-        .section-title { 
-            font-size: 10px; font-weight: bold; margin: 15px 0 8px 0; 
-            padding: 4px 8px; background-color: #f3f4f6; border-left: 4px solid #0d9488;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        
-        .stats-table { margin-bottom: 15px; }
-        .stats-table td { border: 1px solid #ccc; padding: 6px 4px; text-align: center; }
-        .stats-table .label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: bold; }
-        .stats-table .value { font-size: 12px; font-weight: bold; color: #111; margin-top: 2px; }
-        
-        .footer { margin-top: 20px; font-size: 8px; color: #888; border-top: 1px solid #ccc; padding-top: 8px; }
-        
-        .ttd-container { width: 100%; margin-top: 30px; display: table; page-break-inside: avoid; }
-        .ttd-row { display: table-row; }
-        .ttd-col-left { display: table-cell; width: 65%; }
-        .ttd-col-right { display: table-cell; width: 35%; text-align: center; }
-        .ttd-space { height: 50px; }
     </style>
 </head>
 <body>
 
-    <table class="kop-surat" style="border: none;">
-        <tr style="border: none;">
-            <td width="10%" align="center" style="border: none; padding: 0;">
-                <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo" alt="Logo">
+    @include('pdf.partials.kop_admin_kota')
+
+    <div class="judul-laporan">{{ $title ?? 'LAPORAN EVALUASI & PENILAIAN PESERTA MAGANG' }}</div>
+
+    <table class="meta-info">
+        <tr>
+            <td style="width: 50%;">
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
+                <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Super Admin' }} (Super Admin Kota)
             </td>
-            <td width="90%" class="kop-text" style="border: none; padding: 0;">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-dinas">BADAN KESATUAN BANGSA DAN POLITIK</div>
-                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin 70111</div>
+            <td style="width: 50%; text-align: right; vertical-align: top;">
+                <strong>Asal Kampus:</strong> {{ $request->instansi ?: 'Semua' }} &nbsp;|&nbsp;
+                <strong>Lokasi Dinas:</strong> {{ $request->instansi_id ? 'Filter Terpilih' : 'Semua Dinas' }} &nbsp;|&nbsp;
+                <strong>Predikat:</strong> {{ $request->predikat ?: 'Semua' }}
             </td>
         </tr>
     </table>
-
-    <div class="judul-laporan">{!! nl2br(e($title)) !!}</div>
-
-    <div class="meta-info">
-        <table style="width: 100%; border: none; margin: 0;">
-            <tr style="border: none;">
-                <td style="border: none; width: 50%; font-size: 8px; color: #555; padding: 0;">
-                    <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
-                    <strong>Pencetak:</strong> {{ Auth::user()->name }} (Super Admin)
-                </td>
-                <td style="border: none; width: 50%; font-size: 8px; color: #555; text-align: right; vertical-align: top; padding: 0;">
-                    <strong>Asal Kampus:</strong> {{ $request->instansi ?: 'Semua' }} &nbsp;|&nbsp;
-                    <strong>Lokasi Dinas:</strong> {{ $request->instansi_id ? 'Filter Dinas Aktif' : 'Semua' }} &nbsp;|&nbsp;
-                    <strong>Predikat:</strong> {{ $request->predikat ?: 'Semua' }}
-                </td>
-            </tr>
-        </table>
-    </div>
 
     {{-- Ringkasan Statistik --}}
     <div class="section-title">Ringkasan Statistik Kompetensi</div>
@@ -107,37 +154,37 @@
                 <div class="value predikat-kurang">{{ $stats['kurang'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Rerata Kelulusan</div>
+                <div class="label">Rerata Nilai</div>
                 <div class="value" style="color: #0d9488;">{{ $stats['avg_nilai'] }}</div>
             </td>
         </tr>
     </table>
 
-    <table class="stats-table" style="margin-top: -8px;">
+    <table class="stats-table" style="margin-top: -6px;">
         <tr>
             <td style="width: 33.33%">
-                <span class="label">Rerata Kompetensi Teknis:</span> <strong>{{ $statsGlobal['avg_teknis'] }}/100</strong>
+                <span class="label">Rerata Kompetensi Teknis:</span> <strong>{{ $statsGlobal['avg_teknis'] ?? '-' }}/100</strong>
             </td>
             <td style="width: 33.33%">
-                <span class="label">Rerata Kedisiplinan:</span> <strong>{{ $statsGlobal['avg_disiplin'] }}/100</strong>
+                <span class="label">Rerata Kedisiplinan:</span> <strong>{{ $statsGlobal['avg_disiplin'] ?? '-' }}/100</strong>
             </td>
             <td style="width: 33.33%">
-                <span class="label">Rerata Perilaku / Soft Skill:</span> <strong>{{ $statsGlobal['avg_perilaku'] }}/100</strong>
+                <span class="label">Rerata Perilaku / Soft Skill:</span> <strong>{{ $statsGlobal['avg_perilaku'] ?? '-' }}/100</strong>
             </td>
         </tr>
     </table>
 
     {{-- Tabel Utama --}}
     <div class="section-title">Data Pemeringkatan &amp; Analisis Performa</div>
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 5%">Rank</th>
                 <th style="width: 25%">Nama Peserta &amp; Asal Kampus</th>
                 <th style="width: 25%">Penempatan Dinas &amp; Posisi</th>
-                <th style="width: 20%">Aspek Nilai (Teknis / Disiplin / Perilaku)</th>
-                <th style="width: 13%">Nilai Akhir</th>
-                <th style="width: 13%">Predikat</th>
+                <th style="width: 21%">Aspek (Teknis / Disiplin / Perilaku)</th>
+                <th style="width: 12%">Nilai Akhir</th>
+                <th style="width: 12%">Predikat</th>
             </tr>
         </thead>
         <tbody>
@@ -145,19 +192,19 @@
                 <tr>
                     <td class="text-center text-bold">{{ $index + 1 }}</td>
                     <td>
-                        <strong>{{ $data['nama'] }}</strong><br>
-                        <span style="font-size: 7px; color: #555;">{{ $data['asal_instansi'] }}</span>
+                        <strong class="text-bold">{{ $data['nama'] }}</strong><br>
+                        <span style="font-size: 7.5pt; color: #555;">{{ $data['asal_instansi'] }}</span>
                     </td>
                     <td>
-                        <strong>{{ $data['instansi'] }}</strong><br>
-                        <span style="font-size: 7px; color: #555;">{{ $data['posisi'] }}</span>
+                        <strong class="text-bold">{{ $data['instansi'] }}</strong><br>
+                        <span style="font-size: 7.5pt; color: #555;">{{ $data['posisi'] }}</span>
                     </td>
                     <td class="text-center">
                         <span style="color: #2563eb;">{{ $data['teknis'] }}</span> /
                         <span style="color: #7c3aed;">{{ $data['disiplin'] }}</span> /
                         <span style="color: #059669;">{{ $data['perilaku'] }}</span>
                     </td>
-                    <td class="text-center text-bold" style="font-size: 10px; color: #0d9488;">
+                    <td class="text-center text-bold" style="font-size: 9.5pt; color: #0d9488;">
                         {{ $data['rata_rata'] }}
                     </td>
                     <td class="text-center text-bold">
@@ -175,48 +222,17 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center" style="padding: 20px;">Tidak ada data ditemukan.</td>
+                    <td colspan="6" class="text-center" style="padding: 15px;">Tidak ada data ditemukan.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
-    @php
-        $pejabatNama = $pejabat_nama ?? \App\Models\Setting::value('pejabat_name') ?? 'H. Lukman Fadlun, SH';
-        $pejabatNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
-        $pejabatJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Bakesbangpol Kota Banjarmasin';
-        $ttdImg = \App\Models\Setting::value('ttd_image');
-        $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
-    @endphp
+    {{-- Blok Tanda Tangan --}}
+    @include('pdf.partials.ttd_admin_kota')
 
-    {{-- Tanda Tangan --}}
-    <div class="ttd-container">
-        <div class="ttd-row">
-            <div class="ttd-col-left"></div>
-            <div class="ttd-col-right">
-                <p>Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                <p style="margin-top: 2px;">{{ $pejabatJabatan }}</p>
-                @if($ttdFile && file_exists($ttdFile))
-                    <div style="margin: 5px 0;">
-                        <img src="{{ $ttdFile }}" style="max-height: 60px; max-width: 150px;">
-                    </div>
-                @else
-                    <div class="ttd-space"></div>
-                @endif
-                <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">{{ $pejabatNama }}</p>
-                <p style="font-size: 8px; color: #555;">NIP. {{ $pejabatNip }}</p>
-            </div>
-        </div>
-    </div>
+    {{-- Penomoran Halaman & Catatan Kaki --}}
+    @include('pdf.partials.footer_page_number')
 
-    <div class="footer">
-        <p>Laporan Kompetensi &amp; Performa ini merupakan hasil kumulatif evaluasi program magang Kota Banjarmasin. &copy; {{ date('Y') }}</p>
-    </div>
-
-    <script type="text/php">
-        if ( isset($pdf) ) {
-            $pdf->get_cpdf()->addJS('print(true);');
-        }
-    </script>
 </body>
 </html>

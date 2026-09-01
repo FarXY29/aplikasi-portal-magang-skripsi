@@ -104,7 +104,7 @@ class PembimbingLapanganController extends Controller
             $this->authorize('validateRecords', $log->application);
             $log->update([
                 'status_validasi' => $validated['status'],
-                'komentar_pembimbing_lapangan' => $validated['komentar']
+                'komentar_pembimbing_lapangan' => $validated['komentar'] ?? null
             ]);
             $validatedCount++;
         }
