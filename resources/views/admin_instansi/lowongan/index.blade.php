@@ -9,28 +9,44 @@
             ]">
             <x-slot name="badge">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 border border-teal-200/70 dark:border-teal-800 shadow-2xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
+                    {{ $lowongans->count() }} Lowongan
+                </span>
+            </x-slot>
+            <x-slot name="actions">
+                <a href="{{ route('dinas.lowongan.create') }}" class="flex items-center px-4 py-2 bg-teal-600 dark:bg-teal-500 text-white rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-teal-600 shadow-sm transition transform active:scale-95 text-xs uppercase tracking-wider">
+                    <i class="fas fa-plus mr-2 text-[10px]"></i> Buat Lowongan
+                </a>
+            </x-slot>
+        </x-ui.page-header>
+    </x-slot>
+
+    <div class="py-8 bg-gray-50/50 dark:bg-gray-900/50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Filter Bar --}}
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+                <form method="GET" action="{{ route('dinas.lowongan.index') }}" class="flex flex-wrap items-center gap-3">
                     <div class="flex-grow min-w-[200px]">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari posisi, syarat, atau deskripsi..." class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium">
                     </div>
-
+                    <div class="w-full sm:w-48">
+                        <select name="status" class="w-full text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 py-2 px-3 shadow-sm font-medium" onchange="this.form.submit()">
                             <option value="">Semua Status</option>
                             <option value="buka" {{ request('status') == 'buka' ? 'selected' : '' }}>Buka</option>
                             <option value="tutup" {{ request('status') == 'tutup' ? 'selected' : '' }}>Tutup</option>
                         </select>
                     </div>
-                    
-                    <div class="flex items-center ml-auto pl-4 border-l border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('dinas.lowongan.create') }}" class="flex items-center px-4 py-2 bg-teal-600 dark:bg-teal-500 text-white rounded-xl font-bold hover:bg-teal-700 dark:hover:bg-teal-600 shadow-sm transition transform active:scale-95 text-xs uppercase tracking-wider">
-                            <i class="fas fa-plus mr-2 text-[10px]"></i> Buat Lowongan
+                    <button type="submit" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white text-xs font-bold rounded-xl transition">
+                        <i class="fas fa-search mr-1"></i> Cari
+                    </button>
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('dinas.lowongan.index') }}" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-bold rounded-xl transition">
+                            Reset
                         </a>
-                    </div>
+                    @endif
+                </form>
             </div>
-
-            @if(session('success'))
-                <x-ui.alert type="success" class="mb-4">
-                    {{ session('success') }}
-                </x-ui.alert>
-            @endif
 
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="overflow-x-auto">

@@ -23,7 +23,7 @@
     $mode = $mode ?? 'single'; // 'single' or 'dual'
 @endphp
 
-<div class="ttd-container" style="width: 100%; margin-top: 25px; page-break-inside: avoid; font-family: 'Times New Roman', Times, serif;">
+<div class="ttd-container" style="width: 100%; margin-top: 20px; page-break-inside: avoid; font-family: 'Times New Roman', Times, serif;">
     @if($mode === 'dual')
         @php
             $pl = $pembimbing_lapangan ?? ($app->pembimbing_lapangan ?? null);
@@ -58,8 +58,10 @@
                         @endif
                     </div>
 
-                    <div style="font-size: 10pt; font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ $pNama }}</div>
-                    <div style="font-size: 9.5pt; color: #333; margin-top: 2px;">NIP. {{ $pNip }}</div>
+                    <div style="font-size: 10pt; font-weight: bold; text-transform: uppercase;">
+                        <u>{{ $pNama }}</u>
+                    </div>
+                    <div style="font-size: 9.5pt; color: #111; margin-top: 2px;">NIP. {{ $pNip }}</div>
                 </td>
                 <td style="width: 4%; border: none;"></td>
                 {{-- Right Header: Pembimbing Lapangan --}}
@@ -78,8 +80,10 @@
                         @endif
                     </div>
 
-                    <div style="font-size: 10pt; font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ $plNama }}</div>
-                    <div style="font-size: 9.5pt; color: #333; margin-top: 2px;">NIP/NIK. {{ $plNip }}</div>
+                    <div style="font-size: 10pt; font-weight: bold; text-transform: uppercase;">
+                        <u>{{ $plNama }}</u>
+                    </div>
+                    <div style="font-size: 9.5pt; color: #111; margin-top: 2px;">NIP/NIK. {{ $plNip }}</div>
                 </td>
             </tr>
         </table>
@@ -91,7 +95,7 @@
                     <div style="font-size: 10pt; margin-bottom: 2px;">Banjarmasin, {{ $tanggalCetak }}</div>
                     <div style="font-size: 10pt; font-weight: bold; text-transform: uppercase;">{{ $pJabatan }}</div>
                     @if($dinasName)
-                        <div style="font-size: 9pt; font-weight: bold; text-transform: uppercase;">{{ $dinasName }}</div>
+                        <div style="font-size: 9.5pt; font-weight: bold; text-transform: uppercase;">{{ $dinasName }}</div>
                     @endif
                     
                     <div style="height: 60px; margin: 4px 0; text-align: center; vertical-align: middle;">
@@ -102,8 +106,10 @@
                         @endif
                     </div>
 
-                    <div style="font-size: 10pt; font-weight: bold; text-decoration: underline; text-transform: uppercase;">{{ $pNama }}</div>
-                    <div style="font-size: 9.5pt; color: #333; margin-top: 2px;">NIP. {{ $pNip }}</div>
+                    <div style="font-size: 10pt; font-weight: bold; text-transform: uppercase;">
+                        <u>{{ $pNama }}</u>
+                    </div>
+                    <div style="font-size: 9.5pt; color: #111; margin-top: 2px;">NIP. {{ $pNip }}</div>
                 </td>
             </tr>
         </table>

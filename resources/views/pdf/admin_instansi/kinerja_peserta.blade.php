@@ -10,16 +10,16 @@
         }
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 9.5pt;
-            color: #111;
+            font-size: 9pt;
+            color: #000;
             line-height: 1.3;
         }
         
         .judul-laporan {
             text-align: center;
-            margin: 10px 0 12px 0;
+            margin: 8px 0 10px 0;
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 11.5pt;
             text-transform: uppercase;
             text-decoration: underline;
             letter-spacing: 0.5px;
@@ -28,22 +28,22 @@
         .meta-info {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 8.5pt;
-            color: #333;
+            color: #222;
         }
         .meta-info td {
             border: none;
-            padding: 1px 0;
+            padding: 1.5px 0;
         }
         
         .section-title { 
-            font-size: 9.5pt;
+            font-size: 9pt;
             font-weight: bold;
-            margin: 12px 0 6px 0; 
+            margin: 10px 0 5px 0; 
             padding: 3px 6px;
-            background-color: #f3f4f6;
-            border-left: 3px solid #0d9488;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -51,31 +51,31 @@
         .stats-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .stats-table td {
-            border: 1px solid #555;
-            padding: 5px 3px;
+            border: 1px solid #444;
+            padding: 4px 2px;
             text-align: center;
         }
-        .stats-table .label {
-            font-size: 7pt;
+        .stats-table .stat-label {
+            font-size: 6.8pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #555;
+            color: #444;
             font-weight: bold;
         }
-        .stats-table .value {
-            font-size: 11pt;
+        .stats-table .stat-value {
+            font-size: 10.5pt;
             font-weight: bold;
-            color: #111;
+            color: #000;
             margin-top: 1px;
         }
         
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 6px;
+            margin-top: 4px;
             margin-bottom: 10px;
         }
         table.data-table thead {
@@ -86,40 +86,40 @@
         }
         table.data-table th, table.data-table td {
             border: 1px solid #333;
-            padding: 5px 6px;
+            padding: 4.5px 5px;
             text-align: left;
             vertical-align: middle;
-            font-size: 8.5pt;
+            font-size: 8.2pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
-            font-size: 8pt;
+            font-size: 7.8pt;
             text-transform: uppercase;
         }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-bold { font-weight: bold; }
-        .text-green { color: #16a34a; }
-        .text-red { color: #dc2626; }
-        .text-orange { color: #ea580c; }
-        .text-blue { color: #2563eb; }
+        
+        .status-aktif { color: #15803d; font-weight: bold; }
+        .status-selesai { color: #1d4ed8; font-weight: bold; }
         
         .detail-table { width: 100%; border-collapse: collapse; margin-top: 2px; }
-        .detail-table td { font-size: 7.5pt; padding: 2px 4px; border: 1px solid #999; }
+        .detail-table td { font-size: 7.5pt; padding: 2px 4px; border: 1px solid #777; }
     </style>
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi')
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
 
-    <div class="judul-laporan">LAPORAN EVALUASI KINERJA PESERTA MAGANG</div>
+    <div class="judul-laporan">LAPORAN EVALUASI KINERJA &amp; SCORECARD PESERTA MAGANG</div>
 
     <table class="meta-info">
         <tr>
             <td style="width: 50%;">
+                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? (Auth::user()->instansi->nama_dinas ?? '-') }}<br>
                 <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
             </td>
@@ -130,43 +130,43 @@
     </table>
 
     {{-- Ringkasan Statistik --}}
-    <div class="section-title">Ringkasan Statistik Instansi</div>
+    <div class="section-title">Ringkasan Statistik Evaluasi Kinerja</div>
     <table class="stats-table">
         <tr>
             <td style="width: 16.66%">
-                <div class="label">Total Peserta</div>
-                <div class="value">{{ $stats['total_peserta'] }}</div>
+                <div class="stat-label">Total Peserta</div>
+                <div class="stat-value">{{ $stats['total_peserta'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Peserta Aktif</div>
-                <div class="value text-green">{{ $stats['aktif'] }}</div>
+                <div class="stat-label">Peserta Aktif</div>
+                <div class="stat-value status-aktif">{{ $stats['aktif'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Alumni Lulus</div>
-                <div class="value text-blue">{{ $stats['selesai'] }}</div>
+                <div class="stat-label">Alumni Lulus</div>
+                <div class="stat-value status-selesai">{{ $stats['selesai'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Avg Kehadiran</div>
-                <div class="value text-green">{{ $stats['avg_kehadiran'] }}%</div>
+                <div class="stat-label">Rerata Kehadiran</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['avg_kehadiran'] }}%</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Avg Logbook</div>
-                <div class="value text-blue">{{ $stats['avg_logbook'] }}%</div>
+                <div class="stat-label">Rerata Logbook</div>
+                <div class="stat-value" style="color: #1d4ed8;">{{ $stats['avg_logbook'] }}%</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Avg Nilai Lulus</div>
-                <div class="value text-orange">{{ $stats['avg_nilai'] > 0 ? $stats['avg_nilai'] : '-' }}</div>
+                <div class="stat-label">Rerata Nilai Lulus</div>
+                <div class="stat-value" style="color: #b45309;">{{ $stats['avg_nilai'] > 0 ? $stats['avg_nilai'] : '-' }}</div>
             </td>
         </tr>
     </table>
 
     {{-- Tabel Utama --}}
-    <div class="section-title">Scorecard Performa &amp; Evaluasi Peserta</div>
+    <div class="section-title">Scorecard Performa &amp; Evaluasi Peserta Magang</div>
     <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 3%">No</th>
-                <th style="width: 25%">Nama Peserta &amp; Kampus</th>
+                <th style="width: 25%">Nama Peserta &amp; Institusi</th>
                 <th style="width: 20%">Posisi Magang</th>
                 <th style="width: 13%">Kehadiran (%)</th>
                 <th style="width: 13%">Logbook (%)</th>
@@ -177,21 +177,21 @@
         <tbody>
             @forelse($kinerja as $app)
                 {{-- Baris Profil Peserta --}}
-                <tr style="background-color: #f9fafb;">
+                <tr style="background-color: #f8fafc;">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
                         <strong class="text-bold">{{ $app->user->name }}</strong><br>
-                        <small style="color: #555;">{{ $app->user->asal_instansi ?? '-' }}</small>
+                        <span style="font-size: 7.5pt; color: #444;">{{ $app->user->asal_instansi ?? '-' }}</span>
                     </td>
                     <td>{{ $app->position->judul_posisi ?? '-' }}</td>
                     <td class="text-center text-bold">{{ round($app->attendance_rate, 1) }}%</td>
                     <td class="text-center text-bold">{{ round($app->log_rate, 1) }}%</td>
                     <td class="text-center text-bold">
-                        <span style="color: {{ $app->status?->value == 'diterima' ? '#16a34a' : '#2563eb' }};">
+                        <span class="status-{{ $app->status?->value == 'diterima' ? 'aktif' : 'selesai' }}">
                             {{ $app->status?->value == 'diterima' ? 'Aktif' : 'Selesai' }}
                         </span>
                     </td>
-                    <td class="text-center text-bold" style="font-size: 9.5pt; color: #0d9488;">
+                    <td class="text-center text-bold" style="font-size: 9.5pt; color: #0f766e;">
                         {{ $app->avg_nilai > 0 ? round($app->avg_nilai, 1) : '-' }}
                     </td>
                 </tr>
@@ -203,7 +203,7 @@
                             <tr style="border: none;">
                                 {{-- Detail Kehadiran --}}
                                 <td style="width: 31%; border: none; padding: 0; vertical-align: top;">
-                                    <div style="font-size: 7.5pt; font-weight: bold; color: #0d9488; margin-bottom: 2px;">
+                                    <div style="font-size: 7.5pt; font-weight: bold; color: #047857; margin-bottom: 2px;">
                                         RINCIAN KEHADIRAN
                                     </div>
                                     <table class="detail-table">
@@ -216,8 +216,8 @@
                                             <td class="text-bold text-center">{{ $app->attendances->whereIn('status', ['sakit', 'izin'])->count() }} hari</td>
                                         </tr>
                                         <tr>
-                                            <td>Alpa:</td>
-                                            <td class="text-bold text-center {{ $app->attendances->where('status', 'alpa')->count() > 0 ? 'text-red' : '' }}">
+                                            <td>Alpa / Tanpa Ket.:</td>
+                                            <td class="text-bold text-center {{ $app->attendances->where('status', 'alpa')->count() > 0 ? 'text-bold' : '' }}" style="{{ $app->attendances->where('status', 'alpa')->count() > 0 ? 'color: #b91c1c;' : '' }}">
                                                 {{ $app->attendances->where('status', 'alpa')->count() }} hari
                                             </td>
                                         </tr>
@@ -228,7 +228,7 @@
 
                                 {{-- Detail Logbook --}}
                                 <td style="width: 31%; border: none; padding: 0; vertical-align: top;">
-                                    <div style="font-size: 7.5pt; font-weight: bold; color: #7c3aed; margin-bottom: 2px;">
+                                    <div style="font-size: 7.5pt; font-weight: bold; color: #6b21a8; margin-bottom: 2px;">
                                         KEPATUHAN LOGBOOK
                                     </div>
                                     <table class="detail-table">
@@ -238,11 +238,11 @@
                                         </tr>
                                         <tr>
                                             <td>Disetujui:</td>
-                                            <td class="text-bold text-center text-green">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</td>
+                                            <td class="text-bold text-center" style="color: #15803d;">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</td>
                                         </tr>
                                         <tr>
                                             <td>Pending / Revisi:</td>
-                                            <td class="text-bold text-center {{ $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count() > 0 ? 'text-red' : '' }}">
+                                            <td class="text-bold text-center" style="{{ $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count() > 0 ? 'color: #b91c1c;' : '' }}">
                                                 {{ $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count() }} entri
                                             </td>
                                         </tr>
@@ -253,11 +253,11 @@
 
                                 {{-- Detail Penilaian --}}
                                 <td style="width: 32%; border: none; padding: 0; vertical-align: top;">
-                                    <div style="font-size: 7.5pt; font-weight: bold; color: #ea580c; margin-bottom: 2px;">
+                                    <div style="font-size: 7.5pt; font-weight: bold; color: #c2410c; margin-bottom: 2px;">
                                         PENILAIAN &amp; SERTIFIKAT
                                     </div>
                                     @if($app->status?->value === 'selesai')
-                                        <div style="font-size: 7pt; background-color: #f9fafb; padding: 3px 4px; border: 1px solid #999; line-height: 1.2;">
+                                        <div style="font-size: 7pt; background-color: #f8fafc; padding: 3px 4px; border: 1px solid #777; line-height: 1.25;">
                                             <div>Rerata: <strong>{{ round($app->avg_nilai, 1) }} ({{ $app->predikat ?? '-' }})</strong></div>
                                             @if($app->nomor_sertifikat)
                                                 <div>No. Sertifikat: <span style="font-family: monospace; font-weight: bold;">{{ $app->nomor_sertifikat }}</span></div>
@@ -265,8 +265,8 @@
                                             <div>PL: {{ $app->pembimbing_lapangan->name ?? '-' }}</div>
                                         </div>
                                     @else
-                                        <div style="font-size: 7pt; color: #777; font-style: italic; padding: 3px 0;">
-                                            Magang aktif berlangsung.<br>Nilai diinput saat masa magang berakhir.
+                                        <div style="font-size: 7pt; color: #555; font-style: italic; padding: 3px 0;">
+                                            Magang aktif berlangsung.<br>Nilai dan sertifikat diterbitkan saat masa magang berakhir.
                                         </div>
                                     @endif
                                 </td>
@@ -283,7 +283,7 @@
     </table>
 
     {{-- Blok Tanda Tangan --}}
-    @include('pdf.partials.ttd_admin_instansi')
+    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
     @include('pdf.partials.footer_page_number')
