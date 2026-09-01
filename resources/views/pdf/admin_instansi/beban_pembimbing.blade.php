@@ -10,16 +10,16 @@
         }
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 9.5pt;
-            color: #111;
+            font-size: 9pt;
+            color: #000;
             line-height: 1.3;
         }
         
         .judul-laporan {
             text-align: center;
-            margin: 10px 0 12px 0;
+            margin: 8px 0 10px 0;
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 11.5pt;
             text-transform: uppercase;
             text-decoration: underline;
             letter-spacing: 0.5px;
@@ -28,22 +28,22 @@
         .meta-info {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 8.5pt;
-            color: #333;
+            color: #222;
         }
         .meta-info td {
             border: none;
-            padding: 1px 0;
+            padding: 1.5px 0;
         }
         
         .section-title { 
-            font-size: 9.5pt;
+            font-size: 9pt;
             font-weight: bold;
-            margin: 12px 0 6px 0; 
+            margin: 10px 0 5px 0; 
             padding: 3px 6px;
-            background-color: #f3f4f6;
-            border-left: 3px solid #0d9488;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -51,31 +51,31 @@
         .stats-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .stats-table td {
-            border: 1px solid #555;
-            padding: 5px 3px;
+            border: 1px solid #444;
+            padding: 4px 2px;
             text-align: center;
         }
-        .stats-table .label {
-            font-size: 7pt;
+        .stats-table .stat-label {
+            font-size: 6.8pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #555;
+            color: #444;
             font-weight: bold;
         }
-        .stats-table .value {
-            font-size: 11pt;
+        .stats-table .stat-value {
+            font-size: 10.5pt;
             font-weight: bold;
-            color: #111;
+            color: #000;
             margin-top: 1px;
         }
         
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 6px;
+            margin-top: 4px;
             margin-bottom: 10px;
         }
         table.data-table thead {
@@ -86,41 +86,38 @@
         }
         table.data-table th, table.data-table td {
             border: 1px solid #333;
-            padding: 5px 6px;
+            padding: 4.5px 5px;
             text-align: left;
             vertical-align: middle;
-            font-size: 8.5pt;
+            font-size: 8.2pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
-            font-size: 8pt;
+            font-size: 7.8pt;
             text-transform: uppercase;
         }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-bold { font-weight: bold; }
-        .text-green { color: #16a34a; }
-        .text-red { color: #dc2626; }
-        .text-teal { color: #0d9488; }
-        .text-blue { color: #2563eb; }
         
         .detail-table { width: 100%; border-collapse: collapse; margin-top: 2px; }
-        .detail-table th { background-color: #f3f4f6; font-size: 7.5pt; color: #333; padding: 2px 4px; border: 1px solid #999; }
-        .detail-table td { font-size: 7.5pt; padding: 2px 4px; border: 1px solid #999; }
+        .detail-table th { background-color: #f1f5f9; font-size: 7pt; color: #000; padding: 2px 3px; border: 1px solid #777; }
+        .detail-table td { font-size: 7pt; padding: 2px 3px; border: 1px solid #777; }
     </style>
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi')
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
 
     <div class="judul-laporan">LAPORAN KINERJA &amp; BEBAN KERJA PEMBIMBING LAPANGAN</div>
 
     <table class="meta-info">
         <tr>
             <td style="width: 50%;">
+                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? (Auth::user()->instansi->nama_dinas ?? '-') }}<br>
                 <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
             </td>
@@ -131,38 +128,38 @@
     </table>
 
     {{-- Ringkasan Statistik --}}
-    <div class="section-title">Ringkasan Statistik Pembimbing</div>
+    <div class="section-title">Ringkasan Statistik Beban Kerja Pembimbing</div>
     <table class="stats-table">
         <tr>
             <td style="width: 16.66%">
-                <div class="label">Total Pembimbing</div>
-                <div class="value">{{ $stats['total_pembimbing'] }}</div>
+                <div class="stat-label">Total Pembimbing</div>
+                <div class="stat-value">{{ $stats['total_pembimbing'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Bimbingan Aktif</div>
-                <div class="value text-blue">{{ $stats['total_bimbingan_aktif'] }}</div>
+                <div class="stat-label">Bimbingan Aktif</div>
+                <div class="stat-value" style="color: #1d4ed8;">{{ $stats['total_bimbingan_aktif'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Alumni Lulus</div>
-                <div class="value text-green">{{ $stats['total_lulus'] }}</div>
+                <div class="stat-label">Alumni Lulus</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['total_lulus'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Rata-rata Nilai</div>
-                <div class="value text-teal">{{ $stats['rata_nilai_semua'] > 0 ? round($stats['rata_nilai_semua'], 1) : '-' }}</div>
+                <div class="stat-label">Rata-rata Nilai</div>
+                <div class="stat-value" style="color: #0f766e;">{{ $stats['rata_nilai_semua'] > 0 ? round($stats['rata_nilai_semua'], 1) : '-' }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Logbook Pending</div>
-                <div class="value text-red">{{ $stats['total_logbook_tertunda'] }}</div>
+                <div class="stat-label">Logbook Pending</div>
+                <div class="stat-value" style="{{ $stats['total_logbook_tertunda'] > 0 ? 'color: #b91c1c;' : 'color: #15803d;' }}">{{ $stats['total_logbook_tertunda'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Tertib Validasi</div>
-                <div class="value text-green">{{ $stats['tertib_validasi'] }} PL</div>
+                <div class="stat-label">Tertib Validasi</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['tertib_validasi'] }} PL</div>
             </td>
         </tr>
     </table>
 
     {{-- Tabel Utama --}}
-    <div class="section-title">Detail Kinerja Pembimbing Lapangan</div>
+    <div class="section-title">Detail Kinerja &amp; Bimbingan per Pembimbing Lapangan</div>
     <table class="data-table">
         <thead>
             <tr>
@@ -178,23 +175,25 @@
         <tbody>
             @forelse($beban as $pl)
                 {{-- Baris Profil Pembimbing --}}
-                <tr style="background-color: #f9fafb;">
+                <tr style="background-color: #f8fafc;">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
                         <strong class="text-bold">{{ $pl->name }}</strong><br>
-                        <small style="color: #555;">NIP/NIK: {{ $pl->nik ?? '-' }}</small>
+                        <span style="font-size: 7.5pt; color: #444;">NIP/NIK: {{ $pl->nik ?? ($pl->nomor_induk ?? '-') }}</span>
                     </td>
-                    <td class="text-center text-blue text-bold">{{ $pl->total_bimbingan_aktif }} Orang</td>
-                    <td class="text-center text-green text-bold">{{ $pl->total_lulus }} Orang</td>
-                    <td class="text-center {{ $pl->logbook_tertunda > 0 ? 'text-red text-bold' : 'text-green' }}">
+                    <td class="text-center text-bold" style="color: #1d4ed8;">{{ $pl->total_bimbingan_aktif }} Orang</td>
+                    <td class="text-center text-bold" style="color: #15803d;">{{ $pl->total_lulus }} Orang</td>
+                    <td class="text-center text-bold" style="{{ $pl->logbook_tertunda > 0 ? 'color: #b91c1c;' : 'color: #15803d;' }}">
                         {{ $pl->logbook_tertunda > 0 ? $pl->logbook_tertunda . ' Pending' : 'Tuntas' }}
                     </td>
-                    <td class="text-center text-bold">
+                    <td class="text-center text-bold" style="color: #0f766e;">
                         {{ $pl->rata_nilai_diberikan > 0 ? round($pl->rata_nilai_diberikan, 1) : '-' }}
                     </td>
                     <td>
-                        {{ $pl->email }}<br>
-                        <small style="color: #555;">{{ $pl->phone ?? '-' }}</small>
+                        <span style="font-size: 7.5pt;">{{ $pl->email }}</span>
+                        @if(!empty($pl->phone))
+                            <br><span style="font-size: 7.2pt; color: #444;">Telp: {{ $pl->phone }}</span>
+                        @endif
                     </td>
                 </tr>
                 
@@ -205,7 +204,7 @@
                             <tr style="border: none;">
                                 {{-- Kolom Mahasiswa Aktif --}}
                                 <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
-                                    <div style="font-size: 8pt; font-weight: bold; color: #2563eb; margin-bottom: 2px;">
+                                    <div style="font-size: 7.8pt; font-weight: bold; color: #1d4ed8; margin-bottom: 2px;">
                                         MAHASISWA AKTIF ({{ count($pl->mahasiswa_aktif) }})
                                     </div>
                                     @if(count($pl->mahasiswa_aktif) > 0)
@@ -224,17 +223,17 @@
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td>
                                                             <strong>{{ $mhs['nama'] }}</strong><br>
-                                                            <span style="font-size: 6.5pt; color: #555;">{{ $mhs['kampus'] }} ({{ $mhs['posisi'] }})</span>
+                                                            <span style="font-size: 6.5pt; color: #444;">{{ $mhs['kampus'] }} ({{ $mhs['posisi'] }})</span>
                                                         </td>
                                                         <td class="text-center">
                                                             {{ $mhs['logbook']['disetujui'] }}/{{ $mhs['logbook']['total'] }} ({{ $mhs['logbook']['rate'] }}%)
                                                             @if($mhs['logbook']['pending'] > 0)
-                                                                <br><span style="color: #dc2626; font-size: 6.5pt; font-weight: bold;">{{ $mhs['logbook']['pending'] }} Pending</span>
+                                                                <br><span style="color: #b91c1c; font-size: 6.5pt; font-weight: bold;">{{ $mhs['logbook']['pending'] }} Pending</span>
                                                             @endif
                                                         </td>
                                                         <td class="text-center">
                                                             @if($mhs['absensi']['pending'] > 0)
-                                                                <span style="color: #dc2626; font-weight: bold;">{{ $mhs['absensi']['pending'] }}</span>
+                                                                <span style="color: #b91c1c; font-weight: bold;">{{ $mhs['absensi']['pending'] }}</span>
                                                             @else
                                                                 -
                                                             @endif
@@ -244,7 +243,7 @@
                                             </tbody>
                                         </table>
                                     @else
-                                        <div style="font-size: 7.5pt; color: #888; font-style: italic;">Tidak ada bimbingan aktif.</div>
+                                        <div style="font-size: 7.2pt; color: #666; font-style: italic; padding: 2px 0;">Tidak ada bimbingan aktif.</div>
                                     @endif
                                 </td>
                                 
@@ -252,7 +251,7 @@
 
                                 {{-- Kolom Mahasiswa Lulus --}}
                                 <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
-                                    <div style="font-size: 8pt; font-weight: bold; color: #059669; margin-bottom: 2px;">
+                                    <div style="font-size: 7.8pt; font-weight: bold; color: #047857; margin-bottom: 2px;">
                                         ALUMNI LULUS ({{ count($pl->mahasiswa_lulus) }})
                                     </div>
                                     @if(count($pl->mahasiswa_lulus) > 0)
@@ -271,11 +270,11 @@
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td>
                                                             <strong>{{ $mhs['nama'] }}</strong><br>
-                                                            <span style="font-size: 6.5pt; color: #555;">{{ $mhs['kampus'] }}</span>
+                                                            <span style="font-size: 6.5pt; color: #444;">{{ $mhs['kampus'] }}</span>
                                                         </td>
                                                         <td class="text-center">
                                                             <strong>{{ $mhs['nilai'] }}</strong><br>
-                                                            <span style="font-size: 6.5pt; color: #059669;">{{ $mhs['predikat'] }}</span>
+                                                            <span style="font-size: 6.5pt; color: #15803d; font-weight: bold;">{{ $mhs['predikat'] }}</span>
                                                         </td>
                                                         <td style="font-size: 6.5pt; font-family: monospace;">
                                                             {{ $mhs['nomor_sertifikat'] ?: '-' }}
@@ -285,7 +284,7 @@
                                             </tbody>
                                         </table>
                                     @else
-                                        <div style="font-size: 7.5pt; color: #888; font-style: italic;">Belum ada alumni lulus.</div>
+                                        <div style="font-size: 7.2pt; color: #666; font-style: italic; padding: 2px 0;">Belum ada alumni lulus.</div>
                                     @endif
                                 </td>
                             </tr>
@@ -301,7 +300,7 @@
     </table>
 
     {{-- Blok Tanda Tangan --}}
-    @include('pdf.partials.ttd_admin_instansi')
+    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
     @include('pdf.partials.footer_page_number')

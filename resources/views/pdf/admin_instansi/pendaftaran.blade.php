@@ -11,7 +11,7 @@
         body {
             font-family: "Times New Roman", Times, serif;
             font-size: 9pt;
-            color: #111;
+            color: #000;
             line-height: 1.25;
         }
         
@@ -30,11 +30,11 @@
             border-collapse: collapse;
             margin-bottom: 10px;
             font-size: 8.5pt;
-            color: #333;
+            color: #222;
         }
         .meta-info td {
             border: none;
-            padding: 1px 0;
+            padding: 1.5px 0;
         }
         
         .section-title { 
@@ -42,8 +42,8 @@
             font-weight: bold;
             margin: 10px 0 5px 0; 
             padding: 3px 6px;
-            background-color: #f3f4f6;
-            border-left: 3px solid #059669;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -54,28 +54,28 @@
             margin-bottom: 10px;
         }
         .stats-table td {
-            border: 1px solid #666;
+            border: 1px solid #444;
             padding: 4px 2px;
             text-align: center;
         }
-        .stats-table .label {
+        .stats-table .stat-label {
             font-size: 6.8pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #555;
+            color: #444;
             font-weight: bold;
         }
-        .stats-table .value {
+        .stats-table .stat-value {
             font-size: 10.5pt;
             font-weight: bold;
-            color: #111;
+            color: #000;
             margin-top: 1px;
         }
         
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
+            margin-top: 4px;
             margin-bottom: 10px;
         }
         table.data-table thead {
@@ -92,7 +92,7 @@
             font-size: 8.2pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
             font-size: 7.8pt;
@@ -104,24 +104,24 @@
         .text-bold { font-weight: bold; }
         .font-mono { font-family: monospace; font-size: 8pt; }
         
-        .status-diterima { color: #16a34a; font-weight: bold; }
-        .status-selesai { color: #2563eb; font-weight: bold; }
-        .status-pending { color: #d97706; font-weight: bold; }
-        .status-menunggu { color: #ca8a04; font-weight: bold; }
-        .status-ditolak { color: #dc2626; font-weight: bold; }
+        .status-diterima { color: #15803d; font-weight: bold; }
+        .status-selesai { color: #1d4ed8; font-weight: bold; }
+        .status-pending { color: #b45309; font-weight: bold; }
+        .status-menunggu { color: #854d0e; font-weight: bold; }
+        .status-ditolak { color: #b91c1c; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi')
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
 
     <div class="judul-laporan">LAPORAN PENDAFTARAN &amp; PELACAKAN STATUS PERMOHONAN MAGANG</div>
 
     <table class="meta-info">
         <tr>
             <td style="width: 50%;">
-                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? '-' }}<br>
-                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB<br>
+                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? (Auth::user()->instansi->nama_dinas ?? '-') }}<br>
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WITA<br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
             </td>
             <td style="width: 50%; text-align: right; vertical-align: top;">
@@ -149,28 +149,28 @@
     <table class="stats-table">
         <tr>
             <td style="width: 16.66%">
-                <div class="label">Total Pendaftar</div>
-                <div class="value" style="color: #047857;">{{ $stats['total'] }}</div>
+                <div class="stat-label">Total Pendaftar</div>
+                <div class="stat-value" style="color: #047857;">{{ $stats['total'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Pending (Review)</div>
-                <div class="value status-pending">{{ $stats['pending'] }}</div>
+                <div class="stat-label">Pending (Review)</div>
+                <div class="stat-value status-pending">{{ $stats['pending'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Daftar Tunggu</div>
-                <div class="value status-menunggu">{{ $stats['menunggu'] }}</div>
+                <div class="stat-label">Daftar Tunggu</div>
+                <div class="stat-value status-menunggu">{{ $stats['menunggu'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Diterima / Aktif</div>
-                <div class="value status-diterima">{{ $stats['diterima'] }}</div>
+                <div class="stat-label">Diterima / Aktif</div>
+                <div class="stat-value status-diterima">{{ $stats['diterima'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Ditolak</div>
-                <div class="value status-ditolak">{{ $stats['ditolak'] }}</div>
+                <div class="stat-label">Ditolak</div>
+                <div class="stat-value status-ditolak">{{ $stats['ditolak'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Selesai Magang</div>
-                <div class="value status-selesai">{{ $stats['selesai'] }}</div>
+                <div class="stat-label">Selesai Magang</div>
+                <div class="stat-value status-selesai">{{ $stats['selesai'] }}</div>
             </td>
         </tr>
     </table>
@@ -206,7 +206,7 @@
                     {{-- No. Registrasi & Tanggal --}}
                     <td>
                         <strong class="font-mono">{{ $app->nomor_registrasi ?? ('REG-' . $app->id) }}</strong><br>
-                        <span style="font-size: 7.5pt; color: #555;">
+                        <span style="font-size: 7.5pt; color: #444;">
                             {{ \Carbon\Carbon::parse($app->created_at)->translatedFormat('d M Y, H:i') }}
                         </span>
                         @if($app->is_automatic_placement)
@@ -220,7 +220,7 @@
                         <span style="font-size: 7.8pt; color: #047857; font-weight: bold;">
                             {{ $app->user->asal_instansi ?? ($app->user->university->name ?? ($app->user->school->name ?? '-')) }}
                         </span><br>
-                        <span style="font-size: 7.2pt; color: #555;">
+                        <span style="font-size: 7.2pt; color: #444;">
                             @if(!empty($app->user->nim))
                                 NIM/NISN: {{ $app->user->nim }} &bull;
                             @endif
@@ -232,22 +232,22 @@
                     <td>
                         <strong class="text-bold">{{ $app->position->judul_posisi ?? '-' }}</strong>
                         @if($app->pembimbing_lapangan)
-                            <br><small style="color: #333; font-size: 7.5pt;">PL: {{ $app->pembimbing_lapangan->name }}</small>
+                            <br><span style="color: #333; font-size: 7.5pt;">PL: {{ $app->pembimbing_lapangan->name }}</span>
                         @else
-                            <br><small style="color: #888; font-size: 7.2pt; font-style: italic;">PL: Belum ditugaskan</small>
+                            <br><span style="color: #666; font-size: 7.2pt; font-style: italic;">PL: Belum ditugaskan</span>
                         @endif
                     </td>
 
                     {{-- Periode Magang --}}
                     <td>
                         @if($app->tanggal_mulai && $app->tanggal_selesai)
-                            {{ \Carbon\Carbon::parse($app->tanggal_mulai)->format('d M Y') }} s/d<br>
-                            {{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}<br>
-                            <small style="color: #059669; font-weight: bold;">
+                            <strong>{{ \Carbon\Carbon::parse($app->tanggal_mulai)->format('d M Y') }}</strong> s/d<br>
+                            <strong>{{ \Carbon\Carbon::parse($app->tanggal_selesai)->format('d M Y') }}</strong><br>
+                            <span style="color: #059669; font-weight: bold; font-size: 7.2pt;">
                                 ({{ \Carbon\Carbon::parse($app->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($app->tanggal_selesai)) }} Hari)
-                            </small>
+                            </span>
                         @else
-                            <span style="color: #888; font-style: italic;">-</span>
+                            <span style="color: #666; font-style: italic;">-</span>
                         @endif
                     </td>
 
@@ -267,7 +267,7 @@
     </table>
 
     {{-- Blok Tanda Tangan Pejabat --}}
-    @include('pdf.partials.ttd_admin_instansi')
+    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Footer Penomoran Halaman --}}
     @include('pdf.partials.footer_page_number')

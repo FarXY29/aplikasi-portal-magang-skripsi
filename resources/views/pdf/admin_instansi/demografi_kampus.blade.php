@@ -10,16 +10,16 @@
         }
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 9.5pt;
-            color: #111;
+            font-size: 9pt;
+            color: #000;
             line-height: 1.3;
         }
         
         .judul-laporan {
             text-align: center;
-            margin: 10px 0 12px 0;
+            margin: 8px 0 10px 0;
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 11.5pt;
             text-transform: uppercase;
             text-decoration: underline;
             letter-spacing: 0.5px;
@@ -28,22 +28,22 @@
         .meta-info {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 8.5pt;
-            color: #333;
+            color: #222;
         }
         .meta-info td {
             border: none;
-            padding: 1px 0;
+            padding: 1.5px 0;
         }
         
         .section-title { 
-            font-size: 9.5pt;
+            font-size: 9pt;
             font-weight: bold;
-            margin: 14px 0 6px 0; 
+            margin: 10px 0 5px 0; 
             padding: 3px 6px;
-            background-color: #f3f4f6;
-            border-left: 3px solid #ea580c;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -51,31 +51,31 @@
         .stats-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .stats-table td {
-            border: 1px solid #555;
-            padding: 5px 3px;
+            border: 1px solid #444;
+            padding: 4px 2px;
             text-align: center;
         }
-        .stats-table .label {
-            font-size: 7pt;
+        .stats-table .stat-label {
+            font-size: 6.8pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #555;
+            color: #444;
             font-weight: bold;
         }
-        .stats-table .value {
-            font-size: 11pt;
+        .stats-table .stat-value {
+            font-size: 10.5pt;
             font-weight: bold;
-            color: #111;
+            color: #000;
             margin-top: 1px;
         }
         
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 6px;
+            margin-top: 4px;
             margin-bottom: 10px;
         }
         table.data-table thead {
@@ -86,39 +86,36 @@
         }
         table.data-table th, table.data-table td {
             border: 1px solid #333;
-            padding: 5px 6px;
+            padding: 4.5px 5px;
             text-align: left;
             vertical-align: top;
-            font-size: 8.5pt;
+            font-size: 8.2pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
-            font-size: 8pt;
+            font-size: 7.8pt;
             text-transform: uppercase;
         }
         
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-bold { font-weight: bold; }
-        .text-green { color: #16a34a; }
-        .text-red { color: #dc2626; }
-        .text-orange { color: #ea580c; }
-        .text-blue { color: #2563eb; }
         
-        .sub-detail span { display: inline-block; background: #f3f4f6; padding: 1px 4px; border: 1px solid #ddd; border-radius: 2px; margin: 1px; font-size: 7pt; }
+        .sub-detail span { display: inline-block; background: #f8fafc; padding: 1px 4px; border: 1px solid #ccc; border-radius: 2px; margin: 1px; font-size: 7pt; }
     </style>
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi')
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
 
     <div class="judul-laporan">LAPORAN DEMOGRAFI ASAL KAMPUS / SEKOLAH PENDAFTAR MAGANG</div>
 
     <table class="meta-info">
         <tr>
             <td style="width: 50%;">
+                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? (Auth::user()->instansi->nama_dinas ?? '-') }}<br>
                 <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
             </td>
@@ -133,24 +130,24 @@
     <table class="stats-table">
         <tr>
             <td style="width: 20%">
-                <div class="label">Asal Kampus</div>
-                <div class="value">{{ $stats['total_kampus'] }}</div>
+                <div class="stat-label">Asal Kampus / Sekolah</div>
+                <div class="stat-value">{{ $stats['total_kampus'] }}</div>
             </td>
             <td style="width: 20%">
-                <div class="label">Total Jurusan</div>
-                <div class="value">{{ $stats['total_jurusan'] }}</div>
+                <div class="stat-label">Total Jurusan</div>
+                <div class="stat-value">{{ $stats['total_jurusan'] }}</div>
             </td>
             <td style="width: 20%">
-                <div class="label">Total Pelamar</div>
-                <div class="value">{{ $stats['total_pelamar'] }}</div>
+                <div class="stat-label">Total Pelamar</div>
+                <div class="stat-value">{{ $stats['total_pelamar'] }}</div>
             </td>
             <td style="width: 20%">
-                <div class="label">Diterima</div>
-                <div class="value text-green">{{ $stats['total_diterima'] }}</div>
+                <div class="stat-label">Diterima</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['total_diterima'] }}</div>
             </td>
             <td style="width: 20%">
-                <div class="label">Selesai / Lulus</div>
-                <div class="value" style="color: #059669;">{{ $stats['total_selesai'] }}</div>
+                <div class="stat-label">Selesai / Lulus</div>
+                <div class="stat-value" style="color: #1d4ed8;">{{ $stats['total_selesai'] }}</div>
             </td>
         </tr>
     </table>
@@ -195,14 +192,14 @@
                         @endif
                     </td>
                     <td class="text-center text-bold">{{ $data['total_pelamar'] }}</td>
-                    <td class="text-center text-bold text-green">{{ $data['diterima'] }}</td>
-                    <td class="text-center text-bold" style="color: #059669;">{{ $data['selesai'] }}</td>
-                    <td class="text-center text-bold text-red">{{ $data['ditolak'] }}</td>
-                    <td class="text-center text-bold text-orange">{{ $data['pending'] }}</td>
+                    <td class="text-center text-bold" style="color: #15803d;">{{ $data['diterima'] }}</td>
+                    <td class="text-center text-bold" style="color: #1d4ed8;">{{ $data['selesai'] }}</td>
+                    <td class="text-center text-bold" style="color: #b91c1c;">{{ $data['ditolak'] }}</td>
+                    <td class="text-center text-bold" style="color: #b45309;">{{ $data['pending'] }}</td>
                     <td class="text-center text-bold" style="
-                        @if($data['acceptance_rate'] >= 70) color: #16a34a;
-                        @elseif($data['acceptance_rate'] >= 40) color: #ca8a04;
-                        @else color: #dc2626;
+                        @if($data['acceptance_rate'] >= 70) color: #15803d;
+                        @elseif($data['acceptance_rate'] >= 40) color: #b45309;
+                        @else color: #b91c1c;
                         @endif
                     ">{{ $data['acceptance_rate'] }}%</td>
                     <td>
@@ -220,13 +217,13 @@
             @endforelse
 
             @if($demografi->count() > 0)
-                <tr style="background-color: #f3f4f6; font-weight: bold;">
+                <tr style="background-color: #f1f5f9; font-weight: bold;">
                     <td colspan="2" class="text-right">TOTAL KESELURUHAN</td>
                     <td class="text-center">{{ $t_pelamar }}</td>
-                    <td class="text-center text-green">{{ $t_diterima }}</td>
-                    <td class="text-center" style="color: #059669;">{{ $t_selesai }}</td>
-                    <td class="text-center text-red">{{ $t_ditolak }}</td>
-                    <td class="text-center text-orange">{{ $t_pending }}</td>
+                    <td class="text-center" style="color: #15803d;">{{ $t_diterima }}</td>
+                    <td class="text-center" style="color: #1d4ed8;">{{ $t_selesai }}</td>
+                    <td class="text-center" style="color: #b91c1c;">{{ $t_ditolak }}</td>
+                    <td class="text-center" style="color: #b45309;">{{ $t_pending }}</td>
                     <td class="text-center" colspan="2">
                         @php $overall = $t_pelamar > 0 ? round(($t_diterima / $t_pelamar) * 100) : 0; @endphp
                         {{ $overall }}%
@@ -255,11 +252,11 @@
                 <td class="text-center">{{ $loop->iteration }}</td>
                 <td class="text-bold">{{ $jurusan }}</td>
                 <td class="text-center text-bold">{{ $data['total'] }}</td>
-                <td class="text-center text-bold text-green">{{ $data['diterima'] }}</td>
+                <td class="text-center text-bold" style="color: #15803d;">{{ $data['diterima'] }}</td>
                 <td class="text-center text-bold" style="
-                    @if($data['acceptance_rate'] >= 70) color: #16a34a;
-                    @elseif($data['acceptance_rate'] >= 40) color: #ca8a04;
-                    @else color: #dc2626;
+                    @if($data['acceptance_rate'] >= 70) color: #15803d;
+                    @elseif($data['acceptance_rate'] >= 40) color: #b45309;
+                    @else color: #b91c1c;
                     @endif
                 ">{{ $data['acceptance_rate'] }}%</td>
             </tr>
@@ -269,7 +266,7 @@
     @endif
 
     {{-- Blok Tanda Tangan --}}
-    @include('pdf.partials.ttd_admin_instansi')
+    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
     @include('pdf.partials.footer_page_number')
