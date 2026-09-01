@@ -28,7 +28,9 @@ class PesertaViewRegressionTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('&lt;script&gt;', false);
+        $response->assertSee('Deskripsi aman');
         $response->assertDontSee('<script>alert("x")</script>', false);
+        $response->assertDontSee('alert("x")', false);
     }
 
     public function test_participant_can_explicitly_choose_waiting_list(): void

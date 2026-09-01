@@ -66,7 +66,11 @@ class ProfileController extends Controller
         $user->fill($validated);
 
         if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+            if ($user->isEmailVerificationExempt()) {
+                $user->email_verified_at = now();
+            } else {
+                $user->email_verified_at = null;
+            }
         }
 
         // Handle Upload Signature

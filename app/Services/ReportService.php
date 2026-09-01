@@ -43,6 +43,70 @@ class ReportService
         return compact('applications', 'stats');
     }
 
+    public function getApplicationTrackingReportData(int $instansiId, Request $request, bool $paginate = true): array
+    {
+        $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan'])
+            ->whereHas('position', function ($q) use ($instansiId) {
+                $q->where('instansi_id', $instansiId);
+            });
+
+        // Filter Status
+        if ($request->filled('status') && $request->status !== 'semua') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter Posisi Magang
+        if ($request->filled('posisi_id')) {
+            $query->where('internship_position_id', $request->posisi_id);
+        }
+
+        // Filter Rentang Tanggal Pengajuan (created_at)
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        // Pencarian Cepat (Nama, Email, Phone, Asal Instansi, Jurusan/Major, No. Registrasi)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_registrasi', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($u) use ($search) {
+                      $u->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('asal_instansi', 'like', "%{$search}%")
+                        ->orWhere('major', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Hitung statistik ringkasan
+        $statsQuery = clone $query;
+        $stats = [
+            'total' => (clone $statsQuery)->count(),
+            'pending' => (clone $statsQuery)->where('status', 'pending')->count(),
+            'menunggu' => (clone $statsQuery)->where('status', 'menunggu')->count(),
+            'diterima' => (clone $statsQuery)->where('status', 'diterima')->count(),
+            'ditolak' => (clone $statsQuery)->where('status', 'ditolak')->count(),
+            'selesai' => (clone $statsQuery)->where('status', 'selesai')->count(),
+        ];
+
+        // Pengurutan
+        $query->orderBy('created_at', 'desc');
+
+        $applications = $paginate
+            ? $query->paginate(20)->withQueryString()
+            : $query->get();
+
+        $positions = InternshipPosition::where('instansi_id', $instansiId)->orderBy('judul_posisi', 'asc')->get();
+
+        return compact('applications', 'stats', 'positions');
+    }
+
     protected function applyInstansiRekapFilters($query, Request $request): void
     {
         if ($request->filled('status')) {
@@ -501,13 +565,22 @@ class ReportService
             $start = $request->start_date;
             $end = $request->end_date;
             $query->where(function ($q) use ($start, $end) {
-                $q->whereBetween('tanggal_mulai', [$start, $end])
-                    ->orWhereBetween('tanggal_selesai', [$start, $end]);
+                $q->where(function ($sub) use ($start, $end) {
+                    $sub->where('tanggal_mulai', '<=', $end)
+                        ->where('tanggal_selesai', '>=', $start);
+                })->orWhereBetween('tanggal_mulai', [$start, $end])
+                  ->orWhereBetween('tanggal_selesai', [$start, $end]);
             });
         } elseif ($request->filled('start_date')) {
-            $query->where('tanggal_mulai', '>=', $request->start_date);
+            $query->where(function ($q) use ($request) {
+                $q->where('tanggal_selesai', '>=', $request->start_date)
+                    ->orWhere('tanggal_mulai', '>=', $request->start_date);
+            });
         } elseif ($request->filled('end_date')) {
-            $query->where('tanggal_selesai', '<=', $request->end_date);
+            $query->where(function ($q) use ($request) {
+                $q->where('tanggal_mulai', '<=', $request->end_date)
+                    ->orWhere('tanggal_selesai', '<=', $request->end_date);
+            });
         }
 
         // Statistik dihitung via agregasi SQL, bukan load seluruh tabel ke memori

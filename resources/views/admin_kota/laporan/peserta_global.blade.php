@@ -17,7 +17,7 @@
                 </h2>
             </div>
             <div class="flex flex-wrap items-center gap-2 shrink-0">
-                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q']))
+                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q', 'start_date', 'end_date']))
                     <a href="{{ route('admin.laporan.peserta_global') }}"
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xl font-bold text-xs transition shadow-sm">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
@@ -125,82 +125,165 @@
                 </div>
             @endif
 
-            {{-- Toolbar Filter Data --}}
-            <div class="bg-white dark:bg-[#161f33] rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-lg border border-slate-200 dark:border-slate-800/40">
+            {{-- Card Filter Rekapitulasi Modern 2 Baris --}}
+            @php
+                $activeFilterCount = collect([
+                    request('instansi'),
+                    request('instansi_id'),
+                    (request('status') && request('status') !== 'semua' ? request('status') : null),
+                    request('start_date'),
+                    request('end_date'),
+                    request('posisi'),
+                    request('q')
+                ])->filter(fn($v) => !empty($v))->count();
+            @endphp
+
+            <div class="bg-white dark:bg-[#161f33] rounded-2xl md:rounded-3xl p-5 md:p-6 shadow-lg border border-slate-200 dark:border-slate-800/40 space-y-5">
+                
+                {{-- Card Header: Title, Subtitle, Active Filter Badge & Reset Button --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-teal-100 dark:bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-500/25 flex items-center justify-center shrink-0">
+                            <i class="fas fa-sliders-h text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm md:text-base font-black text-slate-900 dark:text-white">Filter & Parameter Rekapitulasi</h3>
+                                @if($activeFilterCount > 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
+                                        {{ $activeFilterCount }} Filter Aktif
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Saring data peserta berdasarkan asal sekolah/kampus, unit dinas, status, rentang waktu, dan formasi.</p>
+                        </div>
+                    </div>
+
+                    @if($activeFilterCount > 0)
+                        <a href="{{ route('admin.laporan.peserta_global') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xl font-bold text-xs transition shadow-sm self-start sm:self-center">
+                            <i class="fas fa-rotate-left text-[10px]"></i> Reset Semua
+                        </a>
+                    @endif
+                </div>
+
                 <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" class="space-y-4">
                     @if(request()->filled('q'))
                         <input type="hidden" name="q" value="{{ request('q') }}">
                     @endif
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 
+                    {{-- Baris 1: Kategori Utama (Kampus, Dinas, Status) --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {{-- Filter Kampus --}}
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Asal Sekolah / Kampus</label>
-                            <select name="instansi" class="w-full py-2.5 px-3 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-teal-500 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark]">
-                                <option value="">Semua Sekolah / Kampus</option>
-                                @foreach($listInstansi as $instansi)
-                                    <option value="{{ $instansi }}" {{ request('instansi') == $instansi ? 'selected' : '' }}>
-                                        {{ Str::limit($instansi, 35) }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="fas fa-university text-teal-500 text-[11px]"></i> Asal Sekolah / Kampus
+                            </label>
+                            <div class="relative">
+                                <select name="instansi" class="w-full py-2.5 px-3.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
+                                    <option value="">Semua Sekolah / Kampus</option>
+                                    @foreach($listInstansi as $instansi)
+                                        <option value="{{ $instansi }}" {{ request('instansi') == $instansi ? 'selected' : '' }}>
+                                            {{ $instansi }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         {{-- Filter Dinas --}}
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Dinas Penempatan</label>
-                            <select name="instansi_id" class="w-full py-2.5 px-3 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-teal-500 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark]">
-                                <option value="">Semua Dinas Penempatan</option>
-                                @foreach($listDinas as $dinas)
-                                    <option value="{{ $dinas->id }}" {{ request('instansi_id') == $dinas->id ? 'selected' : '' }}>
-                                        {{ Str::limit($dinas->nama_dinas, 35) }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="fas fa-building text-teal-500 text-[11px]"></i> Dinas Penempatan
+                            </label>
+                            <div class="relative">
+                                <select name="instansi_id" class="w-full py-2.5 px-3.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
+                                    <option value="">Semua Dinas Penempatan</option>
+                                    @foreach($listDinas as $dinas)
+                                        <option value="{{ $dinas->id }}" {{ request('instansi_id') == $dinas->id ? 'selected' : '' }}>
+                                            {{ $dinas->nama_dinas }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         {{-- Filter Status --}}
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Status Magang</label>
-                            <select name="status" class="w-full py-2.5 px-3 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-teal-500 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark]">
-                                <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
-                                <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Aktif Magang</option>
-                                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai Magang</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending / Menunggu</option>
-                                <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                            </select>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="fas fa-user-check text-teal-500 text-[11px]"></i> Status Magang
+                            </label>
+                            <div class="relative">
+                                <select name="status" class="w-full py-2.5 px-3.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
+                                    <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
+                                    <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Aktif Magang</option>
+                                    <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai Magang</option>
+                                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending / Menunggu</option>
+                                    <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                </select>
+                            </div>
                         </div>
-
-                        {{-- Filter Kata Kunci Posisi --}}
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Posisi Magang</label>
-                            <input type="text" name="posisi" value="{{ request('posisi') }}" placeholder="Cari posisi..."
-                                class="w-full py-2.5 px-3 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-teal-500 focus:border-teal-500 shadow-sm">
-                        </div>
-
                     </div>
 
+                    {{-- Baris 2: Waktu, Posisi & Tombol Aksi --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end pt-1">
+                        {{-- Dari Tanggal --}}
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="far fa-calendar-alt text-teal-500 text-[11px]"></i> Dari Tanggal (Mulai)
+                            </label>
+                            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                class="w-full py-2.5 px-3 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
+                        </div>
+
+                        {{-- Sampai Tanggal --}}
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="far fa-calendar-check text-teal-500 text-[11px]"></i> Sampai Tanggal (Selesai)
+                            </label>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                                class="w-full py-2.5 px-3 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
+                        </div>
+
+                        {{-- Posisi / Formasi Magang --}}
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
+                                <i class="fas fa-briefcase text-teal-500 text-[11px]"></i> Posisi / Formasi
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-slate-500 pointer-events-none">
+                                    <i class="fas fa-search text-xs"></i>
+                                </span>
+                                <input type="text" name="posisi" value="{{ request('posisi') }}" placeholder="Cari posisi / divisi..."
+                                    class="w-full pl-9 pr-3 py-2.5 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm transition">
+                            </div>
+                        </div>
+
+                        {{-- Tombol Aksi --}}
+                        <div class="flex items-center gap-2">
+                            @if($activeFilterCount > 0)
+                                <a href="{{ route('admin.laporan.peserta_global') }}" title="Bersihkan Filter"
+                                    class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold transition flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            @endif
+                            <button type="submit" class="w-full py-2.5 px-4 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-black shadow-md shadow-teal-600/20 hover:shadow-teal-500/30 transition uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fas fa-filter text-xs"></i> Terapkan Filter
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Active Search Query Tag if present --}}
                     @if(request()->filled('q'))
-                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/25 rounded-xl">
+                        <div class="flex items-center justify-between gap-3 px-4 py-2.5 bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/25 rounded-xl mt-2">
                             <span class="text-xs font-bold text-teal-700 dark:text-teal-300 truncate">
-                                <i class="fas fa-search mr-1.5 text-[10px]"></i>Hasil pencarian: &ldquo;{{ request('q') }}&rdquo;
+                                <i class="fas fa-search mr-1.5 text-[10px]"></i>Pencarian teks tabel: &ldquo;{{ request('q') }}&rdquo;
                             </span>
                             <a href="{{ route('admin.laporan.peserta_global', request()->except('q', 'page')) }}" class="text-[10px] font-black text-teal-600 dark:text-teal-400 hover:text-rose-600 dark:hover:text-rose-400 uppercase tracking-wider shrink-0 transition">
                                 Hapus <i class="fas fa-times ml-0.5"></i>
                             </a>
                         </div>
                     @endif
-
-                    <div class="flex flex-col sm:flex-row justify-end items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800/60">
-                        @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q']))
-                            <a href="{{ route('admin.laporan.peserta_global') }}" class="w-full sm:w-auto px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-900/60 rounded-xl transition text-center border border-slate-200 dark:border-slate-700">
-                                <i class="fas fa-times mr-1"></i> Bersihkan Filter
-                            </a>
-                        @endif
-                        <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-500/20 transition uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
-                            <i class="fas fa-filter text-xs"></i> Terapkan Filter
-                        </button>
-                    </div>
                 </form>
             </div>
 

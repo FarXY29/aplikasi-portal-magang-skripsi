@@ -539,7 +539,7 @@
 
                                   <!-- Excerpt description -->
                                   <div class="prose prose-sm text-slate-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed line-clamp-2 mb-6 font-medium">
-                                      {!! strip_tags($loker->deskripsi) !!}
+                                      {{ strip_tags($loker->deskripsi) }}
                                   </div>
                               </div>
 
@@ -715,7 +715,7 @@
                                                       <i class="fas fa-file-lines text-teal-600 dark:text-teal-400"></i> Deskripsi Pekerjaan & Persyaratan
                                                   </h5>
                                                   <div class="prose prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-900/50 p-5 rounded-2xl border border-slate-100 dark:border-gray-700/70 text-xs sm:text-sm font-medium leading-relaxed">
-                                                      {!! $loker->deskripsi !!}
+                                                      {!! \App\Services\HtmlSanitizer::clean($loker->deskripsi) ?: '<p class="text-slate-400 italic">Tidak ada deskripsi rinci.</p>' !!}
                                                   </div>
                                               </div>
 

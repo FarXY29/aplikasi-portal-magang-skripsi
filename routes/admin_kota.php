@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/laporan-penyerapan-kuota/print', [AdminKotaReportController::class, 'printPenyerapanKuota'])->name('laporan.penyerapan_kuota.print');
 
     // Manajemen Pengguna & Monitoring Logbook
+    Route::get('/users/peserta/print-pdf', [AdminUserController::class, 'printParticipants'])->name('users.peserta.pdf');
     Route::resource('users', AdminUserController::class)->except(['show']);
     Route::get('/monitoring-logbook', [AdminUserController::class, 'logbooks'])->name('users.logbooks');
     Route::get('/monitoring-logbook/{id}', [AdminUserController::class, 'showLogbook'])->name('users.logbooks.show');
@@ -71,4 +72,5 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/settings/backups/{backup}/download', [AdminSettingController::class, 'downloadBackup'])
         ->middleware('signed')
         ->name('settings.backups.download');
+    Route::delete('/settings/backups/{backup}', [AdminSettingController::class, 'destroyBackup'])->name('settings.backups.destroy');
 });

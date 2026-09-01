@@ -1,12 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center border border-purple-200 dark:border-purple-800/60">
-                    <i class="fas fa-book-open text-purple-600 dark:text-purple-400 text-lg"></i>
-                </div>
-                {{ __('Laporan Jurnal / Aktivitas Harian') }}
-            </h2>
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center border border-purple-200 dark:border-purple-800/60 shrink-0">
+                <i class="fas fa-book-open text-purple-600 dark:text-purple-400 text-sm md:text-base"></i>
+            </div>
+            <div class="min-w-0">
+                <h2 class="font-extrabold text-lg md:text-xl text-gray-800 dark:text-gray-200 leading-tight truncate">
+                    {{ __('Laporan Jurnal / Aktivitas Harian') }}
+                </h2>
+            </div>
         </div>
     </x-slot>
 
@@ -158,7 +160,7 @@
                                             $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
                                             $fotoTitle = 'Bukti Logbook: ' . ($log->application->user->name ?? 'Mahasiswa') . ' - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d M Y');
                                         @endphp
-                                        <button type="button" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')" class="inline-block relative group cursor-pointer focus:outline-none" title="Lihat Bukti Foto">
+                                        <button type="button" onclick="openImageModal(@js($fotoUrl), @js($fotoTitle))" class="inline-block relative group cursor-pointer focus:outline-none" title="Lihat Bukti Foto">
                                             <img src="{{ $fotoUrl }}" class="w-10 h-10 rounded-xl object-cover border border-gray-200 dark:border-gray-700 group-hover:scale-110 transition shadow-xs">
                                             <span class="absolute -bottom-1 -right-1 bg-purple-600 dark:bg-purple-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[8px] shadow-xs"><i class="fas fa-search-plus"></i></span>
                                         </button>

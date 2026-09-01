@@ -270,22 +270,38 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
-    function initLeafletMap() {
-        if (typeof L === 'undefined') {
-            console.warn('Leaflet gagal dimuat; peta instansi tidak tersedia.');
+    function ensureLeaflet(callback, maxWaitMs = 5000) {
+        if (typeof L !== 'undefined') {
+            callback();
             return;
         }
+        const startTime = Date.now();
+        const interval = setInterval(function() {
+            if (typeof L !== 'undefined') {
+                clearInterval(interval);
+                callback();
+            } else if (Date.now() - startTime > maxWaitMs) {
+                clearInterval(interval);
+                console.warn('Leaflet JS gagal dimuat dalam waktu 5 detik.');
+            }
+        }, 50);
+    }
 
-        var mapContainer = document.getElementById('map');
-        if(!mapContainer) return;
-        if (mapContainer._leaflet_id && window.instansiMap) {
-            return;
-        }
-        if (window.instansiMap) {
-            window.instansiMap.remove();
-            window.instansiMap = null;
-        }
-        mapContainer._leaflet_id = null;
+    function initLeafletMap() {
+        ensureLeaflet(function() {
+            var mapContainer = document.getElementById('map');
+            if(!mapContainer) return;
+            if (mapContainer._leaflet_id && window.instansiMap) {
+                window.instansiMap.invalidateSize();
+                return;
+            }
+            if (window.instansiMap) {
+                try {
+                    window.instansiMap.remove();
+                } catch(e) {}
+                window.instansiMap = null;
+            }
+            mapContainer._leaflet_id = null;
 
         // Default koordinat (Banjarmasin)
         var defaultLat = -3.316694;
@@ -361,13 +377,20 @@
             }
         });
         
-        // If creating new, try to get user's current location to center map
-        if (!latInput.value && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                updateInputs(position.coords.latitude, position.coords.longitude);
-                updateMapElements(position.coords.latitude, position.coords.longitude);
+            // Fix display issues inside containers
+            [50, 150, 300, 600, 1000].forEach(function(delay) {
+                setTimeout(function(){
+                    if (window.instansiMap) window.instansiMap.invalidateSize();
+                }, delay);
             });
-        }
+
+            if (window.ResizeObserver) {
+                var ro = new ResizeObserver(function() {
+                    if (window.instansiMap) window.instansiMap.invalidateSize();
+                });
+                ro.observe(mapContainer);
+            }
+        });
     }
 
     if (document.readyState === 'loading') {
@@ -375,7 +398,10 @@
     } else {
         initLeafletMap();
     }
+    window.addEventListener('load', initLeafletMap);
     document.addEventListener('turbo:load', initLeafletMap);
+    document.addEventListener('turbo:render', initLeafletMap);
+    document.addEventListener('livewire:navigated', initLeafletMap);
 </script>
 @endpush
 </x-app-layout>

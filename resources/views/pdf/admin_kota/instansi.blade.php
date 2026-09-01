@@ -1,158 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Laporan Data Instansi</title>
+    <meta charset="UTF-8">
+    <title>Laporan Data Master Instansi</title>
     <style>
-        /* Setup Dasar untuk Kertas A4 */
-        @page { margin: 2cm; }
+        @page {
+            margin: 1.2cm 1.5cm 1.5cm 1.5cm;
+            size: A4 landscape;
+        }
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 12pt;
-            line-height: 1.5;
+            font-size: 9.5pt;
+            color: #111;
+            line-height: 1.3;
         }
-
-        /* Styling Kop Surat */
-        .kop-surat {
-            width: 100%;
-            border-bottom: 3px double #000; /* Garis ganda tebal tipis khas surat dinas */
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .kop-logo {
-            width: 80px;
-            height: auto;
-        }
-        .kop-text {
+        
+        .judul-laporan {
             text-align: center;
-        }
-        .kop-instansi {
-            font-size: 14pt;
+            margin: 10px 0 12px 0;
             font-weight: bold;
+            font-size: 12pt;
             text-transform: uppercase;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
         }
-        .kop-pemerintah {
-            font-size: 16pt;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .kop-alamat {
-            font-size: 10pt;
-            font-style: italic;
-        }
-
-        /* Styling Tabel Data */
-        table.data {
+        
+        .meta-info {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+            font-size: 8.5pt;
+            color: #333;
         }
-        table.data th, table.data td {
-            border: 1px solid #000;
-            padding: 6px 8px;
+        .meta-info td {
+            border: none;
+            padding: 1px 0;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            margin-bottom: 10px;
+        }
+        table.data-table thead {
+            display: table-header-group;
+        }
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333;
+            padding: 5px 6px;
+            text-align: left;
             vertical-align: top;
-            font-size: 11pt;
+            font-size: 8.5pt;
         }
-        table.data th {
-            background-color: #f0f0f0;
-            font-weight: bold;
+        table.data-table th {
+            background-color: #e5e7eb;
             text-align: center;
+            font-weight: bold;
+            font-size: 8pt;
             text-transform: uppercase;
         }
-
-        /* Tanda Tangan */
-        .ttd-container {
-            width: 100%;
-            margin-top: 50px;
-            display: table; /* Hack untuk layout kolom di PDF */
-        }
-        .ttd-box {
-            display: table-cell;
-            width: 60%;
-        }
-        .ttd-box-right {
-            display: table-cell;
-            width: 40%;
-            text-align: center;
-        }
+        
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-bold { font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <table class="kop-surat">
+    @include('pdf.partials.kop_admin_kota')
+
+    <div class="judul-laporan">LAPORAN DATA MASTER INSTANSI / SKPD</div>
+
+    <table class="meta-info">
         <tr>
-            <td width="15%" align="center">
-                <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="kop-logo" alt="Logo">
+            <td style="width: 50%;">
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
+                <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Super Admin' }} (Super Admin Kota)
             </td>
-            <td width="85%" align="center">
-                <div class="kop-pemerintah">PEMERINTAH KOTA BANJARMASIN</div>
-                <div class="kop-instansi">BADAN KESATUAN BANGSA DAN POLITIK</div>
-                <div class="kop-alamat">Jalan RE Martadinata No. 1, Telp (0511) 3352932, Banjarmasin</div>
+            <td style="width: 50%; text-align: right; vertical-align: top;">
+                <strong>Total Instansi Terdaftar:</strong> {{ count($instansis) }} Instansi
             </td>
         </tr>
     </table>
 
-    <div style="text-align: center; margin-bottom: 20px;">
-        <span style="font-weight: bold; text-decoration: underline; font-size: 14pt;">LAPORAN DATA Instansi</span>
-    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 4%">No</th>
+                <th style="width: 25%">Nama Dinas / Instansi</th>
+                <th style="width: 12%">Kode Unit Kerja</th>
+                <th style="width: 10%">Jml Lowongan</th>
+                <th style="width: 10%">Jml Peserta</th>
+                <th style="width: 24%">Alamat Kantor</th>
+                <th style="width: 15%">Kontak / Titik Lokasi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($instansis as $index => $ins)
+                @php
+                    $lowonganCount = $ins->positions ? $ins->positions->count() : 0;
+                    $pesertaCount = $ins->positions ? $ins->positions->flatMap->applications->whereIn('status', ['diterima', 'selesai'])->count() : 0;
+                @endphp
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-bold">{{ $ins->nama_dinas }}</td>
+                    <td class="text-center" style="font-family: monospace;">{{ $ins->kode_unit_kerja ?? '-' }}</td>
+                    <td class="text-center">{{ $lowonganCount }} Posisi</td>
+                    <td class="text-center">{{ $pesertaCount }} Orang</td>
+                    <td>{{ $ins->alamat ?? '-' }}</td>
+                    <td style="font-size: 8pt;">
+                        @if($ins->contact_whatsapp)
+                            WA: {{ $ins->contact_whatsapp }}<br>
+                        @endif
+                        @if($ins->latitude && $ins->longitude)
+                            <span style="color: #555; font-family: monospace;">{{ round($ins->latitude, 4) }}, {{ round($ins->longitude, 4) }}</span>
+                        @else
+                            <span style="color: #888; font-style: italic;">Lokasi belum diatur</span>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="text-center" style="padding: 15px;">Belum ada data instansi.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
-    <table class="data">
-    <thead>
-        <tr>
-            <th width="5%">No.</th>
-            <th width="25%">Nama Dinas / Instansi</th>
-            <th width="15%">Kode Unit</th>
-            <th width="10%">Jml Lowongan</th>
-            <th width="10%">Jml Peserta</th>
-            <th width="25%">Alamat Kantor</th>
-            <th width="10%">Koordinat</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($instansis as $index => $instansi)
-        <tr>
-            <td style="text-align: center;">{{ $index + 1 }}</td>
-            <td>{{ $instansi->nama_dinas }}</td>
-            <td style="text-align: center;">{{ $instansi->kode_unit_kerja }}</td>
-            
-            <td style="text-align: center;">
-                {{ $instansi->positions->count() }}
-            </td>
-            <td style="text-align: center;">
-                {{ $instansi->positions->flatMap->applications->whereIn('status', ['diterima', 'selesai'])->count() }}
-            </td>
+    {{-- Blok Tanda Tangan --}}
+    @include('pdf.partials.ttd_admin_kota')
 
-            <td>{{ $instansi->alamat }}</td>
-            <td style="font-size: 9pt;">
-                {{ $instansi->latitude }}, {{ $instansi->longitude }}
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-    @php
-        $pejabatNama = $pejabat_nama ?? \App\Models\Setting::value('pejabat_name') ?? 'H. Lukman Fadlun, SH';
-        $pejabatNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
-        $pejabatJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Bakesbangpol Kota Banjarmasin';
-        $ttdImg = \App\Models\Setting::value('ttd_image');
-        $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
-    @endphp
-
-    <div class="ttd-container">
-        <div class="ttd-box-right">
-            <p>Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-            <p style="margin-top: 2px;">{{ $pejabatJabatan }}</p>
-            @if($ttdFile && file_exists($ttdFile))
-                <div style="margin: 5px 0;">
-                    <img src="{{ $ttdFile }}" style="max-height: 60px; max-width: 150px;">
-                </div>
-            @else
-                <br><br><br><br>
-            @endif
-            <p style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">{{ $pejabatNama }}</p>
-            <p style="font-size: 8px; color: #555;">NIP. {{ $pejabatNip }}</p>
-        </div>
-    </div>
+    {{-- Penomoran Halaman & Catatan Kaki --}}
+    @include('pdf.partials.footer_page_number')
 
 </body>
 </html>

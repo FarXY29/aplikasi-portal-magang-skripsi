@@ -193,7 +193,10 @@ class LowonganController extends Controller
      */
     public function show($id)
     {
-        $position = InternshipPosition::with(['instansi', 'requiredMajorCategory'])->findOrFail($id);
+        $position = InternshipPosition::with(['instansi', 'requiredMajorCategory'])
+            ->where('status', 'buka')
+            ->findOrFail($id);
+
         return view('public.lowongan.show', compact('position'));
     }
 }

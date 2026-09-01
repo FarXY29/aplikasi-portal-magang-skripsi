@@ -1,239 +1,309 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Laporan Kinerja dan Beban Pembimbing Lapangan</title>
+    <meta charset="UTF-8">
+    <title>Laporan Kinerja &amp; Beban Pembimbing Lapangan</title>
     <style>
-        body { font-family: sans-serif; font-size: 9px; color: #333; }
-        .header { text-align: center; margin-bottom: 15px; border-bottom: 3px double #333; padding-bottom: 12px; }
-        .header h2 { margin: 0; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
-        .header h3 { margin: 3px 0; font-size: 12px; }
-        .header p { margin: 2px 0; font-size: 10px; color: #555; }
+        @page {
+            margin: 1.2cm 1.5cm 1.5cm 1.5cm;
+            size: A4 landscape;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 9pt;
+            color: #000;
+            line-height: 1.3;
+        }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #aaa; padding: 4px 5px; text-align: left; vertical-align: middle; }
-        th { background-color: #f3f4f6; text-align: center; font-weight: bold; font-size: 8px; text-transform: uppercase; }
+        .judul-laporan {
+            text-align: center;
+            margin: 8px 0 10px 0;
+            font-weight: bold;
+            font-size: 11.5pt;
+            text-transform: uppercase;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
+        }
         
-        .meta-info { margin-bottom: 12px; font-size: 10px; }
+        .meta-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 8.5pt;
+            color: #222;
+        }
+        .meta-info td {
+            border: none;
+            padding: 1.5px 0;
+        }
+        
+        .section-title { 
+            font-size: 9pt;
+            font-weight: bold;
+            margin: 10px 0 5px 0; 
+            padding: 3px 6px;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .stats-table td {
+            border: 1px solid #444;
+            padding: 4px 2px;
+            text-align: center;
+        }
+        .stats-table .stat-label {
+            font-size: 6.8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #444;
+            font-weight: bold;
+        }
+        .stats-table .stat-value {
+            font-size: 10.5pt;
+            font-weight: bold;
+            color: #000;
+            margin-top: 1px;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+            margin-bottom: 10px;
+        }
+        table.data-table thead {
+            display: table-header-group;
+        }
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #333;
+            padding: 4.5px 5px;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 8.2pt;
+        }
+        table.data-table th {
+            background-color: #f1f5f9;
+            text-align: center;
+            font-weight: bold;
+            font-size: 7.8pt;
+            text-transform: uppercase;
+        }
+        
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-bold { font-weight: bold; }
-        .text-green { color: #16a34a; }
-        .text-red { color: #dc2626; }
-        .text-teal { color: #0d9488; }
-        .text-blue { color: #2563eb; }
         
-        .section-title { 
-            font-size: 11px; font-weight: bold; margin: 15px 0 8px 0; 
-            padding: 5px 8px; background-color: #f3f4f6; border-left: 4px solid #0d9488;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        
-        .stats-table { margin-bottom: 15px; }
-        .stats-table td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
-        .stats-table .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; }
-        .stats-table .value { font-size: 14px; font-weight: bold; color: #111; }
-        
-        .pembimbing-row { background-color: #f9fafb; font-weight: bold; font-size: 9px; }
-        
-        .detail-card { background-color: #ffffff; padding: 5px; margin-top: 3px; border: 1px solid #e5e7eb; border-radius: 4px; }
-        .detail-title { font-weight: bold; color: #374151; font-size: 8px; margin-bottom: 3px; text-transform: uppercase; }
         .detail-table { width: 100%; border-collapse: collapse; margin-top: 2px; }
-        .detail-table th { background-color: #f9fafb; font-size: 7px; color: #4b5563; padding: 3px; }
-        .detail-table td { font-size: 8px; padding: 3px; border: 1px solid #e5e7eb; }
-        
-        .footer { margin-top: 20px; font-size: 8px; color: #888; border-top: 1px solid #ccc; padding-top: 8px; }
-        .badge { display: inline-block; padding: 1px 3px; border-radius: 2px; font-size: 7px; font-weight: bold; }
+        .detail-table th { background-color: #f1f5f9; font-size: 7pt; color: #000; padding: 2px 3px; border: 1px solid #777; }
+        .detail-table td { font-size: 7pt; padding: 2px 3px; border: 1px solid #777; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>PEMERINTAH KOTA BANJARMASIN</h2>
-        <h3>{{ Auth::user()->instansi->nama_dinas ?? 'DINAS TERKAIT' }}</h3>
-        <p>Laporan Kinerja &amp; Beban Kerja Pembimbing Lapangan</p>
-    </div>
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
 
-    <div class="meta-info">
-        <p><strong>Dicetak Tanggal:</strong> {{ date('d F Y') }} &nbsp;|&nbsp; <em>Oleh: {{ Auth::user()->name }}</em></p>
-    </div>
+    <div class="judul-laporan">LAPORAN KINERJA &amp; BEBAN KERJA PEMBIMBING LAPANGAN</div>
+
+    <table class="meta-info">
+        <tr>
+            <td style="width: 50%;">
+                <strong>Instansi:</strong> {{ $instansi->nama_dinas ?? (Auth::user()->instansi->nama_dinas ?? '-') }}<br>
+                <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }} <br>
+                <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Admin Instansi' }}
+            </td>
+            <td style="width: 50%; text-align: right; vertical-align: top;">
+                <strong>Total Pembimbing Terdaftar:</strong> {{ $stats['total_pembimbing'] ?? count($beban) }} Orang
+            </td>
+        </tr>
+    </table>
 
     {{-- Ringkasan Statistik --}}
-    <div class="section-title">Ringkasan Statistik</div>
+    <div class="section-title">Ringkasan Statistik Beban Kerja Pembimbing</div>
     <table class="stats-table">
         <tr>
             <td style="width: 16.66%">
-                <div class="label">Total Pembimbing</div>
-                <div class="value">{{ $stats['total_pembimbing'] }}</div>
+                <div class="stat-label">Total Pembimbing</div>
+                <div class="stat-value">{{ $stats['total_pembimbing'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Bimbingan Aktif</div>
-                <div class="value text-blue">{{ $stats['total_bimbingan_aktif'] }}</div>
+                <div class="stat-label">Bimbingan Aktif</div>
+                <div class="stat-value" style="color: #1d4ed8;">{{ $stats['total_bimbingan_aktif'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Alumni Lulus</div>
-                <div class="value text-green">{{ $stats['total_lulus'] }}</div>
+                <div class="stat-label">Alumni Lulus</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['total_lulus'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Rata-rata Nilai</div>
-                <div class="value text-teal">{{ $stats['rata_nilai_semua'] > 0 ? round($stats['rata_nilai_semua'], 1) : '-' }}</div>
+                <div class="stat-label">Rata-rata Nilai</div>
+                <div class="stat-value" style="color: #0f766e;">{{ $stats['rata_nilai_semua'] > 0 ? round($stats['rata_nilai_semua'], 1) : '-' }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Logbook Pending</div>
-                <div class="value text-red">{{ $stats['total_logbook_tertunda'] }}</div>
+                <div class="stat-label">Logbook Pending</div>
+                <div class="stat-value" style="{{ $stats['total_logbook_tertunda'] > 0 ? 'color: #b91c1c;' : 'color: #15803d;' }}">{{ $stats['total_logbook_tertunda'] }}</div>
             </td>
             <td style="width: 16.66%">
-                <div class="label">Tertib Validasi</div>
-                <div class="value text-green">{{ $stats['tertib_validasi'] }} PL</div>
+                <div class="stat-label">Tertib Validasi</div>
+                <div class="stat-value" style="color: #15803d;">{{ $stats['tertib_validasi'] }} PL</div>
             </td>
         </tr>
     </table>
 
     {{-- Tabel Utama --}}
-    <div class="section-title">Detail Kinerja Pembimbing Lapangan</div>
-    <table>
+    <div class="section-title">Detail Kinerja &amp; Bimbingan per Pembimbing Lapangan</div>
+    <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 3%">No</th>
-                <th style="width: 27%">Nama Pembimbing Lapangan</th>
+                <th style="width: 25%">Nama Pembimbing Lapangan</th>
                 <th style="width: 12%">Bimbingan Aktif</th>
                 <th style="width: 12%">Alumni Lulus</th>
                 <th style="width: 12%">Logbook Pending</th>
                 <th style="width: 12%">Rata-rata Nilai</th>
-                <th style="width: 22%">Informasi Kontak</th>
+                <th style="width: 24%">Informasi Kontak</th>
             </tr>
         </thead>
         <tbody>
             @forelse($beban as $pl)
                 {{-- Baris Profil Pembimbing --}}
-                <tr class="pembimbing-row" style="background-color: #f3f4f6;">
+                <tr style="background-color: #f8fafc;">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
-                        <strong>{{ $pl->name }}</strong><br>
-                        <small style="font-weight: normal; color: #555;">NIP/NIK: {{ $pl->nik ?? '-' }}</small>
+                        <strong class="text-bold">{{ $pl->name }}</strong><br>
+                        <span style="font-size: 7.5pt; color: #444;">NIP/NIK: {{ $pl->nik ?? ($pl->nomor_induk ?? '-') }}</span>
                     </td>
-                    <td class="text-center text-blue">{{ $pl->total_bimbingan_aktif }} Org</td>
-                    <td class="text-center text-green">{{ $pl->total_lulus }} Org</td>
-                    <td class="text-center {{ $pl->logbook_tertunda > 0 ? 'text-red text-bold' : 'text-green' }}">
+                    <td class="text-center text-bold" style="color: #1d4ed8;">{{ $pl->total_bimbingan_aktif }} Orang</td>
+                    <td class="text-center text-bold" style="color: #15803d;">{{ $pl->total_lulus }} Orang</td>
+                    <td class="text-center text-bold" style="{{ $pl->logbook_tertunda > 0 ? 'color: #b91c1c;' : 'color: #15803d;' }}">
                         {{ $pl->logbook_tertunda > 0 ? $pl->logbook_tertunda . ' Pending' : 'Tuntas' }}
                     </td>
-                    <td class="text-center">
+                    <td class="text-center text-bold" style="color: #0f766e;">
                         {{ $pl->rata_nilai_diberikan > 0 ? round($pl->rata_nilai_diberikan, 1) : '-' }}
                     </td>
-                    <td style="font-weight: normal; color: #444;">
-                        {{ $pl->email }}<br>
-                        <small>{{ $pl->phone ?? '-' }}</small>
+                    <td>
+                        <span style="font-size: 7.5pt;">{{ $pl->email }}</span>
+                        @if(!empty($pl->phone))
+                            <br><span style="font-size: 7.2pt; color: #444;">Telp: {{ $pl->phone }}</span>
+                        @endif
                     </td>
                 </tr>
                 
                 {{-- Baris Detail Mahasiswa --}}
                 <tr>
-                    <td colspan="7" style="padding: 8px 10px; background-color: #ffffff;">
-                        <div style="width: 100%;">
-                            
-                            {{-- Tabel Anak: Mahasiswa Aktif --}}
-                            <div style="width: 48%; float: left; margin-right: 4%;">
-                                <div class="detail-title" style="color: #2563eb; border-bottom: 1px solid #dbeafe; padding-bottom: 2px;">
-                                    Mahasiswa Aktif ({{ count($pl->mahasiswa_aktif) }})
-                                </div>
-                                @if(count($pl->mahasiswa_aktif) > 0)
-                                    <table class="detail-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%">No</th>
-                                                <th style="width: 45%">Nama / Asal Kampus</th>
-                                                <th style="width: 30%">Logbook</th>
-                                                <th style="width: 20%">Absen Pend.</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($pl->mahasiswa_aktif as $mhs)
+                    <td colspan="7" style="padding: 6px 8px; background-color: #ffffff;">
+                        <table style="width: 100%; border: none; border-collapse: collapse;">
+                            <tr style="border: none;">
+                                {{-- Kolom Mahasiswa Aktif --}}
+                                <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
+                                    <div style="font-size: 7.8pt; font-weight: bold; color: #1d4ed8; margin-bottom: 2px;">
+                                        MAHASISWA AKTIF ({{ count($pl->mahasiswa_aktif) }})
+                                    </div>
+                                    @if(count($pl->mahasiswa_aktif) > 0)
+                                        <table class="detail-table">
+                                            <thead>
                                                 <tr>
-                                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <strong>{{ $mhs['nama'] }}</strong><br>
-                                                        <span style="font-size: 7px; color: #666;">{{ $mhs['kampus'] }} ({{ $mhs['posisi'] }})</span>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {{ $mhs['logbook']['disetujui'] }}/{{ $mhs['logbook']['total'] }} ({{ $mhs['logbook']['rate'] }}%)
-                                                        @if($mhs['logbook']['pending'] > 0)
-                                                            <br><span style="color: #dc2626; font-size: 7px; font-weight: bold;">{{ $mhs['logbook']['pending'] }} Pending</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @if($mhs['absensi']['pending'] > 0)
-                                                            <span style="color: #dc2626; font-weight: bold;">{{ $mhs['absensi']['pending'] }}</span>
-                                                        @else
-                                                            -
-                                                        @endif
-                                                    </td>
+                                                    <th style="width: 6%">No</th>
+                                                    <th style="width: 50%">Nama / Asal Kampus</th>
+                                                    <th style="width: 26%">Logbook</th>
+                                                    <th style="width: 18%">Absen P.</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @else
-                                    <p style="font-size: 8px; color: #888; font-style: italic; margin-top: 5px;">Tidak ada bimbingan aktif.</p>
-                                @endif
-                            </div>
-                            
-                            {{-- Tabel Anak: Mahasiswa Lulus --}}
-                            <div style="width: 48%; float: left;">
-                                <div class="detail-title" style="color: #059669; border-bottom: 1px solid #dcfce7; padding-bottom: 2px;">
-                                    Alumni Lulus ({{ count($pl->mahasiswa_lulus) }})
-                                </div>
-                                @if(count($pl->mahasiswa_lulus) > 0)
-                                    <table class="detail-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%">No</th>
-                                                <th style="width: 45%">Nama / Asal Kampus</th>
-                                                <th style="width: 20%">Nilai / Pred.</th>
-                                                <th style="width: 30%">Sertifikat</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($pl->mahasiswa_lulus as $mhs)
+                                            </thead>
+                                            <tbody>
+                                                @foreach($pl->mahasiswa_aktif as $mhs)
+                                                    <tr>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td>
+                                                            <strong>{{ $mhs['nama'] }}</strong><br>
+                                                            <span style="font-size: 6.5pt; color: #444;">{{ $mhs['kampus'] }} ({{ $mhs['posisi'] }})</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {{ $mhs['logbook']['disetujui'] }}/{{ $mhs['logbook']['total'] }} ({{ $mhs['logbook']['rate'] }}%)
+                                                            @if($mhs['logbook']['pending'] > 0)
+                                                                <br><span style="color: #b91c1c; font-size: 6.5pt; font-weight: bold;">{{ $mhs['logbook']['pending'] }} Pending</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if($mhs['absensi']['pending'] > 0)
+                                                                <span style="color: #b91c1c; font-weight: bold;">{{ $mhs['absensi']['pending'] }}</span>
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div style="font-size: 7.2pt; color: #666; font-style: italic; padding: 2px 0;">Tidak ada bimbingan aktif.</div>
+                                    @endif
+                                </td>
+                                
+                                <td style="width: 4%; border: none;"></td>
+
+                                {{-- Kolom Mahasiswa Lulus --}}
+                                <td style="width: 48%; border: none; padding: 0; vertical-align: top;">
+                                    <div style="font-size: 7.8pt; font-weight: bold; color: #047857; margin-bottom: 2px;">
+                                        ALUMNI LULUS ({{ count($pl->mahasiswa_lulus) }})
+                                    </div>
+                                    @if(count($pl->mahasiswa_lulus) > 0)
+                                        <table class="detail-table">
+                                            <thead>
                                                 <tr>
-                                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <strong>{{ $mhs['nama'] }}</strong><br>
-                                                        <span style="font-size: 7px; color: #666;">{{ $mhs['kampus'] }}</span>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <strong>{{ $mhs['nilai'] }}</strong><br>
-                                                        <span style="font-size: 6px; color: #059669;">{{ $mhs['predikat'] }}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span style="font-size: 7px; font-family: monospace;">{{ $mhs['nomor_sertifikat'] ?: '-' }}</span>
-                                                    </td>
+                                                    <th style="width: 6%">No</th>
+                                                    <th style="width: 44%">Nama / Asal Kampus</th>
+                                                    <th style="width: 22%">Nilai / Predikat</th>
+                                                    <th style="width: 28%">No. Sertifikat</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @else
-                                    <p style="font-size: 8px; color: #888; font-style: italic; margin-top: 5px;">Belum ada alumni lulus.</p>
-                                @endif
-                            </div>
-                            
-                            <div style="clear: both;"></div>
-                        </div>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($pl->mahasiswa_lulus as $mhs)
+                                                    <tr>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td>
+                                                            <strong>{{ $mhs['nama'] }}</strong><br>
+                                                            <span style="font-size: 6.5pt; color: #444;">{{ $mhs['kampus'] }}</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <strong>{{ $mhs['nilai'] }}</strong><br>
+                                                            <span style="font-size: 6.5pt; color: #15803d; font-weight: bold;">{{ $mhs['predikat'] }}</span>
+                                                        </td>
+                                                        <td style="font-size: 6.5pt; font-family: monospace;">
+                                                            {{ $mhs['nomor_sertifikat'] ?: '-' }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div style="font-size: 7.2pt; color: #666; font-style: italic; padding: 2px 0;">Belum ada alumni lulus.</div>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center" style="padding: 20px;">Tidak ada data pembimbing lapangan.</td>
+                    <td colspan="7" class="text-center" style="padding: 15px;">Tidak ada data pembimbing lapangan.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
-    <div class="footer">
-        <p>Dokumen ini dicetak secara otomatis oleh Sistem Portal Magang Pemerintah Kota Banjarmasin. &copy; {{ date('Y') }}</p>
-    </div>
+    {{-- Blok Tanda Tangan --}}
+    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
-    <script type="text/php">
-        if ( isset($pdf) ) {
-            $pdf->get_cpdf()->addJS('print(true);');
-        }
-    </script>
+    {{-- Penomoran Halaman & Catatan Kaki --}}
+    @include('pdf.partials.footer_page_number')
+
 </body>
 </html>

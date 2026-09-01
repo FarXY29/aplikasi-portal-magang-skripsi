@@ -75,6 +75,7 @@ class AdminUserController extends Controller
             'asal_instansi' => $usesAsalInstansi ? $request->asal_instansi : null,
             'nik' => $request->nik,
             'phone' => $request->phone,
+            'email_verified_at' => in_array($request->role, User::EMAIL_VERIFICATION_EXEMPT_ROLES, true) ? now() : null,
         ]);
 
         $user->syncPrimaryRole();
@@ -195,7 +196,7 @@ class AdminUserController extends Controller
     }
 
     // Cetak Laporan Data Master Peserta (PDF)
-    public function printParticipants()
+    public function printParticipants(\App\Services\PdfExportService $pdfService)
     {
         // Ambil hanya user dengan role 'peserta'
         // Urutkan berdasarkan nama agar rapi, hanya kolom yang dipakai template PDF
@@ -204,23 +205,6 @@ class AdminUserController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        $settings = Setting::all()->pluck('value', 'key');
-        $pejabat_nama = $settings['pejabat_name'] ?? 'H. Lukman Fadlun, SH';
-        $pejabat_nip = $settings['pejabat_nip'] ?? '-';
-        $pejabat_jabatan = $settings['pejabat_jabatan'] ?? 'Kepala Bakesbangpol Kota Banjarmasin';
-
-        $ttd_image_path = null;
-        if (! empty($settings['ttd_image']) && Storage::disk('public')->exists($settings['ttd_image'])) {
-            $ttd_image_path = public_path('storage/'.$settings['ttd_image']);
-        }
-
-        // Load View PDF
-        $pdf = Pdf::loadView('pdf.admin_kota.peserta', compact('participants', 'pejabat_nama', 'pejabat_nip', 'pejabat_jabatan', 'ttd_image_path'));
-
-        // Setup Kertas A4 Landscape
-        $pdf->setPaper('a4', 'landscape');
-
-        // Stream (Tampilkan di browser)
-        return $pdf->stream('Laporan-Master-Peserta.pdf');
+        return $pdfService->stream('pdf.admin_kota.peserta', compact('participants'), 'Laporan-Master-Peserta.pdf', 'a4', 'landscape', true);
     }
 }

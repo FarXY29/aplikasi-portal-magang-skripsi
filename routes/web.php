@@ -25,10 +25,19 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Private Storage Guard Route
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StorageAccessController;
+
 Route::get('/storage-access/{type}/{filename}', [StorageAccessController::class, 'serveFile'])
     ->middleware('auth')
     ->name('storage.access');
+
+// Realtime In-App Notification Routes
+Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/unread', [NotificationController::class, 'getUnread'])->name('unread');
+    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read_all');
+});
 
 require __DIR__.'/public.php';
 require __DIR__.'/peserta.php';
