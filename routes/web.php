@@ -39,6 +39,12 @@ Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->gr
     Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read_all');
 });
 
+// Public / Kiosk Display Routes
+use App\Http\Controllers\KioskPresensiController;
+
+Route::get('/kiosk/presensi/{kiosk_token}', [KioskPresensiController::class, 'showKiosk'])->name('kiosk.presensi.public');
+Route::get('/kiosk/live-qr/{kiosk_token}', [KioskPresensiController::class, 'fetchLiveQr'])->name('kiosk.live_qr');
+
 require __DIR__.'/public.php';
 require __DIR__.'/peserta.php';
 require __DIR__.'/admin_instansi.php';
