@@ -9,7 +9,6 @@ class Instansi extends Model
 {
     use HasFactory;
 
-    // Kita harus mendaftarkan kolom mana saja yang boleh diisi (Mass Assignment)
     protected $fillable = [
         'nama_dinas',
         'kode_unit_kerja',
@@ -24,8 +23,28 @@ class Instansi extends Model
         'latitude',
         'longitude',
         'radius_absen',
+        'qr_absensi_enabled',
+        'kiosk_token',
         'ttd_kepala', // Kolom Tanda Tangan Kepala Dinas
     ];
+
+    protected $casts = [
+        'qr_absensi_enabled' => 'boolean',
+        'radius_absen' => 'integer',
+    ];
+
+    /**
+     * Pastikan instansi memiliki kiosk_token rahasia untuk display Kiosk publik/lobi.
+     */
+    public function ensureKioskToken(): string
+    {
+        if (empty($this->kiosk_token)) {
+            $this->kiosk_token = \Illuminate\Support\Str::random(32);
+            $this->save();
+        }
+
+        return $this->kiosk_token;
+    }
 
     protected static function boot()
     {

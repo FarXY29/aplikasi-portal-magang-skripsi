@@ -47,6 +47,9 @@ class ClockInRequest extends FormRequest
             // Idempotency (P0 §5.2) — juga bisa dari header Idempotency-Key.
             'idempotency_key' => ['nullable', 'string', 'max:64'],
 
+            // Dynamic QR token kantor (Dual-Factor Presence)
+            'qr_token' => ['nullable', 'string', 'max:500'],
+
             'status' => ['nullable', 'string', 'in:hadir,izin,sakit'],
             'keterangan' => ['nullable', 'string', 'max:500'],
         ];
@@ -73,6 +76,8 @@ class ClockInRequest extends FormRequest
             'nonce.max' => 'Token keamanan absensi tidak valid.',
             'idempotency_key.string' => 'Idempotency key tidak valid.',
             'idempotency_key.max' => 'Idempotency key tidak valid.',
+            'qr_token.string' => 'Token Dynamic QR kantor tidak valid.',
+            'qr_token.max' => 'Token Dynamic QR kantor melebihi batas panjang yang diizinkan.',
             'status.in' => 'Status kehadiran tidak dikenali.',
             'keterangan.max' => 'Keterangan izin maksimal 500 karakter.',
         ];

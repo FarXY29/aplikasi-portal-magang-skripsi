@@ -51,6 +51,10 @@ class SettingController extends Controller
     public function settings()
     {
         $instansi = Auth::user()->instansi;
+        if ($instansi) {
+            $instansi->ensureKioskToken();
+        }
+
         return view('admin_instansi.settings', compact('instansi'));
     }
 
@@ -62,11 +66,14 @@ class SettingController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'radius_absen' => 'nullable|integer|min:10|max:10000',
+            'qr_absensi_enabled' => 'nullable|boolean',
         ]);
 
         $instansi = Auth::user()->instansi;
         
-        $data = [];
+        $data = [
+            'qr_absensi_enabled' => $request->boolean('qr_absensi_enabled'),
+        ];
         if ($request->has('jam_mulai_masuk')) $data['jam_mulai_masuk'] = $request->jam_mulai_masuk;
         if ($request->has('jam_mulai_pulang')) $data['jam_mulai_pulang'] = $request->jam_mulai_pulang;
         if ($request->has('latitude')) $data['latitude'] = $request->latitude;
@@ -76,5 +83,18 @@ class SettingController extends Controller
         $instansi->update($data);
 
         return back()->with('success', 'Pengaturan instansi berhasil diperbarui.');
+    }
+
+    public function regenerateKioskToken(Request $request)
+    {
+        $instansi = Auth::user()->instansi;
+        if (!$instansi) {
+            abort(404, 'Instansi tidak ditemukan.');
+        }
+
+        $instansi->kiosk_token = \Illuminate\Support\Str::random(32);
+        $instansi->save();
+
+        return back()->with('success', 'Link Kiosk Presensi kantor berhasil diperbarui dengan token baru.');
     }
 }

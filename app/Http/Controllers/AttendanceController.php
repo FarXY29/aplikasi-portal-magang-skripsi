@@ -20,6 +20,7 @@ use App\Services\Attendance\AttendanceFraudDetector;
 use App\Services\Attendance\AttendanceFraudResult;
 use App\Services\Attendance\AttendanceAttemptService;
 use App\Services\Attendance\GeoDistanceService;
+use App\Services\Attendance\DynamicQrService;
 use Illuminate\Database\QueryException;
 use Throwable;
 
@@ -32,6 +33,7 @@ class AttendanceController extends Controller
         private readonly AttendanceFraudDetector $fraudDetector,
         private readonly AttendanceAttemptService $attempts,
         private readonly GeoDistanceService $geo,
+        private readonly DynamicQrService $dynamicQr,
     ) {
     }
 
@@ -198,6 +200,24 @@ class AttendanceController extends Controller
             if ($distanceMeters > $radiusAbsen) {
                 return back()->with('error', ($type === 'clock_in' ? 'Gagal Absen Datang!' : 'Gagal Absen Pulang!')
                     . ' Posisi Anda berada di luar radius kantor (' . number_format($distanceMeters, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+            }
+        }
+
+        // 3.5. Dynamic QR Verification (Dual-Factor Presence).
+        if ($instansi && $instansi->qr_absensi_enabled) {
+            $qrToken = $request->input('qr_token');
+            $qrVerification = $this->dynamicQr->verifyToken($instansi, $qrToken, $now->getTimestamp());
+
+            if (!$qrVerification['valid']) {
+                $errorMsg = match ($qrVerification['reason']) {
+                    'missing_token' => 'Gagal Absen! Instansi Anda mewajibkan scan Dynamic QR di layar kantor.',
+                    'expired' => 'Gagal Absen! Kode Dynamic QR sudah kedaluwarsa (berputar tiap 30 detik). Silakan scan ulang dari layar monitor kantor.',
+                    'invalid_instansi' => 'Gagal Absen! Kode QR ini milik kantor instansi lain.',
+                    'invalid_signature', 'malformed_token' => 'Gagal Absen! Kode Dynamic QR tidak valid atau rusak.',
+                    default => 'Gagal Absen! Validasi Dynamic QR kantor tidak berhasil. Silakan coba scan ulang.'
+                };
+
+                return back()->with('error', $errorMsg);
             }
         }
 

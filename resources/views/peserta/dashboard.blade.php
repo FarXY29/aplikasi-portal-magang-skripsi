@@ -180,14 +180,24 @@
                                     <i class="fas fa-hourglass-start text-indigo-600"></i> Magang Belum Dimulai
                                 </div>
                             @elseif(!$attendanceToday)
+                                @php
+                                    $qrRequired = (bool) ($jamKerja?->qr_absensi_enabled ?? false);
+                                @endphp
                                 <div class="grid grid-cols-2 sm:flex sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                                     <form id="form-absen-masuk" action="{{ route('peserta.absen.masuk') }}" method="POST" class="w-full sm:w-auto">
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-masuk">
                                         <input type="hidden" name="longitude" id="lng-masuk">
-                                        <button type="submit" id="btn-absen-masuk" onclick="handleAbsenClick(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
-                                            <i class="fas fa-fingerprint text-sm"></i> Absen Datang
-                                        </button>
+                                        <input type="hidden" name="qr_token" id="qr-token-masuk">
+                                        @if($qrRequired)
+                                            <button type="button" id="btn-absen-masuk" onclick="openQrScanner(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk', 'Absen Datang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                                <i class="fas fa-qrcode text-sm"></i> Scan QR Masuk
+                                            </button>
+                                        @else
+                                            <button type="submit" id="btn-absen-masuk" onclick="handleAbsenClick(event, 'form-absen-masuk', 'lat-masuk', 'lng-masuk', 'btn-absen-masuk')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                                <i class="fas fa-fingerprint text-sm"></i> Absen Datang
+                                            </button>
+                                        @endif
                                     </form>
                                     
                                     <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'modal-izin')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-white dark:bg-gray-800 border-2 border-amber-400 dark:border-amber-500 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-2xl font-bold transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
@@ -196,6 +206,9 @@
                                 </div>
 
                              @elseif($attendanceToday->status == 'hadir' && empty($attendanceToday->clock_out))
+                                @php
+                                    $qrRequired = (bool) ($jamKerja?->qr_absensi_enabled ?? false);
+                                @endphp
                                 <div class="flex flex-col items-center gap-3 w-full sm:w-auto">
                                     <div class="text-xs font-bold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-2 rounded-xl border border-teal-200/80 dark:border-teal-800/60 shadow-2xs">
                                         <i class="fas fa-check-circle mr-1"></i> Datang: {{ \Carbon\Carbon::parse($attendanceToday->clock_in)->format('H:i') }}
@@ -204,9 +217,16 @@
                                         @csrf
                                         <input type="hidden" name="latitude" id="lat-pulang">
                                         <input type="hidden" name="longitude" id="lng-pulang">
-                                        <button type="submit" id="btn-absen-pulang" onclick="handleAbsenClick(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-rose-700 hover:bg-rose-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
-                                            <i class="fas fa-sign-out-alt text-sm"></i> Absen Pulang
-                                        </button>
+                                        <input type="hidden" name="qr_token" id="qr-token-pulang">
+                                        @if($qrRequired)
+                                            <button type="button" id="btn-absen-pulang" onclick="openQrScanner(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang', 'Absen Pulang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-rose-700 hover:bg-rose-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                                <i class="fas fa-qrcode text-sm"></i> Scan QR Pulang
+                                            </button>
+                                        @else
+                                            <button type="submit" id="btn-absen-pulang" onclick="handleAbsenClick(event, 'form-absen-pulang', 'lat-pulang', 'lng-pulang', 'btn-absen-pulang')" class="w-full sm:w-auto min-h-[44px] justify-center px-5 sm:px-6 py-3 bg-rose-700 hover:bg-rose-800 text-white rounded-2xl font-bold shadow-2xs transition active:scale-95 flex items-center gap-2 text-xs uppercase tracking-wider">
+                                                <i class="fas fa-sign-out-alt text-sm"></i> Absen Pulang
+                                            </button>
+                                        @endif
                                     </form>
                                 </div>
 
@@ -231,6 +251,7 @@
 
                     </div>
                     @include('peserta.dashboard._gps-widget')
+                    @include('peserta.dashboard._qr-scanner-modal')
                 </div>
 
                 {{-- Card Input Saran / Evaluasi --}}
@@ -646,6 +667,194 @@
             form.appendChild(input);
         }
         input.value = value;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // DYNAMIC QR SCANNER (HTML5-QRCode) INTEGRATION
+    // ══════════════════════════════════════════════════════════
+    let html5QrScanner = null;
+    let currentTargetFormId = null;
+    let currentTargetLatId = null;
+    let currentTargetLngId = null;
+    let currentTargetBtnId = null;
+    let currentChallengeData = null;
+
+    function ensureHtml5QrcodeLibrary() {
+        return new Promise((resolve, reject) => {
+            if (typeof window.Html5Qrcode !== 'undefined') {
+                resolve();
+                return;
+            }
+            const existing = document.querySelector('script[src*="html5-qrcode"]');
+            if (existing) {
+                existing.addEventListener('load', resolve);
+                existing.addEventListener('error', reject);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/html5-qrcode';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    function openQrScanner(event, formId, latId, lngId, btnId, actionLabel) {
+        if (event) event.preventDefault();
+        currentTargetFormId = formId;
+        currentTargetLatId = latId;
+        currentTargetLngId = lngId;
+        currentTargetBtnId = btnId;
+
+        const modal = document.getElementById('modal-qr-scanner');
+        const titleEl = document.getElementById('qr-modal-title');
+        if (titleEl && actionLabel) {
+            titleEl.innerText = 'Pindai Dynamic QR (' + actionLabel + ')';
+        }
+        if (modal) modal.classList.remove('hidden');
+
+        setGpsBadgeStatus('loading', 'Kunci GPS...');
+        setSecBadgeStatus('loading', 'Sesi Keamanan...');
+
+        // Fetch challenge nonce
+        fetch('{{ route('peserta.absensi.challenge') }}', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            currentChallengeData = data;
+            setSecBadgeStatus('success', 'Sesi Keamanan Siap');
+        })
+        .catch(() => {
+            setSecBadgeStatus('error', 'Gagal Sesi');
+        });
+
+        // Acquire GPS location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    latestGpsPosition = pos;
+                    latestGpsTimestamp = Date.now();
+                    setGpsBadgeStatus('success', 'GPS Terkunci');
+                },
+                () => {
+                    setGpsBadgeStatus('error', 'GPS Gagal');
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+            );
+        }
+
+        startScanner();
+    }
+
+    function setGpsBadgeStatus(status, text) {
+        const icon = document.getElementById('qr-gps-icon');
+        const textEl = document.getElementById('qr-gps-text');
+        if (textEl) textEl.innerText = text;
+        if (icon) {
+            if (status === 'loading') icon.className = 'fas fa-satellite-dish text-teal-600 animate-pulse';
+            else if (status === 'success') icon.className = 'fas fa-check-circle text-emerald-600';
+            else icon.className = 'fas fa-times-circle text-rose-600';
+        }
+    }
+
+    function setSecBadgeStatus(status, text) {
+        const icon = document.getElementById('qr-sec-icon');
+        const textEl = document.getElementById('qr-sec-text');
+        if (textEl) textEl.innerText = text;
+        if (icon) {
+            if (status === 'loading') icon.className = 'fas fa-shield-alt text-teal-600 animate-spin';
+            else if (status === 'success') icon.className = 'fas fa-shield-halved text-emerald-600';
+            else icon.className = 'fas fa-times-circle text-rose-600';
+        }
+    }
+
+    async function startScanner() {
+        const overlayLoading = document.getElementById('qr-loading-overlay');
+        const overlayError = document.getElementById('qr-error-overlay');
+        if (overlayLoading) overlayLoading.classList.remove('hidden');
+        if (overlayError) overlayError.classList.add('hidden');
+
+        try {
+            await ensureHtml5QrcodeLibrary();
+
+            if (html5QrScanner) {
+                try { await html5QrScanner.stop(); } catch(e) {}
+                html5QrScanner = null;
+            }
+
+            html5QrScanner = new Html5Qrcode('qr-reader');
+            const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+
+            await html5QrScanner.start(
+                { facingMode: 'environment' },
+                config,
+                onQrCodeScanned,
+                () => {}
+            );
+
+            if (overlayLoading) overlayLoading.classList.add('hidden');
+        } catch (err) {
+            console.error('Scanner error:', err);
+            if (overlayLoading) overlayLoading.classList.add('hidden');
+            if (overlayError) overlayError.classList.remove('hidden');
+        }
+    }
+
+    function onQrCodeScanned(decodedText) {
+        if (!decodedText) return;
+
+        if (navigator.vibrate) navigator.vibrate(100);
+
+        if (html5QrScanner) {
+            try { html5QrScanner.stop(); } catch(e) {}
+            html5QrScanner = null;
+        }
+
+        const modal = document.getElementById('modal-qr-scanner');
+        if (modal) modal.classList.add('hidden');
+
+        const form = document.getElementById(currentTargetFormId);
+        if (!form) return;
+
+        setOrCreateHidden(form, 'qr_token', decodedText);
+
+        const btn = document.getElementById(currentTargetBtnId);
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Memproses Presensi...</span>';
+            btn.disabled = true;
+        }
+
+        const ensureChallenge = currentChallengeData 
+            ? Promise.resolve(currentChallengeData)
+            : fetch('{{ route('peserta.absensi.challenge') }}', {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+              }).then(res => res.json());
+
+        const ensureGps = (latestGpsPosition && (Date.now() - latestGpsTimestamp) < 20000)
+            ? Promise.resolve(latestGpsPosition)
+            : new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 });
+              });
+
+        Promise.all([ensureChallenge, ensureGps])
+            .then(([challenge, position]) => {
+                fillAntiFraudFields(form, currentTargetLatId, currentTargetLngId, position, challenge);
+                form.submit();
+            })
+            .catch(() => {
+                alert('Gagal memvalidasi sesi keamanan atau lokasi GPS. Silakan coba scan ulang.');
+                window.location.reload();
+            });
+    }
+
+    function closeQrScannerModal() {
+        if (html5QrScanner) {
+            try { html5QrScanner.stop(); } catch(e) {}
+            html5QrScanner = null;
+        }
+        const modal = document.getElementById('modal-qr-scanner');
+        if (modal) modal.classList.add('hidden');
     }
     </script>
     @endpush

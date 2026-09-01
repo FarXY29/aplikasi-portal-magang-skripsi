@@ -203,6 +203,32 @@
         </a>
         @endif
 
+        {{-- Quick Kiosk Banner --}}
+        <div class="rounded-2xl md:rounded-3xl bg-gradient-to-r from-teal-900/90 to-slate-900 border border-teal-500/30 p-4 md:p-5 shadow-xl text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5 min-w-0">
+                <div class="w-11 h-11 rounded-2xl bg-teal-500/20 border border-teal-400/30 text-teal-300 flex items-center justify-center text-xl shrink-0 shadow-inner">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <h4 class="text-sm md:text-base font-extrabold tracking-tight text-white">Layar Kiosk Presensi Kantor</h4>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase {{ $instansi->qr_absensi_enabled ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-700 text-slate-300' }}">
+                            {{ $instansi->qr_absensi_enabled ? 'Wajib QR Aktif' : 'Mode GPS Standar' }}
+                        </span>
+                    </div>
+                    <p class="text-xs text-teal-200/70 font-medium mt-0.5">Buka tampilan Kiosk di monitor/TV lobi kantor untuk rotasi Dynamic QR 30-detik.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5 w-full sm:w-auto">
+                <a href="{{ route('dinas.kiosk.presensi') }}" target="_blank" class="w-full sm:w-auto px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold text-xs shadow-lg shadow-teal-500/20 transition flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fas fa-desktop"></i> Buka Layar Kiosk
+                </a>
+                <a href="{{ route('dinas.settings') }}" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold text-xs border border-slate-700 transition flex items-center justify-center gap-1.5" title="Pengaturan QR">
+                    <i class="fas fa-cog"></i>
+                </a>
+            </div>
+        </div>
+
         {{-- ══════════════════════════════════════════════════════════ --}}
         {{-- MAIN CHARTS ROW (TREN PENDAFTARAN + STATUS LAMARAN) --}}
         {{-- ══════════════════════════════════════════════════════════ --}}

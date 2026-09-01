@@ -64,6 +64,11 @@ Route::middleware(['auth', 'role:admin_instansi'])->prefix('dinas')->name('dinas
     Route::put('/pengaturan-pejabat', [AdminInstansiSettingController::class, 'updatePejabat'])->name('pejabat.update');
     Route::get('/pengaturan', [AdminInstansiSettingController::class, 'settings'])->name('settings');
     Route::put('/pengaturan', [AdminInstansiSettingController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/pengaturan/regenerate-kiosk-token', [AdminInstansiSettingController::class, 'regenerateKioskToken'])->name('pengaturan.regenerate_kiosk');
+
+    // Dynamic QR Kiosk Display
+    Route::get('/presensi-qr-kiosk', [\App\Http\Controllers\KioskPresensiController::class, 'showKiosk'])->name('kiosk.presensi');
+    Route::get('/presensi-qr-live', [\App\Http\Controllers\KioskPresensiController::class, 'fetchLiveQr'])->name('kiosk.live_qr.auth');
 
     Route::get('/sertifikat/create/{applicationId}', [CertificateController::class, 'create'])->name('sertifikat.create');
     Route::post('/sertifikat/store/{applicationId}', [CertificateController::class, 'store'])->name('sertifikat.store');
