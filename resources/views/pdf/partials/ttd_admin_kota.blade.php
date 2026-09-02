@@ -3,7 +3,18 @@
     $pNip = $pejabat_nip ?? \App\Models\Setting::value('pejabat_nip') ?? '-';
     $pJabatan = $pejabat_jabatan ?? \App\Models\Setting::value('pejabat_jabatan') ?? 'Kepala Badan Kesatuan Bangsa dan Politik';
     $ttdImg = \App\Models\Setting::value('ttd_image');
-    $ttdFile = $ttd_image_path ?? ($ttdImg && \Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg) ? storage_path('app/public/' . $ttdImg) : null);
+    $ttdFile = $ttd_image_path ?? null;
+    if (!$ttdFile && $ttdImg) {
+        if (\Illuminate\Support\Facades\Storage::disk('private')->exists($ttdImg)) {
+            $ttdFile = \Illuminate\Support\Facades\Storage::disk('private')->path($ttdImg);
+        } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($ttdImg)) {
+            $ttdFile = \Illuminate\Support\Facades\Storage::disk('public')->path($ttdImg);
+        } elseif (file_exists(storage_path('app/public/' . $ttdImg))) {
+            $ttdFile = storage_path('app/public/' . $ttdImg);
+        } elseif (file_exists(public_path('storage/' . $ttdImg))) {
+            $ttdFile = public_path('storage/' . $ttdImg);
+        }
+    }
     $tanggalCetak = $custom_date ?? \Carbon\Carbon::now()->translatedFormat('d F Y');
 @endphp
 

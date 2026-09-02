@@ -33,7 +33,11 @@
             $ttdPlPath = null;
             if (!empty($pl?->signature)) {
                 $rawPl = $pl->signature;
-                if (file_exists(storage_path('app/public/' . $rawPl))) {
+                if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawPl)) {
+                    $ttdPlPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawPl);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawPl)) {
+                    $ttdPlPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawPl);
+                } elseif (file_exists(storage_path('app/public/' . $rawPl))) {
                     $ttdPlPath = storage_path('app/public/' . $rawPl);
                 } elseif (file_exists(public_path('storage/' . $rawPl))) {
                     $ttdPlPath = public_path('storage/' . $rawPl);
