@@ -57,7 +57,7 @@
             font-size: 9pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
             font-size: 8.5pt;

@@ -42,8 +42,8 @@
             font-weight: bold;
             margin: 12px 0 6px 0; 
             padding: 3px 6px;
-            background-color: #f3f4f6;
-            border-left: 3px solid #0d9488;
+            background-color: #f1f5f9;
+            border-left: 3px solid #000;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -54,7 +54,7 @@
             margin-bottom: 12px;
         }
         .stats-table td {
-            border: 1px solid #555;
+            border: 1px solid #444;
             padding: 5px 3px;
             text-align: center;
         }
@@ -62,13 +62,13 @@
             font-size: 7pt;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #555;
+            color: #444;
             font-weight: bold;
         }
         .stats-table .value {
             font-size: 11pt;
             font-weight: bold;
-            color: #111;
+            color: #000;
             margin-top: 1px;
         }
         
@@ -92,7 +92,7 @@
             font-size: 8.5pt;
         }
         table.data-table th {
-            background-color: #e5e7eb;
+            background-color: #f1f5f9;
             text-align: center;
             font-weight: bold;
             font-size: 8pt;

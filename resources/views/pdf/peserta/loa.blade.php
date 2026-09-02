@@ -2,56 +2,30 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Surat Balasan Magang - {{ $app->user->name }}</title>
+    <title>Surat Balasan Persetujuan Magang - {{ $app->user->name }}</title>
     <style>
         @page {
-            margin: 1.5cm 2cm 1.5cm 2.5cm; /* Atas Kanan Bawah Kiri */
+            margin: 1.2cm 2cm 1.5cm 2.2cm;
+            size: A4 portrait;
         }
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt; /* Ukuran font standar surat dinas */
-            line-height: 1.2;
-            text-align: justify;
+            font-size: 11pt;
+            line-height: 1.25;
+            color: #000;
         }
-
-        /* KOP SURAT */
-        .header-container {
-            width: 100%;
-            border-bottom: 3px double #000; /* Garis ganda */
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-        .header-table {
-            width: 100%;
-        }
-        .logo-cell {
-            width: 15%;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .text-cell {
-            width: 85%;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .logo {
-            width: 70px;
-            height: auto;
-        }
-        .header-pemko { margin: 0; font-size: 14pt; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; }
-        .header-dinas { margin: 0; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 2px; }
-        .header-alamat { margin: 0; font-size: 9pt; margin-top: 2px; }
 
         /* TANGGAL */
         .date-section {
             text-align: right;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 11pt;
         }
 
-        /* TABEL INFO (Nomor &amp; Tujuan) */
+        /* TABEL INFO (Nomor & Tujuan) */
         .info-container {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .info-table {
             width: 100%;
@@ -59,15 +33,13 @@
         }
         .info-table td {
             vertical-align: top;
-            padding: 1px 0;
+            padding: 1.5px 0;
+            font-size: 10.5pt;
         }
         
-        /* Lebar Kolom Kiri (Nomor, Sifat, Lampiran, Hal) */
-        .col-left-label { width: 12%; white-space: nowrap; }
+        .col-left-label { width: 14%; white-space: nowrap; }
         .col-left-sep { width: 2%; text-align: center; }
-        .col-left-content { width: 46%; padding-right: 10px; }
-
-        /* Lebar Kolom Kanan (Yth) */
+        .col-left-content { width: 44%; padding-right: 10px; }
         .col-right { width: 40%; }
 
         /* ISI SURAT */
@@ -75,31 +47,34 @@
             margin-bottom: 10px;
         }
         .paragraph {
-            text-indent: 30px; /* Menjorok ke dalam */
+            text-indent: 32px;
             margin-bottom: 8px;
             text-align: justify;
+            line-height: 1.3;
         }
 
         /* DATA MAHASISWA */
         .student-table {
             width: 95%;
-            margin-left: 20px; /* Indentasi tabel */
-            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-top: 4px;
+            margin-bottom: 10px;
             border-collapse: collapse;
         }
         .student-table td {
-            padding: 2px;
+            padding: 2px 0;
             vertical-align: top;
+            font-size: 10.5pt;
         }
-        .st-num { width: 5%; text-align: center; }
-        .st-label { width: 20%; }
+        .st-num { width: 4%; text-align: center; }
+        .st-label { width: 24%; }
         .st-sep { width: 3%; }
-        .st-content { width: 72%; font-weight: bold; }
+        .st-content { width: 69%; font-weight: bold; }
 
-        /* TANDA TANGAN */
+        /* TANDA TANGAN & VALIDASI */
         .signature-table {
             width: 100%;
-            margin-top: 25px;
+            margin-top: 15px;
             border-collapse: collapse;
             page-break-inside: avoid;
         }
@@ -108,52 +83,56 @@
             padding: 0;
         }
         .signature-col-left {
-            width: 50%;
+            width: 45%;
+            text-align: center;
+            vertical-align: bottom;
+            padding-bottom: 8px;
         }
         .signature-col-right {
-            width: 50%;
+            width: 55%;
             text-align: center;
         }
         .ttd-img-box {
-            height: 65px;
-            margin: 4px 0;
+            height: 60px;
+            margin: 3px 0;
             text-align: center;
         }
         .ttd-img {
-            max-height: 65px;
-            max-width: 180px;
+            max-height: 58px;
+            max-width: 160px;
             display: inline-block;
             vertical-align: middle;
         }
         .ttd-space {
-            height: 65px;
+            height: 58px;
         }
         
-        /* Helper */
+        .qr-box {
+            display: inline-block;
+            text-align: center;
+            padding: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: #fff;
+        }
+        .qr-caption {
+            font-size: 7.5pt;
+            color: #555;
+            margin-top: 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
         .bold { font-weight: bold; }
         .underline { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <table class="header-table">
-            <tr>
-                <td class="logo-cell">
-                    <img src="{{ public_path('images/Banjarmasin_Logo.svg.png') }}" class="logo" alt="Logo">
-                </td>
-                <td class="text-cell">
-                    <h3 class="header-pemko">PEMERINTAH KOTA BANJARMASIN</h3>
-                    <h1 class="header-dinas">{{ $app->position->instansi->nama_dinas }}</h1>
-                    <p class="header-alamat">{{ $app->position->instansi->alamat ?? 'Alamat Kantor Belum Diatur' }}</p>
-                    <p class="header-alamat">Email: {{ $app->position->instansi->email ?? '-' }}</p>
-                </td>
-            </tr>
-        </table>
-    </div>
+    @include('pdf.partials.kop_admin_instansi', ['instansi' => $app->position->instansi])
 
     <div class="date-section">
-        Banjarmasin, {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}
+        Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
     </div>
 
     <div class="info-container">
@@ -166,17 +145,17 @@
                 </td>
 
                 <td class="col-right" rowspan="4" style="vertical-align: top;">
-                    Yth.<br>
-                    Dekan / Pimpinan<br>
-                    <strong>{{ $app->user->asal_instansi }}</strong><br>
-                    di-<br>
+                    Kepada Yth.<br>
+                    <strong>Pimpinan / Dekan</strong><br>
+                    {{ $app->user->asal_instansi ?? ($app->user->university->name ?? ($app->user->school->name ?? 'Institusi Terkait')) }}<br>
+                    di -<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tempat
                 </td>
             </tr>
             <tr>
                 <td class="col-left-label">Sifat</td>
                 <td class="col-left-sep">:</td>
-                <td class="col-left-content">Biasa</td>
+                <td class="col-left-content">Biasa / Resmi</td>
             </tr>
             <tr>
                 <td class="col-left-label">Lampiran</td>
@@ -193,17 +172,17 @@
 
     <div class="content">
         <p class="paragraph">
-            Sehubungan dengan surat dari <strong>{{ $app->user->asal_instansi }}</strong> perihal Permohonan Kesediaan Menerima Praktik Kerja Lapangan (PKL) / Magang Mahasiswa/i.
+            Sehubungan dengan surat permohonan dari <strong>{{ $app->user->asal_instansi ?? 'Institusi Pemohon' }}</strong> perihal Permohonan Kesediaan Menerima Praktik Kerja Lapangan (PKL) / Magang Mahasiswa/i.
         </p>
 
         <p class="paragraph">
-            Berkaitan hal tersebut di atas, maka {{ $app->position->instansi->nama_dinas }} pada prinsipnya <strong>MENYETUJUI</strong> Mahasiswa/i yang akan Magang pada Instansi kami, yaitu atas nama:
+            Berkaitan dengan hal tersebut di atas, maka <strong>{{ $app->position->instansi->nama_dinas }}</strong> Pemerintah Kota Banjarmasin pada prinsipnya <strong>MENYETUJUI / MENERIMA</strong> pelaksanaan Magang / PKL atas nama:
         </p>
 
         <table class="student-table">
             <tr>
                 <td class="st-num">1.</td>
-                <td class="st-label">Nama</td>
+                <td class="st-label">Nama Lengkap</td>
                 <td class="st-sep">:</td>
                 <td class="st-content">{{ $app->user->name }}</td>
             </tr>
@@ -211,17 +190,23 @@
                 <td class="st-num"></td>
                 <td class="st-label">NIM / NPM / NISN</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->nik ?? $app->user->nim ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->nik ?? ($app->user->nim ?? '-') }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
-                <td class="st-label">Prodi / Jurusan</td>
+                <td class="st-label">Program Studi / Jurusan</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->majorDetail?->name ?? $app->user->major ?? '-' }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->majorDetail?->name ?? ($app->user->major ?? '-') }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>
-                <td class="st-label">Waktu</td>
+                <td class="st-label">Posisi / Bidang</td>
+                <td class="st-sep">:</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->position->judul_posisi ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="st-num"></td>
+                <td class="st-label">Waktu Pelaksanaan</td>
                 <td class="st-sep">:</td>
                 <td class="st-content" style="font-weight: normal;">
                     {{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') }} s.d. {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d F Y') }}
@@ -230,64 +215,76 @@
         </table>
 
         <p class="paragraph">
-            Selama mengikuti program magang tersebut, diharapkan Mahasiswa dapat mengikuti ketentuan dan tata tertib yang berlaku pada {{ $app->position->instansi->nama_dinas }}.
+            Selama mengikuti program magang tersebut, diharapkan peserta yang bersangkutan dapat mematuhi segala ketentuan, jam kerja kedinasan, dan tata tertib yang berlaku pada lingkungan <strong>{{ $app->position->instansi->nama_dinas }}</strong>.
         </p>
 
         <p class="paragraph">
-            Demikian disampaikan, untuk dapat dipergunakan sebagaimana mestinya.
+            Demikian surat persetujuan ini disampaikan untuk dapat dipergunakan sebagaimana mestinya. Atas perhatian dan kerja samanya, diucapkan terima kasih.
         </p>
     </div>
 
+    @php
+        $instansi = $app->position->instansi;
+        $jabatan = trim($instansi->jabatan_pejabat ?? 'Kepala Dinas');
+        $namaPejabat = $instansi->nama_pejabat ?? '........................................';
+        $nipPejabat = $instansi->nip_pejabat ?? '....................';
+        $isKepala = stripos($jabatan, 'kepala dinas') !== false 
+            || stripos($jabatan, 'kepala badan') !== false 
+            || stripos($jabatan, 'kepala kantor') !== false 
+            || stripos($jabatan, 'direktur') !== false 
+            || stripos($jabatan, 'camat') !== false 
+            || stripos($jabatan, 'lurah') !== false;
+        
+        $ttdPath = null;
+        if (!empty($instansi->ttd_kepala)) {
+            $rawPath = $instansi->ttd_kepala;
+            if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawPath)) {
+                $ttdPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawPath);
+            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawPath)) {
+                $ttdPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawPath);
+            } elseif (file_exists(storage_path('app/public/' . $rawPath))) {
+                $ttdPath = storage_path('app/public/' . $rawPath);
+            } elseif (file_exists(public_path('storage/' . $rawPath))) {
+                $ttdPath = public_path('storage/' . $rawPath);
+            }
+        }
+    @endphp
+
     <table class="signature-table">
         <tr>
-            <td class="signature-col-left"></td>
-            <td class="signature-col-right">
-                @php
-                    $jabatan = trim($app->position->instansi->jabatan_pejabat ?? 'Kepala Dinas');
-                    $isKepala = stripos($jabatan, 'kepala dinas') !== false 
-                        || stripos($jabatan, 'kepala badan') !== false 
-                        || stripos($jabatan, 'kepala kantor') !== false 
-                        || stripos($jabatan, 'direktur') !== false 
-                        || stripos($jabatan, 'camat') !== false 
-                        || stripos($jabatan, 'lurah') !== false;
-                    
-                    $ttdPath = null;
-                    if (!empty($app->position->instansi->ttd_kepala)) {
-                        $rawPath = $app->position->instansi->ttd_kepala;
-                        if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawPath)) {
-                            $ttdPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawPath);
-                        } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawPath)) {
-                            $ttdPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawPath);
-                        } elseif (file_exists(storage_path('app/public/' . $rawPath))) {
-                            $ttdPath = storage_path('app/public/' . $rawPath);
-                        } elseif (file_exists(public_path('storage/' . $rawPath))) {
-                            $ttdPath = public_path('storage/' . $rawPath);
-                        }
-                    }
-                @endphp
+            {{-- QR Code Validasi di Kiri Bawah --}}
+            <td class="signature-col-left">
+                <div class="qr-box">
+                    <img src="data:image/svg+xml;base64, {{ base64_encode(QrCode::format('svg')->size(52)->generate(route('id_card.verify', $app->token_verifikasi ?? 'invalid'))) }}" style="display: block; margin: 0 auto; width: 52px; height: 52px;">
+                    <div class="qr-caption">Scan Validasi Dokumen</div>
+                </div>
+            </td>
 
+            {{-- Blok Tanda Tangan Pejabat di Kanan Bawah --}}
+            <td class="signature-col-right">
                 @if(!$isKepala && !empty($jabatan))
-                    <div style="font-weight: normal; text-transform: uppercase;">a.n. KEPALA DINAS</div>
-                    <div style="font-weight: bold; text-transform: uppercase;">{{ $jabatan }},</div>
+                    <div style="font-weight: normal; font-size: 10pt; text-transform: uppercase;">a.n. KEPALA DINAS</div>
+                    <div style="font-weight: bold; font-size: 10.5pt; text-transform: uppercase;">{{ $jabatan }}</div>
                 @else
-                    <div style="font-weight: bold; text-transform: uppercase;">{{ $jabatan }},</div>
+                    <div style="font-weight: bold; font-size: 10.5pt; text-transform: uppercase;">{{ $jabatan }}</div>
                 @endif
+                <div style="font-size: 9.5pt; font-weight: bold; text-transform: uppercase;">{{ $instansi->nama_dinas }}</div>
                 
                 <div class="ttd-img-box">
-                    @if($ttdPath)
+                    @if($ttdPath && file_exists($ttdPath))
                         <img src="{{ $ttdPath }}" class="ttd-img" alt="TTD">
                     @else
                         <div class="ttd-space"></div>
                     @endif
                 </div>
                 
-                <div class="bold underline" style="text-transform: uppercase; margin-bottom: 2px;">
-                    {{ $app->position->instansi->nama_pejabat ?? 'Nama Pejabat Belum Diatur' }}
+                <div class="bold underline" style="text-transform: uppercase; font-size: 10.5pt; margin-bottom: 2px;">
+                    {{ $namaPejabat }}
                 </div>
-                @if(!empty($app->position->instansi->pangkat_pejabat))
-                    <div>{{ $app->position->instansi->pangkat_pejabat }}</div>
+                @if(!empty($instansi->pangkat_pejabat))
+                    <div style="font-size: 9.5pt;">{{ $instansi->pangkat_pejabat }}</div>
                 @endif
-                <div>NIP. {{ $app->position->instansi->nip_pejabat ?? '-' }}</div>
+                <div style="font-size: 9.5pt;">NIP. {{ $nipPejabat }}</div>
             </td>
         </tr>
     </table>
