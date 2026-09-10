@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\Attendance;
+use App\Models\AttendanceDispute;
 use App\Models\DailyLog;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +24,10 @@ class StorageAccessController extends Controller
 
         [$path, $model] = match ($type) {
             'surat' => $this->applicationDocument($filename),
+            'cv' => $this->applicationCvDocument($filename),
             'logbook' => $this->logbookDocument($filename),
             'attendance' => $this->attendanceDocument($filename),
+            'dispute' => $this->disputeDocument($filename),
             'signature' => $this->signatureDocument($filename),
             default => abort(404),
         };
@@ -33,8 +36,14 @@ class StorageAccessController extends Controller
             $this->authorize('view', $model);
         }
 
-        $disk = Storage::disk('private')->exists($path) ? 'private' : 'public';
-        abort_unless(Storage::disk($disk)->exists($path), 404, 'Berkas tidak ditemukan.');
+        if (Storage::disk('private')->exists($path)) {
+            $disk = 'private';
+        } elseif (Storage::disk('public')->exists($path)) {
+            \Illuminate\Support\Facades\Log::warning("Serving legacy sensitive document from public disk fallback: {$path}");
+            $disk = 'public';
+        } else {
+            abort(404, 'Berkas tidak ditemukan.');
+        }
 
         return Storage::disk($disk)->response($path, null, [
             'Content-Disposition' => 'inline; filename="'.basename($path).'"',
@@ -52,6 +61,17 @@ class StorageAccessController extends Controller
             ->firstOrFail();
 
         return [$application->surat_pengantar_path, $application];
+    }
+
+    /** @return array{string, Application} */
+    private function applicationCvDocument(string $filename): array
+    {
+        $application = Application::query()
+            ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
+            ->where('cv_path', 'like', '%/'.$this->like($filename))
+            ->firstOrFail();
+
+        return [$application->cv_path, $application];
     }
 
     /** @return array{string, DailyLog} */
@@ -74,6 +94,17 @@ class StorageAccessController extends Controller
             ->firstOrFail();
 
         return [$attendance->proof_file, $attendance];
+    }
+
+    /** @return array{string, AttendanceDispute} */
+    private function disputeDocument(string $filename): array
+    {
+        $dispute = AttendanceDispute::query()
+            ->with(['attendance.application.position', 'user'])
+            ->where('evidence_file', 'like', '%/'.$this->like($filename))
+            ->firstOrFail();
+
+        return [$dispute->evidence_file, $dispute];
     }
 
     /** @return array{string, object} */

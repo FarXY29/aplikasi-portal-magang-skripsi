@@ -45,6 +45,8 @@ Route::middleware(['auth', 'role:admin_kota'])->prefix('admin')->name('admin.')-
     Route::get('/laporan', [AdminKotaReportController::class, 'report'])->name('laporan');
     Route::get('/laporan/print', [AdminKotaReportController::class, 'printLaporan'])->name('laporan.print');
     Route::get('/pusat-laporan', [AdminKotaReportController::class, 'laporanHub'])->name('laporan.hub');
+    Route::get('/laporan-pendaftaran', [AdminKotaReportController::class, 'laporanPendaftaran'])->name('laporan.pendaftaran');
+    Route::get('/laporan-pendaftaran/print', [AdminKotaReportController::class, 'printPendaftaran'])->name('laporan.pendaftaran.print');
     Route::get('/laporan-peserta-global', [AdminKotaReportController::class, 'laporanPesertaGlobal'])->name('laporan.peserta_global');
     Route::get('/laporan-instansi', [AdminKotaReportController::class, 'laporanInstansi'])->name('laporan.instansi');
     Route::get('/laporan/peserta-global/print', [AdminKotaReportController::class, 'printPesertaGlobal'])->name('laporan.peserta_global.print');

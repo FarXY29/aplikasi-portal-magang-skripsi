@@ -11,9 +11,11 @@ class Instansi extends Model
 
     protected $fillable = [
         'nama_dinas',
+        'singkatan',
         'kode_unit_kerja',
         'alamat',
         'contact_whatsapp',
+        'email',
         'nama_pejabat',
         'nip_pejabat',
         'jabatan_pejabat',
@@ -44,6 +46,31 @@ class Instansi extends Model
         }
 
         return $this->kiosk_token;
+    }
+
+    /**
+     * Dapatkan singkatan dinas resmi, dengan fallback akronim nama dinas.
+     */
+    public function getSingkatanAttribute($value): string
+    {
+        if (!empty($value)) {
+            return strtoupper($value);
+        }
+
+        $nama = trim($this->nama_dinas ?? '');
+        if (empty($nama)) {
+            return 'INSTANSI';
+        }
+
+        $words = preg_split('/\s+/', preg_replace('/[^a-zA-Z0-9\s]/', '', $nama));
+        $acronym = '';
+        foreach ($words as $w) {
+            if (strlen($w) > 0 && !in_array(strtolower($w), ['dan', 'di', 'ke', 'dari', 'kota', 'pemerintah'])) {
+                $acronym .= strtoupper($w[0]);
+            }
+        }
+
+        return !empty($acronym) ? substr($acronym, 0, 15) : 'INSTANSI';
     }
 
     protected static function boot()

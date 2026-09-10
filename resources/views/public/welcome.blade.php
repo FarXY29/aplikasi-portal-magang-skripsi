@@ -26,17 +26,6 @@
         h1, h2, h3, h4, .font-display {
             font-family: 'Outfit', sans-serif;
         }
-        
-        /* Premium Sasirangan Modern Background */
-        .bg-sasirangan-premium {
-            background-color: #042f2e !important;
-            background-image: 
-                radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 15% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-                linear-gradient(to bottom right, rgba(4, 47, 46, 0.95), rgba(6, 78, 59, 0.98)),
-                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2314b8a6' fill-opacity='0.05'%3E%3Cpath d='M40 38v-8h-4v8h-8v4h8v8h4v-8h8v-4h-8zm0-36V0h-4v2h-8v4h8v8h4V6h8V2h-8zM8 38v-8H4v8H0v4h4v8h4v-8h8v-4H8zM8 2V0H4v2H0v4h4v8h4V6h8V2H8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
-            background-size: 100% 100%, 100% 100%, cover, auto !important;
-        }
     </style>
     <script>
         // Progressive enhancement flag: enables reveal/entrance animations only with JS.
@@ -47,6 +36,17 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
+
+        // Dynamically listen to OS theme changes if user has not manually set a preference
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!('theme' in localStorage)) {
+                if (e.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
     </script>
 </head>
 <body class="bg-slate-50 dark:bg-gray-900 text-slate-600 dark:text-slate-400 flex flex-col min-h-screen overflow-x-hidden antialiased transition-colors duration-300">

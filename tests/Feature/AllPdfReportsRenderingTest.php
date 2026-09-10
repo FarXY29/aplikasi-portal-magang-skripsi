@@ -108,6 +108,7 @@ class AllPdfReportsRenderingTest extends TestCase
 
         $routes = [
             route('admin.laporan.print'),
+            route('admin.laporan.pendaftaran.print'),
             route('admin.laporan.peserta_global.print'),
             route('admin.laporan.penyerapan_kuota.print'),
             route('admin.instansi.print_pdf'),

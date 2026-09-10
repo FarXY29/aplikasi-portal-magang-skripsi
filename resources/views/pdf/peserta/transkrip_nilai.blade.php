@@ -136,7 +136,7 @@
         <tr>
             <td class="label-col">Nomor Induk (NIM / NPM / NISN)</td>
             <td class="sep-col">:</td>
-            <td>{{ $app->user->nik ?? ($app->user->nim ?? '-') }}</td> 
+            <td>{{ $app->user->nim ?? ($app->user->nik ?? '-') }}</td> 
         </tr>
         <tr>
             <td class="label-col">Asal Sekolah / Universitas</td>

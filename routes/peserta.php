@@ -35,6 +35,7 @@ Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')
         ->middleware('throttle:attendance-clock')
         ->name('absen.pulang');
     Route::post('/absen/izin', [AttendanceController::class, 'permission'])->name('absen.izin');
+    Route::post('/absensi/{attendance}/dispute', [\App\Http\Controllers\AttendanceDisputeController::class, 'store'])->name('absensi.dispute');
 });
 
 Route::middleware(['auth', 'role:peserta', 'throttle:availability-check'])->group(function () {

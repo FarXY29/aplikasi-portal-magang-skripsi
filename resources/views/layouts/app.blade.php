@@ -36,6 +36,17 @@
             document.documentElement.classList.remove('dark');
         }
 
+        // Dynamically listen to OS theme changes if user has not manually set a preference
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!('theme' in localStorage)) {
+                if (e.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
+
         // Force HTTPS on public domains (e.g. Cloudflare Tunnels) for camera/location APIs
         const isLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname) || 
                         !location.hostname.includes('.') ||
@@ -50,7 +61,31 @@
         }
     </script>
 </head>
-<body class="font-sans antialiased bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-gray-100 transition-colors duration-300" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
+<body class="font-sans antialiased bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-gray-100 transition-colors duration-300" 
+      x-data="{ 
+          sidebarOpen: false, 
+          sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+          activeTooltip: null,
+          tooltipSub: null,
+          tooltipTop: 0,
+          showTooltip(el, text, sub = null) {
+              if (!this.sidebarCollapsed || window.innerWidth < 1024) return;
+              const rect = el.getBoundingClientRect();
+              this.tooltipTop = rect.top + (rect.height / 2);
+              this.activeTooltip = text;
+              this.tooltipSub = sub;
+          },
+          hideTooltip() {
+              this.activeTooltip = null;
+              this.tooltipSub = null;
+          },
+          toggleSidebarCollapse() {
+              this.sidebarCollapsed = !this.sidebarCollapsed;
+              localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
+              this.hideTooltip();
+          }
+      }" 
+      @keydown.escape.window="sidebarOpen = false">
     
     <div class="flex h-screen overflow-hidden">
 
@@ -68,8 +103,13 @@
 
         <!-- MAIN SIDEBAR (Desktop & Drawer Slide-Over) -->
         <aside x-cloak 
-               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 z-50 w-64 md:w-72 bg-white dark:bg-gray-800 border-r border-slate-200/90 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 transform h-full flex flex-col flex-shrink-0">
+               :class="{
+                   'translate-x-0': sidebarOpen,
+                   '-translate-x-full': !sidebarOpen,
+                   'lg:w-20': sidebarCollapsed,
+                   'lg:w-72': !sidebarCollapsed
+               }"
+               class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 border-r border-slate-200/90 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 ease-in-out transform h-full flex flex-col flex-shrink-0 overflow-x-hidden">
             @include('layouts.navigation')
         </aside>
 
@@ -79,11 +119,18 @@
             <!-- DESKTOP & TABLET HEADER (md dan ke atas) -->
             <header class="hidden md:flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-slate-200/90 dark:border-gray-700/80 h-16 min-h-[4rem] max-h-16 items-center justify-between px-6 lg:px-8 z-30 shadow-2xs sticky top-0 flex-shrink-0 box-border">
                 
-                <!-- Sisi Kiri: Hamburger + Breadcrumb / Status Peran -->
+                <!-- Sisi Kiri: Hamburger + Toggle Collapse + Breadcrumb / Status Peran -->
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Tombol Hamburger (Muncul pada tablet md ke lg untuk membuka drawer sidebar) -->
                     <button @click="sidebarOpen = true" class="p-2.5 -ml-2 text-slate-600 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-slate-100/90 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none lg:hidden transition active:scale-95 flex-shrink-0" title="Buka Sidebar">
                         <i class="fas fa-bars text-lg"></i>
+                    </button>
+
+                    <!-- Tombol Toggle Collapse Sidebar (Desktop lg ke atas) -->
+                    <button @click="toggleSidebarCollapse()" 
+                            class="hidden lg:flex p-2.5 -ml-2 text-slate-600 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 hover:bg-slate-100/90 dark:hover:bg-teal-900/30 rounded-xl focus:outline-none transition active:scale-95 flex-shrink-0" 
+                            :title="sidebarCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar'">
+                        <i class="fas text-base transition-transform duration-200" :class="sidebarCollapsed ? 'fa-indent' : 'fa-outdent'"></i>
                     </button>
                     
                     <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-500 dark:text-gray-400 truncate">
@@ -280,6 +327,28 @@
         });
     </script>
     <x-ui.confirm-dialog />
+
+    <!-- Global Floating Tooltip saat Sidebar Collapsed di Desktop -->
+    <div x-show="activeTooltip && sidebarCollapsed"
+         x-cloak
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0 translate-x-1"
+         x-transition:enter-end="opacity-100 translate-x-0"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-start="opacity-100 translate-x-0"
+         x-transition:leave-end="opacity-0 translate-x-1"
+         :style="`top: ${tooltipTop}px; left: 5rem;`"
+         class="hidden lg:flex fixed -translate-y-1/2 ml-3 z-[999] pointer-events-none items-center">
+        <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/95 dark:bg-gray-800/95 backdrop-blur-sm text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-slate-700/80 flex flex-col gap-0.5 relative">
+            <span x-text="activeTooltip" class="leading-tight"></span>
+            <template x-if="tooltipSub">
+                <span x-text="tooltipSub" class="text-[9px] font-extrabold uppercase tracking-wider text-teal-400"></span>
+            </template>
+            <!-- Panah Segitiga Menunjuk ke Ikon Menu -->
+            <div class="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-slate-900/95 dark:border-r-gray-800/95"></div>
+        </div>
+    </div>
+
     @stack('scripts')
 </body>
 </html>

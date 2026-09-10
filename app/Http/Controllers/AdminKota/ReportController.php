@@ -103,6 +103,34 @@ class ReportController extends Controller
     }
 
     /**
+     * Laporan Pendaftaran & Pelacakan Permohonan Magang Real-Time (Tingkat Kota)
+     */
+    public function laporanPendaftaran(Request $request)
+    {
+        $data = $this->reportService->getApplicationTrackingReportData(null, $request, true);
+        $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
+        $data['request'] = $request;
+
+        return view('admin_kota.laporan.pendaftaran', $data);
+    }
+
+    /**
+     * Cetak Laporan Pendaftaran & Pelacakan Permohonan Magang Real-Time (PDF)
+     */
+    public function printPendaftaran(Request $request)
+    {
+        $data = $this->reportService->getApplicationTrackingReportData(null, $request, false);
+        $title = 'Laporan Pendaftaran & Pelacakan Permohonan Magang Real-Time';
+        if ($request->filled('status') && $request->status !== 'semua') {
+            $title .= ' ('.ucfirst($request->status).')';
+        }
+        $data['title'] = $title;
+        $data['request'] = $request;
+
+        return $this->pdfService->stream('pdf.admin_kota.pendaftaran', $data, 'Laporan-Pendaftaran-Pelacakan-Pemko.pdf', 'a4', 'landscape', true);
+    }
+
+    /**
      * Laporan Grading & Evaluasi
      */
     public function laporanGrading(Request $request)

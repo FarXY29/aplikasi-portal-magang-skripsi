@@ -104,18 +104,23 @@ class DashboardController extends Controller
         return view('peserta.dashboard', compact('myApplications', 'activeApp', 'attendanceToday', 'jamKerja', 'stats', 'daysRemaining'));
     }
 
-    public function cancelApplication($id, InternshipApplicationService $applicationService)
+    public function cancelApplication($id, \App\Services\ApplicationStateTransitionService $transitionService)
     {
         $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        $canCancel = in_array($app->status?->value, ['pending', 'menunggu']) || ($app->status?->value === 'diterima' && $app->display_status === 'belum mulai');
-
-        if (!$canCancel) {
-            return back()->with('error', 'Lamaran ini tidak dapat dibatalkan karena magang sudah dimulai atau status sudah tidak relevan.');
+        try {
+            $transitionService->cancel(
+                $app,
+                request('alasan') ?? 'Dibatalkan oleh Peserta',
+                Auth::id(),
+                true
+            );
+        } catch (\App\Exceptions\CancellationPolicyException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal membatalkan lamaran: ' . $e->getMessage());
         }
 
-        $applicationService->cancelApplicant($app, request('alasan') ?? 'Dibatalkan oleh Peserta', 'dibatalkan');
-        
         return back()->with('success', 'Lamaran magang berhasil dibatalkan.');
     }
 

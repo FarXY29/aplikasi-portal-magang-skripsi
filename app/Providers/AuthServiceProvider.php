@@ -6,14 +6,19 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\Application;
 use App\Models\Attendance;
+use App\Models\AttendanceAttempt;
 use App\Models\DailyLog;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Policies\ApplicationPolicy;
 use App\Policies\AttendancePolicy;
+use App\Policies\AttendanceAttemptPolicy;
 use App\Policies\DailyLogPolicy;
 use App\Policies\InstansiPolicy;
 use App\Policies\InternshipPositionPolicy;
+
+use App\Models\AttendanceDispute;
+use App\Policies\AttendanceDisputePolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +30,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Application::class => ApplicationPolicy::class,
         Attendance::class => AttendancePolicy::class,
+        AttendanceAttempt::class => AttendanceAttemptPolicy::class,
+        AttendanceDispute::class => AttendanceDisputePolicy::class,
         DailyLog::class => DailyLogPolicy::class,
         Instansi::class => InstansiPolicy::class,
         InternshipPosition::class => InternshipPositionPolicy::class,

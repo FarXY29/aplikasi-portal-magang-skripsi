@@ -73,6 +73,31 @@
                                            required>
                                     @error('nip_pejabat') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                                 </div>
+
+                                <div>
+                                    <label class="block font-bold text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                        Singkatan Instansi / OPD
+                                    </label>
+                                    <input type="text" name="singkatan" 
+                                           value="{{ old('singkatan', $instansi->singkatan) }}"
+                                           placeholder="Contoh: DISKOMINFO, DISDUKCAPIL, BPKPAD"
+                                           class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-gray-800 dark:text-gray-100 shadow-sm focus:border-teal-500 focus:ring-teal-500 transition text-sm uppercase" 
+                                           maxlength="50">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Digunakan untuk penomoran surat resmi dan LoA (Letter of Acceptance).</p>
+                                    @error('singkatan') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block font-bold text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                        Email Resmi Instansi (Kop Surat)
+                                    </label>
+                                    <input type="email" name="email" 
+                                           value="{{ old('email', $instansi->email) }}"
+                                           placeholder="Contoh: diskominfo@banjarmasinkota.go.id"
+                                           class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-gray-800 dark:text-gray-100 shadow-sm focus:border-teal-500 focus:ring-teal-500 transition text-sm">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dicantumkan pada kop surat dan dokumen resmi cetak instansi.</p>
+                                    @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                </div>
                             </div>
 
                             <div>

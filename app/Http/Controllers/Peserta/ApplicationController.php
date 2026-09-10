@@ -117,7 +117,7 @@ class ApplicationController extends Controller
                     $status = 'menunggu';
                 }
 
-                Application::create([
+                $app = Application::create([
                     'user_id' => $user->id,
                     'internship_position_id' => $id,
                     'letter_number' => $request->letter_number ?? null,
@@ -127,6 +127,11 @@ class ApplicationController extends Controller
                     'tanggal_mulai' => $reqStart,
                     'tanggal_selesai' => $reqEnd,
                 ]);
+
+                $event = $status === 'menunggu'
+                    ? \App\Models\ApplicationTimeline::EVENT_WAITING_LIST
+                    : \App\Models\ApplicationTimeline::EVENT_SUBMITTED;
+                $app->recordTimeline($event, null, $status, ['letter_number' => $request->letter_number ?? null], $user->id);
 
                 return $status;
             });
@@ -346,7 +351,7 @@ class ApplicationController extends Controller
                     $status = 'menunggu';
                 }
 
-                Application::create([
+                $app = Application::create([
                     'user_id' => $user->id,
                     'internship_position_id' => $position->id,
                     'letter_number' => $request->letter_number ?? null,
@@ -357,6 +362,11 @@ class ApplicationController extends Controller
                     'tanggal_selesai' => $reqEnd,
                     'is_automatic_placement' => true,
                 ]);
+
+                $event = $status === 'menunggu'
+                    ? \App\Models\ApplicationTimeline::EVENT_WAITING_LIST
+                    : \App\Models\ApplicationTimeline::EVENT_SUBMITTED;
+                $app->recordTimeline($event, null, $status, ['letter_number' => $request->letter_number ?? null, 'is_automatic' => true], $user->id);
 
                 return $status;
             });

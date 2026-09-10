@@ -39,6 +39,7 @@ Route::middleware(['auth', 'role:admin_instansi'])->prefix('dinas')->name('dinas
     Route::post('/peserta/{id}/selesai', [AdminInstansiActiveInternController::class, 'finishIntern'])->name('peserta.selesai');
     Route::post('/peserta/{id}/keluarkan', [AdminInstansiActiveInternController::class, 'expelIntern'])->name('peserta.keluarkan');
     Route::post('/logbook/validasi/{id}', [AdminInstansiActiveInternController::class, 'validateLogbook'])->name('logbook.validasi');
+    Route::post('/peserta/absensi/dispute/{id}/validasi', [\App\Http\Controllers\AttendanceDisputeController::class, 'review'])->name('peserta.absensi.dispute.review');
     Route::get('/peserta/{id}/absensi/pdf', [AdminInstansiActiveInternController::class, 'printAbsensi'])->name('peserta.absensi.pdf');
 
     Route::get('/pusat-laporan', [AdminInstansiReportController::class, 'laporanHub'])->name('laporan.hub');

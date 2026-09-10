@@ -58,7 +58,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new ApplicationAcceptedMail($app));
 
-        Mail::assertSent(ApplicationAcceptedMail::class, function (ApplicationAcceptedMail $mail) use ($app) {
+        Mail::assertQueued(ApplicationAcceptedMail::class, function (ApplicationAcceptedMail $mail) use ($app) {
             $html = $mail->render();
 
             $this->assertStringContainsString(e($app->user->name), $html);
@@ -76,7 +76,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new ApplicationRejectedMail($app));
 
-        Mail::assertSent(ApplicationRejectedMail::class, function (ApplicationRejectedMail $mail) use ($app) {
+        Mail::assertQueued(ApplicationRejectedMail::class, function (ApplicationRejectedMail $mail) use ($app) {
             $html = $mail->render();
 
             $this->assertStringContainsString(e($app->user->name), $html);
@@ -94,7 +94,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new InternshipEndingMail($app));
 
-        Mail::assertSent(InternshipEndingMail::class, function (InternshipEndingMail $mail) use ($app) {
+        Mail::assertQueued(InternshipEndingMail::class, function (InternshipEndingMail $mail) use ($app) {
             $html = $mail->render();
 
             $this->assertStringContainsString('7 hari ke depan', $html);
@@ -111,7 +111,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new InternshipCompleted($app));
 
-        Mail::assertSent(InternshipCompleted::class, function (InternshipCompleted $mail) use ($app) {
+        Mail::assertQueued(InternshipCompleted::class, function (InternshipCompleted $mail) use ($app) {
             $html = $mail->render();
 
             $this->assertStringContainsString(e($app->user->name), $html);
@@ -133,7 +133,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new ApplicationAcceptedMail($app));
 
-        Mail::assertSent(ApplicationAcceptedMail::class, function (ApplicationAcceptedMail $mail) {
+        Mail::assertQueued(ApplicationAcceptedMail::class, function (ApplicationAcceptedMail $mail) {
             $html = $mail->render();
             $this->assertStringContainsString('-', $html);
 

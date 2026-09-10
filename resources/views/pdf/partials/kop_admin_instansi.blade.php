@@ -3,7 +3,10 @@
     $dinasName = $curInstansi?->nama_dinas ? strtoupper($curInstansi->nama_dinas) : 'DINAS / INSTANSI TERKAIT';
     
     // Address & contact line
-    $alamat = $curInstansi?->alamat ?? 'Jalan RE Martadinata No. 1, Banjarmasin';
+    $alamat = trim($curInstansi?->alamat ?? 'Jalan RE Martadinata No. 1, Banjarmasin');
+    if (!str_contains(strtolower($alamat), 'banjarmasin')) {
+        $alamat .= ', Banjarmasin';
+    }
     $kontakParts = [];
     if (!empty($curInstansi?->contact_whatsapp)) {
         $kontakParts[] = 'Telp/WA: ' . $curInstansi->contact_whatsapp;

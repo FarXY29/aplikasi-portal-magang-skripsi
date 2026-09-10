@@ -61,7 +61,10 @@ class AttendanceAttemptService
                     'fraud_status' => $result->status->value,
                     'risk_indicators' => array_merge(
                         $result->indicatorCodes(),
-                        ['outcome' => $outcome],
+                        [
+                            'outcome' => $outcome,
+                            'decision' => $result->operationalDecision((string) config('attendance.mode', 'shadow'))->value,
+                        ],
                     ),
                 ]);
 

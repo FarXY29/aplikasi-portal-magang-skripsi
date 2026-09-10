@@ -3,6 +3,7 @@
 namespace App\Services\Attendance;
 
 use App\Enums\AttendanceFraudStatus;
+use App\Enums\AttendanceOperationalDecision;
 use Illuminate\Support\Collection;
 
 /**
@@ -62,4 +63,25 @@ class AttendanceFraudResult
             && $this->isCritical()
             && $this->signals->contains(fn (FraudSignal $s) => $s->code === 'INVALID_NONCE');
     }
+
+    /**
+     * Resolves operational decision (ACCEPTED, ACCEPTED_FOR_REVIEW, REJECTED)
+     * keeping clear semantics distinct from risk score (§P0-1103).
+     */
+    public function operationalDecision(string $mode = 'shadow'): AttendanceOperationalDecision
+    {
+        if ($this->shouldBlock($mode)) {
+            return AttendanceOperationalDecision::Rejected;
+        }
+
+        if ($this->status === AttendanceFraudStatus::Critical
+            || $this->status === AttendanceFraudStatus::VeryHigh
+            || $this->status === AttendanceFraudStatus::High
+            || ($this->status === AttendanceFraudStatus::Medium && $mode !== 'shadow')) {
+            return AttendanceOperationalDecision::AcceptedForReview;
+        }
+
+        return AttendanceOperationalDecision::Accepted;
+    }
 }
+

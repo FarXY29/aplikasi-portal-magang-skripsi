@@ -11,7 +11,7 @@ class StoreApplicationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->role === 'peserta';
+        return $this->user() && $this->user()->hasPortalRole('peserta');
     }
 
     /**

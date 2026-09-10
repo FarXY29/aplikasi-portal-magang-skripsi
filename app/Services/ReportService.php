@@ -43,16 +43,29 @@ class ReportService
         return compact('applications', 'stats');
     }
 
-    public function getApplicationTrackingReportData(int $instansiId, Request $request, bool $paginate = true): array
+    public function getApplicationTrackingReportData(?int $instansiId = null, ?Request $request = null, bool $paginate = true): array
     {
-        $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan'])
-            ->whereHas('position', function ($q) use ($instansiId) {
+        $request = $request ?? request();
+        $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan', 'timelines']);
+
+        if ($instansiId !== null) {
+            $query->whereHas('position', function ($q) use ($instansiId) {
                 $q->where('instansi_id', $instansiId);
             });
+        } elseif ($request->filled('instansi_id')) {
+            $targetInstansiId = $request->instansi_id;
+            $query->whereHas('position', function ($q) use ($targetInstansiId) {
+                $q->where('instansi_id', $targetInstansiId);
+            });
+        }
 
         // Filter Status
         if ($request->filled('status') && $request->status !== 'semua') {
-            $query->where('status', $request->status);
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['pending', 'menunggu']);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
 
         // Filter Posisi Magang
@@ -102,7 +115,13 @@ class ReportService
             ? $query->paginate(20)->withQueryString()
             : $query->get();
 
-        $positions = InternshipPosition::where('instansi_id', $instansiId)->orderBy('judul_posisi', 'asc')->get();
+        $posQuery = InternshipPosition::query();
+        if ($instansiId !== null) {
+            $posQuery->where('instansi_id', $instansiId);
+        } elseif ($request->filled('instansi_id')) {
+            $posQuery->where('instansi_id', $request->instansi_id);
+        }
+        $positions = $posQuery->orderBy('judul_posisi', 'asc')->get();
 
         return compact('applications', 'stats', 'positions');
     }
@@ -602,6 +621,22 @@ class ReportService
                 ->count(DB::raw('DISTINCT users.asal_instansi')),
         ];
 
+        // Matriks Rekapitulasi Asal Instansi Pendidikan (Sekolah / Perguruan Tinggi)
+        $rekapKampus = (clone $query)
+            ->join('users', 'applications.user_id', '=', 'users.id')
+            ->whereNotNull('users.asal_instansi')
+            ->where('users.asal_instansi', '!=', '')
+            ->select(
+                'users.asal_instansi',
+                DB::raw("SUM(CASE WHEN applications.status = 'diterima' THEN 1 ELSE 0 END) as total_aktif"),
+                DB::raw("SUM(CASE WHEN applications.status = 'selesai' THEN 1 ELSE 0 END) as total_selesai"),
+                DB::raw("SUM(CASE WHEN applications.status IN ('pending', 'menunggu') THEN 1 ELSE 0 END) as total_pending"),
+                DB::raw("COUNT(applications.id) as total_peserta")
+            )
+            ->groupBy('users.asal_instansi')
+            ->orderByDesc('total_peserta')
+            ->get();
+
         // Urutan berdasar nama instansi dipindah ke SQL
         $sortedQuery = $query
             ->select('applications.*')
@@ -617,7 +652,7 @@ class ReportService
             $allInterns = $sortedQuery->get();
         }
 
-        return compact('allInterns', 'stats');
+        return compact('allInterns', 'stats', 'rekapKampus');
     }
 
     /**

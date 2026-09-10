@@ -174,6 +174,60 @@
         </tr>
     </table>
 
+    {{-- Matriks Rekapitulasi per Asal Instansi Pendidikan --}}
+    <div class="section-title">Rekapitulasi Jumlah Peserta per Asal Instansi Pendidikan (Sekolah / Kampus)</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 5%;">No</th>
+                <th style="width: 45%;">Asal Instansi Pendidikan (Sekolah / Perguruan Tinggi)</th>
+                <th style="width: 12%;">Peserta Aktif</th>
+                <th style="width: 12%;">Peserta Selesai</th>
+                <th style="width: 12%;">Pending / Seleksi</th>
+                <th style="width: 14%;">Total Peserta</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $grandAktif = 0;
+                $grandSelesai = 0;
+                $grandPending = 0;
+                $grandTotal = 0;
+            @endphp
+            @forelse($rekapKampus ?? [] as $kampus)
+                @php
+                    $grandAktif += $kampus->total_aktif;
+                    $grandSelesai += $kampus->total_selesai;
+                    $grandPending += $kampus->total_pending;
+                    $grandTotal += $kampus->total_peserta;
+                @endphp
+                <tr>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td><strong>{{ $kampus->asal_instansi }}</strong></td>
+                    <td class="text-center status-aktif">{{ $kampus->total_aktif }}</td>
+                    <td class="text-center status-selesai">{{ $kampus->total_selesai }}</td>
+                    <td class="text-center status-pending">{{ $kampus->total_pending }}</td>
+                    <td class="text-center text-bold">{{ $kampus->total_peserta }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 10px;">Tidak ada data instansi pendidikan.</td>
+                </tr>
+            @endforelse
+        </tbody>
+        @if(isset($rekapKampus) && count($rekapKampus) > 0)
+            <tfoot>
+                <tr style="background-color: #f8fafc; font-weight: bold;">
+                    <td colspan="2" class="text-right" style="padding-right: 10px;">TOTAL KESELURUHAN:</td>
+                    <td class="text-center status-aktif">{{ $grandAktif }}</td>
+                    <td class="text-center status-selesai">{{ $grandSelesai }}</td>
+                    <td class="text-center status-pending">{{ $grandPending }}</td>
+                    <td class="text-center" style="color: #0d9488;">{{ $grandTotal }}</td>
+                </tr>
+            </tfoot>
+        @endif
+    </table>
+
     {{-- Tabel Utama --}}
     <div class="section-title">Data Rekapitulasi Global Peserta Magang</div>
     <table class="data-table">

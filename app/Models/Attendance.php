@@ -42,4 +42,14 @@ class Attendance extends Model
     {
         return $this->hasMany(AttendanceAttempt::class);
     }
+
+    public function disputes()
+    {
+        return $this->hasMany(AttendanceDispute::class);
+    }
+
+    public function latestDispute()
+    {
+        return $this->hasOne(AttendanceDispute::class)->latestOfMany();
+    }
 }

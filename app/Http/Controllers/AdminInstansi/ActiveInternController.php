@@ -90,19 +90,16 @@ class ActiveInternController extends Controller
         $app = Application::with(['user', 'position.instansi'])->findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
 
-        $lifecycleService->markAsFinished($app);
         try {
-            if ($app->user && $app->user->email) {
-                Mail::to($app->user->email)->send(new InternshipCompleted($app));
-            }
+            $lifecycleService->markAsFinished($app);
         } catch (\Exception $e) {
-            Log::error('Failed to send internship completed email: '.$e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
 
         return back()->with('success', 'Peserta berhasil diluluskan! Sertifikat kini tersedia.');
     }
 
-    public function expelIntern($id)
+    public function expelIntern($id, \App\Services\ApplicationStateTransitionService $transitionService)
     {
         $app = Application::findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
@@ -112,10 +109,11 @@ class ActiveInternController extends Controller
             return back()->with('error', 'Hanya peserta dengan status aktif yang dapat dikeluarkan.');
         }
 
-        $app->update(['status' => ApplicationStatus::Dikeluarkan->value]);
-        $this->auditLogService->record('application.expelled', $app, [
-            'applicant_user_id' => $app->user_id,
-        ]);
+        try {
+            $transitionService->expel($app, 'Dikeluarkan oleh Admin Instansi', auth()->id());
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return back()->with('success', 'Peserta berhasil dikeluarkan dari magang.');
     }

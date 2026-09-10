@@ -28,7 +28,7 @@
           @endif
 
           <!-- Banner Penempatan Otomatis -->
-          <div class="reveal bg-gradient-to-r from-teal-900 via-teal-950 to-emerald-950 dark:from-teal-950 dark:via-gray-900 dark:to-emerald-950 rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-teal-950/35 mb-12 overflow-hidden relative border border-teal-800/40 w-full" style="--reveal-delay: 100ms" x-intersect.once="$el.classList.add('revealed')">
+          <div class="reveal bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-800 dark:from-slate-800 dark:via-slate-900 dark:to-teal-950 rounded-[2.5rem] p-6 sm:p-10 text-white shadow-xl shadow-teal-900/10 dark:shadow-slate-950/40 mb-12 overflow-hidden relative border border-teal-600/30 dark:border-slate-700/60 w-full" style="--reveal-delay: 100ms" x-intersect.once="$el.classList.add('revealed')">
               <div class="absolute -right-8 -top-8 opacity-10 text-white pointer-events-none">
                   <i class="fas fa-route text-[10rem]"></i>
               </div>

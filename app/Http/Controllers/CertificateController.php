@@ -197,12 +197,13 @@ class CertificateController extends Controller
 
         $tokenVerifikasi = $app->token_verifikasi ?? Str::random(32);
 
+        $previousStatus = $app->status_value;
+
         // 1. Simpan Data Legalitas Sertifikat di Application
         $app->update([
             'nomor_sertifikat' => $request->nomor_sertifikat,
             'updated_at' => $request->tanggal_sertifikat . ' ' . now()->format('H:i:s'), 
             'token_verifikasi' => $tokenVerifikasi,
-            'status' => 'selesai'
         ]);
 
         // 2. Simpan atau sinkronkan ke Master Certificate
@@ -215,6 +216,14 @@ class CertificateController extends Controller
                 'status' => 'active',
                 'published_at' => Carbon::parse($request->tanggal_sertifikat),
             ]
+        );
+
+        $app->recordTimeline(
+            \App\Models\ApplicationTimeline::EVENT_CERTIFICATE_ISSUED,
+            $previousStatus,
+            'selesai',
+            ['nomor_sertifikat' => $request->nomor_sertifikat],
+            auth()->id()
         );
 
         // 3. Siapkan Data untuk View PDF
