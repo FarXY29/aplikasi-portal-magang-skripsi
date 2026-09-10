@@ -18,6 +18,8 @@
         </div>
     </x-slot>
 
+    <div class="py-8 bg-slate-50 dark:bg-[#0f172a] min-h-screen font-sans text-slate-900 dark:text-slate-100">
+        <div class="flex justify-between items-center mb-6 print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div x-data="{
         clientSearch: '',
         statusFilter: '{{ request('status', 'semua') }}',
@@ -66,6 +68,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
+            {{-- 6 Stats Cards Grid --}}
             {{-- 6 Stats Cards Grid (Clean & Eye-Comfort) --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 {{-- Total Pendaftar --}}
@@ -143,6 +146,7 @@
                 @endif
             </div>
 
+            {{-- Filter Box --}}
             {{-- Filter Box (Server-Side) --}}
             <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xs border border-slate-200 dark:border-slate-700/80">
                 <form method="GET" action="{{ route('admin.laporan.pendaftaran') }}" class="space-y-4">
@@ -162,9 +166,11 @@
                             </select>
                         </div>
 
+                        {{-- Filter Status Permohonan --}}
                         {{-- Filter Status Permohonan (Server Query) --}}
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1.5">
+                                <i class="fas fa-filter text-teal-500 mr-1"></i> Status Permohonan
                                 <i class="fas fa-filter text-teal-500 mr-1"></i> Filter Status Database
                             </label>
                             <select name="status" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-semibold focus:ring-teal-500 focus:border-teal-500 shadow-2xs py-2.5">
@@ -193,6 +199,7 @@
                         </div>
                     </div>
 
+                    {{-- Baris 2: Tanggal Pengajuan & Pencarian Cepat --}}
                     {{-- Baris 2: Tanggal Pengajuan & Pencarian Server --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end pt-1">
                         {{-- Tanggal Lamar Dari --}}
@@ -213,9 +220,11 @@
                                    class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-semibold focus:ring-teal-500 focus:border-teal-500 shadow-2xs py-2.5">
                         </div>
 
+                        {{-- Kolom Pencarian Cepat --}}
                         {{-- Kolom Pencarian Kata Kunci --}}
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1.5">
+                                <i class="fas fa-search text-teal-500 mr-1"></i> Pencarian Cepat
                                 <i class="fas fa-search text-teal-500 mr-1"></i> Cari di Server
                             </label>
                             <div class="relative">
@@ -223,11 +232,13 @@
                                     <i class="fas fa-search text-xs"></i>
                                 </span>
                                 <input type="text" name="search" value="{{ request('search') }}" 
+                                       placeholder="Nama, NIM, Kampus, No. Reg..."
                                        placeholder="Nama, NIM, No. Reg..."
                                        class="w-full pl-9 border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 rounded-xl text-xs font-semibold focus:ring-teal-500 focus:border-teal-500 shadow-2xs py-2.5">
                             </div>
                         </div>
 
+                        {{-- Tombol Terapkan --}}
                         {{-- Tombol Terapkan & Reset --}}
                         <div class="flex items-center gap-2">
                             @if(request()->anyFilled(['instansi_id', 'status', 'posisi_id', 'start_date', 'end_date', 'search']))
@@ -244,6 +255,7 @@
                 </form>
             </div>
 
+            {{-- Card Tabel Utama --}}
             {{-- Interactive Toolbar: Status Pills Tab & Fast Client-Side Search --}}
             <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xs border border-slate-200 dark:border-slate-700/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                 {{-- 1-Click Status Filter Pills --}}
@@ -315,8 +327,12 @@
                 <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50/60 dark:bg-slate-900/40">
                     <div>
                         <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">Daftar Pelacakan Permohonan Magang</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Rekapitulasi riwayat pengajuan, nomor registrasi, status verifikasi SKPD, dan masa magang.</p>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Rekapitulasi riwayat pengajuan, nomor registrasi, status verifikasi SKPD, dan riwayat mutasi.</p>
                     </div>
+                    <span class="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800/60">
+                        {{ number_format($applications->total()) }} Data Ditemukan
+                    </span>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800/60">
                             {{ number_format($applications->total()) }} Data Terdaftar
@@ -324,6 +340,7 @@
                     </div>
                 </div>
 
+                <div class="overflow-x-auto">
                 {{-- DESKTOP TABULAR VIEW (Hidden on Mobile) --}}
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full divide-y divide-slate-100 dark:divide-slate-700">
@@ -340,6 +357,7 @@
                         </thead>
                         <tbody class="bg-white dark:bg-slate-800/90 divide-y divide-slate-100 dark:divide-slate-700/60 text-sm">
                             @forelse($applications as $app)
+                            <tr class="hover:bg-teal-50/20 dark:hover:bg-slate-900/60 transition duration-150">
                             @php
                                 $statusValue = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string)$app->status;
                                 $appItemJson = [
@@ -413,6 +431,7 @@
                                             </p>
                                             <div class="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 flex-wrap font-medium">
                                                 @if($app->user->nim)
+                                                    <span class="font-mono">NIM/NISN: {{ $app->user->nim }}</span>
                                                     <span class="font-mono">NIM: {{ $app->user->nim }}</span>
                                                     <span>•</span>
                                                 @endif
@@ -474,12 +493,14 @@
                             </tr>
                             @empty
                             <tr>
+                                <td colspan="6" class="px-6 py-16 text-center">
                                 <td colspan="7" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
                                         <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mb-3 border border-slate-200 dark:border-slate-700">
                                             <i class="fas fa-inbox text-2xl text-slate-400 dark:text-slate-500"></i>
                                         </div>
                                         <p class="text-slate-900 dark:text-slate-100 font-bold">Tidak ada permohonan pendaftaran yang ditemukan</p>
+                                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Coba ubah kriteria filter dinas, status, atau kata kunci pencarian Anda.</p>
                                         <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Coba sesuaikan kriteria filter atau kata kunci pencarian Anda.</p>
                                         <a href="{{ route('admin.laporan.pendaftaran') }}" class="mt-4 text-teal-600 dark:text-teal-400 hover:underline text-sm font-bold">
                                             Reset Semua Filter
@@ -492,6 +513,7 @@
                     </table>
                 </div>
 
+                {{-- Pagination --}}
                 {{-- MOBILE CARD VIEW (Visible on Small Screens) --}}
                 <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
                     @forelse($applications as $app)

@@ -46,6 +46,7 @@ class ReportService
     public function getApplicationTrackingReportData(?int $instansiId = null, ?Request $request = null, bool $paginate = true): array
     {
         $request = $request ?? request();
+        $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan']);
         $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan', 'timelines']);
 
         if ($instansiId !== null) {
