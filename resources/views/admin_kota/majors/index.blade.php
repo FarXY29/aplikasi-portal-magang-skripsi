@@ -1,16 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-        <style>
-            .action-btn { transition: all 0.2s ease; }
-            .action-btn:hover { transform: translateY(-1px); }
-            .table-row { transition: background-color 0.15s ease; }
-        </style>
-    @endpush
-
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
             <div class="flex items-center gap-3">
@@ -33,51 +24,7 @@
         </div>
     </x-slot>
 
-    <div class="space-y-5 font-[Inter]" x-data="{
-        modalRumpunOpen: false,
-        newCatName: '',
-        newCatCode: '',
-        newCatDesc: '',
-        catLoading: false,
-        catError: '',
-        catSuccess: '',
-        async submitNewCategory() {
-            if (!this.newCatName.trim() || !this.newCatCode.trim()) {
-                this.catError = 'Nama dan Kode Rumpun wajib diisi.';
-                return;
-            }
-            this.catLoading = true;
-            this.catError = '';
-            try {
-                const response = await fetch('{{ route('admin.master.major-categories.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        name: this.newCatName,
-                        code: this.newCatCode,
-                        description: this.newCatDesc
-                    })
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    this.catError = result.message || 'Gagal menyimpan rumpun keilmuan.';
-                } else {
-                    this.catSuccess = 'Rumpun ' + result.category.name + ' berhasil ditambahkan!';
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 800);
-                }
-            } catch (err) {
-                this.catError = 'Terjadi kesalahan koneksi sistem.';
-            } finally {
-                this.catLoading = false;
-            }
-        }
-    }">
+    <div class="space-y-5 font-[Inter]" x-data="majorCategoryForm({ mode: 'reload' })">
         <div class="flex flex-col gap-4 mb-6 print:hidden">
             <div class="flex justify-between items-center">
                 <a href="{{ route('admin.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
@@ -292,4 +239,5 @@
         </div>
 
     </div>
+    @include('admin_kota.majors.partials.major-category-form-script')
 </x-app-layout>

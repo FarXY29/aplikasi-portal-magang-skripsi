@@ -1,11 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    @endpush
-
     <x-slot name="header">
         <x-report.header
             icon="fas fa-chart-bar"
@@ -35,7 +31,7 @@
         $cukupCount = $penyerapan->filter(fn($i) => $i->persentase_penyerapan >= 50 && $i->persentase_penyerapan < 80)->count();
         $rendahCount = $penyerapan->filter(fn($i) => $i->persentase_penyerapan < 50)->count();
         $chartStatusKuota = [
-            'labels' => ['Optimal (≥ 80%)', 'Cukup (50-79%)', 'Rendah (< 50%)'],
+            'labels' => ['Optimal (â‰¥ 80%)', 'Cukup (50-79%)', 'Rendah (< 50%)'],
             'values' => [$optimalCount, $cukupCount, $rendahCount],
             'colors' => ['#10b981', '#3b82f6', '#f43f5e'],
         ];
@@ -160,7 +156,7 @@
                                 <th class="px-4 py-4 text-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider w-40">Kuota Disediakan</th>
                                 <th class="px-4 py-4 text-center text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider w-36">Total Terserap</th>
                                 <th class="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                    <div class="inline-flex items-center gap-1.5 cursor-help" title="Rumus: (Total Peserta Terserap / Total Kuota Disediakan) × 100%">
+                                    <div class="inline-flex items-center gap-1.5 cursor-help" title="Rumus: (Total Peserta Terserap / Total Kuota Disediakan) Ã— 100%">
                                         <span>Tingkat Penyerapan</span>
                                         <i class="fas fa-info-circle text-[11px] text-teal-500 dark:text-teal-400"></i>
                                     </div>
@@ -200,7 +196,7 @@
                                         } elseif ($rate >= 50) {
                                             $barBg = 'from-blue-500 to-indigo-500';
                                         }
-                                        $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) × 100% = {$rate}%";
+                                        $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) Ã— 100% = {$rate}%";
                                     @endphp
                                     <div class="relative group/penyerapan cursor-help" title="{{ $rumusFormula }}">
                                         <div class="flex items-center gap-3">
@@ -210,7 +206,7 @@
                                         {{-- Custom hover popup showing calculation details --}}
                                         <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/penyerapan:flex flex-col items-center pointer-events-none z-30 transition-all duration-200">
                                             <div class="bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-sm text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg shadow-xl border border-slate-700 whitespace-nowrap text-center">
-                                                <span class="text-teal-400 font-bold">Rumus:</span> ({{ $instansi->total_terserap }} / {{ $instansi->total_kuota }}) × 100% = <span class="font-mono text-emerald-300 font-bold">{{ $rate }}%</span>
+                                                <span class="text-teal-400 font-bold">Rumus:</span> ({{ $instansi->total_terserap }} / {{ $instansi->total_kuota }}) Ã— 100% = <span class="font-mono text-emerald-300 font-bold">{{ $rate }}%</span>
                                             </div>
                                             <div class="w-2 h-2 bg-slate-900 dark:bg-slate-800 rotate-45 -mt-1 border-r border-b border-slate-700"></div>
                                         </div>
@@ -246,7 +242,7 @@
                             } elseif ($rate >= 50) {
                                 $barBg = 'from-blue-500 to-indigo-500';
                             }
-                            $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) × 100% = {$rate}%";
+                            $rumusFormula = "Rumus: (Total Terserap: {$instansi->total_terserap} / Kuota: {$instansi->total_kuota}) Ã— 100% = {$rate}%";
                         @endphp
                         <div class="p-4 space-y-3.5" x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                             <div class="flex items-center gap-3">

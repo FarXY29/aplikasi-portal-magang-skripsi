@@ -18,8 +18,6 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-slate-50 dark:bg-[#0f172a] min-h-screen font-sans text-slate-900 dark:text-slate-100">
-        <div class="flex justify-between items-center mb-6 print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div x-data="{
         clientSearch: '',
         statusFilter: '{{ request('status', 'semua') }}',
@@ -49,6 +47,47 @@
     }" 
     @keydown.escape.window="closeDetail()"
     class="py-8 bg-slate-50 dark:bg-[#0f172a] min-h-screen font-sans text-slate-900 dark:text-slate-100">
+
+        @php
+            // Dibangun sekali, dipakai bersama oleh tabel desktop & kartu mobile.
+            $buildAppItem = function ($app) {
+                $statusValue = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string) $app->status;
+
+                return [
+                    'id' => $app->id,
+                    'nomor_reg' => $app->nomor_registrasi ?? ('REG-' . $app->id),
+                    'nama' => $app->user->name ?? '-',
+                    'email' => $app->user->email ?? '-',
+                    'nim' => $app->user->nim ?? '-',
+                    'kampus' => $app->user->asal_instansi ?? ($app->user->university->name ?? ($app->user->school->name ?? '-')),
+                    'jurusan' => $app->user->major ?? ($app->user->jurusan ?? '-'),
+                    'phone' => $app->user->phone_number ?? ($app->user->nomor_telepon ?? '-'),
+                    'dinas' => $app->position->instansi->nama_dinas ?? '-',
+                    'posisi' => $app->position->judul_posisi ?? '-',
+                    'status' => $statusValue,
+                    'status_label' => $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($statusValue),
+                    'tgl_lamar' => \Carbon\Carbon::parse($app->created_at)->translatedFormat('d F Y, H:i'),
+                    'tgl_mulai' => $app->tanggal_mulai ? \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') : null,
+                    'tgl_selesai' => $app->tanggal_selesai ? \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d F Y') : null,
+                    'durasi' => ($app->tanggal_mulai && $app->tanggal_selesai) ? \Carbon\Carbon::parse($app->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($app->tanggal_selesai)) . ' Hari' : null,
+                    'pembimbing' => $app->pembimbing_lapangan->name ?? null,
+                    'is_auto' => (bool) $app->is_automatic_placement,
+                    'surat_url' => $app->surat_pengantar_path ? route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) : null,
+                    'cv_url' => $app->cv_path ? route('storage.access', ['type' => 'cv', 'filename' => basename($app->cv_path)]) : null,
+                    'rejected_reason' => $app->rejected_reason ?? null,
+                    'timelines' => $app->timelines->map(function ($tl) {
+                        return [
+                            'event' => $tl->getEventLabel(),
+                            'old_status' => $tl->old_status,
+                            'new_status' => $tl->new_status,
+                            'actor' => $tl->actor->name ?? 'Sistem',
+                            'date' => \Carbon\Carbon::parse($tl->created_at)->translatedFormat('d M Y, H:i'),
+                            'notes' => $tl->metadata['notes'] ?? ($tl->metadata['reason'] ?? null),
+                        ];
+                    })->toArray(),
+                ];
+            };
+        @endphp
 
         {{-- Top Navigation & PDF Export --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,7 +185,6 @@
                 @endif
             </div>
 
-            {{-- Filter Box --}}
             {{-- Filter Box (Server-Side) --}}
             <div class="bg-white dark:bg-slate-800/90 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xs border border-slate-200 dark:border-slate-700/80">
                 <form method="GET" action="{{ route('admin.laporan.pendaftaran') }}" class="space-y-4">
@@ -171,7 +209,6 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1.5">
                                 <i class="fas fa-filter text-teal-500 mr-1"></i> Status Permohonan
-                                <i class="fas fa-filter text-teal-500 mr-1"></i> Filter Status Database
                             </label>
                             <select name="status" class="w-full border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-semibold focus:ring-teal-500 focus:border-teal-500 shadow-2xs py-2.5">
                                 <option value="semua" {{ request('status') == 'semua' ? 'selected' : '' }}>Semua Status</option>
@@ -200,7 +237,6 @@
                     </div>
 
                     {{-- Baris 2: Tanggal Pengajuan & Pencarian Cepat --}}
-                    {{-- Baris 2: Tanggal Pengajuan & Pencarian Server --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end pt-1">
                         {{-- Tanggal Lamar Dari --}}
                         <div>
@@ -221,11 +257,9 @@
                         </div>
 
                         {{-- Kolom Pencarian Cepat --}}
-                        {{-- Kolom Pencarian Kata Kunci --}}
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1.5">
                                 <i class="fas fa-search text-teal-500 mr-1"></i> Pencarian Cepat
-                                <i class="fas fa-search text-teal-500 mr-1"></i> Cari di Server
                             </label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -233,13 +267,11 @@
                                 </span>
                                 <input type="text" name="search" value="{{ request('search') }}" 
                                        placeholder="Nama, NIM, Kampus, No. Reg..."
-                                       placeholder="Nama, NIM, No. Reg..."
                                        class="w-full pl-9 border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100 placeholder-slate-400 rounded-xl text-xs font-semibold focus:ring-teal-500 focus:border-teal-500 shadow-2xs py-2.5">
                             </div>
                         </div>
 
                         {{-- Tombol Terapkan --}}
-                        {{-- Tombol Terapkan & Reset --}}
                         <div class="flex items-center gap-2">
                             @if(request()->anyFilled(['instansi_id', 'status', 'posisi_id', 'start_date', 'end_date', 'search']))
                                 <a href="{{ route('admin.laporan.pendaftaran') }}" title="Bersihkan Filter"
@@ -328,19 +360,12 @@
                     <div>
                         <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">Daftar Pelacakan Permohonan Magang</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Rekapitulasi riwayat pengajuan, nomor registrasi, status verifikasi SKPD, dan masa magang.</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Rekapitulasi riwayat pengajuan, nomor registrasi, status verifikasi SKPD, dan riwayat mutasi.</p>
                     </div>
                     <span class="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800/60">
                         {{ number_format($applications->total()) }} Data Ditemukan
                     </span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800/60">
-                            {{ number_format($applications->total()) }} Data Terdaftar
-                        </span>
-                    </div>
                 </div>
 
-                <div class="overflow-x-auto">
                 {{-- DESKTOP TABULAR VIEW (Hidden on Mobile) --}}
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full divide-y divide-slate-100 dark:divide-slate-700">
@@ -357,43 +382,7 @@
                         </thead>
                         <tbody class="bg-white dark:bg-slate-800/90 divide-y divide-slate-100 dark:divide-slate-700/60 text-sm">
                             @forelse($applications as $app)
-                            <tr class="hover:bg-teal-50/20 dark:hover:bg-slate-900/60 transition duration-150">
-                            @php
-                                $statusValue = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string)$app->status;
-                                $appItemJson = [
-                                    'id' => $app->id,
-                                    'nomor_reg' => $app->nomor_registrasi ?? ('REG-' . $app->id),
-                                    'nama' => $app->user->name ?? '-',
-                                    'email' => $app->user->email ?? '-',
-                                    'nim' => $app->user->nim ?? '-',
-                                    'kampus' => $app->user->asal_instansi ?? ($app->user->university->name ?? ($app->user->school->name ?? '-')),
-                                    'jurusan' => $app->user->major ?? ($app->user->jurusan ?? '-'),
-                                    'phone' => $app->user->phone_number ?? ($app->user->nomor_telepon ?? '-'),
-                                    'dinas' => $app->position->instansi->nama_dinas ?? '-',
-                                    'posisi' => $app->position->judul_posisi ?? '-',
-                                    'status' => $statusValue,
-                                    'status_label' => $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($statusValue),
-                                    'tgl_lamar' => \Carbon\Carbon::parse($app->created_at)->translatedFormat('d F Y, H:i'),
-                                    'tgl_mulai' => $app->tanggal_mulai ? \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') : null,
-                                    'tgl_selesai' => $app->tanggal_selesai ? \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d F Y') : null,
-                                    'durasi' => ($app->tanggal_mulai && $app->tanggal_selesai) ? \Carbon\Carbon::parse($app->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($app->tanggal_selesai)) . ' Hari' : null,
-                                    'pembimbing' => $app->pembimbing_lapangan->name ?? null,
-                                    'is_auto' => (bool)$app->is_automatic_placement,
-                                    'surat_url' => $app->surat_pengantar_path ? route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) : null,
-                                    'cv_url' => $app->cv_path ? route('storage.access', ['type' => 'cv', 'filename' => basename($app->cv_path)]) : null,
-                                    'rejected_reason' => $app->rejected_reason ?? null,
-                                    'timelines' => $app->timelines->map(function($tl) {
-                                        return [
-                                            'event' => $tl->getEventLabel(),
-                                            'old_status' => $tl->old_status,
-                                            'new_status' => $tl->new_status,
-                                            'actor' => $tl->actor->name ?? 'Sistem',
-                                            'date' => \Carbon\Carbon::parse($tl->created_at)->translatedFormat('d M Y, H:i'),
-                                            'notes' => $tl->metadata['notes'] ?? ($tl->metadata['reason'] ?? null),
-                                        ];
-                                    })->toArray(),
-                                ];
-                            @endphp
+                            @php($appItemJson = $buildAppItem($app))
                             <tr x-show="matchesSearch({{ json_encode($appItemJson) }})" 
                                 class="hover:bg-teal-50/20 dark:hover:bg-slate-900/60 transition duration-150">
                                 <td class="px-4 py-3.5 text-xs text-slate-400 dark:text-slate-500 text-center font-bold">
@@ -493,15 +482,13 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-16 text-center">
                                 <td colspan="7" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
                                         <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mb-3 border border-slate-200 dark:border-slate-700">
                                             <i class="fas fa-inbox text-2xl text-slate-400 dark:text-slate-500"></i>
                                         </div>
                                         <p class="text-slate-900 dark:text-slate-100 font-bold">Tidak ada permohonan pendaftaran yang ditemukan</p>
-                                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Coba ubah kriteria filter dinas, status, atau kata kunci pencarian Anda.</p>
-                                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Coba sesuaikan kriteria filter atau kata kunci pencarian Anda.</p>
+                                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Coba sesuaikan kriteria filter dinas, status, atau kata kunci pencarian Anda.</p>
                                         <a href="{{ route('admin.laporan.pendaftaran') }}" class="mt-4 text-teal-600 dark:text-teal-400 hover:underline text-sm font-bold">
                                             Reset Semua Filter
                                         </a>
@@ -513,46 +500,10 @@
                     </table>
                 </div>
 
-                {{-- Pagination --}}
                 {{-- MOBILE CARD VIEW (Visible on Small Screens) --}}
                 <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
                     @forelse($applications as $app)
-                    @php
-                        $statusValue = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : (string)$app->status;
-                        $appItemJson = [
-                            'id' => $app->id,
-                            'nomor_reg' => $app->nomor_registrasi ?? ('REG-' . $app->id),
-                            'nama' => $app->user->name ?? '-',
-                            'email' => $app->user->email ?? '-',
-                            'nim' => $app->user->nim ?? '-',
-                            'kampus' => $app->user->asal_instansi ?? ($app->user->university->name ?? ($app->user->school->name ?? '-')),
-                            'jurusan' => $app->user->major ?? ($app->user->jurusan ?? '-'),
-                            'phone' => $app->user->phone_number ?? ($app->user->nomor_telepon ?? '-'),
-                            'dinas' => $app->position->instansi->nama_dinas ?? '-',
-                            'posisi' => $app->position->judul_posisi ?? '-',
-                            'status' => $statusValue,
-                            'status_label' => $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->label() : ucfirst($statusValue),
-                            'tgl_lamar' => \Carbon\Carbon::parse($app->created_at)->translatedFormat('d F Y, H:i'),
-                            'tgl_mulai' => $app->tanggal_mulai ? \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') : null,
-                            'tgl_selesai' => $app->tanggal_selesai ? \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d F Y') : null,
-                            'durasi' => ($app->tanggal_mulai && $app->tanggal_selesai) ? \Carbon\Carbon::parse($app->tanggal_mulai)->diffInDays(\Carbon\Carbon::parse($app->tanggal_selesai)) . ' Hari' : null,
-                            'pembimbing' => $app->pembimbing_lapangan->name ?? null,
-                            'is_auto' => (bool)$app->is_automatic_placement,
-                            'surat_url' => $app->surat_pengantar_path ? route('storage.access', ['type' => 'surat', 'filename' => basename($app->surat_pengantar_path)]) : null,
-                            'cv_url' => $app->cv_path ? route('storage.access', ['type' => 'cv', 'filename' => basename($app->cv_path)]) : null,
-                            'rejected_reason' => $app->rejected_reason ?? null,
-                            'timelines' => $app->timelines->map(function($tl) {
-                                return [
-                                    'event' => $tl->getEventLabel(),
-                                    'old_status' => $tl->old_status,
-                                    'new_status' => $tl->new_status,
-                                    'actor' => $tl->actor->name ?? 'Sistem',
-                                    'date' => \Carbon\Carbon::parse($tl->created_at)->translatedFormat('d M Y, H:i'),
-                                    'notes' => $tl->metadata['notes'] ?? ($tl->metadata['reason'] ?? null),
-                                ];
-                            })->toArray(),
-                        ];
-                    @endphp
+                    @php($appItemJson = $buildAppItem($app))
                     <div x-show="matchesSearch({{ json_encode($appItemJson) }})" 
                          class="p-4 bg-white dark:bg-slate-800/90 space-y-3">
                         <div class="flex items-start justify-between gap-2">
