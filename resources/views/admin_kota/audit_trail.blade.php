@@ -1,5 +1,13 @@
 <x-app-layout>
-    <div class="p-6">
+    <div class="p-6" x-data="{
+            modalOpen: false,
+            metadata: {},
+            openMetadata(data) {
+                this.metadata = (data && typeof data === 'object') ? data : {};
+                this.modalOpen = true;
+            }
+        }"
+        @keydown.escape.window="modalOpen = false">
         <div class="mb-6 flex justify-between items-center">
             <div>
                 <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Audit Trail (Keamanan)</h1>
@@ -82,7 +90,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <button type="button" 
-                                    @click="openMetadataModal(@js(json_encode($log->metadata)))"
+                                    @click="openMetadata(@js($log->metadata))"
                                     class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                     Lihat Detail
                                 </button>
@@ -131,7 +139,7 @@
                         </div>
                         <div class="pt-1">
                             <button type="button"
-                                @click="openMetadataModal(@js(json_encode($log->metadata)))"
+                                @click="openMetadata(@js($log->metadata))"
                                 class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
                                 Lihat Detail
                             </button>
@@ -152,18 +160,8 @@
             </div>
             @endif
         </div>
-    </div>
 
-    <!-- Metadata Modal menggunakan Alpine.js -->
-    <div x-data="{ 
-            modalOpen: false, 
-            metadata: {} 
-        }" 
-        @open-metadata-modal.window="
-            metadata = JSON.parse($event.detail.metadata || '{}'); 
-            modalOpen = true;
-        ">
-        
+        <!-- Metadata Modal menggunakan Alpine.js -->
         <div x-show="modalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 
@@ -191,15 +189,15 @@
                     
                     <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <i class="fas fa-info-circle text-indigo-600"></i>
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-950/50 sm:mx-0 sm:h-10 sm:w-10">
+                                <i class="fas fa-info-circle text-indigo-600 dark:text-indigo-400"></i>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
                                     Detail Metadata
                                 </h3>
-                                <div class="mt-4 border rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-left">
-                                    <pre class="text-[11px] overflow-auto max-h-96 text-gray-800 dark:text-gray-200" x-text="JSON.stringify(metadata, null, 2)"></pre>
+                                <div class="mt-4 border border-gray-100 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-left">
+                                    <pre class="text-[11px] leading-relaxed whitespace-pre-wrap break-words overflow-auto max-h-96 text-gray-800 dark:text-gray-200 font-mono custom-scrollbar" role="region" aria-label="Detail metadata audit" x-text="JSON.stringify(metadata, null, 2)"></pre>
                                 </div>
                             </div>
                         </div>
@@ -213,15 +211,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Alpine Function call to trigger event -->
-    <script>
-        function openMetadataModal(metadataStr) {
-            window.dispatchEvent(new CustomEvent('open-metadata-modal', {
-                detail: {
-                    metadata: metadataStr
-                }
-            }));
-        }
-    </script>
 </x-app-layout>

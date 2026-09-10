@@ -72,16 +72,21 @@
 
                     @php
                         $adminInstansi = Auth::user()?->instansi;
-                        $namaPejabat = $adminInstansi?->nama_pejabat ?? 'H. AHMAD SYARWANI, SE, M.T.';
-                        $jabatanPejabat = $adminInstansi?->jabatan_pejabat ?? 'Kepala Dinas Komunikasi, Informatika dan Statistik';
-                        $nipPejabat = $adminInstansi?->nip_pejabat ?? '19720315 199803 1 004';
+                        $printSettings = \App\Models\Setting::all()->pluck('value', 'key');
+                        $namaPejabat = $adminInstansi?->nama_pejabat ?? ($printSettings['pejabat_name'] ?? '-');
+                        $jabatanPejabat = $adminInstansi?->jabatan_pejabat ?? ($printSettings['pejabat_jabatan'] ?? '-');
+                        $nipPejabat = $adminInstansi?->nip_pejabat ?? ($printSettings['pejabat_nip'] ?? null);
                     @endphp
                     <div class="hidden print:flex justify-end mt-16 break-inside-avoid">
                         <div class="text-center w-full max-w-[18rem]">
                             <p class="mb-1">Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                            <p class="font-bold">{{ $jabatanPejabat }}</p>
+                            @if(!empty($jabatanPejabat) && $jabatanPejabat !== '-')
+                                <p class="font-bold">{{ $jabatanPejabat }}</p>
+                            @endif
                             <div class="h-20"></div>
-                            <p class="font-bold underline">{{ $namaPejabat }}</p>
+                            @if(!empty($namaPejabat) && $namaPejabat !== '-')
+                                <p class="font-bold underline">{{ $namaPejabat }}</p>
+                            @endif
                             @if(!empty($nipPejabat))
                                 <p class="text-sm">NIP. {{ $nipPejabat }}</p>
                             @endif

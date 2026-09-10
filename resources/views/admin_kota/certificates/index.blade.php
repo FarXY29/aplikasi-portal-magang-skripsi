@@ -1,16 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-        <style>
-            .action-btn { transition: all 0.2s ease; }
-            .action-btn:hover { transform: translateY(-1px); }
-            .table-row { transition: background-color 0.15s ease; }
-        </style>
-    @endpush
-
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
             <div class="flex items-center gap-3">
@@ -30,7 +21,15 @@
         </div>
     </x-slot>
 
-    <div class="space-y-6 font-[Inter]" x-data="{ revokeModalOpen: false, selectedCert: null, revokeReason: '' }">
+    <div class="space-y-6 font-[Inter]" x-data="{
+            revokeModalOpen: false,
+            selectedCert: null,
+            revokeReason: '',
+            revokeUrlTemplate: @js(route('admin.certificates.revoke', ['id' => '__ID__'])),
+            get revokeAction() {
+                return this.selectedCert ? this.revokeUrlTemplate.replace('__ID__', this.selectedCert.id) : '';
+            }
+        }">
         
         <!-- Navigation Back -->
         <div class="flex justify-between items-center print:hidden">
@@ -192,7 +191,7 @@
                                         </a>
 
                                         @if(!$cert->isRevoked())
-                                            <button type="button" @click="revokeModalOpen = true; selectedCert = { id: {{ $cert->id }}, nomor: '{{ $cert->nomor_sertifikat }}', nama: '{{ addslashes($cert->application?->user?->name ?? 'Peserta') }}' }; revokeReason = ''" class="action-btn w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100" title="Cabut Status Sertifikat">
+                                            <button type="button" @click="revokeModalOpen = true; selectedCert = { id: {{ $cert->id }}, nomor: @js($cert->nomor_sertifikat), nama: @js($cert->application?->user?->name ?? 'Peserta') }; revokeReason = ''" class="action-btn w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100" title="Cabut Status Sertifikat">
                                                 <i class="fas fa-ban text-xs"></i>
                                             </button>
                                         @else
@@ -243,7 +242,7 @@
                     <p class="text-gray-600 dark:text-gray-400">Nama Peserta: <span class="font-bold text-gray-900 dark:text-gray-100" x-text="selectedCert ? selectedCert.nama : '-'"></span></p>
                 </div>
 
-                <form :action="'{{ url('/admin/certificates') }}/' + (selectedCert ? selectedCert.id : '') + '/revoke'" method="POST" class="space-y-4">
+                <form :action="revokeAction" method="POST" class="space-y-4">
                     @csrf
                     <div>
                         <label for="revoked_reason" class="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">

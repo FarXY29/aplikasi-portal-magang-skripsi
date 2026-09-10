@@ -16,6 +16,7 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -26,6 +27,11 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+
+        /* Transisi tombol aksi & baris tabel (dipakai lintas halaman admin) */
+        .action-btn { transition: all 0.2s ease; }
+        .action-btn:hover { transform: translateY(-1px); }
+        .table-row { transition: background-color 0.15s ease; }
     </style>
     @stack('head')
     @stack('styles')

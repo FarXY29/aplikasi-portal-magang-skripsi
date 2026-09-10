@@ -1,11 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    @endpush
-
     <x-slot name="header">
         <x-report.header
             icon="fas fa-building"
@@ -488,7 +484,7 @@
                                         <div class="flex items-start justify-between gap-2 py-1.5 border-b border-slate-100 dark:border-slate-800/60 last:border-0">
                                             <div class="min-w-0">
                                                 <p class="text-xs font-bold text-slate-900 dark:text-white">{{ $p['nama'] }}</p>
-                                                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $p['kampus'] }} · {{ $p['posisi'] }}</p>
+                                                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $p['kampus'] }} Â· {{ $p['posisi'] }}</p>
                                             </div>
                                             <div class="flex gap-2 shrink-0 text-[10px] font-mono">
                                                 <span class="text-orange-600 dark:text-orange-400 font-bold">Telat {{ $p['terlambat'] }}x</span>

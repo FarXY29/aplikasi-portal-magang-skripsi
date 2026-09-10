@@ -1,11 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    @endpush
-
     <x-slot name="header">
         <x-report.header
             icon="fas fa-graduation-cap"

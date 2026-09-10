@@ -1,8 +1,4 @@
-<x-app-layout>
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    @endpush
-
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-teal-600 dark:bg-teal-500 text-white flex items-center justify-center shadow-sm">
@@ -15,61 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto space-y-6 font-[Inter]" x-data="{
-        modalRumpunOpen: false,
-        newCatName: '',
-        newCatCode: '',
-        newCatDesc: '',
-        catLoading: false,
-        catError: '',
-        catSuccess: '',
-        async submitNewCategory() {
-            if (!this.newCatName.trim() || !this.newCatCode.trim()) {
-                this.catError = 'Nama dan Kode Rumpun wajib diisi.';
-                return;
-            }
-            this.catLoading = true;
-            this.catError = '';
-            try {
-                const response = await fetch('{{ route('admin.master.major-categories.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        name: this.newCatName,
-                        code: this.newCatCode,
-                        description: this.newCatDesc
-                    })
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    this.catError = result.message || 'Gagal menyimpan rumpun keilmuan.';
-                } else {
-                    const select = document.getElementById('major_category_id');
-                    const opt = document.createElement('option');
-                    opt.value = result.category.id;
-                    opt.text = result.category.name + ' (' + result.category.code + ')';
-                    opt.selected = true;
-                    select.appendChild(opt);
-                    this.catSuccess = 'Rumpun ' + result.category.name + ' berhasil ditambahkan!';
-                    setTimeout(() => {
-                        this.modalRumpunOpen = false;
-                        this.newCatName = '';
-                        this.newCatCode = '';
-                        this.newCatDesc = '';
-                        this.catSuccess = '';
-                    }, 1000);
-                }
-            } catch (err) {
-                this.catError = 'Terjadi kesalahan koneksi sistem.';
-            } finally {
-                this.catLoading = false;
-            }
-        }
-    }">
+    <div class="max-w-3xl mx-auto space-y-6 font-[Inter]" x-data="majorCategoryForm({ mode: 'append' })">
         <div class="flex justify-between items-center">
             <a href="{{ route('admin.master.majors.index') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
                 <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
@@ -215,4 +157,5 @@
         </div>
 
     </div>
+    @include('admin_kota.majors.partials.major-category-form-script')
 </x-app-layout>

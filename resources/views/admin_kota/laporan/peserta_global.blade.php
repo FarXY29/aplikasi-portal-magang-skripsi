@@ -1,11 +1,7 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
-    @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    @endpush
-
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 min-w-0">
             <div class="flex items-center gap-3 min-w-0">

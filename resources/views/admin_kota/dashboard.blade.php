@@ -3,7 +3,6 @@
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     @push('styles')
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
         <style>
             .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
             .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -40,7 +39,7 @@
                     </div>
                     <div>
                         <h1 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Selamat Datang, Super Admin
+                            Selamat Datang, {{ auth()->user()?->name ?? 'Super Admin' }}
                         </h1>
                         <p class="text-xs md:text-sm text-gray-500 dark:text-slate-400 font-semibold mt-1">
                             <span id="current-period-display">{{ now()->translatedFormat('l, d F Y') }} • {{ $periodText }}</span>
