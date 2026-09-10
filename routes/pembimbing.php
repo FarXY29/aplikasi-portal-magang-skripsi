@@ -14,6 +14,7 @@ Route::middleware(['auth', 'role:pembimbing_lapangan'])->prefix('pembimbing_lapa
     Route::post('/penilaian/{id}', [PembimbingLapanganController::class, 'simpanNilai'])->name('simpan_nilai');
     Route::get('/absensi', [PembimbingLapanganController::class, 'attendance'])->name('attendance.index');
     Route::post('/absensi/{id}/validasi', [PembimbingLapanganController::class, 'validateAttendance'])->name('attendance.validate');
+    Route::post('/absensi/dispute/{id}/validasi', [\App\Http\Controllers\AttendanceDisputeController::class, 'review'])->name('attendance.dispute.review');
 });
 
 Route::middleware(['auth', 'role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {

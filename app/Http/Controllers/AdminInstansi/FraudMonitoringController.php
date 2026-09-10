@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AdminInstansi;
 
 use App\Enums\AttendanceFraudStatus;
+use App\Enums\AttendanceOperationalDecision;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceAttempt;
 use App\Models\User;
@@ -72,9 +73,22 @@ class FraudMonitoringController extends Controller
             ->where('instance_id', $instansiId)
             ->findOrFail($id);
 
+        $this->authorize('view', $attempt);
+
+        $decision = null;
+        if (is_array($attempt->risk_indicators) && isset($attempt->risk_indicators['decision'])) {
+            $decisionEnum = AttendanceOperationalDecision::tryFrom($attempt->risk_indicators['decision']);
+            $decision = [
+                'value' => $attempt->risk_indicators['decision'],
+                'label' => $decisionEnum?->label() ?? $attempt->risk_indicators['decision'],
+                'badge' => $decisionEnum?->badgeClass() ?? '',
+            ];
+        }
+
         return response()->json([
             'attempt' => $attempt,
             'fraud_status_label' => AttendanceFraudStatus::tryFrom($attempt->fraud_status ?? 'low')?->label(),
+            'decision' => $decision,
         ]);
     }
 
@@ -96,19 +110,23 @@ class FraudMonitoringController extends Controller
             fwrite($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             fputcsv($out, [
-                'Waktu Server', 'Peserta', 'Tipe', 'Risk Score', 'Status',
+                'Waktu Server', 'Peserta', 'Tipe', 'Risk Score', 'Status', 'Keputusan',
                 'Latitude', 'Longitude', 'Jarak (m)', 'Akurasi (m)', 'Margin (m)',
                 'IP', 'User-Agent', 'Sinyal Utama',
             ]);
 
             $query->lazy(500)->each(function ($a) use ($out) {
                 $top = $a->fraudEvents->sortByDesc('score_delta')->first();
+                $decisionVal = is_array($a->risk_indicators) ? ($a->risk_indicators['decision'] ?? null) : null;
+                $decisionLabel = $decisionVal ? (AttendanceOperationalDecision::tryFrom($decisionVal)?->label() ?? $decisionVal) : '-';
+
                 fputcsv($out, [
                     $a->server_received_at->format('Y-m-d H:i'),
                     $a->user?->name,
                     $a->attendance_type === 'clock_in' ? 'Masuk' : 'Pulang',
                     $a->risk_score,
                     $a->fraud_status,
+                    $decisionLabel,
                     $a->latitude,
                     $a->longitude,
                     $a->distance_to_instance,

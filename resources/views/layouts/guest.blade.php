@@ -34,6 +34,17 @@
                 document.documentElement.classList.remove('dark');
             }
 
+            // Dynamically listen to OS theme changes if user has not manually set a preference
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                if (!('theme' in localStorage)) {
+                    if (e.matches) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            });
+
             // Force HTTPS on public domains (e.g. Cloudflare Tunnels) for camera/location APIs
             const isLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname) || 
                             !location.hostname.includes('.') ||

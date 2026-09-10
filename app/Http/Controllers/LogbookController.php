@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf; 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 use App\Http\Requests\Logbook\StoreDailyLogRequest;
 use App\Http\Requests\Logbook\UpdateDailyLogRequest;
 use App\Services\AuditLogService;
@@ -112,25 +114,49 @@ class LogbookController extends Controller
             }
         }
 
-        // 3. Upload Foto
+        // 3. Cek Duplikasi Logbook Hari Ini
+        $todayStr = Carbon::today()->toDateString();
+        $existingLog = DailyLog::where('application_id', $app->id)
+            ->whereDate('tanggal', $todayStr)
+            ->first();
+
+        if ($existingLog) {
+            return back()->with('error', 'Anda sudah mengisi logbook untuk hari ini.');
+        }
+
+        // 4. Upload Foto
         $fotoPath = null;
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('documents/logbook', 'private');
         }
 
-        // 4. Simpan Log
-        $log = DailyLog::create([
-            'application_id' => $app->id,
-            'tanggal' => now(),
-            'kegiatan' => $request->validated('kegiatan'),
-            'bukti_foto_path' => $fotoPath,
-            'status_validasi' => 'pending'
-        ]);
+        // 5. Simpan Log dalam Transaksi
+        try {
+            DB::transaction(function () use ($app, $request, $fotoPath, $auditLogService) {
+                $log = DailyLog::create([
+                    'application_id' => $app->id,
+                    'tanggal' => now(),
+                    'kegiatan' => $request->validated('kegiatan'),
+                    'bukti_foto_path' => $fotoPath,
+                    'status_validasi' => 'pending'
+                ]);
 
-        $auditLogService->record('daily_log.created', $log, [
-            'application_id' => $app->id,
-            'has_proof' => (bool) $fotoPath,
-        ]);
+                $auditLogService->record('daily_log.created', $log, [
+                    'application_id' => $app->id,
+                    'has_proof' => (bool) $fotoPath,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            if ($fotoPath) {
+                Storage::disk('private')->delete($fotoPath);
+            }
+
+            if ($e instanceof QueryException && $this->isDuplicateEntry($e)) {
+                return back()->with('error', 'Anda sudah mengisi logbook untuk hari ini.');
+            }
+
+            throw $e;
+        }
 
         return back()->with('success', 'Logbook hari ini berhasil disimpan!');
     }
@@ -257,5 +283,21 @@ class LogbookController extends Controller
         $distance = $earthRadius * $c;
 
         return $distance; // Hasil dalam Kilometer
+    }
+
+    private function isDuplicateEntry(QueryException $e): bool
+    {
+        $code = (string) $e->getCode();
+        $errorCode = $e->errorInfo[1] ?? null;
+
+        if ($errorCode === 1062 || $code === '23505') {
+            return true;
+        }
+
+        $message = $e->getMessage();
+
+        return str_contains($message, 'Duplicate entry')
+            || str_contains($message, 'UNIQUE constraint failed')
+            || str_contains($message, 'duplicate key value violates unique constraint');
     }
 }

@@ -12,21 +12,21 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="text-base sm:text-lg font-black leading-none tracking-tight uppercase transition-colors duration-300 font-display" 
-                          :class="scrolled ? 'text-slate-900 dark:text-white' : 'text-white group-hover:text-teal-200'">SiMagang</span>
+                          :class="scrolled ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-200'">SiMagang</span>
                     <span class="text-[9px] font-extrabold tracking-widest uppercase transition-colors duration-300 mt-1" 
-                          :class="scrolled ? 'text-teal-600 dark:text-teal-400' : 'text-teal-300/90'">Kota Banjarmasin</span>
+                          :class="scrolled ? 'text-teal-600 dark:text-teal-400' : 'text-teal-700 dark:text-teal-300'">Kota Banjarmasin</span>
                 </div>
             </a>
 
             <!-- Desktop Navigation Links -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="#lowongan" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Cari Lowongan</a>
-                <a href="#langkah" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Alur Magang</a>
-                <a href="{{ route('tracking.index') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Lacak Permohonan</a>
-                <a href="#faq" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">FAQ</a>
-                <a href="{{url('/scan-qr') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-white/90 hover:text-white'">Scan QR</a>
+                <a href="#lowongan" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Cari Lowongan</a>
+                <a href="#langkah" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Alur Magang</a>
+                <a href="{{ route('tracking.index') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Lacak Permohonan</a>
+                <a href="#faq" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">FAQ</a>
+                <a href="{{url('/scan-qr') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Scan QR</a>
 
-                <div class="h-5 w-[1px]" :class="scrolled ? 'bg-slate-200 dark:bg-gray-700' : 'bg-white/20'"></div>
+                <div class="h-5 w-[1px]" :class="scrolled ? 'bg-slate-200 dark:bg-gray-700' : 'bg-slate-300 dark:bg-white/20'"></div>
 
                 @if (Route::has('login'))
                     @auth
@@ -34,15 +34,15 @@
                             <a href="{{ url('/dashboard') }}" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all">
                                 <i class="fas fa-columns mr-2"></i>Dashboard Saya
                             </a>
-                            <x-theme-toggle class="p-2.5 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200/50 dark:border-gray-700/50" />
+                            <x-theme-toggle class="p-2.5 text-slate-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100/80 dark:bg-gray-800 border border-slate-200/60 dark:border-gray-700/50 shadow-xs" />
                         </div>
                     @else
                         <div class="flex items-center gap-3">
-                            <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs sm:text-sm font-bold transition-all rounded-2xl" :class="scrolled ? 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-800' : 'text-white hover:bg-white/10'">Masuk</a>
+                            <a href="{{ route('login') }}" class="px-4 py-2.5 text-xs sm:text-sm font-bold transition-all rounded-2xl" :class="scrolled ? 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-800' : 'text-slate-700 dark:text-white hover:bg-slate-200/50 dark:hover:bg-white/10'">Masuk</a>
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="bg-white text-teal-800 hover:bg-teal-50 px-5 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm shadow-sm transition-all border border-slate-100">Daftar Sekarang</a>
+                                <a href="{{ route('register') }}" class="bg-teal-600 hover:bg-teal-700 text-white dark:bg-white dark:text-teal-800 dark:hover:bg-teal-50 px-5 py-2.5 rounded-2xl font-extrabold text-xs sm:text-sm shadow-sm transition-all border border-teal-600 dark:border-slate-100">Daftar Sekarang</a>
                             @endif
-                            <x-theme-toggle class="p-2.5 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200/50 dark:border-gray-700/50" />
+                            <x-theme-toggle class="p-2.5 text-slate-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100/80 dark:bg-gray-800 border border-slate-200/60 dark:border-gray-700/50 shadow-xs" />
                         </div>
                     @endauth
                 @endif
@@ -50,8 +50,8 @@
 
             <!-- Mobile Drawer Button -->
             <div class="md:hidden flex items-center gap-2">
-                <x-theme-toggle class="p-2 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-white/10" />
-                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="p-2.5 rounded-xl transition focus:outline-none" :class="scrolled ? 'text-slate-800 dark:text-white' : 'text-white'">
+                <x-theme-toggle class="p-2 text-slate-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100/80 dark:bg-white/10 border border-slate-200/60 dark:border-transparent" />
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="p-2.5 rounded-xl transition focus:outline-none text-slate-800 dark:text-white">
                     <i class="fas" :class="mobileMenuOpen ? 'fa-times text-lg' : 'fa-bars text-lg'"></i>
                 </button>
             </div>

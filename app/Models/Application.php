@@ -83,6 +83,7 @@ class Application extends Model
         static::deleting(function ($application) {
             $application->logs()->delete();
             $application->attendances()->delete();
+            $application->timelines()->delete();
             if ($application->certificate) {
                 $application->certificate->delete();
             }
@@ -122,6 +123,27 @@ class Application extends Model
     public function certificate()
     {
         return $this->hasOne(Certificate::class);
+    }
+
+    public function timelines()
+    {
+        return $this->hasMany(ApplicationTimeline::class)->orderBy('created_at', 'asc')->orderBy('id', 'asc');
+    }
+
+    public function recordTimeline(
+        string $event,
+        ?string $oldStatus = null,
+        ?string $newStatus = null,
+        array $metadata = [],
+        ?int $actorId = null
+    ): ApplicationTimeline {
+        return $this->timelines()->create([
+            'actor_id' => $actorId ?? auth()->id(),
+            'event' => $event,
+            'old_status' => $oldStatus ?? ($this->status instanceof ApplicationStatus ? $this->status->value : (string) $this->status),
+            'new_status' => $newStatus,
+            'metadata' => $metadata ?: null,
+        ]);
     }
 
     // Accessor untuk status yang memperhitungkan tanggal mulai (mendukung Enum & String)

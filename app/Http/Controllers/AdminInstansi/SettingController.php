@@ -21,6 +21,8 @@ class SettingController extends Controller
             'nama_pejabat' => 'required|string|max:255',
             'nip_pejabat' => 'required|string|max:50',
             'jabatan_pejabat' => 'required|string|max:100',
+            'email' => 'nullable|email|max:255',
+            'singkatan' => 'nullable|string|max:50',
             'ttd_kepala' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]); 
 
@@ -31,6 +33,14 @@ class SettingController extends Controller
             'nip_pejabat' => $request->nip_pejabat,
             'jabatan_pejabat' => $request->jabatan_pejabat,
         ];
+
+        if ($request->has('email')) {
+            $dataToUpdate['email'] = $request->email;
+        }
+
+        if ($request->has('singkatan')) {
+            $dataToUpdate['singkatan'] = $request->singkatan;
+        }
 
         if ($request->hasFile('ttd_kepala')) {
             if ($instansi->ttd_kepala && Storage::disk('private')->exists($instansi->ttd_kepala)) {

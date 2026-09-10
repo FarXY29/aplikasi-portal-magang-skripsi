@@ -48,9 +48,9 @@
         }
         .paragraph {
             text-indent: 32px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: justify;
-            line-height: 1.3;
+            line-height: 1.25;
         }
 
         /* DATA MAHASISWA */
@@ -190,7 +190,7 @@
                 <td class="st-num"></td>
                 <td class="st-label">NIM / NPM / NISN</td>
                 <td class="st-sep">:</td>
-                <td class="st-content" style="font-weight: normal;">{{ $app->user->nik ?? ($app->user->nim ?? '-') }}</td>
+                <td class="st-content" style="font-weight: normal;">{{ $app->user->nim ?? ($app->user->nik ?? '-') }}</td>
             </tr>
             <tr>
                 <td class="st-num"></td>

@@ -1,10 +1,10 @@
 
      <!-- Footer Section -->
-     <footer class="bg-slate-950 text-white pt-16 pb-8 mt-auto border-t border-slate-900 pb-safe w-full">
+     <footer class="bg-slate-900 text-slate-300 dark:bg-slate-950 dark:text-slate-400 pt-16 pb-8 mt-auto border-t border-slate-800 dark:border-slate-900 pb-safe w-full">
          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
              
              <!-- Footer Grid -->
-             <div class="reveal grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-10 pb-12 border-b border-slate-900 text-left w-full" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
+             <div class="reveal grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-10 pb-12 border-b border-slate-800 dark:border-slate-900 text-left w-full" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">
                  <!-- Kolom 1 (Branding & Logo) -->
                  <div class="md:col-span-5 flex flex-col items-start gap-4">
                      <div class="flex items-center gap-3">

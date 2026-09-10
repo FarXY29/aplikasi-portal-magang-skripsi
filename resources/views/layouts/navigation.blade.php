@@ -1,14 +1,34 @@
 <!-- 1. TOP LOGO & HEADER BRANDING -->
-<div class="flex items-center justify-between h-16 min-h-[4rem] max-h-16 px-6 bg-slate-50/90 dark:bg-gray-900/90 text-slate-800 dark:text-white border-b border-slate-200/90 dark:border-gray-700/80 flex-shrink-0 box-border">
-    <a href="{{ route('home') }}" class="flex items-center gap-3 group min-w-0">
+<div class="flex items-center h-16 min-h-[4rem] max-h-16 bg-slate-50/90 dark:bg-gray-900/90 text-slate-800 dark:text-white border-b border-slate-200/90 dark:border-gray-700/80 flex-shrink-0 box-border transition-all duration-300 overflow-x-hidden"
+     :class="sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-5'">
+    
+    <a href="{{ route('home') }}" 
+       class="flex items-center gap-3 group min-w-0" 
+       :class="sidebarCollapsed ? 'justify-center' : ''"
+       @mouseenter="showTooltip($el, '{{ config('app.name', 'Portal Magang') }}', 'Banjarmasin')"
+       @mouseleave="hideTooltip()">
         <div class="w-9 h-9 rounded-xl bg-teal-700 text-white flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
             <x-application-logo class="w-full h-full fill-current text-white" />
         </div>
-        <div class="flex flex-col min-w-0">
+        <div x-show="!sidebarCollapsed" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-x-2"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             class="flex flex-col min-w-0" 
+             :class="sidebarCollapsed ? 'lg:hidden' : ''">
             <span class="text-base font-black tracking-tight leading-tight text-slate-900 dark:text-white truncate">Portal <span class="text-teal-700 dark:text-teal-400">Magang</span></span>
             <span class="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-gray-400 truncate">Banjarmasin</span>
         </div>
     </a>
+
+    <!-- Tombol Collapse/Expand di Header Sidebar (Desktop lg) -->
+    <button @click="toggleSidebarCollapse()" 
+            x-show="!sidebarCollapsed"
+            class="hidden lg:flex w-8 h-8 rounded-lg bg-slate-200/60 hover:bg-slate-300/70 dark:bg-gray-800 dark:hover:bg-gray-700 items-center justify-center text-slate-500 dark:text-gray-400 hover:text-teal-700 dark:hover:text-teal-400 transition focus:outline-none flex-shrink-0" 
+            title="Kecilkan Sidebar">
+        <i class="fas fa-angle-left text-sm"></i>
+    </button>
+
     <!-- Tombol Tutup untuk Mode Drawer (Tablet/Mobile) -->
     <button @click="sidebarOpen = false" class="lg:hidden w-8 h-8 rounded-lg bg-slate-200/70 hover:bg-slate-300/70 dark:bg-gray-800 dark:hover:bg-gray-700 flex items-center justify-center text-slate-600 dark:text-gray-300 transition focus:outline-none flex-shrink-0" title="Tutup Sidebar">
         <i class="fas fa-times text-sm"></i>
@@ -16,194 +36,307 @@
 </div>
 
 <!-- 2. MAIN SCROLLABLE MENU ITEMS -->
-<div class="flex-1 overflow-y-auto custom-scrollbar px-4 py-5 space-y-6">
+<div class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300"
+     :class="sidebarCollapsed ? 'px-2 py-4 space-y-4' : 'px-4 py-5 space-y-6'">
     
     <!-- SECTION: MENU UTAMA -->
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Menu Utama</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" 
+               x-transition.opacity.duration.150ms 
+               class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" 
+               :class="sidebarCollapsed ? 'lg:hidden' : ''">Menu Utama</p>
         </div>
 
         <a href="{{ route('dashboard') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-th-large w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dashboard') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Dashboard Beranda</span>
+           @mouseenter="showTooltip($el, 'Dashboard Beranda')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-th-large w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dashboard') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Dashboard Beranda</span>
         </a>
     </div>
 
     <!-- SECTION: ROLE-SPECIFIC NAVIGATION -->
     @if(Auth::user()->role == 'peserta')
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Aktivitas Magang</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Aktivitas Magang</p>
         </div>
 
+        <!-- Logbook Harian -->
         <a href="{{ route('peserta.logbook.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.logbook.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-book-open w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.logbook.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Logbook Harian</span>
+           @mouseenter="showTooltip($el, 'Logbook Harian')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.logbook.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-book-open w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.logbook.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Logbook Harian</span>
         </a>
 
+        <!-- Absensi Kehadiran -->
         <a href="{{ route('peserta.absensi.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.absensi.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-user-clock w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.absensi.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Absensi Kehadiran</span>
+           @mouseenter="showTooltip($el, 'Absensi Kehadiran')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.absensi.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-user-clock w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.absensi.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Absensi Kehadiran</span>
         </a>
 
+        <!-- Sertifikat Magang -->
         <a href="{{ route('peserta.sertifikat') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.sertifikat') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-award w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.sertifikat') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Sertifikat Magang</span>
+           @mouseenter="showTooltip($el, 'Sertifikat Magang')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('peserta.sertifikat') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-award w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('peserta.sertifikat') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Sertifikat Magang</span>
         </a>
     </div>
     @elseif(Auth::user()->role == 'admin_kota')
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Super Admin</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Super Admin</p>
         </div>
 
+        <!-- Kelola Data Instansi -->
         <a href="{{ route('admin.instansi.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.instansi.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-building w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.instansi.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Kelola Data Instansi</span>
+           @mouseenter="showTooltip($el, 'Kelola Data Instansi')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.instansi.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-building w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.instansi.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Kelola Data Instansi</span>
         </a>
 
+        <!-- Master Jurusan & Rumpun -->
         <a href="{{ route('admin.master.majors.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.master.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-graduation-cap w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.master.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Master Jurusan & Rumpun</span>
+           @mouseenter="showTooltip($el, 'Master Jurusan & Rumpun')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.master.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-graduation-cap w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.master.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Master Jurusan & Rumpun</span>
         </a>
 
+        <!-- Manajemen Pengguna -->
         <a href="{{ route('admin.users.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.users.index') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-users-cog w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.users.index') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Manajemen Pengguna</span>
+           @mouseenter="showTooltip($el, 'Manajemen Pengguna')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.users.index') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-users-cog w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.users.index') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Manajemen Pengguna</span>
         </a>
 
+        <!-- Registri Sertifikat -->
         <a href="{{ route('admin.certificates.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.certificates.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-certificate w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.certificates.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Registri Sertifikat</span>
+           @mouseenter="showTooltip($el, 'Registri Sertifikat')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.certificates.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-certificate w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.certificates.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Registri Sertifikat</span>
         </a>
 
+        <!-- Pusat Laporan -->
         <a href="{{ route('admin.laporan.hub') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-chart-pie w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.laporan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pusat Laporan</span>
+           @mouseenter="showTooltip($el, 'Pusat Laporan')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.laporan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-chart-pie w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.laporan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pusat Laporan</span>
         </a>
 
+        <!-- Monitoring Logbook -->
         <a href="{{ route('admin.users.logbooks') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.users.logbooks*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-book w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.users.logbooks*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Monitoring Logbook</span>
+           @mouseenter="showTooltip($el, 'Monitoring Logbook')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.users.logbooks*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-book w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.users.logbooks*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Monitoring Logbook</span>
         </a>
 
+        <!-- Pengaturan Sistem -->
         <a href="{{ route('admin.settings.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-cogs w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.settings.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pengaturan Sistem</span>
+           @mouseenter="showTooltip($el, 'Pengaturan Sistem')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-cogs w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('admin.settings.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pengaturan Sistem</span>
         </a>
     </div>
     @elseif(Auth::user()->role == 'admin_instansi')
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Manajemen Dinas</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Manajemen Dinas</p>
         </div>
 
+        <!-- Kelola Lowongan -->
         <a href="{{ route('dinas.lowongan.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.lowongan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-briefcase w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.lowongan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Kelola Lowongan</span>
+           @mouseenter="showTooltip($el, 'Kelola Lowongan')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.lowongan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-briefcase w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.lowongan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Kelola Lowongan</span>
         </a>
 
+        <!-- Pelamar Masuk -->
         <a href="{{ route('dinas.pelamar') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.pelamar') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-envelope-open-text w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.pelamar') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pelamar Masuk</span>
+           @mouseenter="showTooltip($el, 'Pelamar Masuk')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.pelamar') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-envelope-open-text w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.pelamar') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pelamar Masuk</span>
         </a>
 
+        <!-- Monitoring Peserta -->
         <a href="{{ route('dinas.peserta.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.peserta.index') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-user-check w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.peserta.index') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Monitoring Peserta</span>
+           @mouseenter="showTooltip($el, 'Monitoring Peserta')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.peserta.index') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-user-check w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.peserta.index') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Monitoring Peserta</span>
         </a>
 
+        <!-- Data Pembimbing -->
         <a href="{{ route('dinas.pembimbing_lapangan.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.pembimbing_lapangan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-chalkboard-teacher w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.pembimbing_lapangan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Data Pembimbing</span>
+           @mouseenter="showTooltip($el, 'Data Pembimbing')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.pembimbing_lapangan.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-chalkboard-teacher w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.pembimbing_lapangan.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Data Pembimbing</span>
         </a>
 
+        <!-- Pusat Laporan -->
         <a href="{{ route('dinas.laporan.hub') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.laporan.hub') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-chart-pie w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.laporan.hub') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pusat Laporan</span>
+           @mouseenter="showTooltip($el, 'Pusat Laporan')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.laporan.hub') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-chart-pie w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.laporan.hub') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pusat Laporan</span>
         </a>
 
+        <!-- Pengaturan -->
         <a href="{{ route('dinas.settings') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.settings') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-sliders-h w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.settings') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pengaturan</span>
+           @mouseenter="showTooltip($el, 'Pengaturan')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('dinas.settings') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-sliders-h w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('dinas.settings') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pengaturan</span>
         </a>
     </div>
     @elseif(Auth::user()->role == 'pembimbing_lapangan')
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Monitoring Lapangan</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Monitoring Lapangan</p>
         </div>
 
+        <!-- Validasi Logbook -->
         <a href="{{ route('pembimbing_lapangan.logbook.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-book-open w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Validasi Logbook</span>
+           @mouseenter="showTooltip($el, 'Validasi Logbook')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-book-open w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing_lapangan.logbook*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Validasi Logbook</span>
         </a>
 
+        <!-- Absensi Peserta -->
         <a href="{{ route('pembimbing_lapangan.attendance.index') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-clipboard-list w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Absensi Peserta</span>
+           @mouseenter="showTooltip($el, 'Absensi Peserta')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-clipboard-list w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing_lapangan.attendance.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Absensi Peserta</span>
         </a>
     </div>
     @elseif(Auth::user()->role == 'pembimbing')
     <div class="space-y-1.5">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Pembimbing Sekolah</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-600 dark:bg-teal-500 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pembimbing Sekolah</p>
         </div>
 
+        <!-- Daftar Mahasiswa -->
         <a href="{{ route('pembimbing.dashboard') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing.dashboard') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-user-graduate w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing.dashboard') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Daftar Mahasiswa</span>
+           @mouseenter="showTooltip($el, 'Daftar Mahasiswa')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('pembimbing.dashboard') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-user-graduate w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('pembimbing.dashboard') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Daftar Mahasiswa</span>
         </a>
     </div>
     @endif
 
     <!-- SECTION: PENGATURAN & SISTEM -->
     <div class="space-y-1.5 pt-3 border-t border-slate-200/80 dark:border-gray-700/50">
-        <div class="px-3 mb-2 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-            <p class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest">Akun & Sistem</p>
+        <div class="px-3 mb-2 flex items-center gap-2" :class="sidebarCollapsed ? 'justify-center px-0' : ''">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span>
+            <p x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="text-[10px] font-extrabold text-slate-400 dark:text-gray-400 uppercase tracking-widest truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Akun & Sistem</p>
         </div>
 
+        <!-- Pengaturan Profil -->
         <a href="{{ route('profile.edit') }}" 
-           class="group relative flex items-center px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('profile.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}">
-           <i class="fas fa-user-circle w-5 mr-3.5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('profile.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"></i>
-           <span>Pengaturan Profil</span>
+           @mouseenter="showTooltip($el, 'Pengaturan Profil')"
+           @mouseleave="hideTooltip()"
+           class="group relative flex items-center text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('profile.*') ? 'bg-teal-50/90 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60 shadow-2xs' : 'text-slate-600 dark:text-gray-300 hover:bg-slate-100/80 dark:hover:bg-gray-700 hover:text-teal-800 dark:hover:text-white' }}"
+           :class="sidebarCollapsed ? 'px-0 py-3 justify-center' : 'px-4 py-3'">
+           <i class="fas fa-user-circle w-5 text-center transition-transform group-hover:scale-110 {{ request()->routeIs('profile.*') ? 'text-teal-700 dark:text-teal-400' : 'text-slate-400 dark:text-gray-500 group-hover:text-teal-700 dark:group-hover:text-white' }}"
+              :class="sidebarCollapsed ? 'mr-0' : 'mr-3.5'"></i>
+           <span x-show="!sidebarCollapsed" x-transition.opacity.duration.150ms class="truncate" :class="sidebarCollapsed ? 'lg:hidden' : ''">Pengaturan Profil</span>
         </a>
-
     </div>
 </div>
 
 <!-- 3. BOTTOM USER PROFILE & LOGOUT CARD -->
-<div class="p-3.5 border-t border-slate-200/90 dark:border-gray-700/80 bg-slate-50/90 dark:bg-gray-900/80 flex-shrink-0">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-2xs border border-slate-200/80 dark:border-gray-700/80 hover:border-slate-300 dark:hover:border-teal-500 transition-all duration-300">
-        <div class="flex items-center justify-between gap-2.5">
+<div class="border-t border-slate-200/90 dark:border-gray-700/80 bg-slate-50/90 dark:bg-gray-900/80 flex-shrink-0 transition-all duration-300 overflow-x-hidden"
+     :class="sidebarCollapsed ? 'p-2' : 'p-3.5'">
+    
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xs border border-slate-200/80 dark:border-gray-700/80 hover:border-slate-300 dark:hover:border-teal-500 transition-all duration-300"
+         :class="sidebarCollapsed ? 'p-2 flex flex-col items-center gap-2.5' : 'p-3'">
+        
+        <!-- Expanded Mode: Horizontal Info + Controls -->
+        <div class="flex items-center justify-between gap-2.5 w-full"
+             :class="sidebarCollapsed ? 'lg:hidden' : ''">
             <div class="flex items-center gap-3 min-w-0 flex-1">
                 <div class="w-10 h-10 rounded-xl bg-teal-700 text-white flex items-center justify-center font-black text-sm shadow-2xs flex-shrink-0">
                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
@@ -228,5 +361,43 @@
                 </form>
             </div>
         </div>
+
+        <!-- Collapsed Mode (Desktop Only): Compact Vertical Stack -->
+        <div x-show="sidebarCollapsed" 
+             class="hidden lg:flex flex-col items-center gap-2.5 w-full">
+            
+            <!-- User Avatar Icon with Hover Tooltip -->
+            <div class="flex items-center justify-center"
+                 @mouseenter="showTooltip($el, '{{ Auth::user()->name }}', '{{ str_replace('_', ' ', Auth::user()->role) }}')"
+                 @mouseleave="hideTooltip()">
+                <div class="w-10 h-10 rounded-xl bg-teal-700 text-white flex items-center justify-center font-black text-sm shadow-2xs cursor-pointer hover:scale-105 transition-transform duration-150">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="w-8 h-px bg-slate-200 dark:bg-gray-700"></div>
+
+            <!-- Controls: Theme Toggle & Logout -->
+            <div class="flex flex-col items-center gap-2">
+                <div @mouseenter="showTooltip($el, 'Ganti Tema')"
+                     @mouseleave="hideTooltip()">
+                    <x-theme-toggle class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-slate-200 dark:border-gray-600" />
+                </div>
+
+                <div @mouseenter="showTooltip($el, 'Logout')"
+                     @mouseleave="hideTooltip()">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" 
+                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white dark:bg-rose-900/30 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-rose-200/60 dark:border-rose-900/50">
+                            <i class="fas fa-sign-out-alt text-sm"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>

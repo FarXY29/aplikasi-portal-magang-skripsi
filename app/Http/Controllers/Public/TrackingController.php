@@ -43,7 +43,7 @@ class TrackingController extends Controller
             ]);
         }
 
-        $applications = Application::with(['user', 'position.instansi'])
+        $applications = Application::with(['user', 'position.instansi', 'timelines'])
             ->where(function ($query) use ($keyword) {
                 $query->where('nomor_registrasi', $keyword)
                     ->orWhere('token_verifikasi', $keyword);
@@ -167,6 +167,12 @@ class TrackingController extends Controller
             'tgl_daftar' => $app->created_at ? $app->created_at->translatedFormat('d M Y H:i') : '-',
             'periode_mulai' => $app->tanggal_mulai ? \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d F Y') : null,
             'periode_selesai' => $app->tanggal_selesai ? \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d F Y') : null,
+            'timelines' => $app->timelines ? $app->timelines->map(fn ($t) => [
+                'event' => $t->event,
+                'label' => $t->getEventLabel(),
+                'created_at' => $t->created_at ? $t->created_at->translatedFormat('d M Y H:i') : null,
+                'new_status' => $t->new_status,
+            ])->values()->all() : [],
         ];
     }
 

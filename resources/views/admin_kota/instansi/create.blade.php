@@ -68,6 +68,34 @@
                             </div>
 
                             <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Singkatan Instansi / OPD</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                                        <i class="fas fa-tag"></i>
+                                    </div>
+                                    <input type="text" name="singkatan" value="{{ old('singkatan') }}"
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-sm text-sm uppercase" 
+                                        placeholder="Contoh: DISKOMINFO">
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Digunakan untuk format penomoran LoA & surat resmi.</p>
+                                @error('singkatan') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Email Resmi Instansi (Kop Surat)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <input type="email" name="email" value="{{ old('email') }}"
+                                        class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-teal-500 focus:ring focus:ring-teal-500/20 transition shadow-sm text-sm" 
+                                        placeholder="Contoh: diskominfo@banjarmasinkota.go.id">
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dicantumkan pada kop surat resmi instansi.</p>
+                                @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Alamat Kantor <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 top-3 pointer-events-none text-gray-400 dark:text-gray-500">

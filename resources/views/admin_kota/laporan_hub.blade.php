@@ -24,15 +24,27 @@
                     </div>
                 </a>
 
-                <!-- Laporan Global Peserta -->
+                <!-- Laporan Pendaftaran & Pelacakan Real-Time -->
+                <a href="{{ route('admin.laporan.pendaftaran') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-emerald-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Pendaftaran &amp; Pelacakan Status</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Monitoring pendaftaran dan pelacakan status permohonan magang siswa/mahasiswa secara real-time se-Kota Banjarmasin.</p>
+                    </div>
+                </a>
+
+                <!-- Laporan Rekapitulasi Peserta Magang (Aktif, Selesai & Asal Instansi) -->
                 <a href="{{ route('admin.laporan.peserta_global') }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-teal-300 transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                     <div class="relative z-10">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Peserta Global</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Rekapitulasi seluruh peserta magang dari seluruh universitas dan instansi di lingkungan pemkot.</p>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Rekapitulasi Peserta Magang</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Rekapitulasi daftar jumlah peserta aktif, selesai, serta matriks asal instansi pendidikan per periode di lingkup Pemerintah Kota Banjarmasin.</p>
                     </div>
                 </a>
 

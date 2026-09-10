@@ -52,6 +52,8 @@ class InstansiController extends Controller
         $request->validate([
             'nama_dinas' => 'required|string|max:255',
             'kode_unit_kerja' => 'required|string|max:50|unique:instansis',
+            'singkatan' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
             'alamat' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -62,7 +64,7 @@ class InstansiController extends Controller
         ]);
 
         $instansi = DB::transaction(function () use ($request) {
-            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'alamat', 'latitude', 'longitude', 'radius_absen']);
+            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'singkatan', 'email', 'alamat', 'latitude', 'longitude', 'radius_absen']);
 
             if ($request->hasFile('ttd_kepala')) {
                 $data['ttd_kepala'] = $request->file('ttd_kepala')->store('signatures', 'private');
@@ -107,6 +109,8 @@ class InstansiController extends Controller
         $request->validate([
             'nama_dinas' => 'required|string|max:255',
             'kode_unit_kerja' => 'required|string|max:50|unique:instansis,kode_unit_kerja,'.$instansi->id, 
+            'singkatan' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
             'alamat' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -121,7 +125,7 @@ class InstansiController extends Controller
         ]);
 
         DB::transaction(function () use ($instansi, $adminUser, $request) {
-            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'alamat', 'latitude', 'longitude', 'radius_absen']);
+            $data = $request->only(['nama_dinas', 'kode_unit_kerja', 'singkatan', 'email', 'alamat', 'latitude', 'longitude', 'radius_absen']);
 
             if ($request->hasFile('ttd_kepala')) {
                 if ($instansi->ttd_kepala) {

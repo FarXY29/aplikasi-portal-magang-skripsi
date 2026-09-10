@@ -22,6 +22,8 @@ use App\Services\Attendance\AttendanceAttemptService;
 use App\Services\Attendance\GeoDistanceService;
 use App\Services\Attendance\DynamicQrService;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class AttendanceController extends Controller
@@ -332,58 +334,79 @@ class AttendanceController extends Controller
         // 9. Keputusan berdasarkan mode (§23, §24).
         $blocked = $fraudEnabled && $fraudResult->shouldBlock($mode);
 
-        // 10. Persist attendance + attempt evidence.
+        // 10. Persist attendance inside DB transaction + attempt evidence post-commit.
         try {
-            if ($type === 'clock_in') {
-                $attendance = Attendance::create([
-                    'application_id' => $application->id,
-                    'date' => $today,
-                    'status' => 'hadir',
-                    'clock_in' => $now->format('H:i:s'), // SERVER time authoritative
-                    'latitude_in' => $latitude,
-                    'longitude_in' => $longitude,
-                    'ip_address' => $request->ip(),
-                    'device_info' => $request->userAgent(),
-                    'validation_status' => 'approved',
-                    'risk_score' => $fraudEnabled ? $fraudResult->score : null,
-                    'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
-                ]);
+            $txResult = DB::transaction(function () use (
+                $type, $application, $today, $now, $latitude, $longitude,
+                $request, $fraudEnabled, $fraudResult
+            ) {
+                if ($type === 'clock_in') {
+                    $attendance = Attendance::create([
+                        'application_id' => $application->id,
+                        'date' => $today,
+                        'status' => 'hadir',
+                        'clock_in' => $now->format('H:i:s'), // SERVER time authoritative
+                        'latitude_in' => $latitude,
+                        'longitude_in' => $longitude,
+                        'ip_address' => $request->ip(),
+                        'device_info' => $request->userAgent(),
+                        'validation_status' => 'approved',
+                        'risk_score' => $fraudEnabled ? $fraudResult->score : null,
+                        'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
+                    ]);
 
-                app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [
-                    'application_id' => $application->id,
-                    'date' => $today,
-                ]);
+                    app(AuditLogService::class)->record('attendance.clocked_in', $attendance, [
+                        'application_id' => $application->id,
+                        'date' => $today,
+                    ]);
 
-                $successMessage = 'Berhasil Absen Datang! Selamat beraktivitas.';
-            } else {
-                // Guard race: hanya update bila clock_out masih null.
-                $updated = Attendance::where('application_id', $application->id)
-                            ->where('date', $today)
-                            ->where('status', 'hadir')
-                            ->whereNull('clock_out')
-                            ->update([
-                                'clock_out' => $now->format('H:i:s'), // SERVER time authoritative
-                                'latitude_out' => $latitude,
-                                'longitude_out' => $longitude,
-                                'risk_score' => $fraudEnabled ? $fraudResult->score : null,
-                                'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
-                            ]);
+                    return [
+                        'attendance' => $attendance,
+                        'message' => 'Berhasil Absen Datang! Selamat beraktivitas.',
+                    ];
+                } else {
+                    // Guard race: hanya update bila clock_out masih null.
+                    $updated = Attendance::where('application_id', $application->id)
+                                ->where('date', $today)
+                                ->where('status', 'hadir')
+                                ->whereNull('clock_out')
+                                ->update([
+                                    'clock_out' => $now->format('H:i:s'), // SERVER time authoritative
+                                    'latitude_out' => $latitude,
+                                    'longitude_out' => $longitude,
+                                    'risk_score' => $fraudEnabled ? $fraudResult->score : null,
+                                    'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
+                                ]);
 
-                if ($updated === 0) {
-                    return back()->with('error', 'Anda sudah melakukan absen pulang sebelumnya.');
+                    if ($updated === 0) {
+                        return null;
+                    }
+
+                    $attendance = Attendance::where('application_id', $application->id)
+                                ->where('date', $today)
+                                ->where('status', 'hadir')
+                                ->first();
+
+                    app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
+                        'application_id' => $application->id,
+                        'date' => $today,
+                    ]);
+
+                    return [
+                        'attendance' => $attendance,
+                        'message' => 'Berhasil Absen Pulang! Hati-hati di jalan.',
+                    ];
                 }
+            });
 
-                $attendance = $attendance->refresh();
-
-                app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
-                    'application_id' => $application->id,
-                    'date' => $today,
-                ]);
-
-                $successMessage = 'Berhasil Absen Pulang! Hati-hati di jalan.';
+            if ($txResult === null) {
+                return back()->with('error', 'Anda sudah melakukan absen pulang sebelumnya.');
             }
 
-            // Bila fraud layer aktif: simpan attempt sukses + events.
+            $attendance = $txResult['attendance'];
+            $successMessage = $txResult['message'];
+
+            // Bila fraud layer aktif: simpan attempt sukses + events (external to core attendance tx).
             if ($fraudEnabled) {
                 $context = $this->buildContext($request, $user, $application, $instansi, $type, $now, $latitude, $longitude, $distanceMeters);
                 $attempt = $this->attempts->record($context, $fraudResult, $attendance, $blocked ? 'blocked' : 'accepted');
@@ -463,22 +486,34 @@ class AttendanceController extends Controller
         // 3. Upload File Bukti
         $path = $request->file('proof_file')->store('documents/attendance', 'private');
 
-        // 4. Simpan Data
-        $attendance = Attendance::create([
-            'application_id' => $application->id,
-            'date' => $today,
-            'status' => $request->status,
-            'description' => $request->description,
-            'proof_file' => $path,
-            'clock_in' => null, // Tidak ada jam masuk
-            'clock_out' => null, // Tidak ada jam pulang
-            'validation_status' => 'pending'
-        ]);
+        // 4. Simpan Data dalam Transaksi
+        try {
+            DB::transaction(function () use ($application, $today, $request, $path) {
+                $attendance = Attendance::create([
+                    'application_id' => $application->id,
+                    'date' => $today,
+                    'status' => $request->status,
+                    'description' => $request->description,
+                    'proof_file' => $path,
+                    'clock_in' => null, // Tidak ada jam masuk
+                    'clock_out' => null, // Tidak ada jam pulang
+                    'validation_status' => 'pending'
+                ]);
 
-        app(AuditLogService::class)->record('attendance.permission_requested', $attendance, [
-            'application_id' => $application->id,
-            'status' => $request->status,
-        ]);
+                app(AuditLogService::class)->record('attendance.permission_requested', $attendance, [
+                    'application_id' => $application->id,
+                    'status' => $request->status,
+                ]);
+            });
+        } catch (\Throwable $e) {
+            Storage::disk('private')->delete($path);
+
+            if ($e instanceof QueryException && $this->isDuplicateEntry($e)) {
+                return back()->with('error', 'Anda sudah mengisi data absensi/izin hari ini.');
+            }
+
+            throw $e;
+        }
 
         return back()->with('success', 'Pengajuan Izin/Sakit berhasil dikirim.');
     }
@@ -562,10 +597,19 @@ class AttendanceController extends Controller
         }
     }
 
-    private function isDuplicateEntry(QueryException $e): bool
+    public function isDuplicateEntry(QueryException $e): bool
     {
-        // MySQL duplicate entry (1062) / PostgreSQL unique violation (23505).
-        return in_array($e->getCode(), [23000, 23505], true)
-            && str_contains($e->getMessage(), 'Duplicate entry');
+        $code = (string) $e->getCode();
+        $errorCode = $e->errorInfo[1] ?? null;
+
+        if ($errorCode === 1062 || $code === '23505') {
+            return true;
+        }
+
+        $message = $e->getMessage();
+
+        return str_contains($message, 'Duplicate entry')
+            || str_contains($message, 'UNIQUE constraint failed')
+            || str_contains($message, 'duplicate key value violates unique constraint');
     }
 }

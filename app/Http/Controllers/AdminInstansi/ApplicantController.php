@@ -25,7 +25,7 @@ class ApplicantController extends Controller
         $instansiId = Auth::user()->instansi_id;
         $query = Application::whereHas('position', function ($q) use ($instansiId) {
             $q->where('instansi_id', $instansiId);
-        })->with(['user.university', 'user.school', 'position'])->orderBy('created_at', 'desc');
+        })->with(['user.university', 'user.school', 'user.majorDetail', 'position', 'pembimbing_lapangan'])->orderBy('created_at', 'desc');
 
         if ($request->has('status') && $request->status != 'semua' && $request->status != '') {
             $query->where('status', $request->status);
@@ -97,7 +97,11 @@ class ApplicantController extends Controller
         $app = Application::with('position.instansi', 'user')->findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
 
-        $this->applicationService->rejectApplicant($app, $request->validated('alasan'));
+        try {
+            $this->applicationService->rejectApplicant($app, $request->validated('alasan'));
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return back()->with('success', 'Peserta ditolak dan catatan telah disimpan.');
     }

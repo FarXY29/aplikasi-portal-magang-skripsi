@@ -301,6 +301,20 @@
                                             class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-mono font-bold shadow-xs"
                                             placeholder="19xxxxxxxx xxx x xxx">
                                     </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Singkatan Instansi</label>
+                                        <input type="text" name="singkatan" value="{{ old('singkatan', $instansi->singkatan) }}"
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs uppercase"
+                                            placeholder="Contoh: DISKOMINFO, BPKPAD">
+                                        <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Digunakan untuk penomoran LoA & surat resmi.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Email Resmi Instansi (Kop Surat)</label>
+                                        <input type="email" name="email" value="{{ old('email', $instansi->email) }}"
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs font-bold shadow-xs"
+                                            placeholder="Contoh: diskominfo@banjarmasinkota.go.id">
+                                        <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Dicantumkan pada kop surat dan dokumen resmi cetak.</p>
+                                    </div>
                                 </div>
 
                                 <div>
