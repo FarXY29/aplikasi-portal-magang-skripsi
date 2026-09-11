@@ -1,23 +1,23 @@
-# Graph Report - aplikasi-magang - Copy-backup  (2026-09-10)
+# Graph Report - aplikasi-magang-copy-backup  (2026-09-11)
 
 ## Corpus Check
-- 873 files · ~534,559 words
+- 877 files · ~537,555 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3195 nodes · 5437 edges · 733 communities (638 shown, 95 thin omitted)
+- 3211 nodes · 5465 edges · 737 communities (640 shown, 97 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 19 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `18def3b0`
+- Built from commit: `e6085335`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - User
-- User.php
-- Illuminate\Foundation\Testing\RefreshDatabase
+- Attendance
+- TestCase
 - Illuminate\Console\Command
 - Instansi
 - Controller
@@ -26,63 +26,62 @@
 - ApplicationFactory
 - AttendanceFraudContext
 - Illuminate\Http\Request
-- CertificateGovernanceTest
-- QueuedNotificationReliabilityTest.php
+- Illuminate\Support\Str
+- ApplicationRejectedMail
 - Portal Magang Banjarmasin System Overview
 - Application
 - AttendanceDispute
 - ApplicationStateTransitionService
-- Carbon\Carbon
+- AttendanceController
 - require
 - Illuminate\Support\Facades\Auth
-- Illuminate\Database\Seeder
+- User.php
 - AttendanceFraudResult
 - devDependencies
 - MajorCategory
 - Illuminate\Support\Facades\Schema
-- DatabaseBackup
+- AuditLogService
 - QueuedNotificationReliabilityTest
 - Http/Kernel.php
 - Illuminate\Database\Eloquent\Model
 - dependencies
 - AttendanceFraudMonitoringTest
 - KioskPresensiController
-- Illuminate\Support\Facades\Route
+- CertificateController
 - FullSystemRoleAndPageVerificationTest
-- RejectApplicationRequest
+- Illuminate\Database\Eloquent\Relations\BelongsTo
 - Illuminate\Database\Migrations\Migration
 - Symfony\Component\HttpFoundation\Response
 - Testing Skills With Subagents
 - LowonganRequest
-- ReportApplicationAndRekapGlobalTest
+- ReportController
 - DailyLog
-- AttendanceIdempotencyService
+- Illuminate\Database\Seeder
 - PembimbingLapanganController
 - composer.json
-- Illuminate\Database\Eloquent\Relations\BelongsTo
+- ApplicationLifecycleService
 - GeoDistanceServiceTest
 - PesertaViewRegressionTest
 - Setting
 - PembimbingLapanganController
-- EmailVerificationExemptionTest.php
+- QueuedNotificationReliabilityTest.php
 - AttendanceChallengeTest
-- University
-- DailyLogAuthorizationTest
+- InternshipApplicationService
+- AttendanceDisputeService
 - Using Git Worktrees
-- Certificate
 - ClockInOutAntiFraudTest
 - require-dev
 - scripts
 - public/manifest.json
-- Attendance
+- InternshipEndingMail
 - config
 - LaporanRedesignSmokeTest
-- AttendancePolicy
+- .failed
 - welcome.blade.php
-- AdminUserController
+- ImpossibleTravelRuleTest
 - app.js
 - Test-Driven Development (TDD)
-- EmailVerificationExemptionTest
+- AttendanceAuthorizationTest
 - Kernel
 - Creation Log: Systematic Debugging Skill
 - AttendanceRegressionTest
@@ -90,13 +89,13 @@
 - peserta/dashboard.blade.php
 - MajorManagementTest
 - Single-Flow Task Execution
-- ActiveInternController
-- Illuminate\Support\Str
+- CancellationPolicyException
+- Certificate
 - psr-4
 - logging.php
 - app.blade.php
 - Graphify Knowledge Graph Rule
-- DynamicQrService
+- FraudMonitoringController.php
 - TrustHosts
 - AttendanceService
 - CreatesApplication.php
@@ -120,30 +119,27 @@
 - peserta.blade.php
 - peserta_global.blade.php
 - users/index.blade.php
-- ApplicationPolicy
+- AdminUserController
 - ApplicationAuthorizationTest
 - AttendanceRiskScorerTest
-- AttendanceController.php
-- LoginRequest
-- AuthTest
-- keywords
-- .buildDashboardData
-- UpdateDailyLogRequest
-- InstansiController
-- AttendanceDynamicQrTest
-- PembimbingLapanganViewsTest
-- IdCardVerificationTest.php
 - StorageAccessController
-- PembimbingSekolahViewsTest
+- LoginRequest
+- EmailViewsTest
+- keywords
+- Carbon\Carbon
+- ApplicationStatusNotification
+- DashboardController
+- ProfileController.php
+- PembimbingLapanganViewsTest
+- AdminInstansi/DashboardController.php
+- EventServiceProvider
+- PembimbingSekolahViewsTest.php
 - GeoDistanceService
 - Illuminate\Database\Schema\Blueprint
-- EmailVerificationTest.php
-- ProfileTest
-- RoleAdminKotaTest
-- CertificateService.php
-- InstitutionIsolationTest
+- DailyLogAuthorizationTest
+- TrackingTest
+- AuthServiceProvider
 - AdminDashboardService
-- AllPdfReportsRenderingTest.php
 - makeSquareIcon
 - opendesign/manifest.json
 - Logo Kota Banjarmasin (Kayuh Baimbai)
@@ -174,6 +170,13 @@
 - Banjarmasin PWA Icon (192x192)
 - PWA Icon 512x512 (Banjarmasin Seal)
 - ID Card Frame Template
+- instansi/create.blade.php
+- instansi/edit.blade.php
+- majors/create.blade.php
+- majors/edit.blade.php
+- majors/index.blade.php
+- users/create.blade.php
+- users/edit.blade.php
 - loa.blade.php
 - logbook_rekap.blade.php
 - transkrip_nilai.blade.php
@@ -189,7 +192,7 @@
 - Persuasion Principles for Skill Design
 - Writing Skills
 - Executing Plans
-- AuditLogService
+- AttendanceController.php
 - Defense-in-Depth Validation
 - Verification Before Completion
 - [Analysis Title]
@@ -200,12 +203,10 @@
 - Skill authoring best practices
 - Brainstorming Ideas Into Designs
 - render-graphs.js
-- ApplicationTimelineTest
 - Install Antigravity Superpowers Profile
 - Using Skills
 - Writing Plans
-- AttendanceAttemptPolicy
-- TestCase
+- Illuminate\Foundation\Testing\DatabaseTransactions
 - Superpowers for Antigravity
 - Requesting Code Review
 - Returns: "OK" or lists conflicts
@@ -230,18 +231,24 @@
 - test-academic.md
 - task.md
 - run-tests.sh
-- InstansiPolicy
 - admin_kota/pendaftaran.blade.php
-- AttendanceAuthorizationTest
+- ApplicationAcceptedMail
 - PembimbingSekolahController
-- InternshipPositionPolicy
+- Handler
+- AccuracyRule
+- TrustProxies
+- EncryptCookies
+- PreventRequestsDuringMaintenance
+- TrimStrings
+- ValidateSignature
+- VerifyCsrfToken
 
 ## God Nodes (most connected - your core abstractions)
-1. `User` - 338 edges
-2. `Application` - 270 edges
-3. `Instansi` - 180 edges
-4. `InternshipPosition` - 143 edges
-5. `TestCase` - 119 edges
+1. `User` - 341 edges
+2. `Application` - 273 edges
+3. `Instansi` - 183 edges
+4. `InternshipPosition` - 146 edges
+5. `TestCase` - 121 edges
 6. `Attendance` - 96 edges
 7. `Controller` - 72 edges
 8. `DailyLog` - 58 edges
@@ -268,107 +275,103 @@
 - **Graphify Knowledge Graph Rules and AI Agent Instructions** — agents_rules_graphify_rule, agents_workflows_graphify_workflow, gemini_graphify_instructions [EXTRACTED 1.00]
 - **Internship Application Design System & UI Mockups** — opendesign_mockups_alur_magang_brutalism_index_mockup, opendesign_mockups_alur_magang_minimalism_index_mockup, opendesign_mockups_katalog_magang_banjarmasin_index_catalog, opendesign_mockups_kartu_metriks_stats_index_mockup [INFERRED 0.85]
 
-## Communities (733 total, 95 thin omitted)
+## Communities (737 total, 97 thin omitted)
 
 ### Community 0 - "User"
-Cohesion: 0.06
-Nodes (4): User, Illuminate\Foundation\Auth\User, RolePembimbingLapanganTest, RolePesertaTest
+Cohesion: 0.04
+Nodes (10): User, InstansiPolicy, Illuminate\Foundation\Auth\User, CertificateGovernanceTest, EmailVerificationExemptionTest, EmailVerificationTest, ProfileTest, RoleAdminKotaTest (+2 more)
 
-### Community 1 - "User.php"
-Cohesion: 0.33
-Nodes (5): Illuminate\Contracts\Auth\MustVerifyEmail, Illuminate\Notifications\Notifiable, Laravel\Sanctum\HasApiTokens, Spatie\Permission\Exceptions\PermissionDoesNotExist, Spatie\Permission\Traits\HasRoles
-
-### Community 2 - "Illuminate\Foundation\Testing\RefreshDatabase"
-Cohesion: 0.09
-Nodes (6): Illuminate\Foundation\Testing\RefreshDatabase, AuthenticationTest, PasswordConfirmationTest, PasswordUpdateTest, RegistrationTest, KioskPresensiTest
+### Community 2 - "TestCase"
+Cohesion: 0.04
+Nodes (19): CreatesApplication, Illuminate\Auth\Notifications\ResetPassword, Illuminate\Foundation\Testing\RefreshDatabase, Illuminate\Foundation\Testing\TestCase, Illuminate\Foundation\Testing\WithFaker, Illuminate\Support\Facades\Notification, ReportApplicationAndRekapGlobalTest, AllPdfReportsRenderingTest (+11 more)
 
 ### Community 3 - "Illuminate\Console\Command"
 Cohesion: 0.19
 Nodes (6): CompleteExpiredInternships, MigratePublicDocumentsToPrivate, PruneExpiredBackups, SendEndingNotifications, Command, Illuminate\Console\Command
 
 ### Community 4 - "Instansi"
-Cohesion: 0.05
-Nodes (9): LowonganController, Instansi, InternshipPosition, HighPriorityReviewTest, MediumPriorityReviewTest, MultiRoleHighPriorityIntegrationTest, NotificationTest, TrackingTest (+1 more)
+Cohesion: 0.04
+Nodes (12): LowonganController, Instansi, InternshipPosition, InternshipPositionPolicy, DatabaseSeeder, HighPriorityReviewTest, IdCardVerificationTest, MediumPriorityReviewTest (+4 more)
 
 ### Community 5 - "Controller"
-Cohesion: 0.08
-Nodes (24): AuthenticatedSessionController, ConfirmablePasswordController, EmailVerificationNotificationController, EmailVerificationPromptController, NewPasswordController, PasswordController, PasswordResetLinkController, RegisteredUserController (+16 more)
+Cohesion: 0.07
+Nodes (26): AuthenticatedSessionController, ConfirmablePasswordController, EmailVerificationNotificationController, EmailVerificationPromptController, NewPasswordController, PasswordController, PasswordResetLinkController, RegisteredUserController (+18 more)
 
 ### Community 6 - "FraudSignal"
-Cohesion: 0.08
-Nodes (8): FraudSignal, AccuracyRule, AttendanceFraudRule, BoundaryConfidenceRule, NetworkAnomalyRule, RequestFrequencyRule, SessionConsistencyRule, TimestampRule
+Cohesion: 0.09
+Nodes (7): FraudSignal, AttendanceFraudRule, BoundaryConfidenceRule, NetworkAnomalyRule, RequestFrequencyRule, SessionConsistencyRule, TimestampRule
 
 ### Community 7 - "Client"
 Cohesion: 0.06
-Nodes (14): Client, EnvKitDebugServiceProvider, AppServiceProvider, BroadcastServiceProvider, Illuminate\Notifications\Messages\MailMessage, Illuminate\Support\Facades\Broadcast, Illuminate\Support\Facades\Facade, Illuminate\Support\Facades\URL (+6 more)
+Nodes (17): Client, EnvKitDebugServiceProvider, AppServiceProvider, BroadcastServiceProvider, Illuminate\Auth\Events\Verified, Illuminate\Auth\Notifications\VerifyEmail, Illuminate\Notifications\Messages\MailMessage, Illuminate\Support\Facades\Broadcast (+9 more)
 
 ### Community 8 - "ApplicationFactory"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (8): ApplicationFactory, static, InstansiFactory, InternshipPositionFactory, static, static, UserFactory, Illuminate\Database\Eloquent\Factories\Factory
 
 ### Community 9 - "AttendanceFraudContext"
-Cohesion: 0.19
-Nodes (3): AttendanceAttempt, AttendanceAttemptService, AttendanceFraudContext
+Cohesion: 0.14
+Nodes (4): AttendanceAttempt, AttendanceAttemptPolicy, AttendanceAttemptService, AttendanceFraudContext
 
 ### Community 10 - "Illuminate\Http\Request"
-Cohesion: 0.06
-Nodes (6): ReportController, AuditLogController, ReportController, ReportService, Illuminate\Contracts\Http\Kernel, Illuminate\Http\Request
+Cohesion: 0.09
+Nodes (6): ReportController, Authenticate, ReportService, Illuminate\Auth\Middleware\Authenticate, Illuminate\Contracts\Http\Kernel, Illuminate\Http\Request
 
-### Community 12 - "QueuedNotificationReliabilityTest.php"
-Cohesion: 0.05
-Nodes (35): CancellationPolicyException, InvalidApplicationStateTransitionException, CreateDatabaseBackup, LogFailedQueueJob, LogNotificationFailure, ApplicationAcceptedMail, Throwable, ApplicationRejectedMail (+27 more)
+### Community 11 - "Illuminate\Support\Str"
+Cohesion: 0.15
+Nodes (4): CertificateService, Barryvdh\DomPDF\Facade\Pdf, Illuminate\Support\Str, SimpleSoftwareIO\QrCode\Facades\QrCode
+
+### Community 12 - "ApplicationRejectedMail"
+Cohesion: 0.29
+Nodes (11): CreateDatabaseBackup, ApplicationRejectedMail, Illuminate\Bus\Queueable, Illuminate\Contracts\Queue\ShouldQueue, Illuminate\Contracts\Queue\ShouldQueueAfterCommit, Illuminate\Foundation\Bus\Dispatchable, Illuminate\Mail\Mailable, Illuminate\Mail\Mailables\Attachment (+3 more)
 
 ### Community 13 - "Portal Magang Banjarmasin System Overview"
 Cohesion: 0.09
 Nodes (27): Quality Checks Verify Job, GitHub Actions Quality Checks Workflow, OpenDesign Manifest Loader & Navigation, OpenDesign UI Prototype Viewer, Neo-Brutalist 4-Step Registration Flow, Alur Pendaftaran Magang Neo-Brutalism Mockup, Minimalist 4-Step Registration Flow, Alur Pendaftaran Magang Minimalism Mockup (+19 more)
 
 ### Community 14 - "Application"
-Cohesion: 0.06
-Nodes (6): ApplicationController, DashboardController, Application, Illuminate\Pagination\LengthAwarePaginator, Illuminate\Support\Facades\DB, ApplicationStateTransitionServiceTest
+Cohesion: 0.05
+Nodes (6): ApplicationController, Application, ApplicationPolicy, Illuminate\Auth\Access\Response, Illuminate\Pagination\LengthAwarePaginator, ApplicationStateTransitionServiceTest
 
 ### Community 15 - "AttendanceDispute"
 Cohesion: 0.13
 Nodes (3): AttendanceDispute, AttendanceDisputePolicy, AttendanceDisputeTest
 
-### Community 16 - "ApplicationStateTransitionService"
-Cohesion: 0.07
-Nodes (6): GenerateCertificateNumberAction, ApplicantController, ApplicationLifecycleService, ApplicationStateTransitionService, InternshipApplicationService, ApplicationStatus
-
-### Community 17 - "Carbon\Carbon"
-Cohesion: 0.19
-Nodes (4): AttendanceController, Carbon, ClockInRequest, Carbon\Carbon
+### Community 17 - "AttendanceController"
+Cohesion: 0.06
+Nodes (10): AttendanceController, Carbon, ClockInRequest, AttendanceChallengeService, AttendanceIdempotencyService, AttendanceLockService, DynamicQrService, Illuminate\Cache\Lock (+2 more)
 
 ### Community 18 - "require"
 Cohesion: 0.08
 Nodes (25): require, barryvdh/laravel-dompdf, ext-bcmath, ext-ctype, ext-curl, ext-dom, ext-fileinfo, ext-gd (+17 more)
 
 ### Community 19 - "Illuminate\Support\Facades\Auth"
-Cohesion: 0.14
-Nodes (5): FraudMonitoringController, SettingController, Illuminate\Database\Eloquent\Builder, Illuminate\Support\Facades\Auth, Illuminate\Support\Facades\Request
+Cohesion: 0.15
+Nodes (3): SettingController, Illuminate\Support\Facades\Auth, Illuminate\Support\Facades\Request
 
-### Community 20 - "Illuminate\Database\Seeder"
+### Community 20 - "User.php"
 Cohesion: 0.18
-Nodes (7): Carbon\CarbonPeriod, AttendanceSeeder, DatabaseSeeder, MassDummySeeder, PenilaianDummySeeder, Factory, Illuminate\Database\Seeder
+Nodes (9): Illuminate\Contracts\Auth\MustVerifyEmail, Illuminate\Notifications\Notifiable, Laravel\Sanctum\HasApiTokens, Spatie\Permission\DefaultTeamResolver, Spatie\Permission\Exceptions\PermissionDoesNotExist, Spatie\Permission\Models\Permission, Spatie\Permission\Models\Role, Spatie\Permission\PermissionRegistrar (+1 more)
 
 ### Community 21 - "AttendanceFraudResult"
-Cohesion: 0.09
-Nodes (8): fromScore(), self, AttendanceFraudResult, self, AttendanceFraudStatus, AttendanceOperationalDecision, Illuminate\Support\Collection, AttendanceFraudDecisionTest
+Cohesion: 0.11
+Nodes (7): fromScore(), self, AttendanceFraudResult, self, AttendanceFraudStatus, Illuminate\Support\Collection, AttendanceFraudDecisionTest
 
 ### Community 22 - "devDependencies"
 Cohesion: 0.10
 Nodes (21): alpinejs, laravel-vite-plugin, devDependencies, alpinejs, laravel-vite-plugin, postcss, tailwindcss, @tailwindcss/forms (+13 more)
 
 ### Community 23 - "MajorCategory"
-Cohesion: 0.07
-Nodes (12): MajorCategoryController, MajorController, ProfileController, ProfileUpdateRequest, Major, MajorCategory, MajorSeeder, Illuminate\Database\Eloquent\Relations\HasMany (+4 more)
+Cohesion: 0.12
+Nodes (6): MajorCategoryController, MajorController, Major, MajorCategory, MajorSeeder, Illuminate\Database\Eloquent\Relations\HasMany
 
-### Community 25 - "DatabaseBackup"
-Cohesion: 0.11
-Nodes (4): AdminSettingController, UpdateSystemSettingsRequest, DatabaseBackup, DatabaseBackupTest
+### Community 25 - "AuditLogService"
+Cohesion: 0.10
+Nodes (6): AdminSettingController, RequestDatabaseBackupRequest, UpdateSystemSettingsRequest, DatabaseBackup, AuditLogService, DatabaseBackupTest
 
 ### Community 27 - "Http/Kernel.php"
-Cohesion: 0.05
-Nodes (31): Kernel, Authenticate, EncryptCookies, PreventRequestsDuringMaintenance, TrimStrings, TrustProxies, ValidateSignature, VerifyCsrfToken (+23 more)
+Cohesion: 0.11
+Nodes (17): Kernel, Illuminate\Auth\Middleware\AuthenticateWithBasicAuth, Illuminate\Auth\Middleware\Authorize, Illuminate\Auth\Middleware\EnsureEmailIsVerified, Illuminate\Auth\Middleware\RequirePassword, Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse, Illuminate\Foundation\Http\Kernel, Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull (+9 more)
 
 ### Community 28 - "Illuminate\Database\Eloquent\Model"
 Cohesion: 0.14
@@ -378,8 +381,12 @@ Nodes (4): AttendanceFraudEvent, AuditLog, Illuminate\Database\Eloquent\Factorie
 Cohesion: 0.12
 Nodes (17): @alpinejs/collapse, @fortawesome/fontawesome-free, @hotwired/turbo, dependencies, @alpinejs/collapse, @fortawesome/fontawesome-free, @hotwired/turbo, @radix-ui/react-slot (+9 more)
 
+### Community 32 - "CertificateController"
+Cohesion: 0.13
+Nodes (3): CertificateController, TrackingController, Illuminate\Support\Facades\Route
+
 ### Community 36 - "Symfony\Component\HttpFoundation\Response"
-Cohesion: 0.26
+Cohesion: 0.24
 Nodes (6): CheckRole, RedirectIfAuthenticated, SecurityHeaders, UpdateExpiredInternships, Closure, Symfony\Component\HttpFoundation\Response
 
 ### Community 37 - "Testing Skills With Subagents"
@@ -391,8 +398,12 @@ Cohesion: 0.13
 Nodes (6): LowonganController, LowonganRequest, HtmlSanitizer, DOMDocument, DOMElement, DOMNode
 
 ### Community 40 - "DailyLog"
+Cohesion: 0.12
+Nodes (4): ActiveInternController, DailyLog, DailyLogPolicy, PembimbingLogbookService
+
+### Community 41 - "Illuminate\Database\Seeder"
 Cohesion: 0.14
-Nodes (5): DailyLog, DailyLogPolicy, AuthServiceProvider, PembimbingLogbookService, Illuminate\Foundation\Support\Providers\AuthServiceProvider
+Nodes (10): BackfillRolesAndMasterData, School, University, Carbon\CarbonPeriod, AttendanceSeeder, MassDummySeeder, PenilaianDummySeeder, UniversityAndSchoolSeeder (+2 more)
 
 ### Community 42 - "PembimbingLapanganController"
 Cohesion: 0.12
@@ -406,21 +417,17 @@ Nodes (12): autoload-dev, psr-4, description, extra, laravel, dont-discover, lic
 Cohesion: 0.20
 Nodes (3): PHPUnit\Framework\TestCase, GeoDistanceServiceTest, ExampleTest
 
-### Community 49 - "EmailVerificationExemptionTest.php"
-Cohesion: 0.20
-Nodes (4): Illuminate\Auth\Notifications\ResetPassword, Illuminate\Auth\Notifications\VerifyEmail, Illuminate\Support\Facades\Notification, PasswordResetTest
+### Community 49 - "QueuedNotificationReliabilityTest.php"
+Cohesion: 0.33
+Nodes (4): LogFailedQueueJob, LogNotificationFailure, Illuminate\Notifications\Events\NotificationFailed, Illuminate\Queue\Events\JobFailed
 
-### Community 51 - "University"
-Cohesion: 0.17
-Nodes (8): BackfillRolesAndMasterData, School, University, UniversityAndSchoolSeeder, Spatie\Permission\DefaultTeamResolver, Spatie\Permission\Models\Permission, Spatie\Permission\Models\Role, Spatie\Permission\PermissionRegistrar
+### Community 52 - "AttendanceDisputeService"
+Cohesion: 0.22
+Nodes (3): AttendanceDisputeController, AttendanceDisputeService, Illuminate\Validation\ValidationException
 
 ### Community 53 - "Using Git Worktrees"
 Cohesion: 0.08
 Nodes (24): 1. Check Existing Directories, 1. Detect Project Name, 2. Check AGENTS.md, 2. Create Worktree, 3. Ask User, 3. Run Project Setup, 4. Verify Clean Baseline, 5. Report Location (+16 more)
-
-### Community 54 - "Certificate"
-Cohesion: 0.18
-Nodes (4): CertificateGovernanceController, Certificate, PdfExportService, Illuminate\Http\Response
 
 ### Community 56 - "require-dev"
 Cohesion: 0.20
@@ -434,9 +441,9 @@ Nodes (10): scripts, post-autoload-dump, post-create-project-cmd, post-root-pack
 Cohesion: 0.20
 Nodes (9): background_color, description, display, icons, name, orientation, short_name, start_url (+1 more)
 
-### Community 59 - "Attendance"
-Cohesion: 0.11
-Nodes (4): AttendanceDisputeController, Attendance, AttendanceDisputeService, Illuminate\Validation\ValidationException
+### Community 59 - "InternshipEndingMail"
+Cohesion: 0.20
+Nodes (3): InternshipEndingMail, Throwable, Illuminate\Mail\Mailables\Envelope
 
 ### Community 60 - "config"
 Cohesion: 0.22
@@ -470,9 +477,13 @@ Nodes (6): peserta.dashboard._absensi-card, peserta.dashboard._gps-widget, peser
 Cohesion: 0.11
 Nodes (18): 1. Identify Independent Domains, 2. Create Task Units, 3. Execute Sequentially with Review, 4. Review and Integrate, Advantages, Antigravity Execution Model, Checkpoint Pattern, Common Mistakes (+10 more)
 
-### Community 77 - "Illuminate\Support\Str"
-Cohesion: 0.14
-Nodes (3): CertificateController, Barryvdh\DomPDF\Facade\Pdf, Illuminate\Support\Str
+### Community 76 - "CancellationPolicyException"
+Cohesion: 0.38
+Nodes (3): CancellationPolicyException, InvalidApplicationStateTransitionException, RuntimeException
+
+### Community 77 - "Certificate"
+Cohesion: 0.18
+Nodes (4): CertificateGovernanceController, Certificate, PdfExportService, Illuminate\Http\Response
 
 ### Community 78 - "psr-4"
 Cohesion: 0.40
@@ -489,6 +500,10 @@ Nodes (4): layouts.navigation, layouts.partials._mobile-bottom-nav, layouts.part
 ### Community 81 - "Graphify Knowledge Graph Rule"
 Cohesion: 0.50
 Nodes (4): Graphify Query and Navigation Guidelines, Graphify Knowledge Graph Rule, Graphify Knowledge Graph Workflow, Gemini Graphify Instructions
+
+### Community 82 - "FraudMonitoringController.php"
+Cohesion: 0.39
+Nodes (3): FraudMonitoringController, AttendanceOperationalDecision, Illuminate\Database\Eloquent\Builder
 
 ### Community 85 - "CreatesApplication.php"
 Cohesion: 0.67
@@ -566,29 +581,33 @@ Nodes (3): pdf.partials.footer_page_number, pdf.partials.kop_admin_kota, pdf.par
 Cohesion: 0.50
 Nodes (3): pdf.partials.footer_page_number, pdf.partials.kop_admin_kota, pdf.partials.ttd_admin_kota
 
+### Community 108 - "AdminUserController"
+Cohesion: 0.10
+Nodes (5): AuditLogController, InstansiController, AdminUserController, Illuminate\Support\Facades\Hash, Illuminate\Validation\Rules\Password
+
 ### Community 110 - "AttendanceRiskScorerTest"
 Cohesion: 0.11
 Nodes (4): AttendanceFraudDetector, self, AttendanceRiskScorer, AttendanceRiskScorerTest
 
-### Community 111 - "AttendanceController.php"
-Cohesion: 0.16
-Nodes (7): Handler, AttendanceChallengeService, AttendanceLockService, Illuminate\Cache\Lock, Illuminate\Contracts\Auth\Authenticatable, Illuminate\Foundation\Exceptions\Handler, Throwable
-
 ### Community 112 - "LoginRequest"
-Cohesion: 0.21
+Cohesion: 0.24
 Nodes (4): LoginRequest, Illuminate\Auth\Events\Lockout, Illuminate\Cache\RateLimiting\Limit, Illuminate\Support\Facades\RateLimiter
 
 ### Community 114 - "keywords"
 Cohesion: 0.67
 Nodes (3): keywords, framework, laravel
 
-### Community 141 - "GeoDistanceService"
-Cohesion: 0.12
-Nodes (4): GeoDistanceService, ImpossibleTravelRule, LocationConsistencyRule, ImpossibleTravelRuleTest
+### Community 119 - "Carbon\Carbon"
+Cohesion: 0.16
+Nodes (5): InternshipCompleted, Throwable, Carbon\Carbon, Illuminate\Support\Facades\DB, Illuminate\Support\Facades\Mail
 
-### Community 144 - "EmailVerificationTest.php"
+### Community 120 - "ApplicationStatusNotification"
 Cohesion: 0.29
-Nodes (3): Illuminate\Auth\Events\Verified, Illuminate\Support\Facades\Event, EmailVerificationTest
+Nodes (3): ApplicationStatusNotification, Throwable, Illuminate\Notifications\Notification
+
+### Community 141 - "GeoDistanceService"
+Cohesion: 0.18
+Nodes (3): GeoDistanceService, ImpossibleTravelRule, LocationConsistencyRule
 
 ### Community 168 - "Logo Kota Banjarmasin (Kayuh Baimbai)"
 Cohesion: 0.67
@@ -638,9 +657,9 @@ Nodes (15): Code Examples, Common Rationalizations for Skipping Testing, Directo
 Cohesion: 0.15
 Nodes (12): Executing Plans, Integration, Overview, Remember, Step 1: Load and Review Plan, Step 2: Execute Batch, Step 3: Report, Step 4: Continue (+4 more)
 
-### Community 657 - "AuditLogService"
-Cohesion: 0.18
-Nodes (4): LogbookController, StoreDailyLogRequest, AuditLogService, Illuminate\Database\QueryException
+### Community 657 - "AttendanceController.php"
+Cohesion: 0.14
+Nodes (4): LogbookController, StoreDailyLogRequest, UpdateDailyLogRequest, Illuminate\Database\QueryException
 
 ### Community 658 - "Defense-in-Depth Validation"
 Cohesion: 0.17
@@ -655,8 +674,8 @@ Cohesion: 0.17
 Nodes (12): Advanced: Skills with executable code, [Analysis Title], Anti-patterns to avoid, Avoid offering too many options, Avoid Windows-style paths, Conditional workflow pattern, Examples pattern, Executive summary (+4 more)
 
 ### Community 662 - "Illuminate\Foundation\Http\FormRequest"
-Cohesion: 0.11
-Nodes (5): RequestDatabaseBackupRequest, PermissionRequest, StoreCertificateRequest, StoreApplicationRequest, Illuminate\Foundation\Http\FormRequest
+Cohesion: 0.08
+Nodes (8): PermissionRequest, StoreCertificateRequest, AssignMentorRequest, RejectApplicationRequest, StoreApplicationRequest, ProfileUpdateRequest, Illuminate\Foundation\Http\FormRequest, Illuminate\Validation\Rule
 
 ### Community 664 - "refactor-pembimbing-lapangan-views"
 Cohesion: 0.18
@@ -694,9 +713,9 @@ Nodes (7): How to Access Skills, Red Flags, Skill Priority, Skill Types, The Rul
 Cohesion: 0.25
 Nodes (7): Bite-Sized Task Granularity, Execution Handoff, Overview, Plan Document Header, Remember, Task Structure, Writing Plans
 
-### Community 678 - "TestCase"
-Cohesion: 0.07
-Nodes (20): CreatesApplication, RoleAndPermissionSeeder, Illuminate\Foundation\Inspiring, Illuminate\Foundation\Testing\DatabaseTransactions, Illuminate\Foundation\Testing\TestCase, Illuminate\Foundation\Testing\WithFaker, Illuminate\Http\UploadedFile, Illuminate\Support\Facades\Artisan (+12 more)
+### Community 678 - "Illuminate\Foundation\Testing\DatabaseTransactions"
+Cohesion: 0.05
+Nodes (15): RoleAndPermissionSeeder, Illuminate\Foundation\Inspiring, Illuminate\Foundation\Testing\DatabaseTransactions, Illuminate\Http\UploadedFile, Illuminate\Support\Facades\Artisan, Illuminate\Support\Facades\Gate, Illuminate\Support\Facades\Storage, ReportTrackingSearchTest (+7 more)
 
 ### Community 679 - "Superpowers for Antigravity"
 Cohesion: 0.29
@@ -770,25 +789,33 @@ Nodes (3): Avoid time-sensitive information, Content guidelines, Use consistent 
 Cohesion: 0.50
 Nodes (3): pdf.partials.footer_page_number, pdf.partials.kop_admin_kota, pdf.partials.ttd_admin_kota
 
+### Community 719 - "ApplicationAcceptedMail"
+Cohesion: 0.20
+Nodes (3): ApplicationAcceptedMail, Throwable, Illuminate\Mail\Mailables\Content
+
+### Community 727 - "Handler"
+Cohesion: 0.40
+Nodes (3): Handler, Illuminate\Foundation\Exceptions\Handler, Throwable
+
 ## Knowledge Gaps
-- **594 isolated node(s):** `find-polluter.sh script`, `fs`, `path`, `{ execSync }`, `run-tests.sh script` (+589 more)
+- **601 isolated node(s):** `find-polluter.sh script`, `fs`, `path`, `{ execSync }`, `run-tests.sh script` (+596 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **95 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **97 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `User` connect `User` to `IdCardVerificationTest.php`, `User.php`, `Illuminate\Foundation\Testing\RefreshDatabase`, `Instansi`, `Controller`, `ApplicationFactory`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `CertificateGovernanceTest`, `QueuedNotificationReliabilityTest.php`, `PembimbingSekolahViewsTest`, `Application`, `AttendanceDispute`, `EmailVerificationTest.php`, `ProfileTest`, `RoleAdminKotaTest`, `Illuminate\Support\Facades\Auth`, `Illuminate\Database\Seeder`, `AttendanceFraudResult`, `GeoDistanceService`, `MajorCategory`, `DatabaseBackup`, `QueuedNotificationReliabilityTest`, `InstitutionIsolationTest`, `Illuminate\Database\Eloquent\Model`, `AttendanceFraudMonitoringTest`, `Illuminate\Support\Facades\Route`, `ApplicationTimelineTest`, `FullSystemRoleAndPageVerificationTest`, `AllPdfReportsRenderingTest.php`, `AttendanceAttemptPolicy`, `TestCase`, `ReportApplicationAndRekapGlobalTest`, `DailyLog`, `PesertaViewRegressionTest`, `Setting`, `PembimbingLapanganController`, `EmailVerificationExemptionTest.php`, `AttendanceChallengeTest`, `University`, `DailyLogAuthorizationTest`, `ClockInOutAntiFraudTest`, `Attendance`, `LaporanRedesignSmokeTest`, `AttendancePolicy`, `AdminUserController`, `EmailVerificationExemptionTest`, `AttendanceRegressionTest`, `MajorManagementTest`, `ActiveInternController`, `InstansiPolicy`, `AttendanceAuthorizationTest`, `PembimbingSekolahController`, `InternshipPositionPolicy`, `ApplicationPolicy`, `ApplicationAuthorizationTest`, `AuthTest`, `.buildDashboardData`, `InstansiController`, `AttendanceDynamicQrTest`, `PembimbingLapanganViewsTest`?**
-  _High betweenness centrality (0.102) - this node is a cross-community bridge._
-- **Why does `Application` connect `Application` to `User`, `IdCardVerificationTest.php`, `Illuminate\Console\Command`, `Instansi`, `StorageAccessController`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `CertificateGovernanceTest`, `QueuedNotificationReliabilityTest.php`, `PembimbingSekolahViewsTest`, `GeoDistanceService`, `AttendanceDispute`, `ApplicationStateTransitionService`, `Carbon\Carbon`, `AuditLogService`, `Illuminate\Support\Facades\Auth`, `Illuminate\Database\Seeder`, `AttendanceFraudResult`, `MajorCategory`, `CertificateService.php`, `QueuedNotificationReliabilityTest`, `Illuminate\Database\Eloquent\Model`, `AttendanceFraudMonitoringTest`, `Illuminate\Support\Facades\Route`, `ApplicationTimelineTest`, `RejectApplicationRequest`, `FullSystemRoleAndPageVerificationTest`, `Symfony\Component\HttpFoundation\Response`, `AllPdfReportsRenderingTest.php`, `TestCase`, `ReportApplicationAndRekapGlobalTest`, `DailyLog`, `PembimbingLapanganController`, `Illuminate\Database\Eloquent\Relations\BelongsTo`, `PesertaViewRegressionTest`, `DailyLogAuthorizationTest`, `AdminUserController`, `ActiveInternController`, `Illuminate\Support\Str`, `PembimbingSekolahController`, `AttendanceService`, `ApplicationPolicy`, `ApplicationAuthorizationTest`, `AttendanceController.php`, `.buildDashboardData`, `AttendanceDynamicQrTest`, `PembimbingLapanganViewsTest`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
-- **Why does `Instansi` connect `Instansi` to `IdCardVerificationTest.php`, `User`, `Illuminate\Foundation\Testing\RefreshDatabase`, `ApplicationFactory`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `CertificateGovernanceTest`, `QueuedNotificationReliabilityTest.php`, `PembimbingSekolahViewsTest`, `Application`, `AttendanceDispute`, `GeoDistanceService`, `Carbon\Carbon`, `Illuminate\Database\Seeder`, `AttendanceFraudResult`, `MajorCategory`, `CertificateService.php`, `QueuedNotificationReliabilityTest`, `InstitutionIsolationTest`, `Illuminate\Database\Eloquent\Model`, `AttendanceFraudMonitoringTest`, `KioskPresensiController`, `ApplicationTimelineTest`, `FullSystemRoleAndPageVerificationTest`, `AllPdfReportsRenderingTest.php`, `TestCase`, `ReportApplicationAndRekapGlobalTest`, `DailyLog`, `PesertaViewRegressionTest`, `EmailVerificationExemptionTest.php`, `DailyLogAuthorizationTest`, `Certificate`, `Attendance`, `AdminUserController`, `EmailVerificationExemptionTest`, `AttendanceRegressionTest`, `InstansiPolicy`, `AttendanceAuthorizationTest`, `DynamicQrService`, `ApplicationAuthorizationTest`, `AttendanceController.php`, `InstansiController`, `AttendanceDynamicQrTest`, `PembimbingLapanganViewsTest`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `User` connect `User` to `AdminInstansi/DashboardController.php`, `Attendance`, `TestCase`, `Instansi`, `Controller`, `Client`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `PembimbingSekolahViewsTest.php`, `Application`, `AttendanceDispute`, `DailyLogAuthorizationTest`, `TrackingTest`, `Illuminate\Support\Facades\Auth`, `User.php`, `Illuminate\Foundation\Http\FormRequest`, `MajorCategory`, `AuditLogService`, `QueuedNotificationReliabilityTest`, `Illuminate\Database\Eloquent\Model`, `AttendanceFraudMonitoringTest`, `CertificateController`, `FullSystemRoleAndPageVerificationTest`, `Illuminate\Foundation\Testing\DatabaseTransactions`, `ReportController`, `DailyLog`, `Illuminate\Database\Seeder`, `PesertaViewRegressionTest`, `Setting`, `PembimbingLapanganController`, `QueuedNotificationReliabilityTest.php`, `AttendanceChallengeTest`, `AttendanceDisputeService`, `ClockInOutAntiFraudTest`, `LaporanRedesignSmokeTest`, `AttendanceAuthorizationTest`, `AttendanceRegressionTest`, `MajorManagementTest`, `FraudMonitoringController.php`, `PembimbingSekolahController`, `AdminUserController`, `ApplicationAuthorizationTest`, `EmailViewsTest`, `Carbon\Carbon`, `ProfileController.php`, `PembimbingLapanganViewsTest`?**
+  _High betweenness centrality (0.091) - this node is a cross-community bridge._
+- **Why does `Application` connect `Application` to `AdminInstansi/DashboardController.php`, `User`, `Attendance`, `Illuminate\Console\Command`, `Instansi`, `TestCase`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `Illuminate\Support\Str`, `ApplicationRejectedMail`, `PembimbingSekolahViewsTest.php`, `AttendanceDispute`, `ApplicationStateTransitionService`, `AttendanceController.php`, `AttendanceController`, `Illuminate\Support\Facades\Auth`, `TrackingTest`, `Illuminate\Foundation\Http\FormRequest`, `QueuedNotificationReliabilityTest`, `Illuminate\Database\Eloquent\Model`, `CertificateController`, `FullSystemRoleAndPageVerificationTest`, `Illuminate\Database\Eloquent\Relations\BelongsTo`, `Symfony\Component\HttpFoundation\Response`, `Illuminate\Foundation\Testing\DatabaseTransactions`, `ReportController`, `DailyLog`, `Illuminate\Database\Seeder`, `PembimbingLapanganController`, `ApplicationLifecycleService`, `PesertaViewRegressionTest`, `QueuedNotificationReliabilityTest.php`, `InternshipApplicationService`, `ApplicationStatus.php`, `InternshipEndingMail`, `ApplicationAcceptedMail`, `PembimbingSekolahController`, `AttendanceService`, `ApplicationAuthorizationTest`, `StorageAccessController`, `EmailViewsTest`, `Carbon\Carbon`, `ApplicationStatusNotification`, `DashboardController`, `PembimbingLapanganViewsTest`?**
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+- **Why does `Instansi` connect `Instansi` to `User`, `TestCase`, `ApplicationFactory`, `AttendanceFraudContext`, `Illuminate\Http\Request`, `Illuminate\Support\Str`, `PembimbingSekolahViewsTest.php`, `Application`, `AttendanceDispute`, `AttendanceController.php`, `AttendanceController`, `TrackingTest`, `DailyLogAuthorizationTest`, `QueuedNotificationReliabilityTest`, `Illuminate\Database\Eloquent\Model`, `AttendanceFraudMonitoringTest`, `KioskPresensiController`, `FullSystemRoleAndPageVerificationTest`, `Illuminate\Foundation\Testing\DatabaseTransactions`, `Illuminate\Database\Seeder`, `PesertaViewRegressionTest`, `QueuedNotificationReliabilityTest.php`, `AttendanceAuthorizationTest`, `AttendanceRegressionTest`, `Certificate`, `AdminUserController`, `ApplicationAuthorizationTest`, `EmailViewsTest`, `Carbon\Carbon`, `PembimbingLapanganViewsTest`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **What connects `find-polluter.sh script`, `fs`, `path` to the rest of the system?**
-  _594 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _601 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
-  _Cohesion score 0.05647058823529412 - nodes in this community are weakly interconnected._
-- **Should `Illuminate\Foundation\Testing\RefreshDatabase` be split into smaller, more focused modules?**
-  _Cohesion score 0.08831908831908832 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.03657262277951933 - nodes in this community are weakly interconnected._
+- **Should `TestCase` be split into smaller, more focused modules?**
+  _Cohesion score 0.035493827160493825 - nodes in this community are weakly interconnected._
 - **Should `Instansi` be split into smaller, more focused modules?**
-  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.036281179138321996 - nodes in this community are weakly interconnected._
