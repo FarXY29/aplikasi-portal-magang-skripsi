@@ -1,13 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center border border-blue-200 dark:border-blue-800/60">
-                    <i class="fas fa-chart-line text-blue-600 dark:text-blue-400 text-lg"></i>
-                </div>
-                {{ __('Laporan Kinerja Peserta') }}
-            </h2>
-        </div>
+        <x-ui.page-header
+            title="Laporan Kinerja Peserta"
+            icon="fas fa-chart-line"
+            iconColor="blue"
+            :breadcrumbs="[['label' => 'Pusat Laporan', 'url' => route('dinas.laporan.hub')], ['label' => 'Kinerja Peserta']]" />
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

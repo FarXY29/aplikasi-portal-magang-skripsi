@@ -29,6 +29,28 @@ class RoleAdminInstansiTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('dinas.dashboard'));
         $response->assertStatus(200);
+        $response->assertSee('id="trendChart"', false);
+        $response->assertSee('id="statusChart"', false);
+        $response->assertSee('id="status-empty-placeholder"', false);
+        $response->assertDontSee('data-labels="JSON.parse', false);
+
+        // Test AJAX response for dynamic period refresh
+        $ajaxResponse = $this->actingAs($user)->getJson(route('dinas.dashboard', ['period' => '7_hari']));
+        $ajaxResponse->assertStatus(200)
+            ->assertJsonStructure([
+                'totalLowongan',
+                'totalPembimbing',
+                'totalApplications',
+                'activeInterns',
+                'completedInterns',
+                'pendingApplications',
+                'statusLabels',
+                'statusData',
+                'trendLabels',
+                'trendData',
+                'periodText',
+                'period'
+            ]);
     }
 
     public function test_laporan_kinerja_peserta_accurately_counts_hadir_and_pending_attendance()

@@ -1,21 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-slate-800 dark:text-slate-100 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60 shadow-2xs">
-                    <i class="fas fa-clipboard-check text-teal-700 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Laporan Pendaftaran & Pelacakan Permohonan') }}
-            </h2>
-            <div class="flex items-center gap-2">
-                @if(request()->anyFilled(['status', 'posisi_id', 'start_date', 'end_date', 'search']))
+        <x-ui.page-header
+            title="Laporan Pendaftaran & Pelacakan Permohonan"
+            icon="fas fa-clipboard-check"
+            :breadcrumbs="[['label' => 'Pusat Laporan', 'url' => route('dinas.laporan.hub')], ['label' => 'Pendaftaran']]">
+            @if(request()->anyFilled(['status', 'posisi_id', 'start_date', 'end_date', 'search']))
+                <x-slot name="actions">
                     <a href="{{ route('dinas.laporan.pendaftaran') }}"
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xl font-bold text-xs transition shadow-2xs">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
                     </a>
-                @endif
-            </div>
-        </div>
+                </x-slot>
+            @endif
+        </x-ui.page-header>
     </x-slot>
 
     <div x-data="{

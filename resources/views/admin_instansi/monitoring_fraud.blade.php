@@ -1,24 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center border border-amber-200 dark:border-amber-800/60">
-                        <i class="fas fa-shield-alt text-amber-600 dark:text-amber-400 text-lg"></i>
-                    </div>
-                    Monitoring Fraud Absensi
-                </h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
-                    Pantau &amp; selidiki percobaan absensi yang ditandai mencurigakan oleh sistem anti-fraud.
-                </p>
-            </div>
-
-            <div class="flex items-center gap-2">
+        <x-ui.page-header
+            title="Monitoring Fraud Absensi"
+            subtitle="Pantau & selidiki percobaan absensi yang ditandai mencurigakan oleh sistem anti-fraud."
+            icon="fas fa-shield-alt"
+            iconColor="amber"
+            :breadcrumbs="[['label' => 'Monitoring Fraud']]">
+            <x-slot name="actions">
                 <a href="{{ route('dinas.monitoring.fraud.export', request()->query()) }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 border border-transparent rounded-xl text-white text-xs font-bold transition shadow-xs flex items-center uppercase tracking-wider">
                     <i class="fas fa-file-csv mr-2"></i> Export CSV
                 </a>
-            </div>
-        </div>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

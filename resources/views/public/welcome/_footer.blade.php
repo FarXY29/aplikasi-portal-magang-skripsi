@@ -61,8 +61,7 @@
          </div>
      </footer>
      
-     <!-- Instant.page for prefetching speed boost -->
-     <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
+     <!-- Turbo Drive menangani prefetch & navigasi; instant.page dihapus untuk menghindari konflik. -->
      <script>
          function scrollToResults() {
              const params = new URLSearchParams(window.location.search);

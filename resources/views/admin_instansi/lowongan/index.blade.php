@@ -91,18 +91,25 @@
                                         <div class="flex items-center text-sm font-bold text-gray-800 dark:text-gray-200">
                                             <i class="fas fa-users mr-2 text-gray-400 dark:text-gray-500"></i> {{ $loker->kuota }} <span class="text-xs font-normal text-gray-500 dark:text-gray-400 ml-1">orang</span>
                                         </div>
-                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                                            <i class="far fa-calendar-alt mr-2 text-gray-400 dark:text-gray-500"></i> 
-                                            {{ \Carbon\Carbon::parse($loker->batas_daftar)->format('d M Y') }}
-                                        </div>
-                                        
-                                        @php
-                                            $daysLeft = now()->diffInDays(\Carbon\Carbon::parse($loker->batas_daftar), false);
-                                        @endphp
-                                        @if($daysLeft >= 0)
-                                            <span class="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">Sisa {{ ceil($daysLeft) }} hari lagi</span>
+                                        @if($loker->batas_daftar)
+                                            <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                                <i class="far fa-calendar-alt mr-2 text-gray-400 dark:text-gray-500"></i> 
+                                                {{ \Carbon\Carbon::parse($loker->batas_daftar)->format('d M Y') }}
+                                            </div>
+
+                                            @php
+                                                $daysLeft = now()->diffInDays(\Carbon\Carbon::parse($loker->batas_daftar), false);
+                                            @endphp
+                                            @if($daysLeft >= 0)
+                                                <span class="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">Sisa {{ ceil($daysLeft) }} hari lagi</span>
+                                            @else
+                                                <span class="text-[10px] text-red-500 dark:text-red-400 font-bold mt-1">Pendaftaran Tutup</span>
+                                            @endif
                                         @else
-                                            <span class="text-[10px] text-red-500 dark:text-red-400 font-bold mt-1">Pendaftaran Tutup</span>
+                                            <div class="flex items-center text-xs text-gray-400 dark:text-gray-500 italic">
+                                                <i class="far fa-calendar-alt mr-2 text-gray-400 dark:text-gray-500"></i>
+                                                Tanpa tenggat waktu
+                                            </div>
                                         @endif
                                     </div>
                                 </td>
@@ -137,17 +144,16 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-16 text-center">
-                                    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
-                                            <i class="fas fa-briefcase text-3xl"></i>
-                                        </div>
-                                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Belum Ada Lowongan</h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Buat lowongan magang pertama Anda sekarang.</p>
-                                        <a href="{{ route('dinas.lowongan.create') }}" class="mt-4 text-teal-600 dark:text-teal-400 font-bold text-sm hover:underline">
-                                            + Tambah Lowongan
+                                <td colspan="4" class="px-6 py-10">
+                                    <x-ui.empty-state
+                                        title="Belum Ada Lowongan"
+                                        description="Buat lowongan magang pertama Anda sekarang."
+                                        icon="fa-briefcase"
+                                        class="shadow-none border-none bg-transparent">
+                                        <a href="{{ route('dinas.lowongan.create') }}" class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm transition shadow-xs">
+                                            <i class="fas fa-plus mr-2 text-xs"></i> Tambah Lowongan
                                         </a>
-                                    </div>
+                                    </x-ui.empty-state>
                                 </td>
                             </tr>
                             @endforelse

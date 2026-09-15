@@ -129,6 +129,17 @@
                 <strong>Dinas:</strong> {{ $request->instansi_id ? (\App\Models\Instansi::find($request->instansi_id)?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas' }}
                 @if(isset($request) && $request->filled('start_date') && $request->filled('end_date'))
                     <br><strong>Periode Magang:</strong> {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
+                    @if($request->filled('periode_preset'))
+                        <span style="font-size: 8pt; color: #0f766e; font-weight: bold;">
+                            ({{ match($request->periode_preset) {
+                                '1_bulan' => 'Preset: 1 Bulan',
+                                '3_bulan' => 'Preset: 3 Bulan (Triwulan)',
+                                'semester' => 'Preset: 1 Semester (6 Bulan)',
+                                'tahun' => 'Preset: 1 Tahun',
+                                default => $request->periode_preset
+                            } }})
+                        </span>
+                    @endif
                 @elseif(isset($request) && $request->filled('start_date'))
                     <br><strong>Periode Magang:</strong> Mulai &ge; {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }}
                 @elseif(isset($request) && $request->filled('end_date'))

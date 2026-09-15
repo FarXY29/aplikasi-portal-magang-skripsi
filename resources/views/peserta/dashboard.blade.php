@@ -1,7 +1,4 @@
 <x-app-layout>
-    @push('head')
-        @vite('resources/css/peserta.css')
-    @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-slate-900 dark:text-gray-100 leading-tight flex items-center gap-3">
@@ -533,7 +530,9 @@
         );
     }
 
-    document.addEventListener("DOMContentLoaded", autoDetectGPS);
+    // turbo:load also fires on the initial page load, so a single listener is
+    // enough. It replaces the previous DOMContentLoaded + turbo:load pair that
+    // triggered autoDetectGPS twice on first paint.
     window.addEventListener("turbo:load", autoDetectGPS);
 
     // Fungsi ripple effect

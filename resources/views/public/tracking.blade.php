@@ -47,7 +47,7 @@
     <!-- Header Navigation -->
     <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-gray-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 group focus:outline-none" data-turbo="false">
+            <a href="{{ url('/') }}" class="flex items-center gap-3 group focus:outline-none">
                 <div class="bg-teal-700 text-white rounded-xl p-2 shadow-2xs flex items-center justify-center">
                     <x-application-logo class="w-6 h-6 fill-current text-white" />
                 </div>
@@ -58,15 +58,15 @@
             </a>
 
             <div class="flex items-center gap-3">
-                <a href="{{ url('/') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition" data-turbo="false">
+                <a href="{{ url('/') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition">
                     <i class="fas fa-arrow-left text-[10px]"></i> Beranda
                 </a>
                 @auth
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5" data-turbo="false">
+                    <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5">
                         <i class="fas fa-columns"></i> Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5" data-turbo="false">
+                    <a href="{{ route('login') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5">
                         <i class="fas fa-sign-in-alt"></i> Masuk
                     </a>
                 @endauth
@@ -92,7 +92,6 @@
             <form id="tracking-search-form" 
                   action="{{ route('tracking.search') }}" 
                   method="GET" 
-                  data-turbo="false"
                   @submit.prevent="executeSearch()" 
                   class="max-w-2xl mx-auto">
                 <div class="bg-white dark:bg-gray-800 p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 flex flex-col sm:flex-row gap-2">
@@ -294,11 +293,11 @@
                     <!-- Actions -->
                     <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
                         @auth
-                            <a href="{{ route('dashboard') }}" class="min-h-[44px] px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-2" data-turbo="false">
+                            <a href="{{ route('dashboard') }}" class="min-h-[44px] px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-2">
                                 <i class="fas fa-columns"></i> Masuk ke Dashboard Saya &rarr;
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="min-h-[44px] px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-2" data-turbo="false">
+                            <a href="{{ route('login') }}" class="min-h-[44px] px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-2xs transition flex items-center gap-2">
                                 <i class="fas fa-sign-in-alt"></i> Masuk Akun untuk Cetak LoA & ID Card
                             </a>
                         @endauth

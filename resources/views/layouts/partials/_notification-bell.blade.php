@@ -112,6 +112,15 @@ function realtimeNotificationHandler() {
             }, 20000);
         },
 
+        // Alpine v3 calls destroy() automatically when Turbo replaces the
+        // element, so the poller never leaks across navigations.
+        destroy() {
+            if (this.pollInterval) {
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        },
+
         toggleDropdown() {
             this.open = !this.open;
             if (this.open) {

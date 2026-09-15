@@ -1,16 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-chart-pie text-teal-600 dark:text-teal-400 text-lg"></i>
+        <x-ui.page-header
+            title="Pusat Laporan & Analitik"
+            icon="fas fa-chart-pie"
+            :breadcrumbs="[['label' => 'Pusat Laporan']]">
+            <x-slot name="actions">
+                <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-xs border border-gray-100 dark:border-gray-700">
+                    Modul Laporan: <span class="font-bold text-teal-600 dark:text-teal-400">7 Modul Tersedia</span>
                 </div>
-                {{ __('Pusat Laporan & Analitik') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-xs border border-gray-100 dark:border-gray-700">
-                Modul Laporan: <span class="font-bold text-teal-600 dark:text-teal-400">7 Modul Tersedia</span>
-            </div>
-        </div>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

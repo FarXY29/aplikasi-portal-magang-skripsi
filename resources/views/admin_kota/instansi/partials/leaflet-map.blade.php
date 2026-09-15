@@ -145,9 +145,6 @@
     } else {
         initLeafletMap();
     }
-    window.addEventListener('load', initLeafletMap);
     document.addEventListener('turbo:load', initLeafletMap);
-    document.addEventListener('turbo:render', initLeafletMap);
-    document.addEventListener('livewire:navigated', initLeafletMap);
 </script>
 @endpush

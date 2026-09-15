@@ -1,7 +1,6 @@
 <x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
-        @vite('resources/css/peserta.css')
     @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">

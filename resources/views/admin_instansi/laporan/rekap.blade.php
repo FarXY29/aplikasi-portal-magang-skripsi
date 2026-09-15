@@ -1,13 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-file-alt text-teal-600 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Laporan Rekap Peserta') }}
-            </h2>
-        </div>
+        <x-ui.page-header
+            title="Laporan Rekap Peserta"
+            icon="fas fa-file-alt"
+            :breadcrumbs="[['label' => 'Pusat Laporan', 'url' => route('dinas.laporan.hub')], ['label' => 'Rekap Peserta']]" />
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
@@ -63,7 +59,7 @@
                     <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-2 border border-indigo-100 dark:border-indigo-900/50">
                         <i class="fas fa-university text-xs"></i>
                     </div>
-                    <p class="text-xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['total_campuses'] ?? $stats['total_kampus'] }}</p>
+                    <p class="text-xl font-black text-indigo-700 dark:text-indigo-400">{{ $stats['total_kampus'] }}</p>
                     <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mt-1">Kampus Terlibat</p>
                 </div>
             </div>

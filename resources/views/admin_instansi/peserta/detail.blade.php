@@ -1,14 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-journal-whills text-teal-600 dark:text-teal-400"></i>
-                {{ __('Detail Logbook Peserta') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Total Aktivitas: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $logs->count() }}</span>
-            </div>
-        </div>
+        <x-ui.page-header
+            title="Detail Logbook Peserta"
+            icon="fas fa-journal-whills"
+            :breadcrumbs="[['label' => 'Detail Logbook Peserta']]">
+            <x-slot name="actions">
+                <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
+                    Total Aktivitas: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $logs->count() }}</span>
+                </div>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
@@ -64,7 +65,7 @@
                                     $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
                                     $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') . ' (' . $app->user->name . ')';
                                 @endphp
-                                <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                <div class="relative group w-full h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer shadow-sm" onclick="openImageModal(@js($fotoUrl), @js($fotoTitle))">
                                     <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transition transform group-hover:scale-110 duration-500" alt="Dokumentasi">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                                         <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>

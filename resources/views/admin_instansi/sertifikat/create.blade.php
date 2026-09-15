@@ -1,13 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-certificate text-teal-600 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Penerbitan Sertifikat Kelulusan') }}
-            </h2>
-        </div>
+        <x-ui.page-header
+            title="Penerbitan Sertifikat Kelulusan"
+            icon="fas fa-certificate"
+            :breadcrumbs="[['label' => 'Penerbitan Sertifikat']]" />
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

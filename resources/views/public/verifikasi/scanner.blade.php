@@ -257,15 +257,31 @@
                     this.debugProtocol = window.location.protocol;
                     this.debugSecure = window.isSecureContext ? "YA" : "TIDAK (Wajib HTTPS)";
 
-                    const cleanup = () => {
+                    // Keep a stable reference so the listeners can be removed in
+                    // destroy(). They must stay attached for the whole lifetime of
+                    // the component (no { once: true }) so the camera is stopped on
+                    // every navigation away, not just the first one.
+                    this._cleanup = () => {
                         this.stopScanning();
                     };
 
-                    document.addEventListener('turbo:before-cache', cleanup, { once: true });
-                    document.addEventListener('turbo:before-render', cleanup, { once: true });
-                    window.addEventListener('pagehide', cleanup, { once: true });
+                    document.addEventListener('turbo:before-cache', this._cleanup);
+                    document.addEventListener('turbo:before-render', this._cleanup);
+                    window.addEventListener('pagehide', this._cleanup);
 
                     this.ensureLibraries().catch(() => {});
+                },
+
+                // Alpine v3 invokes destroy() when Turbo detaches the element:
+                // stop the camera and detach listeners to avoid leaks.
+                destroy() {
+                    this.stopScanning();
+                    if (this._cleanup) {
+                        document.removeEventListener('turbo:before-cache', this._cleanup);
+                        document.removeEventListener('turbo:before-render', this._cleanup);
+                        window.removeEventListener('pagehide', this._cleanup);
+                        this._cleanup = null;
+                    }
                 },
 
                 ensureLibraries() {

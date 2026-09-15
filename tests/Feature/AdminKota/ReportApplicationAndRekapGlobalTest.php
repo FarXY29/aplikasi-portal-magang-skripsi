@@ -248,4 +248,41 @@ class ReportApplicationAndRekapGlobalTest extends TestCase
         $response->assertSee('Daftar Pelacakan Permohonan Magang', false);
         $response->assertSee('REG-2026-0001', false);
     }
+
+    public function test_admin_kota_can_filter_laporan_peserta_global_by_preset_periode(): void
+    {
+        // 1 Bulan preset
+        $response1 = $this->actingAs($this->adminKota)
+            ->get(route('admin.laporan.peserta_global', ['periode_preset' => '1_bulan']));
+        $response1->assertStatus(200);
+        $response1->assertSee('Filter Cepat Periode:');
+        $response1->assertSee('Periode 1 Bulan Terakhir Aktif');
+
+        // 3 Bulan preset
+        $response3 = $this->actingAs($this->adminKota)
+            ->get(route('admin.laporan.peserta_global', ['periode_preset' => '3_bulan']));
+        $response3->assertStatus(200);
+        $response3->assertSee('Periode 3 Bulan (Triwulan) Aktif');
+
+        // Semester preset
+        $responseSem = $this->actingAs($this->adminKota)
+            ->get(route('admin.laporan.peserta_global', ['periode_preset' => 'semester']));
+        $responseSem->assertStatus(200);
+        $responseSem->assertSee('Periode 1 Semester (6 Bulan) Aktif');
+
+        // Tahun preset
+        $responseTahun = $this->actingAs($this->adminKota)
+            ->get(route('admin.laporan.peserta_global', ['periode_preset' => 'tahun']));
+        $responseTahun->assertStatus(200);
+        $responseTahun->assertSee('Periode 1 Tahun Aktif');
+    }
+
+    public function test_admin_kota_can_print_laporan_peserta_global_pdf_with_preset(): void
+    {
+        $response = $this->actingAs($this->adminKota)
+            ->get(route('admin.laporan.peserta_global.print', ['periode_preset' => 'semester']));
+
+        $response->assertStatus(200);
+        $this->assertEquals('application/pdf', $response->headers->get('content-type'));
+    }
 }

@@ -1,5 +1,6 @@
 import './bootstrap';
 import '@hotwired/turbo';
+import '../css/peserta.css';
 
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';

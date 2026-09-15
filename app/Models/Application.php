@@ -179,4 +179,72 @@ class Application extends Model
             default    => 'D (Kurang)',
         };
     }
+
+    /**
+     * Kolom nilai penilaian akhir yang valid (5 kriteria).
+     * Nilai rata-rata = total 5 kriteria / 5.
+     *
+     * @var array<int, string>
+     */
+    public const CRITERIA_COLUMNS = [
+        'nilai_kerajinan',
+        'nilai_disiplin',
+        'nilai_adaptasi',
+        'nilai_kreatifitas',
+        'nilai_skill_pengetahuan',
+    ];
+
+    /**
+     * Persentase kehadiran (hadir / total absensi) dalam rentang 0-100.
+     * Mengutamakan nilai persist (nilai_rata_rata) bila tersedia, jika tidak
+     * dihitung dari 5 kolom kriteria. Menghindari dynamic-property yang rapuh.
+     */
+    public function getAttendanceRateAttribute(): float
+    {
+        $total = $this->attendances->count();
+        if ($total === 0) {
+            return 0.0;
+        }
+
+        $hadir = $this->attendances->where('status', 'hadir')->count();
+
+        return round(($hadir / $total) * 100, 2);
+    }
+
+    /**
+     * Persentase logbook yang telah disetujui pembimbing (0-100).
+     */
+    public function getLogRateAttribute(): float
+    {
+        $total = $this->logs->count();
+        if ($total === 0) {
+            return 0.0;
+        }
+
+        $disetujui = $this->logs->where('status_validasi', 'disetujui')->count();
+
+        return round(($disetujui / $total) * 100, 2);
+    }
+
+    /**
+     * Nilai akhir magang. Prioritas: nilai_rata_rata persisten, lalu rerata
+     * 5 kolom kriteria (bila ada salah satu terisi), selain itu 0.
+     */
+    public function getAvgNilaiAttribute(): float
+    {
+        if ((float) $this->nilai_rata_rata > 0) {
+            return (float) $this->nilai_rata_rata;
+        }
+
+        $criteria = array_map(
+            fn ($column) => (float) ($this->{$column} ?? 0),
+            self::CRITERIA_COLUMNS
+        );
+
+        if (array_sum($criteria) <= 0) {
+            return 0.0;
+        }
+
+        return round(array_sum($criteria) / count(self::CRITERIA_COLUMNS), 2);
+    }
 }
