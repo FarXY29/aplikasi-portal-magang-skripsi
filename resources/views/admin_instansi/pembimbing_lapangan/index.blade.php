@@ -1,20 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between gap-4 w-full">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60 shrink-0">
-                    <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400 text-sm md:text-base"></i>
+        <x-ui.page-header
+            title="Kelola Pembimbing Lapangan"
+            subtitle="Buat akun pegawai pembimbing dan kelola data pembimbing lapangan."
+            icon="fas fa-chalkboard-teacher"
+            :breadcrumbs="[['label' => 'Kelola Pembimbing Lapangan']]">
+            <x-slot name="actions">
+                <div class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-gray-800 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs shrink-0">
+                    Total Pembimbing: <span class="font-black text-teal-600 dark:text-teal-400 font-mono">{{ $pembimbing_lapangan->count() }}</span>
                 </div>
-                <div class="min-w-0">
-                    <h2 class="font-extrabold text-lg md:text-xl text-gray-800 dark:text-gray-200 leading-tight truncate">
-                        {{ __('Kelola Pembimbing Lapangan') }}
-                    </h2>
-                </div>
-            </div>
-            <div class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-gray-800 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-gray-700/60 shadow-2xs shrink-0">
-                Total Pembimbing: <span class="font-black text-teal-600 dark:text-teal-400 font-mono">{{ $pembimbing_lapangan->count() }}</span>
-            </div>
-        </div>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

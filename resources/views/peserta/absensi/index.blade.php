@@ -1,7 +1,4 @@
 <x-app-layout>
-    @push('head')
-        @vite('resources/css/peserta.css')
-    @endpush
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">

@@ -95,7 +95,7 @@
     
     <div class="flex h-screen overflow-hidden">
 
-        <!-- Backdrop untuk Mode Drawer (Tablet/Mobile < lg) -->
+        <!-- Backdrop untuk Mode Drawer (Tablet md ke lg) -->
         <div x-show="sidebarOpen" x-cloak 
              x-transition:enter="transition-opacity ease-linear duration-300"
              x-transition:enter-start="opacity-0"
@@ -104,10 +104,10 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="sidebarOpen = false" 
-             class="fixed inset-0 z-40 bg-slate-900/60 lg:hidden backdrop-blur-xs">
+             class="fixed inset-0 z-40 bg-slate-900/60 hidden md:block lg:hidden backdrop-blur-xs">
         </div>
 
-        <!-- MAIN SIDEBAR (Desktop & Drawer Slide-Over) -->
+        <!-- MAIN SIDEBAR (Desktop & Tablet Drawer Slide-Over) -->
         <aside x-cloak 
                :class="{
                    'translate-x-0': sidebarOpen,
@@ -115,7 +115,7 @@
                    'lg:w-20': sidebarCollapsed,
                    'lg:w-72': !sidebarCollapsed
                }"
-               class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 border-r border-slate-200/90 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 ease-in-out transform h-full flex flex-col flex-shrink-0 overflow-x-hidden">
+               class="hidden md:flex fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 border-r border-slate-200/90 dark:border-gray-700/80 shadow-2xl lg:shadow-none lg:static lg:inset-auto lg:translate-x-0 transition-all duration-300 ease-in-out transform h-full flex-col flex-shrink-0 overflow-x-hidden">
             @include('layouts.navigation')
         </aside>
 
@@ -161,7 +161,7 @@
                             <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</span>
                         </div>
                         <div class="h-3.5 w-px bg-slate-300 dark:bg-gray-600"></div>
-                        <div id="realtime-clock" class="flex items-center gap-1.5 font-mono font-black text-teal-700 dark:text-teal-400">
+                        <div id="realtime-clock" data-turbo-permanent class="flex items-center gap-1.5 font-mono font-black text-teal-700 dark:text-teal-400">
                             <i class="far fa-clock text-xs"></i>
                             <span id="clock-span">00:00:00</span>
                         </div>
@@ -179,6 +179,7 @@
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
+                <div class="flex items-center min-w-0">
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 min-w-0">
                         <div class="w-8 h-8 rounded-lg bg-teal-700 text-white flex items-center justify-center p-1 shadow-2xs flex-shrink-0">
                             <x-application-logo class="w-full h-full fill-current text-white" />
@@ -195,7 +196,7 @@
                 <div class="flex items-center gap-2">
                     @include('layouts.partials._notification-bell')
 
-                    <div id="mobile-clock" class="text-[11px] font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/70 dark:border-teal-800/80 shadow-2xs">
+                    <div id="mobile-clock" data-turbo-permanent class="text-[11px] font-mono font-black text-teal-800 dark:text-teal-400 bg-teal-50/90 dark:bg-teal-900/30 px-2.5 py-1.5 rounded-lg border border-teal-200/70 dark:border-teal-800/80 shadow-2xs">
                         <i class="far fa-clock mr-1 text-teal-700 dark:text-teal-400"></i><span id="mobile-clock-span">00:00:00</span>
                     </div>
 
@@ -222,49 +223,57 @@
     @include('layouts.partials._mobile-bottom-nav')
 
     @include('layouts.partials._mobile-sheet')
-    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const updateClock = () => {
+        (function () {
+            let clockTimer = null;
+
+            function updateClock() {
                 const clockSpan = document.getElementById('clock-span');
                 const mobileClockSpan = document.getElementById('mobile-clock-span');
-                if (clockSpan || mobileClockSpan) {
-                    const now = new Date();
-                    const hours = String(now.getHours()).padStart(2, '0');
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const seconds = String(now.getSeconds()).padStart(2, '0');
-                    const timeStr = `${hours}:${minutes}:${seconds}`;
-                    if (clockSpan) clockSpan.textContent = timeStr;
-                    if (mobileClockSpan) mobileClockSpan.textContent = timeStr;
-                }
-            };
-            setInterval(updateClock, 1000);
-            updateClock();
-        });
-        
-        // Support Turbo page transitions
-        document.addEventListener('turbo:load', () => {
-            if (window.Alpine) {
-                const bodyEl = document.querySelector('body');
-                if (bodyEl && bodyEl.__x) {
-                    bodyEl.__x.$data.sidebarOpen = false;
+                if (!clockSpan && !mobileClockSpan) return;
+
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const timeStr = `${hours}:${minutes}:${seconds}`;
+                if (clockSpan) clockSpan.textContent = timeStr;
+                if (mobileClockSpan) mobileClockSpan.textContent = timeStr;
+            }
+
+            function startClock() {
+                updateClock();
+                clearInterval(clockTimer);
+                clockTimer = setInterval(updateClock, 1000);
+
+                // Close the sidebar drawer after every Turbo navigation so a
+                // half-open state never carries over between pages.
+                if (window.Alpine && typeof window.Alpine.$data === 'function') {
+                    try {
+                        const bodyData = window.Alpine.$data(document.body);
+                        if (bodyData && 'sidebarOpen' in bodyData) {
+                            bodyData.sidebarOpen = false;
+                        }
+                    } catch (e) {
+                        /* body not yet initialised by Alpine; nothing to reset. */
+                    }
                 }
             }
-            const updateClock = () => {
-                const clockSpan = document.getElementById('clock-span');
-                const mobileClockSpan = document.getElementById('mobile-clock-span');
-                if (clockSpan || mobileClockSpan) {
-                    const now = new Date();
-                    const hours = String(now.getHours()).padStart(2, '0');
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const seconds = String(now.getSeconds()).padStart(2, '0');
-                    const timeStr = `${hours}:${minutes}:${seconds}`;
-                    if (clockSpan) clockSpan.textContent = timeStr;
-                    if (mobileClockSpan) mobileClockSpan.textContent = timeStr;
-                }
-            };
-            updateClock();
-        });
+
+            // First load + every Turbo navigation (turbo:load fires on initial load too).
+            document.addEventListener('turbo:load', startClock);
+            if (document.readyState !== 'loading') {
+                startClock();
+            } else {
+                document.addEventListener('DOMContentLoaded', startClock, { once: true });
+            }
+
+            // Stop the interval while Turbo snapshots the page to avoid orphan timers.
+            document.addEventListener('turbo:before-cache', function () {
+                clearInterval(clockTimer);
+                clockTimer = null;
+            });
+        })();
     </script>
     <!-- Global Image Modal -->
     <div id="global-image-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300 backdrop-blur-md" onclick="closeImageModal()">

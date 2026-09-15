@@ -99,6 +99,15 @@
             </a>
         @elseif(Auth::user()->role == 'pembimbing')
             <!-- 2. PROFIL -->
+            <!-- 2. MAHASISWA -->
+            <a href="{{ route('pembimbing.dashboard') }}" class="flex flex-col items-center justify-center w-16 py-1 rounded-2xl transition-all {{ request()->routeIs('pembimbing.dashboard') ? 'text-teal-800 dark:text-teal-300 font-bold scale-105' : 'text-slate-400 font-medium hover:text-slate-600 dark:hover:text-gray-300' }}">
+                <div class="relative flex items-center justify-center w-8 h-8 {{ request()->routeIs('pembimbing.dashboard') ? 'bg-teal-50 dark:bg-teal-950/60 rounded-xl text-teal-700 dark:text-teal-400 border border-teal-200/60 dark:border-teal-800/60 shadow-2xs' : '' }}">
+                    <i class="fas fa-user-graduate text-base"></i>
+                </div>
+                <span class="text-[10px] mt-0.5 tracking-tight font-bold">Mahasiswa</span>
+            </a>
+
+            <!-- 3. PROFIL -->
             <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center w-16 py-1 rounded-2xl transition-all {{ request()->routeIs('profile.*') ? 'text-teal-800 dark:text-teal-300 font-bold scale-105' : 'text-slate-400 font-medium hover:text-slate-600 dark:hover:text-gray-300' }}">
                 <div class="relative flex items-center justify-center w-8 h-8 {{ request()->routeIs('profile.*') ? 'bg-teal-50 dark:bg-teal-950/60 rounded-xl text-teal-700 dark:text-teal-400 border border-teal-200/60 dark:border-teal-800/60 shadow-2xs' : '' }}">
                     <i class="fas fa-user-circle text-base"></i>

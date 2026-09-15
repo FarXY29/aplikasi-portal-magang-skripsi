@@ -581,6 +581,28 @@ class ReportService
             });
         }
 
+        if ($request->filled('periode_preset')) {
+            $preset = $request->periode_preset;
+            $today = Carbon::now()->toDateString();
+
+            if (! $request->filled('end_date')) {
+                $request->merge(['end_date' => $today]);
+            }
+
+            if (! $request->filled('start_date')) {
+                $startDate = match ($preset) {
+                    '1_bulan' => Carbon::now()->subDays(30)->toDateString(),
+                    '3_bulan' => Carbon::now()->subMonths(3)->toDateString(),
+                    'semester' => Carbon::now()->subMonths(6)->toDateString(),
+                    'tahun' => Carbon::now()->subYear()->toDateString(),
+                    default => null,
+                };
+                if ($startDate) {
+                    $request->merge(['start_date' => $startDate]);
+                }
+            }
+        }
+
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $start = $request->start_date;
             $end = $request->end_date;
@@ -670,33 +692,14 @@ class ReportService
             $q->where('instansi_id', $instansiId);
         })->whereIn('status', ['diterima', 'selesai'])
             ->with(['user', 'position', 'logs', 'attendances', 'pembimbing_lapangan'])
-            ->get()->map(function ($app) {
-                $total_logs = $app->logs->count();
-                $approved_logs = $app->logs->where('status_validasi', 'disetujui')->count();
-                $log_rate = $total_logs > 0 ? ($approved_logs / $total_logs) * 100 : 0;
+            ->get()
+            // attendance_rate, log_rate, dan avg_nilai disediakan sebagai
+            // accessor pada model Application (bukan dynamic property).
+            ->sortByDesc('avg_nilai');
 
-                $total_attendance = $app->attendances->count();
-                $hadir = $app->attendances->where('status', 'hadir')->count();
-                $attendance_rate = $total_attendance > 0 ? ($hadir / $total_attendance) * 100 : 0;
-
-                $avg_nilai = 0;
-                if ($app->nilai_rata_rata) {
-                    $avg_nilai = (float) $app->nilai_rata_rata;
-                } else {
-                    $t = (float) $app->nilai_teknis;
-                    $d = (float) $app->nilai_disiplin;
-                    $p = (float) $app->nilai_perilaku;
-                    if ($t > 0 || $d > 0 || $p > 0) {
-                        $avg_nilai = ($t + $d + $p) / 3;
-                    }
-                }
-
-                $app->log_rate = $log_rate;
-                $app->attendance_rate = $attendance_rate;
-                $app->avg_nilai = $avg_nilai;
-
-                return $app;
-            })->sortByDesc('avg_nilai');
+        $dinilai = $kinerja
+            ->where('status.value', 'selesai')
+            ->filter(fn ($app) => $app->avg_nilai > 0);
 
         $stats = [
             'total_peserta' => $kinerja->count(),
@@ -704,9 +707,7 @@ class ReportService
             'selesai' => $kinerja->where('status.value', 'selesai')->count(),
             'avg_kehadiran' => $kinerja->count() > 0 ? round($kinerja->avg('attendance_rate'), 1) : 0,
             'avg_logbook' => $kinerja->count() > 0 ? round($kinerja->avg('log_rate'), 1) : 0,
-            'avg_nilai' => $kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->count() > 0
-                ? round($kinerja->where('status.value', 'selesai')->where('avg_nilai', '>', 0)->avg('avg_nilai'), 1)
-                : 0,
+            'avg_nilai' => $dinilai->count() > 0 ? round($dinilai->avg('avg_nilai'), 1) : 0,
         ];
 
         return compact('kinerja', 'stats');

@@ -242,7 +242,7 @@
             if (minutesEl) minutesEl.innerText = pad(now.getMinutes());
             if (secondsEl) secondsEl.innerText = pad(now.getSeconds());
         }
-        setInterval(updateLiveClock, 1000);
+        let liveClockInterval = setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
         // 2. Countdown and Auto-Refresh
@@ -291,7 +291,7 @@
             }
         }
 
-        setInterval(() => {
+        let countdownInterval = setInterval(() => {
             remainingSeconds--;
             if (remainingSeconds <= 0) {
                 fetchNewQr();
@@ -299,6 +299,15 @@
                 updateCountdownUI();
             }
         }, 1000);
+
+        // Stop both timers when Turbo snapshots the page or the page is hidden,
+        // preventing orphan intervals from accumulating across navigations.
+        function stopKioskTimers() {
+            clearInterval(liveClockInterval);
+            clearInterval(countdownInterval);
+        }
+        document.addEventListener('turbo:before-cache', stopKioskTimers);
+        window.addEventListener('pagehide', stopKioskTimers);
 
         // 3. Fullscreen Controller
         function toggleFullScreen() {

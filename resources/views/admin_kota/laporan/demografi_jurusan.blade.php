@@ -258,6 +258,7 @@
         } else {
             init();
         }
+        document.addEventListener('turbo:load', init);
     })();
     </script>
     @endpush

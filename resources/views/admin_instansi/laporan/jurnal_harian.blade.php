@@ -1,15 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3 min-w-0">
-            <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center border border-purple-200 dark:border-purple-800/60 shrink-0">
-                <i class="fas fa-book-open text-purple-600 dark:text-purple-400 text-sm md:text-base"></i>
-            </div>
-            <div class="min-w-0">
-                <h2 class="font-extrabold text-lg md:text-xl text-gray-800 dark:text-gray-200 leading-tight truncate">
-                    {{ __('Laporan Jurnal / Aktivitas Harian') }}
-                </h2>
-            </div>
-        </div>
+        <x-ui.page-header
+            title="Laporan Jurnal / Aktivitas Harian"
+            icon="fas fa-book-open"
+            iconColor="purple"
+            :breadcrumbs="[['label' => 'Pusat Laporan', 'url' => route('dinas.laporan.hub')], ['label' => 'Jurnal Harian']]" />
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

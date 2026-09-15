@@ -252,10 +252,10 @@
                         </span>
                     </div>
 
-                    <div class="relative w-full mt-4" style="height: 280px;">
+                    <div class="relative w-full mt-4 min-h-[200px] sm:min-h-[280px]" style="height: 280px;">
                         <canvas id="trendChart"
-                            data-labels="{{ \Illuminate\Support\Js::from($trendLabels) }}"
-                            data-values="{{ \Illuminate\Support\Js::from($trendData) }}">
+                            data-labels="{{ json_encode($trendLabels) }}"
+                            data-values="{{ json_encode($trendData) }}">
                         </canvas>
                     </div>
                 </div>
@@ -274,11 +274,15 @@
                         </div>
                     </div>
 
-                    <div class="relative flex items-center justify-center" style="height: 210px;">
+                    <div class="relative flex items-center justify-center min-h-[180px] sm:min-h-[210px]" style="height: 210px;">
                         <canvas id="statusChart"
-                            data-labels="{{ \Illuminate\Support\Js::from($statusLabels) }}"
-                            data-values="{{ \Illuminate\Support\Js::from($statusData) }}">
+                            data-labels="{{ json_encode($statusLabels) }}"
+                            data-values="{{ json_encode($statusData) }}">
                         </canvas>
+                        <div id="status-empty-placeholder" class="hidden absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center pb-6">
+                            <i class="fas fa-inbox text-slate-400 dark:text-slate-600 text-xl mb-1"></i>
+                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500">Belum ada data</span>
+                        </div>
                     </div>
                 </div>
 
@@ -390,145 +394,227 @@
     </div>
 
     {{-- Chart.js & Realtime Refresh Script --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         (function() {
-            let currentPeriod = '{{ $period }}';
+            let currentPeriod = @js($period);
             let countdown = 60;
             let timerInterval = null;
+            let refreshInFlight = false;
+            let dashboardBootScheduled = false;
+            const chartJsUrl = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
 
-            function initCharts() {
-                if (typeof Chart === 'undefined') {
-                    setTimeout(initCharts, 50);
+            const isDark = () => document.documentElement.classList.contains('dark');
+
+            function loadChartJs() {
+                if (typeof Chart !== 'undefined') {
+                    return Promise.resolve();
+                }
+
+                if (window.dinasDashboardChartPromise) {
+                    return window.dinasDashboardChartPromise;
+                }
+
+                window.dinasDashboardChartPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = chartJsUrl;
+                    script.async = true;
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error('Chart.js gagal dimuat.'));
+                    document.head.appendChild(script);
+                });
+
+                return window.dinasDashboardChartPromise;
+            }
+
+            // 1. TREN PENDAFTARAN (LINE CHART)
+            function initOrUpdateTrendChart(trendLabels, trendValues) {
+                const canvasTrend = document.getElementById('trendChart');
+                if (!canvasTrend) return;
+
+                const ctx = canvasTrend.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+                gradient.addColorStop(0, 'rgba(20, 184, 166, 0.4)');
+                gradient.addColorStop(1, 'rgba(20, 184, 166, 0.0)');
+
+                if (window.dinasTrendChart) {
+                    window.dinasTrendChart.data.labels = trendLabels;
+                    window.dinasTrendChart.data.datasets[0].data = trendValues;
+                    window.dinasTrendChart.update('none');
                     return;
                 }
 
-                // 1. TREN PENDAFTARAN (LINE CHART)
-                const canvasTrend = document.getElementById('trendChart');
-                if (window.dinasTrendChart) {
-                    try { window.dinasTrendChart.destroy(); } catch(e) {}
-                    window.dinasTrendChart = null;
-                }
-
-                if (canvasTrend) {
-                    const trendLabels = JSON.parse(canvasTrend.dataset.labels || '[]');
-                    const trendValues = JSON.parse(canvasTrend.dataset.values || '[]');
-                    const ctx = canvasTrend.getContext('2d');
-
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-                    gradient.addColorStop(0, 'rgba(20, 184, 166, 0.4)');
-                    gradient.addColorStop(1, 'rgba(20, 184, 166, 0.0)');
-
-                    window.dinasTrendChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: trendLabels,
-                            datasets: [{
-                                label: 'Pendaftar',
-                                data: trendValues,
-                                borderColor: '#14b8a6',
-                                borderWidth: 3,
-                                backgroundColor: gradient,
-                                fill: true,
-                                tension: 0.4,
-                                pointBackgroundColor: '#2dd4bf',
-                                pointBorderColor: '#0f172a',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: '#0f172a',
-                                    borderColor: '#334155',
-                                    borderWidth: 1,
-                                    titleFont: { family: 'Inter', size: 12, weight: 'bold' },
-                                    bodyFont: { family: 'Inter', size: 12 },
-                                    padding: 12,
-                                    cornerRadius: 10,
-                                    callbacks: {
-                                        label: (context) => ` ${context.parsed.y} Pendaftar`
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: 'rgba(51, 65, 85, 0.3)', borderDash: [4, 4] },
-                                    ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
-                                },
-                                x: {
-                                    grid: { display: false },
-                                    ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
+                window.dinasTrendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: trendLabels,
+                        datasets: [{
+                            label: 'Pendaftar',
+                            data: trendValues,
+                            borderColor: '#14b8a6',
+                            borderWidth: 3,
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#2dd4bf',
+                            pointBorderColor: '#0f172a',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#0f172a',
+                                borderColor: '#334155',
+                                borderWidth: 1,
+                                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                                bodyFont: { family: 'Inter', size: 12 },
+                                padding: 12,
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: (context) => ` ${context.parsed.y} Pendaftar`
                                 }
                             }
-                        }
-                    });
-                }
-
-                // 2. STATUS LAMARAN (DONUT CHART)
-                const canvasStatus = document.getElementById('statusChart');
-                if (window.dinasStatusChart) {
-                    try { window.dinasStatusChart.destroy(); } catch(e) {}
-                    window.dinasStatusChart = null;
-                }
-
-                if (canvasStatus) {
-                    const statusLabels = JSON.parse(canvasStatus.dataset.labels || '[]');
-                    const statusValues = JSON.parse(canvasStatus.dataset.values || '[]');
-
-                    window.dinasStatusChart = new Chart(canvasStatus.getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: statusLabels,
-                            datasets: [{
-                                data: statusValues,
-                                backgroundColor: ['#f59e0b', '#10b981', '#6366f1', '#ef4444'],
-                                borderWidth: 3,
-                                borderColor: '#161f33',
-                                hoverOffset: 6,
-                            }]
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        usePointStyle: true,
-                                        pointStyle: 'circle',
-                                        boxWidth: 8,
-                                        font: { family: 'Inter', size: 11, weight: '600' },
-                                        padding: 14,
-                                        color: '#94a3b8'
-                                    }
-                                },
-                                tooltip: {
-                                    backgroundColor: '#0f172a',
-                                    borderColor: '#334155',
-                                    borderWidth: 1,
-                                    padding: 12,
-                                    cornerRadius: 10,
-                                    callbacks: {
-                                        label: (ctx) => ` ${ctx.label}: ${ctx.parsed} Orang`
-                                    }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                suggestedMax: 5,
+                                grid: { color: 'rgba(51, 65, 85, 0.3)', borderDash: [4, 4] },
+                                ticks: {
+                                    precision: 0,
+                                    stepSize: 1,
+                                    color: '#94a3b8',
+                                    font: { family: 'Inter', size: 10 }
                                 }
                             },
-                            cutout: '70%',
-                            animation: { animateRotate: true, duration: 800 }
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#94a3b8', font: { family: 'Inter', size: 10 } }
+                            }
                         }
-                    });
+                    }
+                });
+            }
+
+            // 2. STATUS LAMARAN (DONUT CHART)
+            function initOrUpdateStatusChart(statusLabels, statusValues) {
+                const canvasStatus = document.getElementById('statusChart');
+                if (!canvasStatus) return;
+
+                const placeholderEl = document.getElementById('status-empty-placeholder');
+                const totalApplicants = (statusValues || []).reduce((sum, val) => sum + Number(val || 0), 0);
+                const isEmpty = totalApplicants === 0;
+
+                if (placeholderEl) {
+                    if (isEmpty) {
+                        placeholderEl.classList.remove('hidden');
+                    } else {
+                        placeholderEl.classList.add('hidden');
+                    }
+                }
+
+                const chartData = isEmpty ? [1] : statusValues;
+                const chartColors = isEmpty 
+                    ? [isDark() ? '#334155' : '#e2e8f0'] 
+                    : ['#f59e0b', '#10b981', '#6366f1', '#ef4444'];
+                const borderColor = isDark() ? '#161f33' : '#ffffff';
+
+                if (window.dinasStatusChart) {
+                    window.dinasStatusChart.data.labels = isEmpty ? ['Belum ada data'] : statusLabels;
+                    window.dinasStatusChart.data.datasets[0].data = chartData;
+                    window.dinasStatusChart.data.datasets[0].backgroundColor = chartColors;
+                    window.dinasStatusChart.data.datasets[0].borderColor = borderColor;
+                    window.dinasStatusChart.options.plugins.legend.display = !isEmpty;
+                    window.dinasStatusChart.options.plugins.tooltip.enabled = !isEmpty;
+                    window.dinasStatusChart.update('none');
+                    return;
+                }
+
+                window.dinasStatusChart = new Chart(canvasStatus.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: isEmpty ? ['Belum ada data'] : statusLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: chartColors,
+                            borderWidth: 3,
+                            borderColor: borderColor,
+                            hoverOffset: isEmpty ? 0 : 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: !isEmpty,
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    boxWidth: 8,
+                                    font: { family: 'Inter', size: 11, weight: '600' },
+                                    padding: 14,
+                                    color: '#94a3b8'
+                                }
+                            },
+                            tooltip: {
+                                enabled: !isEmpty,
+                                backgroundColor: '#0f172a',
+                                borderColor: '#334155',
+                                borderWidth: 1,
+                                padding: 12,
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: (ctx) => ` ${ctx.label}: ${ctx.parsed} Orang`
+                                }
+                            }
+                        },
+                        cutout: '70%',
+                        animation: { animateRotate: true, duration: 800 }
+                    }
+                });
+            }
+
+            function initCharts() {
+                if (typeof Chart === 'undefined') {
+                    console.warn('Chart.js belum siap; inisialisasi ditunda.');
+                    return;
+                }
+
+                const canvasTrend = document.getElementById('trendChart');
+                if (canvasTrend) {
+                    try {
+                        const trendLabels = JSON.parse(canvasTrend.dataset.labels || '[]');
+                        const trendValues = JSON.parse(canvasTrend.dataset.values || '[]');
+                        initOrUpdateTrendChart(trendLabels, trendValues);
+                    } catch (e) {
+                        console.error('Gagal inisialisasi trendChart:', e);
+                    }
+                }
+
+                const canvasStatus = document.getElementById('statusChart');
+                if (canvasStatus) {
+                    try {
+                        const statusLabels = JSON.parse(canvasStatus.dataset.labels || '[]');
+                        const statusValues = JSON.parse(canvasStatus.dataset.values || '[]');
+                        initOrUpdateStatusChart(statusLabels, statusValues);
+                    } catch (e) {
+                        console.error('Gagal inisialisasi statusChart:', e);
+                    }
                 }
             }
 
             // AJAX DATA FETCHER
             function fetchDashboardData(period, isManual = false) {
+                if (refreshInFlight) return;
+                refreshInFlight = true;
+
                 const refreshIcon = document.getElementById('refresh-icon');
                 if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
@@ -561,7 +647,7 @@
                     if (elFlaggedAtt) elFlaggedAtt.textContent = data.flaggedAttendances;
                     if (elFlaggedAtt2) elFlaggedAtt2.textContent = data.flaggedAttempts;
 
-                    // Update Subtitles & Badges
+                    // Update Subtitles & Badges (server adalah source of truth)
                     const periodMap = {
                         'hari_ini': 'Hari Ini',
                         '7_hari': '7 Hari Terakhir',
@@ -569,7 +655,7 @@
                         'semester': 'Semester Ini',
                         'tahun': 'Tahun Ini'
                     };
-                    const pText = (data && data.periodText) ? data.periodText : (periodMap[period] || '30 Hari Terakhir');
+                    const pText = (data && data.periodText) ? data.periodText : (periodMap[period] || periodMap['30_hari']);
 
                     document.querySelectorAll('.stat-period-subtitle').forEach(el => {
                         el.textContent = pText;
@@ -587,34 +673,31 @@
                     if (lolosEl) lolosEl.textContent = `${data.lolosPercentage}%`;
                     if (tolakEl) tolakEl.textContent = `${data.tolakPercentage}%`;
 
-                    // Update Line Chart
-                    if (window.dinasTrendChart) {
-                        window.dinasTrendChart.data.labels = data.trendLabels;
-                        window.dinasTrendChart.data.datasets[0].data = data.trendData;
-                        window.dinasTrendChart.update('none');
-                    }
-
-                    // Update Donut Chart
-                    if (window.dinasStatusChart) {
-                        window.dinasStatusChart.data.labels = data.statusLabels;
-                        window.dinasStatusChart.data.datasets[0].data = data.statusData;
-                        window.dinasStatusChart.update('none');
-                    }
+                    // Update Charts
+                    initOrUpdateTrendChart(data.trendLabels, data.trendData);
+                    initOrUpdateStatusChart(data.statusLabels, data.statusData);
 
                     // Reset Timer
                     countdown = 60;
                     const timerEl = document.getElementById('countdown-timer');
                     if (timerEl) timerEl.textContent = countdown;
                 })
-                .catch(err => console.error('Error fetching dashboard data:', err))
+                .catch(err => {
+                    console.error('Error fetching dashboard data:', err);
+                    countdown = 60;
+                })
                 .finally(() => {
+                    refreshInFlight = false;
                     if (refreshIcon) refreshIcon.classList.remove('fa-spin');
                 });
             }
 
-            // FILTER BUTTON EVENT LISTENERS
+            // FILTER BUTTON EVENT LISTENERS (idempotent: berpagar dataset attribute)
             function setupEventListeners() {
                 document.querySelectorAll('.period-btn').forEach(btn => {
+                    if (btn.dataset.dashboardListener === 'true') return;
+                    btn.dataset.dashboardListener = 'true';
+
                     btn.addEventListener('click', function() {
                         document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
@@ -624,7 +707,8 @@
                 });
 
                 const refreshBtn = document.getElementById('refresh-btn');
-                if (refreshBtn) {
+                if (refreshBtn && refreshBtn.dataset.dashboardListener !== 'true') {
+                    refreshBtn.dataset.dashboardListener = 'true';
                     refreshBtn.addEventListener('click', function() {
                         fetchDashboardData(currentPeriod, true);
                     });
@@ -635,9 +719,11 @@
             function startAutoRefreshTimer() {
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(() => {
-                    countdown--;
-                    const timerEl = document.getElementById('countdown-timer');
-                    if (timerEl) timerEl.textContent = countdown;
+                    if (countdown > 0) {
+                        countdown--;
+                        const timerEl = document.getElementById('countdown-timer');
+                        if (timerEl) timerEl.textContent = countdown;
+                    }
 
                     if (countdown <= 0) {
                         fetchDashboardData(currentPeriod);
@@ -645,22 +731,32 @@
                 }, 1000);
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                initCharts();
-                setupEventListeners();
-                startAutoRefreshTimer();
-            });
+            function bootDashboard() {
+                if (dashboardBootScheduled) return;
+                dashboardBootScheduled = true;
 
-            document.addEventListener('turbo:load', () => {
-                initCharts();
-                setupEventListeners();
-                startAutoRefreshTimer();
-            });
+                loadChartJs()
+                    .then(() => {
+                        initCharts();
+                        setupEventListeners();
+                        startAutoRefreshTimer();
+                    })
+                    .catch((error) => {
+                        console.warn('Dashboard tetap dimuat tanpa grafik:', error);
+                        setupEventListeners();
+                        startAutoRefreshTimer();
+                    });
+            }
+
+            bootDashboard();
+            document.addEventListener('DOMContentLoaded', bootDashboard);
+            document.addEventListener('turbo:load', bootDashboard);
 
             document.addEventListener('turbo:before-cache', () => {
+                dashboardBootScheduled = false;
                 if (timerInterval) clearInterval(timerInterval);
-                if (window.dinasTrendChart) { try { window.dinasTrendChart.destroy(); } catch(e) {} }
-                if (window.dinasStatusChart) { try { window.dinasStatusChart.destroy(); } catch(e) {} }
+                if (window.dinasTrendChart) { try { window.dinasTrendChart.destroy(); } catch(e) {} window.dinasTrendChart = null; }
+                if (window.dinasStatusChart) { try { window.dinasStatusChart.destroy(); } catch(e) {} window.dinasStatusChart = null; }
             });
         })();
     </script>

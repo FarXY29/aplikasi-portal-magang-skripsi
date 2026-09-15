@@ -29,7 +29,13 @@ class LowonganRequest extends FormRequest
             'required_major' => ['nullable', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'kuota' => ['required', 'integer', 'min:1'],
-            'batas_daftar' => ['nullable', 'date', 'after_or_equal:today'],
+            // Batas daftar hanya divalidasi "tidak boleh lampau" saat pembuatan.
+            // Saat edit, lowongan yang sudah lewat tenggat tetap dapat diperbarui
+            // (mis. menutup lowongan atau memperbaiki deskripsi).
+            'batas_daftar' => array_merge(
+                ['nullable', 'date'],
+                $this->isMethod('post') ? ['after_or_equal:today'] : []
+            ),
         ];
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {

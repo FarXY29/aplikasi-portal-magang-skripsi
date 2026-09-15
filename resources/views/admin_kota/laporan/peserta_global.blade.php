@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
@@ -13,7 +13,7 @@
                 </h2>
             </div>
             <div class="flex flex-wrap items-center gap-2 shrink-0">
-                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q', 'start_date', 'end_date']))
+                @if(request()->anyFilled(['instansi', 'instansi_id', 'status', 'posisi', 'q', 'start_date', 'end_date', 'periode_preset']))
                     <a href="{{ route('admin.laporan.peserta_global') }}"
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xl font-bold text-xs transition shadow-sm">
                         <i class="fas fa-redo-alt text-[10px]"></i> Reset Filter
@@ -45,7 +45,47 @@
     @endphp
 
     <div class="font-[Inter] -mx-4 -mt-4 -mb-24 md:-mx-6 md:-mt-6 md:-mb-8 lg:-mx-8 lg:-mt-8 px-4 pt-4 pb-24 md:px-6 md:pt-6 md:pb-8 lg:px-8 lg:pt-8 min-h-full bg-gray-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-100"
-        x-data="{ quickSearch: '' }">
+        x-data="{ 
+            quickSearch: '',
+            formatDate(d) {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            },
+            applyPreset(preset) {
+                const today = new Date();
+                const end = this.formatDate(today);
+                let start = '';
+                if (preset === '1_bulan') {
+                    const d = new Date();
+                    d.setDate(d.getDate() - 30);
+                    start = this.formatDate(d);
+                } else if (preset === '3_bulan') {
+                    const d = new Date();
+                    d.setMonth(d.getMonth() - 3);
+                    start = this.formatDate(d);
+                } else if (preset === 'semester') {
+                    const d = new Date();
+                    d.setMonth(d.getMonth() - 6);
+                    start = this.formatDate(d);
+                } else if (preset === 'tahun') {
+                    const d = new Date();
+                    d.setFullYear(d.getFullYear() - 1);
+                    start = this.formatDate(d);
+                }
+                this.$refs.startDateInput.value = start;
+                this.$refs.endDateInput.value = end;
+                this.$refs.presetInput.value = preset;
+                this.$refs.filterForm.submit();
+            },
+            clearPeriod() {
+                this.$refs.startDateInput.value = '';
+                this.$refs.endDateInput.value = '';
+                this.$refs.presetInput.value = '';
+                this.$refs.filterForm.submit();
+            }
+        }">
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Back Navigation & Export Buttons --}}
@@ -129,6 +169,7 @@
                     (request('status') && request('status') !== 'semua' ? request('status') : null),
                     request('start_date'),
                     request('end_date'),
+                    request('periode_preset'),
                     request('posisi'),
                     request('q')
                 ])->filter(fn($v) => !empty($v))->count();
@@ -163,10 +204,11 @@
                     @endif
                 </div>
 
-                <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" class="space-y-4">
+                <form method="GET" action="{{ route('admin.laporan.peserta_global') }}" x-ref="filterForm" class="space-y-4">
                     @if(request()->filled('q'))
                         <input type="hidden" name="q" value="{{ request('q') }}">
                     @endif
+                    <input type="hidden" name="periode_preset" x-ref="presetInput" value="{{ request('periode_preset') }}">
 
                     {{-- Baris 1: Kategori Utama (Kampus, Dinas, Status) --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -221,6 +263,79 @@
                         </div>
                     </div>
 
+                    {{-- Filter Cepat Periode Magang --}}
+                    <div class="p-3 bg-slate-50/90 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 space-y-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-bolt text-amber-500 text-xs"></i> Filter Cepat Periode:
+                            </span>
+                            @if(request()->filled('periode_preset') || (request()->filled('start_date') && request()->filled('end_date')))
+                                <span class="text-[10px] text-teal-600 dark:text-teal-400 font-bold flex items-center gap-1">
+                                    <i class="fas fa-check-circle text-[10px]"></i>
+                                    @if(request('periode_preset') === '1_bulan')
+                                        Periode 1 Bulan Terakhir Aktif
+                                    @elseif(request('periode_preset') === '3_bulan')
+                                        Periode 3 Bulan (Triwulan) Aktif
+                                    @elseif(request('periode_preset') === 'semester')
+                                        Periode 1 Semester (6 Bulan) Aktif
+                                    @elseif(request('periode_preset') === 'tahun')
+                                        Periode 1 Tahun Aktif
+                                    @else
+                                        Rentang Tanggal Kustom Aktif
+                                    @endif
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            {{-- 1 Bulan --}}
+                            <button type="button" 
+                                @click="applyPreset('1_bulan')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs {{ request('periode_preset') === '1_bulan' ? 'bg-teal-600 text-white shadow-teal-600/25 ring-2 ring-teal-500/30' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 hover:bg-teal-50 dark:hover:bg-slate-700 hover:text-teal-600 dark:hover:text-teal-400' }}">
+                                <i class="far fa-calendar text-[11px] {{ request('periode_preset') === '1_bulan' ? 'text-white' : 'text-teal-500' }}"></i>
+                                <span>1 Bulan</span>
+                                <span class="text-[10px] {{ request('periode_preset') === '1_bulan' ? 'text-teal-100' : 'text-slate-400' }} hidden sm:inline">(30 Hari)</span>
+                            </button>
+
+                            {{-- 3 Bulan (Triwulan) --}}
+                            <button type="button" 
+                                @click="applyPreset('3_bulan')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs {{ request('periode_preset') === '3_bulan' ? 'bg-teal-600 text-white shadow-teal-600/25 ring-2 ring-teal-500/30' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 hover:bg-teal-50 dark:hover:bg-slate-700 hover:text-teal-600 dark:hover:text-teal-400' }}">
+                                <i class="fas fa-layer-group text-[11px] {{ request('periode_preset') === '3_bulan' ? 'text-white' : 'text-teal-500' }}"></i>
+                                <span>3 Bulan</span>
+                                <span class="text-[10px] {{ request('periode_preset') === '3_bulan' ? 'text-teal-100' : 'text-slate-400' }} hidden sm:inline">(Triwulan)</span>
+                            </button>
+
+                            {{-- Semester (6 Bulan) --}}
+                            <button type="button" 
+                                @click="applyPreset('semester')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs {{ request('periode_preset') === 'semester' ? 'bg-teal-600 text-white shadow-teal-600/25 ring-2 ring-teal-500/30' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 hover:bg-teal-50 dark:hover:bg-slate-700 hover:text-teal-600 dark:hover:text-teal-400' }}">
+                                <i class="fas fa-graduation-cap text-[11px] {{ request('periode_preset') === 'semester' ? 'text-white' : 'text-teal-500' }}"></i>
+                                <span>1 Semester</span>
+                                <span class="text-[10px] {{ request('periode_preset') === 'semester' ? 'text-teal-100' : 'text-slate-400' }} hidden sm:inline">(6 Bulan)</span>
+                            </button>
+
+                            {{-- 1 Tahun --}}
+                            <button type="button" 
+                                @click="applyPreset('tahun')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs {{ request('periode_preset') === 'tahun' ? 'bg-teal-600 text-white shadow-teal-600/25 ring-2 ring-teal-500/30' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80 hover:bg-teal-50 dark:hover:bg-slate-700 hover:text-teal-600 dark:hover:text-teal-400' }}">
+                                <i class="fas fa-calendar-alt text-[11px] {{ request('periode_preset') === 'tahun' ? 'text-white' : 'text-teal-500' }}"></i>
+                                <span>1 Tahun</span>
+                                <span class="text-[10px] {{ request('periode_preset') === 'tahun' ? 'text-teal-100' : 'text-slate-400' }} hidden sm:inline">(Tahunan)</span>
+                            </button>
+
+                            {{-- Reset Periode --}}
+                            @if(request()->filled('periode_preset') || request()->filled('start_date') || request()->filled('end_date'))
+                                <button type="button" 
+                                    @click="clearPeriod()"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition sm:ml-auto">
+                                    <i class="fas fa-times text-[10px]"></i>
+                                    <span>Reset Periode</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
                     {{-- Baris 2: Waktu, Posisi & Tombol Aksi --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end pt-1">
                         {{-- Dari Tanggal --}}
@@ -228,7 +343,7 @@
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
                                 <i class="far fa-calendar-alt text-teal-500 text-[11px]"></i> Dari Tanggal (Mulai)
                             </label>
-                            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                            <input type="date" name="start_date" x-ref="startDateInput" @change="$refs.presetInput.value = ''" value="{{ request('start_date') }}"
                                 class="w-full py-2.5 px-3 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
                         </div>
 
@@ -237,7 +352,7 @@
                             <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1 flex items-center gap-1.5">
                                 <i class="far fa-calendar-check text-teal-500 text-[11px]"></i> Sampai Tanggal (Selesai)
                             </label>
-                            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                            <input type="date" name="end_date" x-ref="endDateInput" @change="$refs.presetInput.value = ''" value="{{ request('end_date') }}"
                                 class="w-full py-2.5 px-3 bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 shadow-sm cursor-pointer dark:[color-scheme:dark] transition">
                         </div>
 
@@ -591,6 +706,7 @@
         } else {
             init();
         }
+        document.addEventListener('turbo:load', init);
     })();
     </script>
     @endpush

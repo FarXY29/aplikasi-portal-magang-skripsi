@@ -1,17 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div>
-                    <h2 class="font-black text-xl text-gray-800 dark:text-gray-100 leading-tight flex items-center gap-2">
-                        <i class="fas fa-university text-orange-500"></i>
-                        {{ __('Laporan Demografi Kampus & Sekolah') }}
-                    </h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Ringkasan persebaran asal kampus, sekolah, dan jurusan pendaftar magang.</p>
-                </div>
-            </div>
-
-        </div>
+        <x-ui.page-header
+            title="Laporan Demografi Kampus & Sekolah"
+            subtitle="Ringkasan persebaran asal kampus, sekolah, dan jurusan pendaftar magang."
+            icon="fas fa-university"
+            iconColor="orange"
+            :breadcrumbs="[['label' => 'Pusat Laporan', 'url' => route('dinas.laporan.hub')], ['label' => 'Demografi Kampus']]" />
     </x-slot>
 
     <div class="py-6 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">

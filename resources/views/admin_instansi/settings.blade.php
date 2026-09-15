@@ -15,14 +15,10 @@
         </style>
     @endpush
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-950/60 flex items-center justify-center border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-cog text-teal-600 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Pengaturan Instansi') }}
-            </h2>
-        </div>
+        <x-ui.page-header
+            title="Pengaturan Instansi"
+            icon="fas fa-cog"
+            :breadcrumbs="[['label' => 'Pengaturan Instansi']]" />
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
@@ -157,7 +153,7 @@
                                     <span class="text-xs font-black text-red-700 dark:text-red-300 font-mono bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-800/60" id="radius-display">{{ old('radius_absen', $instansi->radius_absen ?? 100) }} Meter</span>
                                 </label>
                                 <div class="relative flex items-center gap-3 pt-1">
-                                    <input type="range" id="input_radius_slider" min="10" max="2000" step="10" value="{{ old('radius_absen', $instansi->radius_absen ?? 100) }}"
+                                    <input type="range" id="input_radius_slider" min="10" max="10000" step="10" value="{{ old('radius_absen', $instansi->radius_absen ?? 100) }}"
                                         class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-red-600">
                                     <input type="number" id="input_radius" name="radius_absen" min="10" max="10000" value="{{ old('radius_absen', $instansi->radius_absen ?? 100) }}" required
                                         class="w-24 px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-red-500 focus:ring-red-500 font-mono text-xs text-center font-bold shadow-xs">
@@ -537,8 +533,10 @@
 
                     function updateRadius(val) {
                         val = parseInt(val) || 100;
+                        // Clamp ke batas yang sama dengan input (min 10, max 10000)
+                        val = Math.min(10000, Math.max(10, val));
                         if (radiusInput) radiusInput.value = val;
-                        if (radiusSlider) radiusSlider.value = val <= 2000 ? val : 2000;
+                        if (radiusSlider) radiusSlider.value = val;
                         if (radiusDisplay) radiusDisplay.innerText = val + ' Meter';
                         if (adminCircle) adminCircle.setRadius(val);
                     }
@@ -651,10 +649,7 @@
         } else {
             initAdminMap();
         }
-        window.addEventListener('load', initAdminMap);
         document.addEventListener('turbo:load', initAdminMap);
-        document.addEventListener('turbo:render', initAdminMap);
-        document.addEventListener('livewire:navigated', initAdminMap);
     </script>
     @endpush
 </x-app-layout>

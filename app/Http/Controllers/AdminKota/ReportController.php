@@ -82,6 +82,7 @@ class ReportController extends Controller
         $data = $this->reportService->getGlobalInternsData($request);
         $data['listDinas'] = Instansi::orderBy('nama_dinas', 'asc')->get();
         $data['listInstansi'] = User::portalRole('peserta')->whereNotNull('asal_instansi')->distinct()->orderBy('asal_instansi', 'asc')->pluck('asal_instansi');
+        $data['request'] = $request;
 
         return view('admin_kota.laporan.peserta_global', $data);
     }

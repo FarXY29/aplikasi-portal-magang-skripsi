@@ -1,8 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Pengaturan Tanda Tangan Sertifikat') }}
-        </h2>
+        <x-ui.page-header
+            title="Pengaturan Tanda Tangan Sertifikat"
+            icon="fas fa-file-signature"
+            :breadcrumbs="[['label' => 'Pengaturan Tanda Tangan']]" />
     </x-slot>
 
     <div class="py-12">

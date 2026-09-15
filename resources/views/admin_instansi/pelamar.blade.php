@@ -1,14 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-inbox text-teal-600 dark:text-teal-400"></i>
-                {{ __('Daftar Pelamar Magang') }}
-            </h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
-                Total Pelamar: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $applicants->total() }}</span>
-            </div>
-        </div>
+        <x-ui.page-header
+            title="Daftar Pelamar Magang"
+            subtitle="Tinjau, terima, atau tolak permohonan pendaftaran magang yang masuk."
+            icon="fas fa-inbox"
+            :breadcrumbs="[['label' => 'Daftar Pelamar Magang']]">
+            <x-slot name="actions">
+                <div class="text-sm text-gray-500 dark:text-gray-400 font-medium bg-white dark:bg-gray-800 px-4 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
+                    Total Pelamar: <span class="font-bold text-teal-600 dark:text-teal-400">{{ $applicants->total() }}</span>
+                </div>
+            </x-slot>
+        </x-ui.page-header>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans" x-data="{

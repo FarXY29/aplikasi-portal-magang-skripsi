@@ -4,14 +4,13 @@
     @endpush
 
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-emerald-600 dark:from-teal-400 dark:to-emerald-300 leading-tight flex items-center gap-3 drop-shadow-sm">
-                <div class="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center border border-teal-200 dark:border-teal-800/50">
-                    <i class="fas fa-edit text-teal-600 dark:text-teal-400 text-lg"></i>
-                </div>
-                {{ __('Edit Lowongan Magang') }}
-            </h2>
-        </div>
+        <x-ui.page-header
+            title="Edit Lowongan Magang"
+            icon="fas fa-edit"
+            :breadcrumbs="[
+                ['label' => 'Lowongan Magang', 'url' => route('dinas.lowongan.index')],
+                ['label' => 'Edit'],
+            ]" />
     </x-slot>
 
     <div class="py-12 bg-slate-50 dark:bg-gray-900 min-h-screen relative overflow-hidden font-sans">
@@ -124,7 +123,7 @@
                                         <i class="fas fa-users text-emerald-500 dark:text-emerald-400"></i> Kuota Penerimaan
                                     </label>
                                     <div class="relative transition-all duration-300 group-focus-within:drop-shadow-md">
-                                        <input type="number" name="kuota" id="kuota" value="{{ old('kuota', $loker->kuota) }}" min="0" 
+                                        <input type="number" name="kuota" id="kuota" value="{{ old('kuota', $loker->kuota) }}" min="1" 
                                             class="w-full px-5 py-3.5 bg-slate-50 dark:bg-gray-900 border @error('kuota') border-red-400 focus:border-red-500 focus:ring-red-500/10 @else border-slate-200 dark:border-gray-700 focus:border-emerald-500 focus:ring-emerald-500/10 @enderror rounded-2xl focus:bg-white dark:focus:bg-gray-800 focus:ring-4 transition-all font-medium text-slate-800 dark:text-gray-100" required
                                             oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                             oninput="this.setCustomValidity('')">
@@ -186,7 +185,11 @@
                                     <i class="fas fa-file-alt text-teal-600 dark:text-teal-400"></i> Deskripsi & Syarat Detail
                                 </label>
                                 <div class="rounded-2xl overflow-hidden border @error('deskripsi') border-red-400 focus-within:ring-red-500/10 focus-within:border-red-500 @else border-slate-200 dark:border-gray-700 focus-within:ring-teal-500/10 focus-within:border-teal-500 @enderror shadow-sm focus-within:ring-4 transition-all duration-300 bg-white dark:bg-gray-800">
-                                    <textarea id="editor" name="deskripsi" class="w-full border-0 focus:ring-0 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100">{{ old('deskripsi', $loker->deskripsi) }}</textarea>
+                                    <x-ui.rich-text-editor
+                                        name="deskripsi"
+                                        id="editor"
+                                        placeholder="Jelaskan tanggung jawab dan persyaratan magang secara rinci..."
+                                        :toolbar="['undo', 'redo', '|', 'heading', '|', 'bold', 'italic', 'underline', 'bulletedList', 'numberedList', '|', 'alignment', 'outdent', 'indent', '|', 'link', 'blockQuote']">{{ old('deskripsi', $loker->deskripsi) }}</x-ui.rich-text-editor>
                                 </div>
                                 @error('deskripsi') 
                                     <span class="text-red-500 text-xs mt-2 ml-1 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> {{ $message }}</span> 
@@ -211,7 +214,7 @@
         </div>
     </div>
 
-    <!-- Inject Keyframes for Blob Animations & CKEditor Dark Mode CSS -->
+    <!-- Inject Keyframes for Blob Animations -->
     <style>
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
@@ -225,133 +228,16 @@
         .animation-delay-2000 {
             animation-delay: 2s;
         }
-
-        /* ── CKEditor 5 Dark Theme via CSS Variables ── */
-        .dark {
-            /* Base */
-            --ck-color-base-background:       #1f2937;  /* gray-800 */
-            --ck-color-base-foreground:       #111827;  /* gray-900 */
-            --ck-color-base-border:           #374151;  /* gray-700 */
-            --ck-color-base-text:             #f3f4f6;  /* gray-100 */
-            --ck-color-base-active:           #374151;
-            --ck-color-base-active-focus:     #4b5563;
-            --ck-color-base-error:            #ef4444;
-            --ck-color-base-action:           #14b8a6;  /* teal */
-            --ck-color-base-focus:            #14b8a6;
-            --ck-color-focus-border:          #14b8a6;
-            --ck-color-focus-outer-shadow:    rgba(20,184,166,0.25);
-
-            /* Toolbar */
-            --ck-color-toolbar-background:    #1f2937;
-            --ck-color-toolbar-border:        #374151;
-
-            /* Buttons */
-            --ck-color-button-default-background:       transparent;
-            --ck-color-button-default-hover-background: #374151;
-            --ck-color-button-default-active-background:#4b5563;
-            --ck-color-button-on-background:            #374151;
-            --ck-color-button-on-hover-background:      #4b5563;
-            --ck-color-button-on-active-background:     #6b7280;
-            --ck-color-button-on-disabled-background:   #1f2937;
-            --ck-color-button-action-background:        #0d9488;
-            --ck-color-button-action-hover-background:  #0f766e;
-            --ck-color-button-action-text:              #ffffff;
-            --ck-color-button-save:                     #14b8a6;
-            --ck-color-button-cancel:                   #ef4444;
-
-            /* Dropdown / Panel */
-            --ck-color-dropdown-panel-background: #1f2937;
-            --ck-color-dropdown-panel-border:     #374151;
-            --ck-color-panel-background:          #1f2937;
-            --ck-color-panel-border:              #374151;
-
-            /* List items */
-            --ck-color-list-background:              #1f2937;
-            --ck-color-list-button-hover-background: #374151;
-            --ck-color-list-button-on-background:    #374151;
-            --ck-color-list-button-on-background-focus: #4b5563;
-            --ck-color-list-button-on-text:          #f3f4f6;
-
-            /* Input fields */
-            --ck-color-input-background:          #111827;
-            --ck-color-input-border:              #374151;
-            --ck-color-input-text:                #f3f4f6;
-            --ck-color-input-disabled-background: #1f2937;
-            --ck-color-input-disabled-border:     #374151;
-            --ck-color-input-disabled-text:       #9ca3af;
-
-            /* Editable area */
-            --ck-color-editor-base-text:          #f3f4f6;
-
-            /* Shadow */
-            --ck-color-shadow-drop:  rgba(0,0,0,0.5);
-            --ck-color-shadow-inner: rgba(0,0,0,0.5);
-            --ck-color-shadow-small: rgba(0,0,0,0.5);
-
-            /* Tooltip */
-            --ck-color-tooltip-background: #374151;
-            --ck-color-tooltip-text:       #f3f4f6;
-
-            /* Table */
-            --ck-color-table-focused-cell-background: rgba(20,184,166,0.1);
-
-            /* Separator */
-            --ck-color-toolbar-separator: #374151;
-        }
-
-        .dark .ck-editor__editable_inline,
-        .dark .ck.ck-editor__editable:not(.ck-editor__nested-editable) {
-            background: #111827 !important;  /* gray-900 */
-            color: #f3f4f6 !important;
-        }
     </style>
 
     <script>
-        // CKEditor di-load on-demand saat user mulai mengetik (hindari ~1 MB blocking script)
+        // Double Submit Prevention + Auto-focus first error.
+        // (Init CKEditor ditangani oleh <x-ui.rich-text-editor />.)
         document.addEventListener("turbo:load", function() {
-            const editorElement = document.querySelector('#editor');
-            const initCkEditor = () => {
-                if (!editorElement || editorElement.dataset.ckLoaded) return;
-                editorElement.dataset.ckLoaded = '1';
-                const script = document.createElement('script');
-                script.src = 'https://cdn.ckeditor.com/ckeditor5/40.0.0/super-build/ckeditor.js';
-                script.onload = () => {
-                    CKEDITOR.ClassicEditor.create(editorElement, {
-                    toolbar: {
-                        items: [
-                            'undo', 'redo', '|', 'heading', '|',
-                            'bold', 'italic', 'underline', 'bulletedList', 'numberedList', '|',
-                            'alignment', 'outdent', 'indent', '|', 'link', 'blockQuote'
-                        ],
-                        shouldNotGroupWhenFull: true
-                    },
-                    placeholder: 'Jelaskan tanggung jawab dan persyaratan magang secara rinci...',
-                    removePlugins: [
-                        'CKBox', 'CKFinder', 'EasyImage', 'RealTimeCollaborativeComments', 
-                        'RealTimeCollaborativeTrackChanges', 'RealTimeCollaborativeRevisionHistory', 
-                        'PresenceList', 'Comments', 'TrackChanges', 'TrackChangesData', 
-                        'RevisionHistory', 'Pagination', 'WProofreader', 'MathType', 
-                        'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 
-                        'Table', 'TableToolbar', 'MediaEmbed'
-                    ]
-                }).then(editor => {
-                    // Set min height for editor content area
-                    editor.editing.view.change(writer => {
-                        writer.setStyle('min-height', '250px', editor.editing.view.document.getRoot());
-                        writer.setStyle('border', 'none', editor.editing.view.document.getRoot());
-                    });
-                }).catch(error => console.error(error));
-                };
-                document.head.appendChild(script);
-            };
-            if (editorElement) {
-                editorElement.addEventListener('focus', initCkEditor, { once: true });
-                editorElement.addEventListener('pointerdown', initCkEditor, { once: true });
-            }
-
             // Double Submit Prevention
             const form = document.querySelector('#lowongan-form');
-            if (form) {
+            if (form && !form.dataset.submitBound) {
+                form.dataset.submitBound = '1';
                 form.addEventListener('submit', function(e) {
                     const submitBtn = form.querySelector('button[type="submit"]');
                     if (submitBtn) {

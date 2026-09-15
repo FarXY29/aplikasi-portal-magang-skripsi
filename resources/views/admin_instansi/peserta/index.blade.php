@@ -226,14 +226,12 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
-                                            <i class="fas fa-users-slash text-3xl text-gray-400 dark:text-gray-500"></i>
-                                        </div>
-                                        <p class="font-bold text-gray-700 dark:text-gray-300">Tidak ada peserta ditemukan</p>
-                                        <p class="text-xs mt-1 text-gray-500 dark:text-gray-400">Silakan sesuaikan filter atau terima pelamar terlebih dahulu.</p>
-                                    </div>
+                                <td colspan="4" class="px-6 py-10">
+                                    <x-ui.empty-state
+                                        title="Tidak Ada Peserta Ditemukan"
+                                        description="Silakan sesuaikan filter atau terima pelamar terlebih dahulu."
+                                        icon="fa-users-slash"
+                                        class="shadow-none border-none bg-transparent" />
                                 </td>
                             </tr>
                             @endforelse

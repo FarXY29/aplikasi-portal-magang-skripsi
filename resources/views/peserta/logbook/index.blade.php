@@ -1,7 +1,6 @@
 <x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
-        @vite('resources/css/peserta.css')
         <style>
             .glass-effect {
                 background: rgba(255, 255, 255, 0.85);
