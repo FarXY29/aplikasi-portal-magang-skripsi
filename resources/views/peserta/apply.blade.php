@@ -47,7 +47,6 @@
                             <div>
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">Detail Pekerjaan</h4>
                                 <div class="prose prose-sm text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                                    {{ $position->deskripsi }}
                                     {!! \App\Services\HtmlSanitizer::clean($position->deskripsi) !!}
                                 </div>
                             </div>
@@ -203,7 +202,7 @@
     </div>
 
     <script>
-    document.addEventListener('turbo:load', function() {
+    function initApplyForm() {
         const startInput = document.getElementById('tanggal_mulai');
         const endInput   = document.getElementById('tanggal_selesai');
         const resultDiv  = document.getElementById('availability-result');
@@ -216,7 +215,7 @@
         const durationText  = document.getElementById('duration-text');
         const presetIndicator = document.getElementById('duration-preset-indicator');
         const presetBtns    = document.querySelectorAll('.preset-duration-btn');
-        const positionId = "{{ $position->id }}"; 
+        const availabilityUrl = "{{ route('magang.check.availability', $position->id) }}";
 
         if (!startInput || !endInput) return;
 
@@ -375,7 +374,7 @@
             showResult('loading', 'Sedang memeriksa ketersediaan kuota...', 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300');
             submitBtn.disabled = true;
 
-            fetch(`/magang/check-availability/${positionId}`, {
+            fetch(availabilityUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -490,6 +489,13 @@
         if (startInput.value && endInput.value) {
             validateDates();
         }
-    });
+    }
+
+    // Daftarkan listener sekali saja; script inline ini dijalankan ulang
+    // setiap navigasi Turbo, sehingga tanpa guard listener akan menumpuk.
+    if (!window.__pesertaApplyWired) {
+        window.__pesertaApplyWired = true;
+        document.addEventListener('turbo:load', initApplyForm);
+    }
     </script>
 </x-app-layout>

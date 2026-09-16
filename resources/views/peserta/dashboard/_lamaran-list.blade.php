@@ -43,6 +43,16 @@
                 </div>
                 
                 <div class="p-4 sm:p-6 space-y-4">
+                    @php
+                        $badges = [
+                            'pending' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/60',
+                            'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/60',
+                            'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200/70 dark:border-emerald-800/60',
+                            'belum mulai' => 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-200/70 dark:border-indigo-800/60',
+                            'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200/70 dark:border-blue-800/60',
+                            'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200/70 dark:border-rose-800/60',
+                        ];
+                    @endphp
                     @forelse($myApplications as $app)
                         @php
                             $appStatus = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status;
@@ -53,16 +63,6 @@
                             <div class="w-full lg:flex-1 min-w-0">
                                 <div class="flex flex-wrap items-center gap-2 mb-1.5">
                                     <h4 class="font-black text-slate-900 dark:text-gray-100 text-sm sm:text-base md:text-lg leading-tight">{{ $app->position->instansi->nama_dinas }}</h4>
-                                    @php
-                                        $badges = [
-                                            'pending' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/60',
-                                            'menunggu' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/60',
-                                            'diterima' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200/70 dark:border-emerald-800/60',
-                                            'belum mulai' => 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border-indigo-200/70 dark:border-indigo-800/60',
-                                            'selesai' => 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200/70 dark:border-blue-800/60',
-                                            'ditolak' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200/70 dark:border-rose-800/60'
-                                        ];
-                                    @endphp
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase whitespace-nowrap border {{ $badges[$app->display_status] ?? 'bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-gray-700' }}">
                                         {{ $app->display_status }}
                                     </span>

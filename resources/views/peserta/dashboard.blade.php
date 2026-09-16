@@ -530,10 +530,14 @@
         );
     }
 
-    // turbo:load also fires on the initial page load, so a single listener is
-    // enough. It replaces the previous DOMContentLoaded + turbo:load pair that
-    // triggered autoDetectGPS twice on first paint.
-    window.addEventListener("turbo:load", autoDetectGPS);
+    // turbo:load also fires on the initial page load. Guard against
+    // duplicate listeners: this inline script re-executes on every Turbo
+    // navigation, so registering unconditionally stacks listeners and
+    // triggers autoDetectGPS many times.
+    if (!window.__pesertaDashboardGpsWired) {
+        window.__pesertaDashboardGpsWired = true;
+        window.addEventListener("turbo:load", function () { autoDetectGPS(); });
+    }
 
     // Fungsi ripple effect
     function addRipple(btn, event) {
@@ -691,7 +695,11 @@
                 return;
             }
             const script = document.createElement('script');
-            script.src = 'https://unpkg.com/html5-qrcode';
+            // Versi di-pin + SRI agar tidak mengeksekusi kode pihak ketiga
+            // yang berubah tanpa sepengetahuan kita (supply-chain risk).
+            script.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+            script.integrity = 'sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+';
+            script.crossOrigin = 'anonymous';
             script.onload = resolve;
             script.onerror = reject;
             document.head.appendChild(script);

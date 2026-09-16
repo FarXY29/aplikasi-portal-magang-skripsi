@@ -223,14 +223,16 @@
                                     @endif
                                 </div>
                             @else
+                                @php
+                                    $badges = [
+                                        'pending' => ['bg' => 'bg-amber-50 dark:bg-amber-950/60', 'text' => 'text-amber-700 dark:text-amber-300', 'icon' => 'fa-clock', 'border' => 'border-amber-200 dark:border-amber-800/60'],
+                                        'disetujui' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/60', 'text' => 'text-emerald-700 dark:text-emerald-300', 'icon' => 'fa-check-circle', 'border' => 'border-emerald-200 dark:border-emerald-800/60'],
+                                        'revisi' => ['bg' => 'bg-rose-50 dark:bg-rose-950/60', 'text' => 'text-rose-700 dark:text-rose-300', 'icon' => 'fa-exclamation-circle', 'border' => 'border-rose-200 dark:border-rose-800/60'],
+                                    ];
+                                @endphp
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     @foreach($logs as $log)
                                         @php
-                                            $badges = [
-                                                'pending' => ['bg' => 'bg-amber-50 dark:bg-amber-950/60', 'text' => 'text-amber-700 dark:text-amber-300', 'icon' => 'fa-clock', 'border' => 'border-amber-200 dark:border-amber-800/60'],
-                                                'disetujui' => ['bg' => 'bg-emerald-50 dark:bg-emerald-950/60', 'text' => 'text-emerald-700 dark:text-emerald-300', 'icon' => 'fa-check-circle', 'border' => 'border-emerald-200 dark:border-emerald-800/60'],
-                                                'revisi' => ['bg' => 'bg-rose-50 dark:bg-rose-950/60', 'text' => 'text-rose-700 dark:text-rose-300', 'icon' => 'fa-exclamation-circle', 'border' => 'border-rose-200 dark:border-rose-800/60'],
-                                            ];
                                             $status = $badges[$log->status_validasi] ?? $badges['pending'];
                                         @endphp
                                         
@@ -333,7 +335,7 @@
                 <div x-show="showEditModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="showEditModal = false" aria-hidden="true"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                 <div x-show="showEditModal" x-transition class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-200 dark:border-gray-700">
-                    <form :action="'{{ route('peserta.logbook.index') }}/' + editLogId" method="POST" enctype="multipart/form-data">
+                    <form :action="'{{ route('peserta.logbook.update', ':id') }}'.replace(':id', editLogId)" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="log_id" x-model="editLogId">
@@ -412,7 +414,9 @@
         removeBtn.classList.remove('flex');
     }
 
-    document.addEventListener('alpine:init', () => {
+    if (!window.__pesertaLogbookAlpineWired) {
+        window.__pesertaLogbookAlpineWired = true;
+        document.addEventListener('alpine:init', () => {
         Alpine.data('logbookData', () => ({
             filter: @js(request('status', 'semua')),
             filterTanggal: @js(request('date', '')),
@@ -442,22 +446,14 @@
                 this.editStatusValidasi = statusValidasi;
                 this.showEditModal = true;
             },
-            openGallery(imgUrl, title = 'Dokumentasi Logbook') {
-                openImageModal(imgUrl, title);
-            },
-            matchFilter(status, dateStr) {
-                if (this.filter !== 'semua' && this.filter !== status) return false;
-                if (this.filterTanggal && dateStr !== this.filterTanggal) return false;
-                if (this.filterBulan && !dateStr.startsWith(this.filterBulan)) return false;
-                return true;
-            },
             resetFilters() {
                 window.location.href = @js(route('peserta.logbook.index'));
             }
         }))
-    });
+        });
+    }
 
-    document.addEventListener("turbo:load", function() {
+    function initLogbookLocation() {
         const statusDiv = document.getElementById("loc-status");
         const btnSubmit = document.getElementById("btn-submit");
         const coordsDisplay = document.getElementById("coords-display");
@@ -519,6 +515,13 @@
         }
 
         requestLocation();
-    });
+    }
+
+    // Daftarkan listener sekali saja; script inline ini dijalankan ulang
+    // setiap navigasi Turbo, sehingga tanpa guard listener akan menumpuk.
+    if (!window.__pesertaLogbookLocationWired) {
+        window.__pesertaLogbookLocationWired = true;
+        document.addEventListener('turbo:load', initLogbookLocation);
+    }
     </script>
 </x-app-layout>

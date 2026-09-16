@@ -53,6 +53,13 @@ class ApplicationController extends Controller
     public function storeApplication(StoreApplicationRequest $request, $id)
     {
         $user = Auth::user();
+        $position = InternshipPosition::with('requiredMajorCategory')->findOrFail($id);
+
+        // 1. Validasi Kualifikasi Jurusan & Rumpun Keilmuan
+        if (! $position->matchesUser($user)) {
+            $expected = $position->requiredMajorCategory?->name ?? $position->required_major;
+            return redirect()->route('home')->with('error', "Kualifikasi jurusan Anda tidak memenuhi kriteria lowongan ini (Khusus: {$expected}).");
+        }
 
         $reqStart = $request->tanggal_mulai;
         $reqEnd = $request->tanggal_selesai;

@@ -33,7 +33,12 @@ class PembimbingSekolahController extends Controller
     public function index(Request $request)
     {
         $pembimbing = Auth::user();
+
+        // Normalisasi input status agar view selalu menerima nilai yang dikenal.
         $statusFilter = $request->input('status', 'aktif');
+        if (! in_array($statusFilter, ['aktif', 'selesai', 'semua'], true)) {
+            $statusFilter = 'semua';
+        }
 
         $statusQuery = match ($statusFilter) {
             'aktif' => ['diterima'],

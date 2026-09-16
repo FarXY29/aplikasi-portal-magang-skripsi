@@ -27,10 +27,11 @@ class PesertaViewRegressionTest extends TestCase
         $response = $this->actingAs($user)->get(route('peserta.daftar.form', $position->id));
 
         $response->assertOk();
-        $response->assertSee('&lt;script&gt;', false);
+        // Deskripsi dirender sekali (hasil sanitasi), bukan dobel render.
         $response->assertSee('Deskripsi aman');
         $response->assertDontSee('<script>alert("x")</script>', false);
         $response->assertDontSee('alert("x")', false);
+        $response->assertDontSee('&lt;script&gt;', false);
     }
 
     public function test_participant_can_explicitly_choose_waiting_list(): void

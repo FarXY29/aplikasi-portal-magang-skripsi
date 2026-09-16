@@ -110,22 +110,46 @@ class DatabaseSeeder extends Seeder
                 $pembimbings[$instansi->id][] = $pembimbingLapangan;
             }
 
-            // Buat 2-4 Posisi Magang per INSTANSI
-            $posisiList = ['Programmer / Web Developer', 'Staf Administrasi', 'Desain Grafis', 'Analis Data', 'Public Relations', 'Customer Service'];
-            $numPositions = rand(2, 4);
-            $selectedPosisi = $faker->randomElements($posisiList, $numPositions);
+            // Buat 2-4 Posisi Magang per INSTANSI dengan kategori rumpun ilmu yang realistis
+            $catMap = \App\Models\MajorCategory::pluck('id', 'code')->toArray();
+            $positionDefinitions = [
+                'Programmer / Web Developer' => [
+                    'category_id' => $catMap['TIK'] ?? null,
+                    'majors' => ['S1 Teknik Informatika / Sistem Informasi', 'Rekayasa Perangkat Lunak (SMK / S1)'],
+                ],
+                'Desain Grafis' => [
+                    'category_id' => $catMap['TIK'] ?? null,
+                    'majors' => ['Desain Komunikasi Visual (SMK / S1)', 'Multimedia & DKV (SMK)'],
+                ],
+                'Staf Administrasi' => [
+                    'category_id' => $catMap['EKBIS'] ?? null,
+                    'majors' => ['S1 Administrasi / Manajemen', 'Otomatisasi & Tata Kelola Perkantoran (SMK)'],
+                ],
+                'Analis Data' => [
+                    'category_id' => $catMap['TIK'] ?? null,
+                    'majors' => ['S1 Sistem Informasi / Informatika', 'Teknologi Informasi (S1)'],
+                ],
+                'Public Relations' => [
+                    'category_id' => $catMap['HUMANIORA'] ?? null,
+                    'majors' => ['Ilmu Komunikasi (S1)', 'Hubungan Masyarakat (PR) (D3 / S1)'],
+                ],
+                'Customer Service' => [
+                    'category_id' => null,
+                    'majors' => ['Semua Jurusan'],
+                ],
+                'Staff Legal & Kebijakan' => [
+                    'category_id' => $catMap['HUKUM_AP'] ?? null,
+                    'majors' => ['S1 Ilmu Hukum'],
+                ],
+            ];
 
-            foreach ($selectedPosisi as $posisiStr) {
-                $jurusanList = [
-                    'S1 Komputer / Informatika',
-                    'S1 Administrasi / Manajemen',
-                    'Semua Jurusan',
-                    'Teknik Komputer Jaringan (SMK)',
-                    'Otomatisasi dan Tata Kelola Perkantoran (SMK)',
-                    'Desain Komunikasi Visual (SMK / S1)',
-                    'SMA/SMK Sederajat'
-                ];
-                $reqMajor = $faker->randomElement($jurusanList);
+            $availableTitles = array_keys($positionDefinitions);
+            $numPositions = rand(2, 4);
+            $selectedTitles = $faker->randomElements($availableTitles, $numPositions);
+
+            foreach ($selectedTitles as $posisiStr) {
+                $def = $positionDefinitions[$posisiStr];
+                $reqMajor = $faker->randomElement($def['majors']);
 
                 $position = InternshipPosition::updateOrCreate(
                     [
@@ -133,6 +157,7 @@ class DatabaseSeeder extends Seeder
                         'judul_posisi' => $posisiStr,
                     ],
                     [
+                        'required_major_category_id' => $def['category_id'],
                         'required_major' => $reqMajor,
                         'deskripsi' => $faker->paragraph,
                         'kuota' => rand(2, 5),
@@ -296,4 +321,4 @@ class DatabaseSeeder extends Seeder
             }
         });
     }
-}
+}
