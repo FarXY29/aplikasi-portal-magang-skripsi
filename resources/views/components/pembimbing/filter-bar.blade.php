@@ -7,14 +7,23 @@
     'statusField' => 'status',
     'statusOptions' => [],
     'statusBadgeLabel' => 'Status',
-    'isFiltered' => false,
+    'isFiltered' => null,
     'app' => null,
     'applications' => [],
     'filterType' => 'semua',
     'selectedDate' => null,
 ])
 
-@php($selectedDate = $selectedDate ?: date('Y-m-d'))
+@php
+    $today = \Carbon\Carbon::today()->toDateString();
+    $selectedDate = $selectedDate ?: $today;
+
+    // Bila pemanggil tidak menentukan $isFiltered, hitung otomatis dari query string
+    // agar logika ini tidak terduplikasi di setiap view.
+    $isFiltered ??= request()->hasAny(['search', $statusField])
+        || (request('filter_type') && request('filter_type') !== 'semua')
+        || (request('date') && request('date') !== $today);
+@endphp
 
 <form action="{{ route($routeName, $app->id) }}" method="GET"
       x-data="{
@@ -124,9 +133,11 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($isFiltered || (isset($applications) && $applications->count() > 1))
                 <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Filter Aktif:</span>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
-                    <i class="fas fa-user-graduate text-[10px]"></i> {{ $app->user->name }}
-                </span>
+                @if($app?->user)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
+                        <i class="fas fa-user-graduate text-[10px]"></i> {{ $app->user->name }}
+                    </span>
+                @endif
 
                 @if(request('search'))
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
@@ -142,9 +153,12 @@
                     </span>
                 @endif
 
-                @if(request($statusField))
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 capitalize">
-                        <i class="fas fa-tag text-[10px]"></i> {{ $statusBadgeLabel }}: {{ request($statusField) }}
+                @php
+                    $activeStatusLabel = collect($statusOptions)->firstWhere('value', request($statusField))['label'] ?? null;
+                @endphp
+                @if($activeStatusLabel)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
+                        <i class="fas fa-tag text-[10px]"></i> {{ $statusBadgeLabel }}: {{ $activeStatusLabel }}
                         <a href="{{ request()->fullUrlWithQuery([$statusField => null]) }}" class="hover:text-rose-500 transition ml-1" title="Hapus filter status"><i class="fas fa-times"></i></a>
                     </span>
                 @endif

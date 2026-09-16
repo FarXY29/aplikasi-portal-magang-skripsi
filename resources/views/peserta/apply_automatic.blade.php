@@ -214,7 +214,7 @@
     </div>
 
     <script>
-    document.addEventListener('turbo:load', function() {
+    function initApplyAutomaticForm() {
         const startInput = document.getElementById('tanggal_mulai');
         const endInput   = document.getElementById('tanggal_selesai');
         const submitBtn  = document.getElementById('submitBtn');
@@ -394,6 +394,13 @@
         if (startInput.value && endInput.value) {
             validateDates();
         }
-    });
+    }
+
+    // Daftarkan listener sekali saja; script inline ini dijalankan ulang
+    // setiap navigasi Turbo, sehingga tanpa guard listener akan menumpuk.
+    if (!window.__pesertaApplyAutomaticWired) {
+        window.__pesertaApplyAutomaticWired = true;
+        document.addEventListener('turbo:load', initApplyAutomaticForm);
+    }
     </script>
 </x-app-layout>

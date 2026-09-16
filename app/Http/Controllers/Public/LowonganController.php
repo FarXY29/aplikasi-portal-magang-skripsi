@@ -17,9 +17,40 @@ class LowonganController extends Controller
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
+        $isPeserta = $user && $user->hasPortalRole('peserta');
+        $userHasMajor = $isPeserta && (!empty($user->major_id) || !empty($user->major));
+        $userMajorLabel = $userHasMajor ? ($user->majorDetail?->name ?? $user->major) : null;
+
+        $filterJurusanScope = 'all';
+        if ($userHasMajor) {
+            $filterJurusanScope = $request->get('filter_jurusan', 'my_major');
+            if (!in_array($filterJurusanScope, ['my_major', 'all'])) {
+                $filterJurusanScope = 'my_major';
+            }
+        }
+
+        // Hitung total posisi yang cocok dengan kualifikasi jurusan peserta
+        $totalMatchingCount = 0;
+        $matchingPositionIds = collect();
+        if ($userHasMajor) {
+            $matchingPositionIds = InternshipPosition::where('status', 'buka')
+                ->where('kuota', '>', 0)
+                ->with(['requiredMajorCategory'])
+                ->get()
+                ->filter(fn($p) => $p->matchesUser($user))
+                ->pluck('id');
+            $totalMatchingCount = $matchingPositionIds->count();
+        }
+
         $query = InternshipPosition::with(['instansi', 'requiredMajorCategory'])
                     ->where('status', 'buka')
                     ->where('kuota', '>', 0); 
+
+        // 0. Terapkan Penyaringan Sesuai Jurusan Saya jika aktif
+        if ($userHasMajor && $filterJurusanScope === 'my_major') {
+            $query->whereIn('id', $matchingPositionIds);
+        }
 
         // 1. Filter Instansi / Dinas
         if ($request->filled('instansi_id')) {
@@ -178,13 +209,15 @@ class LowonganController extends Controller
         if ($request->ajax() || $request->header('X-Alpine-Fetch') || $request->query('partial') === 'grid') {
             return view('public.welcome._lowongan-grid', compact(
                 'lowongans', 'instansis', 'majorCategories',
-                'totalInstansi', 'totalLowongan', 'totalAlumni'
+                'totalInstansi', 'totalLowongan', 'totalAlumni',
+                'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount'
             ));
         }
 
         return view('public.welcome', compact(
             'lowongans', 'instansis', 'majorCategories',
-            'totalInstansi', 'totalLowongan', 'totalAlumni'
+            'totalInstansi', 'totalLowongan', 'totalAlumni',
+            'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount'
         )); 
     }
 

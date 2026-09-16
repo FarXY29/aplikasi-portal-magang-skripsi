@@ -180,8 +180,12 @@
                                     <i class="fas fa-arrow-right text-xs"></i>
                                 </a>
                             @else
-                                <button disabled class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-6 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
-                                    <i class="fas fa-lock text-xs mr-1"></i> Syarat Tidak Sesuai
+                                @php
+                                    $reqLabel = $position->requiredMajorCategory?->name ?? $position->required_major;
+                                @endphp
+                                <button disabled title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}" class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fas fa-lock text-xs"></i>
+                                    <span>Syarat Tidak Sesuai (Khusus: {{ Str::limit($reqLabel, 24) }})</span>
                                 </button>
                             @endif
                         @else
@@ -228,8 +232,12 @@
                                     <i class="fas fa-arrow-right text-xs"></i>
                                 </a>
                             @else
-                                <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
-                                    Syarat Tidak Sesuai
+                                @php
+                                    $reqLabel = $position->requiredMajorCategory?->name ?? $position->required_major;
+                                @endphp
+                                <button disabled title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-lock text-xs"></i>
+                                    <span class="truncate">Syarat Tidak Sesuai ({{ Str::limit($reqLabel, 20) }})</span>
                                 </button>
                             @endif
                         @else

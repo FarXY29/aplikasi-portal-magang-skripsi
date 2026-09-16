@@ -60,102 +60,126 @@ class InternshipPosition extends Model
         $reqMajorLower = strtolower($reqMajorText);
         $reqCategoryId = $this->required_major_category_id;
 
-        // 1. Jika lowongan terbuka untuk semua jurusan / umum
-        if (
-            empty($reqCategoryId) &&
-            (empty($reqMajorText) || $reqMajorText === '-' || str_contains($reqMajorLower, 'semua'))
-        ) {
+        // 1. Jika lowongan terbuka untuk semua jurusan / umum (tanpa kategori spesifik)
+        $isGeneralMajor = (empty($reqMajorText) || $reqMajorText === '-' || str_contains($reqMajorLower, 'semua jurusan') || str_contains($reqMajorLower, 'semua'));
+        if (empty($reqCategoryId) && $isGeneralMajor) {
             return true;
         }
 
-        // 2. Ambil data jurusan & rumpun dari User
+        // 2. Ambil data jurusan, jenjang & rumpun dari User
         $userMajorDetail = $user->majorDetail;
         $userMajorName = trim((string) ($userMajorDetail?->name ?? ''));
         $userMajorRaw = trim((string) ($user->major ?? ''));
         $userMajorCombined = trim($userMajorName . ' ' . $userMajorRaw);
         $userMajorLower = strtolower($userMajorCombined);
         
-        $userCategoryId = $userMajorDetail?->major_category_id;
-        $userCategoryName = strtolower(trim((string) ($userMajorDetail?->category?->name ?? '')));
-        $userCategoryCode = strtolower(trim((string) ($userMajorDetail?->category?->code ?? '')));
-
-        // 3. Jika lowongan memiliki required_major_category_id spesifik
-        if ($reqCategoryId) {
-            // Jika user memiliki major_id dengan category_id yang sama
-            if ($userCategoryId && (int) $userCategoryId === (int) $reqCategoryId) {
-                return true;
-            }
-            
-            // Cek jika kode/nama kategori lowongan cocok dengan teks kategori user
-            $posCat = $this->requiredMajorCategory;
-            $posCatName = strtolower((string) ($posCat?->name ?? ''));
-            $posCatCode = strtolower((string) ($posCat?->code ?? ''));
-
-            if (!empty($posCatCode) && !empty($userCategoryCode) && $posCatCode === $userCategoryCode) {
-                return true;
-            }
-            if (!empty($posCatName) && !empty($userMajorLower)) {
-                if (str_contains($userMajorLower, $posCatName) || str_contains($posCatName, $userMajorLower)) {
-                    return true;
-                }
+        $userDegreeLevel = strtoupper(trim((string) ($userMajorDetail?->degree_level ?? '')));
+        if (empty($userDegreeLevel) && !empty($userMajorRaw)) {
+            if (preg_match('/\[?(S1|D3|D4|SMK|SMA|S2)\]?/i', $userMajorRaw, $matches)) {
+                $userDegreeLevel = strtoupper($matches[1]);
             }
         }
 
-        // Jika teks lowongan adalah "Semua Jurusan"
-        if (empty($reqMajorText) || $reqMajorText === '-' || str_contains($reqMajorLower, 'semua')) {
+        $userCategoryId = $userMajorDetail?->major_category_id;
+
+        // 3. Validasi Jenjang Pendidikan (Degree Level Check)
+        // Posisi khusus SMK saja (tidak membuka S1/D3/Sederajat)
+        $isReqSmkOnly = (preg_match('/\b(smk|sma)\b/i', $reqMajorLower) && !preg_match('/\b(s1|d3|d4|sederajat|semua)\b/i', $reqMajorLower));
+        // Posisi khusus perguruan tinggi saja (tidak membuka SMK/SMA/Sederajat)
+        $isReqHigherEdOnly = (preg_match('/\b(s1|d3|d4|s2)\b/i', $reqMajorLower) && !preg_match('/\b(smk|sma|sederajat|semua)\b/i', $reqMajorLower));
+
+        $isUserHigherEd = in_array($userDegreeLevel, ['S1', 'D3', 'D4', 'S2']);
+        $isUserSmk = in_array($userDegreeLevel, ['SMK', 'SMA']);
+
+        if ($isReqSmkOnly && $isUserHigherEd) {
+            return false;
+        }
+        if ($isReqHigherEdOnly && $isUserSmk) {
+            return false;
+        }
+
+        // Jika lowongan adalah "Semua Jurusan" (dan lolos syarat jenjang di atas jika ada)
+        if ($isGeneralMajor && empty($reqCategoryId)) {
             return true;
+        }
+
+        // 4. Jika lowongan memiliki required_major_category_id spesifik (Primary Boundary)
+        if ($reqCategoryId) {
+            // Pelamar wajib memiliki major_id dengan kategori rumpun yang sama
+            if (!$userCategoryId || (int) $userCategoryId !== (int) $reqCategoryId) {
+                return false;
+            }
+
+            // Jika lowongan terbuka umum untuk seluruh jurusan di rumpun tersebut
+            if ($isGeneralMajor) {
+                return true;
+            }
+
+            $reqCatName = strtolower(trim((string) ($this->requiredMajorCategory?->name ?? '')));
+            if (!empty($reqCatName) && $reqMajorLower === $reqCatName) {
+                return true;
+            }
         }
 
         if (empty($userMajorLower)) {
             return false;
         }
 
-        // 4. Direct Substring Check (dua arah)
-        if (str_contains($reqMajorLower, $userMajorLower) || str_contains($userMajorLower, $reqMajorLower)) {
-            return true;
-        }
-        if (!empty($userMajorName) && (str_contains($reqMajorLower, strtolower($userMajorName)) || str_contains(strtolower($userMajorName), $reqMajorLower))) {
-            return true;
-        }
-        if (!empty($userMajorRaw) && (str_contains($reqMajorLower, strtolower($userMajorRaw)) || str_contains(strtolower($userMajorRaw), $reqMajorLower))) {
-            return true;
-        }
-
-        // 5. Normalisasi & Token Keyword Matching
-        $stopWords = ['dan', 'atau', 'jurusan', 'program', 'studi', 'prodi', 'fakultas', 'bidang', 'keahlian', 'semua', 'khusus', 'sederajat', 'min', 'minimal', 'jenjang'];
+        // 5. Normalisasi & Token Keyword Matching (Hanya dari nama jurusan spesifik peserta)
+        $stopWords = [
+            'dan', 'atau', 'jurusan', 'program', 'studi', 'prodi', 'fakultas', 'bidang', 'keahlian', 
+            'semua', 'khusus', 'sederajat', 'min', 'minimal', 'jenjang', 'diutamakan', 'terbuka', 'untuk',
+            'ilmu', 'teknologi', 'rekayasa', 'sains', 'pendidikan', 'pengembangan', 'tingkat', 'ahli'
+        ];
         
         $cleanReq = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $reqMajorLower);
+        $cleanReq = preg_replace('/\b(smk|sma|s1|d3|d4|s2)\b/i', ' ', $cleanReq);
+
         $cleanUser = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $userMajorLower);
-        $cleanUserCat = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $userCategoryName);
+        $cleanUser = preg_replace('/\b(smk|sma|s1|d3|d4|s2)\b/i', ' ', $cleanUser);
 
         $reqTokens = array_values(array_filter(explode(' ', $cleanReq), fn($t) => strlen($t) >= 3 && !in_array($t, $stopWords)));
         $userTokens = array_values(array_filter(explode(' ', $cleanUser), fn($t) => strlen($t) >= 3 && !in_array($t, $stopWords)));
-        $userCatTokens = array_values(array_filter(explode(' ', $cleanUserCat), fn($t) => strlen($t) >= 3 && !in_array($t, $stopWords)));
 
-        $allUserTokens = array_unique(array_merge($userTokens, $userCatTokens));
+        // Jika tidak ada token spesifik lagi pada syarat lowongan
+        if (empty($reqTokens)) {
+            return true;
+        }
 
-        // Cek irisan kata langsung (misal: "informatika", "komputer", "akuntansi", "manajemen", "hukum", "desain")
-        $intersect = array_intersect($reqTokens, $allUserTokens);
+        if (empty($userTokens)) {
+            return false;
+        }
+
+        // Direct Substring Check pada nama jurusan spesifik peserta
+        if (!empty($userMajorName)) {
+            $cleanUserMajorName = strtolower(trim($userMajorName));
+            if (str_contains($reqMajorLower, $cleanUserMajorName) || str_contains($cleanUserMajorName, $reqMajorLower)) {
+                return true;
+            }
+        }
+
+        // Cek irisan kata langsung (misal: "informatika", "komputer", "akuntansi", "hukum")
+        $intersect = array_intersect($reqTokens, $userTokens);
         if (!empty($intersect)) {
             return true;
         }
 
-        // 6. Synonym & Keilmuan Cluster Map
+        // 6. Synonym & Keilmuan Cluster Map yang Bersih (tanpa kata generik)
         $clusters = [
-            'ti' => ['informatika', 'komputer', 'it', 'rpl', 'tkj', 'perangkat', 'lunak', 'software', 'programming', 'programmer', 'sistem', 'informasi', 'ilmu', 'jaringan', 'cyber', 'multimedia', 'teknologi', 'database'],
-            'ekbis' => ['akuntansi', 'keuangan', 'akt', 'finance', 'perbankan', 'pajak', 'perpajakan', 'manajemen', 'bisnis', 'ekonomi', 'pemasaran', 'marketing', 'administrasi'],
-            'adm' => ['administrasi', 'adm', 'perkantoran', 'sekretaris', 'tata', 'kelola', 'kearsipan', 'arsip', 'pemerintahan', 'publik', 'kebijakan'],
+            'ti' => ['informatika', 'komputer', 'it', 'rpl', 'tkj', 'perangkat', 'lunak', 'software', 'programming', 'programmer', 'jaringan', 'cyber', 'multimedia', 'database'],
+            'ekbis' => ['akuntansi', 'keuangan', 'akt', 'finance', 'perbankan', 'pajak', 'perpajakan', 'manajemen', 'bisnis', 'ekonomi', 'pemasaran', 'marketing'],
+            'adm' => ['administrasi', 'adm', 'perkantoran', 'sekretaris', 'kearsipan', 'arsip', 'pemerintahan'],
             'hukum' => ['hukum', 'syariah', 'perdata', 'pidana', 'tatanegara', 'notariat', 'advokat', 'legal'],
-            'desain' => ['desain', 'dkv', 'grafis', 'multimedia', 'animasi', 'visual', 'komunikasi', 'seni', 'kreatif'],
+            'desain' => ['desain', 'dkv', 'grafis', 'multimedia', 'animasi', 'visual', 'seni', 'kreatif'],
             'kesehatan' => ['kesehatan', 'medis', 'keperawatan', 'perawat', 'kebidanan', 'bidan', 'farmasi', 'apoteker', 'epidemiologi', 'kesmas', 'gizi'],
             'teknik' => ['sipil', 'arsitektur', 'konstruksi', 'bangunan', 'elektro', 'mesin', 'industri', 'lingkungan', 'planologi', 'tata kota'],
-            'pendidikan' => ['pendidikan', 'keguruan', 'guru', 'pgsd', 'bimbingan', 'konseling', 'kurikulum', 'pengajaran'],
-            'sosial' => ['sosial', 'sosiologi', 'komunikasi', 'humas', 'hubungan', 'masyarakat', 'jurnalistik', 'politik'],
+            'guru' => ['keguruan', 'guru', 'pgsd', 'kurikulum', 'pengajaran'],
+            'sosial' => ['sosiologi', 'komunikasi', 'humas', 'jurnalistik', 'politik'],
         ];
 
         foreach ($clusters as $cluster) {
             $reqHasCluster = !empty(array_intersect($reqTokens, $cluster));
-            $userHasCluster = !empty(array_intersect($allUserTokens, $cluster));
+            $userHasCluster = !empty(array_intersect($userTokens, $cluster));
             if ($reqHasCluster && $userHasCluster) {
                 return true;
             }

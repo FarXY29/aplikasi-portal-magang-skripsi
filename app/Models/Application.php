@@ -165,6 +165,26 @@ class Application extends Model
     }
 
     /**
+     * Label ramah pengguna untuk status (fallback ke ucfirst bila bukan enum).
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status instanceof ApplicationStatus
+            ? $this->status->label()
+            : ucfirst((string) $this->status);
+    }
+
+    /**
+     * Kelas Tailwind badge status (fallback netral bila bukan enum).
+     */
+    public function getStatusBadgeClassAttribute(): string
+    {
+        return $this->status instanceof ApplicationStatus
+            ? $this->status->badgeClass()
+            : 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700';
+    }
+
+    /**
      * Predikat (grade label) untuk rata-rata nilai akhir magang.
      * Satu-satunya sumber kebenaran untuk band predikat — dipakai oleh
      * PembimbingLapanganController (simpanNilai) dan view penilaian (JS).

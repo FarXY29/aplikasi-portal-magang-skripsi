@@ -65,7 +65,7 @@
                       <span>Ditemukan <strong>{{ $lowongans->total() }}</strong> Posisi</span>
                   </div>
 
-                  @if(request()->anyFilled(['posisi', 'instansi_id', 'jurusan', 'major_category_id', 'search', 'sort']))
+                  @if(request()->anyFilled(['posisi', 'instansi_id', 'jurusan', 'major_category_id', 'search', 'sort']) || (request('filter_jurusan') === 'all' && ($userHasMajor ?? false)))
                       <a href="{{ route('home') }}#lowongan" class="group flex items-center bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 px-4 py-2.5 rounded-2xl text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition duration-300 shadow-2xs">
                           <i class="fas fa-undo-alt mr-1.5 group-hover:-rotate-180 transition-transform duration-500 text-xs"></i> Reset
                       </a>
@@ -73,13 +73,75 @@
               </div>
           </div>
 
+          @if(($isPeserta ?? false) && ($userHasMajor ?? false))
+              <!-- Smart Qualification Filter Banner -->
+              <div class="reveal mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 dark:to-transparent border border-teal-200/80 dark:border-teal-800/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs" style="--reveal-delay: 25ms" x-intersect.once="$el.classList.add('revealed')">
+                  <div class="flex items-start sm:items-center gap-3.5">
+                      <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 sm:mt-0">
+                          <i class="fas fa-user-graduate text-base"></i>
+                      </div>
+                      <div>
+                          <div class="flex flex-wrap items-center gap-2">
+                              <span class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">Kualifikasi Jurusan Anda</span>
+                              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-200 text-xs font-extrabold border border-teal-200/80 dark:border-teal-700/60">
+                                  <i class="fas fa-check-circle text-[11px] text-teal-600 dark:text-teal-400"></i>
+                                  {{ $userMajorLabel }}
+                              </span>
+                          </div>
+                          <p class="text-slate-600 dark:text-slate-300 text-xs mt-1 font-medium leading-relaxed">
+                              @if(($filterJurusanScope ?? '') === 'my_major')
+                                  Menampilkan lowongan yang sesuai kualifikasi jurusan Anda (<strong>{{ $totalMatchingCount }}</strong> posisi ditemukan).
+                              @else
+                                  Menampilkan seluruh lowongan yang tersedia lintas jurusan dan kualifikasi.
+                              @endif
+                          </p>
+                      </div>
+                  </div>
+
+                  <!-- Segmented Switch / Toggle Pills -->
+                  <div class="flex items-center p-1 bg-white/90 dark:bg-gray-800/90 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-2xs shrink-0 self-start md:self-center">
+                      <button type="button"
+                              @click="setFilterJurusan('my_major')"
+                              class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($filterJurusanScope ?? '') === 'my_major' ? 'bg-teal-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' }}">
+                          <i class="fas fa-bullseye text-[11px]"></i>
+                          <span>Sesuai Jurusan ({{ $totalMatchingCount }})</span>
+                      </button>
+                      <button type="button"
+                              @click="setFilterJurusan('all')"
+                              class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ ($filterJurusanScope ?? '') === 'all' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white' }}">
+                          <i class="fas fa-globe text-[11px]"></i>
+                          <span>Semua Lowongan</span>
+                      </button>
+                  </div>
+              </div>
+          @elseif(($isPeserta ?? false) && !($userHasMajor ?? false))
+              <!-- Incomplete Profile Notice Banner -->
+              <div class="reveal mb-6 p-4 sm:p-5 rounded-2xl bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs" style="--reveal-delay: 25ms" x-intersect.once="$el.classList.add('revealed')">
+                  <div class="flex items-start sm:items-center gap-3.5">
+                      <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5 sm:mt-0">
+                          <i class="fas fa-triangle-exclamation text-base"></i>
+                      </div>
+                      <div>
+                          <h4 class="text-xs sm:text-sm font-black text-amber-900 dark:text-amber-200 uppercase tracking-wider">Lengkapi Program Studi Anda</h4>
+                          <p class="text-amber-800/80 dark:text-amber-300/80 text-xs mt-0.5 font-medium leading-relaxed">
+                              Anda belum memilih Jurusan / Program Studi di profil. Lengkapi profil agar katalog lowongan magang otomatis disaring sesuai bidang Anda.
+                          </p>
+                      </div>
+                  </div>
+                  <a href="{{ route('profile.edit') }}" class="shrink-0 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-xs">
+                      <span>Lengkapi Profil</span>
+                      <i class="fas fa-arrow-right text-[11px]"></i>
+                  </a>
+              </div>
+          @endif
+
           <!-- Active Filter Chips Bar (Touch-Swipeable on Mobile) -->
           @php
               $activeInstansi = request('instansi_id') ? $instansis->firstWhere('id', request('instansi_id')) : null;
               $activeCategory = request('major_category_id') && isset($majorCategories) ? $majorCategories->firstWhere('id', request('major_category_id')) : null;
           @endphp
 
-          @if(request()->anyFilled(['search', 'instansi_id', 'major_category_id', 'jurusan', 'sort']))
+          @if(request()->anyFilled(['search', 'instansi_id', 'major_category_id', 'jurusan', 'sort']) || (request('filter_jurusan') === 'all' && ($userHasMajor ?? false)))
               <div class="reveal mb-5 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-gray-800/60 border border-slate-200/70 dark:border-gray-700/60 flex items-center gap-2 text-xs overflow-x-auto no-scrollbar scroll-smooth flex-nowrap w-full -mx-4 px-4 sm:mx-0 sm:px-4" style="--reveal-delay: 50ms" x-intersect.once="$el.classList.add('revealed')">
                   <span class="font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider text-[10px] flex items-center gap-1.5 shrink-0 mr-1">
                       <i class="fas fa-filter text-teal-600 dark:text-teal-400"></i> Filter Aktif:
@@ -136,6 +198,17 @@
                       <a href="{{ route('home', $querySort) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
                           <i class="fas fa-arrow-down-short-wide text-teal-600 dark:text-teal-400 text-xs"></i>
                           <span>Urut: {{ $sortLabel }}</span>
+                          <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
+                      </a>
+                  @endif
+
+                  @if(request('filter_jurusan') === 'all' && ($userHasMajor ?? false))
+                      @php
+                          $queryNoFilterJurusan = request()->except('filter_jurusan');
+                      @endphp
+                      <a href="{{ route('home', $queryNoFilterJurusan) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-teal-400 hover:text-teal-600 transition shadow-2xs group">
+                          <i class="fas fa-globe text-teal-600 dark:text-teal-400 text-xs"></i>
+                          <span>Mode: Semua Lowongan</span>
                           <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
                       </a>
                   @endif
@@ -204,6 +277,9 @@
               <form action="{{ route('home') }}#lowongan" method="GET" id="filter-form" @submit.prevent="applyFilter()" class="w-full">
                   @if(request('search'))
                       <input type="hidden" name="search" value="{{ request('search') }}" x-model="filterState.search">
+                  @endif
+                  @if(request('filter_jurusan'))
+                      <input type="hidden" name="filter_jurusan" value="{{ request('filter_jurusan') }}" x-model="filterState.filter_jurusan">
                   @endif
 
                   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-5 items-end w-full">
@@ -331,6 +407,31 @@
 
                       <!-- Bottom Sheet Body Form -->
                       <div class="p-6 overflow-y-auto space-y-4 flex-grow overscroll-contain">
+                          @if(($isPeserta ?? false) && ($userHasMajor ?? false))
+                              <!-- Filter Sesuai Jurusan Toggle Mobile -->
+                              <div>
+                                  <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                      🎯 Cakupan Rekomendasi
+                                  </label>
+                                  <div class="grid grid-cols-2 gap-2">
+                                      <button type="button" 
+                                              @click="tempFilter.filter_jurusan = 'my_major'" 
+                                              class="py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5"
+                                              :class="tempFilter.filter_jurusan === 'my_major' ? 'bg-teal-600 text-white border-teal-600 shadow-xs' : 'bg-slate-50 dark:bg-gray-800 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-gray-700'">
+                                          <i class="fas fa-bullseye text-[11px]"></i>
+                                          <span>Sesuai Jurusan</span>
+                                      </button>
+                                      <button type="button" 
+                                              @click="tempFilter.filter_jurusan = 'all'" 
+                                              class="py-2.5 px-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5"
+                                              :class="tempFilter.filter_jurusan === 'all' ? 'bg-slate-800 text-white border-slate-800 dark:bg-slate-700 dark:border-slate-700 shadow-xs' : 'bg-slate-50 dark:bg-gray-800 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-gray-700'">
+                                          <i class="fas fa-globe text-[11px]"></i>
+                                          <span>Semua Posisi</span>
+                                      </button>
+                                  </div>
+                              </div>
+                          @endif
+
                           <!-- Select Instansi -->
                           <div>
                               <label class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
@@ -557,9 +658,18 @@
                                                   <i class="fas fa-arrow-right text-xs"></i>
                                               </a>
                                           @else
-                                              <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-3.5 px-4 rounded-2xl font-bold cursor-not-allowed text-xs flex items-center justify-center gap-2 uppercase tracking-wider">
-                                                  <i class="fas fa-lock text-xs"></i> Syarat Jurusan Tidak Sesuai
-                                              </button>
+                                              @php
+                                                  $reqLabel = $loker->requiredMajorCategory?->name ?? $loker->required_major;
+                                              @endphp
+                                              <div class="w-full" title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}">
+                                                  <button disabled class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-3 px-3 rounded-2xl font-bold cursor-not-allowed text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
+                                                      <i class="fas fa-lock text-xs"></i>
+                                                      <span>Syarat Tidak Sesuai</span>
+                                                  </button>
+                                                  <p class="text-[10px] text-center text-slate-400 dark:text-gray-500 mt-1 truncate px-1 font-medium">
+                                                      Khusus: {{ Str::limit($reqLabel, 26) }}
+                                                  </p>
+                                              </div>
                                           @endif
                                       @elseif(auth()->user()->hasPortalRole(['admin_kota', 'admin_instansi']))
                                           <button disabled class="w-full text-center text-xs font-bold text-gray-500 dark:text-gray-400 py-3.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl uppercase tracking-wider">Pratinjau Admin</button>
@@ -791,10 +901,14 @@
                                                                   <i class="fas fa-arrow-right text-xs"></i>
                                                               </a>
                                                           @else
-                                                              <button disabled class="flex-1 sm:flex-none bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-4 sm:px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider">
-                                                                  <i class="fas fa-lock text-xs mr-1"></i> Syarat Tidak Sesuai
-                                                              </button>
-                                                          @endif
+                                                               @php
+                                                                   $reqLabel = $loker->requiredMajorCategory?->name ?? $loker->required_major;
+                                                               @endphp
+                                                               <button disabled title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}" class="flex-1 sm:flex-none bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-4 sm:px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+                                                                   <i class="fas fa-lock text-xs"></i>
+                                                                   <span>Syarat Tidak Sesuai (Khusus: {{ Str::limit($reqLabel, 22) }})</span>
+                                                               </button>
+                                                           @endif
                                                       @elseif(auth()->user()->hasPortalRole(['admin_kota', 'admin_instansi']))
                                                           <button disabled class="px-4 sm:px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-xs uppercase tracking-wider">Pratinjau Admin</button>
                                                       @endif
@@ -821,9 +935,19 @@
                       <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-gray-100">Lowongan Belum Ditemukan</h3>
                       <p class="text-slate-500 dark:text-gray-400 mt-2 max-w-md mx-auto text-xs sm:text-sm font-medium leading-relaxed">
                           Tidak ada posisi magang aktif yang sesuai dengan kombinasi filter atau kata kunci saat ini. Anda dapat mereset filter atau mencoba opsi alokasi cerdas.
+                          @if(($isPeserta ?? false) && ($userHasMajor ?? false) && ($filterJurusanScope ?? '') === 'my_major')
+                              Belum ada posisi magang aktif yang membuka kualifikasi khusus untuk jurusan <strong>{{ $userMajorLabel }}</strong>. Anda dapat melihat semua lowongan yang tersedia atau mencoba penempatan otomatis.
+                          @else
+                              Tidak ada posisi magang aktif yang sesuai dengan kombinasi filter atau kata kunci saat ini. Anda dapat mereset filter atau mencoba opsi alokasi cerdas.
+                          @endif
                       </p>
                       
                       <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+                          @if(($isPeserta ?? false) && ($userHasMajor ?? false) && ($filterJurusanScope ?? '') === 'my_major')
+                              <button type="button" @click="setFilterJurusan('all')" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md uppercase tracking-wider active:scale-95">
+                                  <i class="fas fa-globe text-xs"></i> Lihat Semua Lowongan
+                              </button>
+                          @endif
                           <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 bg-slate-900 dark:bg-teal-600 hover:bg-teal-600 dark:hover:bg-teal-500 text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md uppercase tracking-wider">
                               <i class="fas fa-undo text-xs"></i> Reset Semua Filter
                           </a>
@@ -851,13 +975,15 @@
                           instansi_id: '{{ request('instansi_id') }}',
                           major_category_id: '{{ request('major_category_id') }}',
                           jurusan: '{{ request('jurusan') }}',
-                          sort: '{{ request('sort', 'latest') }}'
+                          sort: '{{ request('sort', 'latest') }}',
+                          filter_jurusan: '{{ request('filter_jurusan', $filterJurusanScope ?? '') }}'
                       },
                       tempFilter: {
                           instansi_id: '{{ request('instansi_id') }}',
                           major_category_id: '{{ request('major_category_id') }}',
                           jurusan: '{{ request('jurusan') }}',
-                          sort: '{{ request('sort', 'latest') }}'
+                          sort: '{{ request('sort', 'latest') }}',
+                          filter_jurusan: '{{ request('filter_jurusan', $filterJurusanScope ?? '') }}'
                       },
                       initGrid() {
                           this.setupPaginationLinks();
@@ -875,6 +1001,7 @@
                           this.tempFilter.major_category_id = this.filterState.major_category_id;
                           this.tempFilter.jurusan = this.filterState.jurusan;
                           this.tempFilter.sort = this.filterState.sort || 'latest';
+                          this.tempFilter.filter_jurusan = this.filterState.filter_jurusan;
                           this.mobileFilterOpen = true;
                           document.body.classList.add('overflow-hidden');
                       },
@@ -887,6 +1014,7 @@
                           this.filterState.major_category_id = this.tempFilter.major_category_id;
                           this.filterState.jurusan = this.tempFilter.jurusan;
                           this.filterState.sort = this.tempFilter.sort;
+                          this.filterState.filter_jurusan = this.tempFilter.filter_jurusan;
                           this.closeMobileFilter();
                           this.applyFilter();
                       },
@@ -895,10 +1023,15 @@
                           this.tempFilter.major_category_id = '';
                           this.tempFilter.jurusan = '';
                           this.tempFilter.sort = 'latest';
+                          this.tempFilter.filter_jurusan = '{{ ($userHasMajor ?? false) ? 'my_major' : 'all' }}';
                           this.applyMobileFilter();
                       },
                       setQuickJurusan(jurusan) {
                           this.filterState.jurusan = jurusan;
+                          this.applyFilter();
+                      },
+                      setFilterJurusan(scope) {
+                          this.filterState.filter_jurusan = scope;
                           this.applyFilter();
                       },
                       applyFilter() {
@@ -908,6 +1041,7 @@
                           if (this.filterState.major_category_id) params.append('major_category_id', this.filterState.major_category_id);
                           if (this.filterState.jurusan) params.append('jurusan', this.filterState.jurusan);
                           if (this.filterState.sort && this.filterState.sort !== 'latest') params.append('sort', this.filterState.sort);
+                          if (this.filterState.filter_jurusan) params.append('filter_jurusan', this.filterState.filter_jurusan);
 
                           const targetUrl = '{{ route('home') }}' + (params.toString() ? '?' + params.toString() : '') + '#lowongan';
                           
