@@ -70,6 +70,9 @@ export default defineConfig(({ mode }) => {
                 input: [
                     'resources/css/app.css',
                     'resources/js/app.js',
+                    'resources/js/peserta/apply-form.js',
+                    'resources/js/peserta/dashboard.js',
+                    'resources/js/peserta/logbook.js',
                 ],
                 refresh: true,
             }),

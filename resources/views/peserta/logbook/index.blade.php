@@ -55,102 +55,7 @@
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
                 
                 {{-- Left Column: Form Tulis Jurnal Baru --}}
-                <div class="xl:col-span-4">
-                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-8">
-                        @if($activeApp->status === 'selesai' || $activeApp->status_value === 'selesai')
-                            <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40">
-                                <h3 class="font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-2 text-base">
-                                    <i class="fas fa-lock text-amber-600 dark:text-amber-400"></i> Logbook Dikunci
-                                </h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Masa magang Anda telah selesai.</p>
-                            </div>
-                            
-                            <div class="p-6 space-y-5">
-                                <div class="p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 rounded-2xl text-xs text-amber-800 dark:text-amber-200 flex items-start gap-3">
-                                    <i class="fas fa-info-circle text-amber-600 dark:text-amber-400 text-lg shrink-0 mt-0.5"></i>
-                                    <div>
-                                        <p class="font-bold">Masa Magang Telah Selesai</p>
-                                        <p class="mt-1 text-amber-700 dark:text-amber-300 leading-relaxed">Anda tidak dapat lagi menulis jurnal baru atau menyimpan laporan karena status magang Anda sudah selesai.</p>
-                                    </div>
-                                </div>
-
-                                <a href="{{ route('peserta.logbook.print', $activeApp->id) }}" target="_blank" 
-                                    class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3.5 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                                    <i class="fas fa-file-pdf text-sm"></i> Download Rekap Logbook (PDF)
-                                </a>
-                            </div>
-                        @else
-                            <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-950/40 dark:to-emerald-950/40">
-                                <h3 class="font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-2 text-base">
-                                    <i class="fas fa-pen-nib text-teal-600 dark:text-teal-400"></i> Tulis Jurnal Baru
-                                </h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Catat aktivitas magang Anda hari ini.</p>
-                            </div>
-                            
-                            <div class="p-6">
-                                <form action="{{ route('peserta.logbook.store') }}" method="POST" enctype="multipart/form-data" id="logbookForm">
-                                    @csrf
-                                    <input type="hidden" name="latitude" id="lat">
-                                    <input type="hidden" name="longitude" id="lng">
-
-                                    <div class="mb-5">
-                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
-                                        <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm shadow-xs transition hover:shadow-md resize-none font-medium" placeholder="Apa saja kegiatan yang Anda kerjakan hari ini?" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')"></textarea>
-                                        <x-input-error :messages="$errors->get('kegiatan')" class="mt-2" />
-                                    </div>
-
-                                    <div class="mb-5">
-                                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Dokumentasi (Foto)</label>
-                                        <div class="relative w-full h-40 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:bg-teal-50 dark:hover:bg-teal-950/20 hover:border-teal-400 dark:hover:border-teal-500 transition-all group overflow-hidden flex flex-col items-center justify-center cursor-pointer">
-                                            <!-- Image Preview Container -->
-                                            <div id="image-preview" class="absolute inset-0 z-10 hidden bg-black">
-                                                <img id="preview-img" src="" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
-                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span class="text-white text-xs font-bold bg-black/60 px-3 py-1 rounded-full"><i class="fas fa-camera mr-1"></i> Ganti Foto</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Default Empty State -->
-                                            <div id="empty-state" class="flex flex-col items-center justify-center z-0">
-                                                <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-2xl shadow-xs flex items-center justify-center mb-2 border border-gray-200 dark:border-gray-700 group-hover:scale-110 transition-transform">
-                                                    <i class="fas fa-cloud-upload-alt text-teal-600 dark:text-teal-400 text-xl"></i>
-                                                </div>
-                                                <p class="text-xs font-bold text-gray-600 dark:text-gray-300">Klik untuk upload foto</p>
-                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">PNG, JPG, JPEG maks 5MB</p>
-                                            </div>
-                                            
-                                            <input id="foto" name="foto" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" accept="image/*" onchange="previewImage(this)" />
-                                        </div>
-                                        <button type="button" id="remove-btn" onclick="removeImage()" class="hidden mt-2 text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold items-center gap-1">
-                                            <i class="fas fa-trash"></i> Hapus Foto
-                                        </button>
-                                        <x-input-error :messages="$errors->get('foto')" class="mt-2" />
-                                    </div>
-
-                                    <div class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
-                                        <div class="absolute top-0 right-0 -mt-2 -mr-2 text-gray-200 dark:text-gray-800 opacity-40">
-                                            <i class="fas fa-map-marked-alt text-6xl"></i>
-                                        </div>
-                                        <p class="text-[10px] font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 relative z-10">Verifikasi Lokasi GPS</p>
-                                        <div id="loc-status" class="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 relative z-10">
-                                            <i class="fas fa-circle-notch fa-spin"></i> Mendapatkan koordinat...
-                                        </div>
-                                        <div id="coords-display" class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 hidden font-mono relative z-10 bg-white dark:bg-gray-800 inline-block px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700">
-                                            Lat: <span id="show-lat"></span>, Lng: <span id="show-lng"></span>
-                                        </div>
-                                        <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
-                                        <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
-                                    </div>
-
-                                    <button type="submit" id="btn-submit" disabled 
-                                        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3.5 rounded-2xl font-bold shadow-md transition active:scale-95 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                                        <i class="fas fa-paper-plane"></i> Simpan Laporan
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                @include('peserta.logbook._form-card')
 
                 {{-- Right Column: Timeline & Cards --}}
                 <div class="xl:col-span-8">
@@ -158,7 +63,7 @@
                         
                         <!-- Header & Filters -->
                         <div class="p-6 flex flex-col justify-between gap-4 sticky top-0 z-10 glass-effect">
-                            <form method="GET" action="{{ route('peserta.logbook.index') }}">
+                            <form method="GET" action="{{ route('peserta.logbook.index') }}" x-ref="filterForm">
                                 <input type="hidden" name="status" x-model="filter">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
@@ -168,16 +73,16 @@
                                 
                                     <!-- Status Filters -->
                                 <div class="flex flex-wrap gap-2">
-                                    <button type="button" @click="filter = 'semua'; $nextTick(() => $el.form.submit())" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
+                                    <button type="button" @click="filter = 'semua'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'semua'" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
                                         Semua <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->total() }}</span>
                                     </button>
-                                    <button type="button" @click="filter = 'pending'; $nextTick(() => $el.form.submit())" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'pending'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'pending'" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Pending
                                     </button>
-                                    <button type="button" @click="filter = 'disetujui'; $nextTick(() => $el.form.submit())" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'disetujui'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'disetujui'" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Disetujui
                                     </button>
-                                    <button type="button" @click="filter = 'revisi'; $nextTick(() => $el.form.submit())" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+                                    <button type="button" @click="filter = 'revisi'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'revisi'" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
                                         Revisi
                                     </button>
                                 </div>
@@ -188,12 +93,12 @@
                             <div class="flex flex-wrap gap-3 items-end bg-gray-50 dark:bg-gray-900 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 mt-2">
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-alt mr-1"></i> Spesifik Tanggal</label>
-                                    <input type="date" name="date" x-model="filterTanggal" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                    <input type="date" name="date" x-model="filterTanggal" @change="$refs.filterForm.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
                                 </div>
                                 <div class="hidden sm:block text-gray-300 dark:text-gray-700 font-light mb-2">|</div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"><i class="far fa-calendar-check mr-1"></i> Filter Bulan</label>
-                                    <input type="month" name="month" x-model="filterBulan" @change="$el.form.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
+                                    <input type="month" name="month" x-model="filterBulan" @change="$refs.filterForm.submit()" class="text-xs font-bold text-gray-800 dark:text-gray-100 rounded-xl border-gray-300 dark:border-gray-700 shadow-xs focus:ring-teal-500 focus:border-teal-500 py-2 px-3 bg-white dark:bg-gray-800 w-full sm:w-auto cursor-pointer [color-scheme:dark]">
                                 </div>
                                 <div class="ml-auto flex-1 sm:flex-none flex justify-end gap-2">
                                     <button type="button" @click="resetFilters()" x-show="filter !== 'semua' || filterTanggal !== '' || filterBulan !== ''" x-transition class="text-xs font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5 w-full sm:w-auto shadow-xs">
@@ -251,7 +156,7 @@
                                                     $fotoUrl = route('storage.access', ['type' => 'logbook', 'filename' => basename($log->bukti_foto_path)]);
                                                     $fotoTitle = 'Dokumentasi Logbook - ' . \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y');
                                                 @endphp
-                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" onclick="openImageModal('{{ $fotoUrl }}', '{{ addslashes($fotoTitle) }}')">
+                                                <div class="h-48 w-full bg-gray-100 dark:bg-gray-900 relative cursor-pointer overflow-hidden" onclick="openImageModal(@js($fotoUrl), @js($fotoTitle))">
                                                     <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" alt="Dokumentasi">
                                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-4">
                                                         <span class="text-white text-xs font-bold bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full"><i class="fas fa-expand-alt mr-1.5"></i> Perbesar Foto</span>
@@ -295,7 +200,7 @@
                                                 <!-- Action Buttons -->
                                                 @if($log->status_validasi === 'pending')
                                                     <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700 flex gap-3">
-                                                        <button @click="openEditModal({{ $log->id }}, '{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}', {{ json_encode($log->kegiatan) }}, '{{ $log->status_validasi }}')" type="button" class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 rounded-2xl text-xs font-bold hover:bg-teal-600 hover:text-white transition shadow-xs">
+                                                        <button @click="openEditModal({{ $log->id }}, {{ Js::from(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y')) }}, {{ Js::from($log->kegiatan) }}, {{ Js::from($log->status_validasi) }})" type="button" class="flex-1 inline-flex items-center justify-center px-4 py-3 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 rounded-2xl text-xs font-bold hover:bg-teal-600 hover:text-white transition shadow-xs">
                                                             <i class="fas fa-edit mr-2"></i> Edit Jurnal
                                                         </button>
                                                         
@@ -309,7 +214,7 @@
                                                     </div>
                                                 @elseif($log->status_validasi === 'revisi')
                                                     <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
-                                                        <button @click="openEditModal({{ $log->id }}, '{{ \Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y') }}', {{ json_encode($log->kegiatan) }}, '{{ $log->status_validasi }}')" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 rounded-2xl text-xs font-bold hover:bg-rose-600 hover:text-white transition shadow-xs">
+                                                        <button @click="openEditModal({{ $log->id }}, {{ Js::from(\Carbon\Carbon::parse($log->tanggal)->translatedFormat('d F Y')) }}, {{ Js::from($log->kegiatan) }}, {{ Js::from($log->status_validasi) }})" type="button" class="w-full inline-flex items-center justify-center px-4 py-3 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 rounded-2xl text-xs font-bold hover:bg-rose-600 hover:text-white transition shadow-xs">
                                                             <i class="fas fa-edit mr-2"></i> Perbaiki Jurnal Ini
                                                         </button>
                                                     </div>
@@ -330,198 +235,24 @@
         </div>
         
         <!-- Modal Edit / Revisi Jurnal -->
-        <div x-show="showEditModal" class="fixed inset-0 z-[100] overflow-y-auto text-left" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div x-show="showEditModal" x-transition.opacity class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="showEditModal = false" aria-hidden="true"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div x-show="showEditModal" x-transition class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-gray-200 dark:border-gray-700">
-                    <form :action="'{{ route('peserta.logbook.update', ':id') }}'.replace(':id', editLogId)" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="log_id" x-model="editLogId">
-                        <input type="hidden" name="status_validasi" x-model="editStatusValidasi">
-                        <input type="hidden" name="tanggal" x-model="editTanggal">
-                        
-                        <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-6">
-                            <div class="flex items-center gap-4 mb-6 pb-5 border-b border-gray-100 dark:border-gray-700">
-                                <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-2xl"
-                                     :class="editStatusValidasi === 'revisi' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60' : 'bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60'">
-                                    <i class="fas text-lg" :class="editStatusValidasi === 'revisi' ? 'fa-edit' : 'fa-pen-nib'"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-base font-bold text-gray-900 dark:text-gray-100" id="modal-title" x-text="editStatusValidasi === 'revisi' ? 'Revisi Jurnal Harian' : 'Edit Jurnal Harian'"></h3>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold mt-0.5" x-text="editTanggal"></p>
-                                </div>
-                            </div>
-                            <div class="space-y-5">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
-                                    <textarea name="kegiatan" rows="4" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm font-medium shadow-xs resize-none" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')" x-model="editKegiatan"></textarea>
-                                    <x-input-error :messages="$errors->get('kegiatan')" class="mt-2" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Ganti Foto (Opsional)</label>
-                                    <input type="file" name="foto" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 border border-gray-300 dark:border-gray-700 rounded-xl p-1 bg-white dark:bg-gray-900 cursor-pointer">
-                                    <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 font-medium">Abaikan jika tidak ada perubahan bukti dokumentasi.</p>
-                                    <x-input-error :messages="$errors->get('foto')" class="mt-2" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
-                            <button type="submit" class="w-full inline-flex justify-center rounded-xl shadow-xs px-6 py-2.5 bg-teal-600 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition sm:w-auto" x-text="editStatusValidasi === 'revisi' ? 'Simpan Revisi' : 'Simpan Perubahan'">
-                            </button>
-                            <button type="button" @click="showEditModal = false" class="w-full inline-flex justify-center rounded-xl shadow-xs px-6 py-2.5 bg-white dark:bg-gray-800 text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-300 dark:border-gray-700 transition sm:w-auto">
-                                Batal
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        @include('peserta.logbook._edit-modal')
 
         </div>
     </div>
 
-    <script>
-    function previewImage(input) {
-        const preview = document.getElementById('preview-img');
-        const previewContainer = document.getElementById('image-preview');
-        const emptyState = document.getElementById('empty-state');
-        const removeBtn = document.getElementById('remove-btn');
-        
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-                removeBtn.classList.remove('hidden');
-                removeBtn.classList.add('flex');
-            }
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            removeImage();
-        }
-    }
-
-    function removeImage() {
-        document.getElementById('foto').value = "";
-        document.getElementById('preview-img').src = "";
-        document.getElementById('image-preview').classList.add('hidden');
-        document.getElementById('empty-state').classList.remove('hidden');
-        const removeBtn = document.getElementById('remove-btn');
-        removeBtn.classList.add('hidden');
-        removeBtn.classList.remove('flex');
-    }
-
-    if (!window.__pesertaLogbookAlpineWired) {
-        window.__pesertaLogbookAlpineWired = true;
-        document.addEventListener('alpine:init', () => {
-        Alpine.data('logbookData', () => ({
-            filter: @js(request('status', 'semua')),
-            filterTanggal: @js(request('date', '')),
-            filterBulan: @js(request('month', '')),
-            
-            // Edit Modal State
-            showEditModal: false,
-            editLogId: null,
-            editTanggal: '',
-            editKegiatan: '',
-            editStatusValidasi: '',
-            
-            init() {
-                const oldLogId = "{{ old('log_id') }}";
-                if (oldLogId) {
-                    this.editLogId = oldLogId;
-                    this.editKegiatan = {!! json_encode(old('kegiatan') ?? '') !!};
-                    this.editStatusValidasi = "{{ old('status_validasi') }}";
-                    this.editTanggal = "{{ old('tanggal') }}";
-                    this.showEditModal = true;
-                }
-            },
-            openEditModal(id, tanggal, kegiatan, statusValidasi) {
-                this.editLogId = id;
-                this.editTanggal = tanggal;
-                this.editKegiatan = kegiatan;
-                this.editStatusValidasi = statusValidasi;
-                this.showEditModal = true;
-            },
-            resetFilters() {
-                window.location.href = @js(route('peserta.logbook.index'));
-            }
-        }))
-        });
-    }
-
-    function initLogbookLocation() {
-        const statusDiv = document.getElementById("loc-status");
-        const btnSubmit = document.getElementById("btn-submit");
-        const coordsDisplay = document.getElementById("coords-display");
-        const showLat = document.getElementById("show-lat");
-        const showLng = document.getElementById("show-lng");
-
-        if (!statusDiv || !btnSubmit) return;
-
-        function requestLocation() {
-            if (navigator.geolocation) {
-                const options = {
-                    enableHighAccuracy: false, 
-                    timeout: 30000,            
-                    maximumAge: 300000         
-                };
-                navigator.geolocation.getCurrentPosition(successLocation, errorLocation, options);
-            } else {
-                showErrorMsg("Browser tidak mendukung Geolocation.");
-            }
-        }
-
-        function successLocation(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            document.getElementById("lat").value = lat;
-            document.getElementById("lng").value = lng;
-
-            statusDiv.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 flex items-center font-bold"><i class="fas fa-check-circle mr-1.5 text-base"></i> Lokasi Terkunci</span>';
-            showLat.innerText = lat.toFixed(6);
-            showLng.innerText = lng.toFixed(6);
-            coordsDisplay.classList.remove("hidden");
-            
-            btnSubmit.disabled = false;
-        }
-
-        function errorLocation(error) {
-            let msg = "Gagal mengambil lokasi.";
-            let retryBtn = '';
-
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    msg = "Izin lokasi ditolak. Buka pengaturan browser."; 
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    msg = "Sinyal lokasi tidak ditemukan. Pastikan GPS aktif."; 
-                    break;
-                case error.TIMEOUT:
-                    msg = "Waktu habis. Sinyal lemah.";
-                    retryBtn = `<button type="button" onclick="window.location.reload()" class="ml-2 underline text-teal-600 dark:text-teal-400">Coba Lagi</button>`;
-                    break;
-            }
-            showErrorMsg(msg, retryBtn);
-        }
-
-        function showErrorMsg(msg, extraHtml = '') {
-            statusDiv.innerHTML = `<div class="flex flex-col"><span class="text-rose-600 dark:text-rose-400 flex items-center font-bold text-xs"><i class="fas fa-exclamation-triangle mr-1.5"></i> ${msg}</span>${extraHtml}</div>`;
-            btnSubmit.disabled = true;
-        }
-
-        requestLocation();
-    }
-
-    // Daftarkan listener sekali saja; script inline ini dijalankan ulang
-    // setiap navigasi Turbo, sehingga tanpa guard listener akan menumpuk.
-    if (!window.__pesertaLogbookLocationWired) {
-        window.__pesertaLogbookLocationWired = true;
-        document.addEventListener('turbo:load', initLogbookLocation);
-    }
+    @push('scripts')
+    @vite('resources/js/peserta/logbook.js')
+    <script type="application/json" id="peserta-logbook-config">
+        {!! json_encode([
+            'filterStatus' => request('status', 'semua'),
+            'filterDate' => request('date', ''),
+            'filterMonth' => request('month', ''),
+            'resetUrl' => route('peserta.logbook.index'),
+            'oldLogId' => old('log_id'),
+            'oldKegiatan' => old('kegiatan') ?? '',
+            'oldStatusValidasi' => old('status_validasi'),
+            'oldTanggal' => old('tanggal'),
+        ]) !!}
     </script>
+    @endpush
 </x-app-layout>

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
@@ -213,194 +213,16 @@
         </div>
     </div>
 
-    <script>
-    function initApplyAutomaticForm() {
-        const startInput = document.getElementById('tanggal_mulai');
-        const endInput   = document.getElementById('tanggal_selesai');
-        const submitBtn  = document.getElementById('submitBtn');
-        const fileInput  = document.getElementById('surat');
-        const uploadEmpty   = document.getElementById('upload-empty');
-        const uploadPreview = document.getElementById('upload-preview');
-        const fileNameText  = document.getElementById('file-name-text');
-        const durationWrap  = document.getElementById('duration-badge-wrap');
-        const durationText  = document.getElementById('duration-text');
-        const presetIndicator = document.getElementById('duration-preset-indicator');
-        const presetBtns    = document.querySelectorAll('.preset-duration-btn');
-        
-        if (!startInput || !endInput) return;
-
-        // File Upload Preview
-        fileInput.addEventListener('change', function(){
-            if(this.files && this.files.length > 0){
-                fileNameText.textContent = this.files[0].name;
-                uploadEmpty.classList.add('hidden');
-                uploadPreview.classList.remove('hidden');
-                uploadPreview.classList.add('flex');
-            }
-        });
-
-        // Drag & Drop
-        const uploadZone = fileInput.closest('label');
-        if (uploadZone) {
-            uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('border-teal-500'); });
-            uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-teal-500'));
-            uploadZone.addEventListener('drop', e => {
-                e.preventDefault();
-                uploadZone.classList.remove('border-teal-500');
-                if(e.dataTransfer.files[0]?.type === 'application/pdf') {
-                    fileInput.files = e.dataTransfer.files;
-                    fileNameText.textContent = e.dataTransfer.files[0].name;
-                    uploadEmpty.classList.add('hidden');
-                    uploadPreview.classList.remove('hidden');
-                    uploadPreview.classList.add('flex');
-                }
-            });
-        }
-
-        // Helper hitung tanggal selesai berdasarkan penambahan bulan kalender (Mulai + X Bulan - 1 Hari)
-        function calculateEndDateFromMonths(startDateStr, monthsCount) {
-            const parts = startDateStr.split('-').map(Number);
-            let year = parts[0];
-            let month = parts[1] - 1 + monthsCount;
-            let day = parts[2];
-
-            year += Math.floor(month / 12);
-            month = ((month % 12) + 12) % 12;
-
-            const daysInTargetMonth = new Date(year, month + 1, 0).getDate();
-            const clampedDay = Math.min(day, daysInTargetMonth);
-
-            const targetDate = new Date(year, month, clampedDay);
-            targetDate.setDate(targetDate.getDate() - 1);
-
-            const pad = (n) => String(n).padStart(2, '0');
-            return `${targetDate.getFullYear()}-${pad(targetDate.getMonth() + 1)}-${pad(targetDate.getDate())}`;
-        }
-
-        function setActivePresetButton(activeMonths) {
-            presetBtns.forEach(btn => {
-                const m = parseInt(btn.getAttribute('data-months'), 10);
-                if (m === activeMonths) {
-                    btn.classList.add('active', 'border-teal-500', 'dark:border-teal-400', 'bg-teal-50/50', 'dark:bg-teal-950/40', 'ring-2', 'ring-teal-500/20');
-                    btn.classList.remove('border-gray-200', 'dark:border-gray-700', 'bg-white', 'dark:bg-gray-800');
-                } else {
-                    btn.classList.remove('active', 'border-teal-500', 'dark:border-teal-400', 'bg-teal-50/50', 'dark:bg-teal-950/40', 'ring-2', 'ring-teal-500/20');
-                    btn.classList.add('border-gray-200', 'dark:border-gray-700', 'bg-white', 'dark:bg-gray-800');
-                }
-            });
-        }
-
-        // Preset Button Click Event
-        presetBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const months = parseInt(this.getAttribute('data-months'), 10);
-                
-                // Jika tanggal mulai belum diisi, gunakan minimal tanggal hari ini
-                if (!startInput.value) {
-                    const today = new Date();
-                    const pad = (n) => String(n).padStart(2, '0');
-                    const todayStr = startInput.min || `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-                    startInput.value = todayStr;
-                }
-
-                const computedEnd = calculateEndDateFromMonths(startInput.value, months);
-                endInput.value = computedEnd;
-                setActivePresetButton(months);
-                validateDates();
-            });
-        });
-
-        // Duration Calculator & Preset Matching
-        function updateDuration() {
-            const s = startInput.value, e = endInput.value;
-            if(startInput.value) endInput.min = startInput.value;
-            if(s && e) {
-                const days = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
-                if(days > 0) {
-                    const weeks = Math.round(days / 7);
-                    const approxMonths = Math.round(days / 30.4);
-                    
-                    let durationSummary = `${days} hari`;
-                    if (approxMonths >= 1) {
-                        durationSummary += ` (~${approxMonths} bulan / ${weeks} minggu)`;
-                    } else if (weeks >= 1) {
-                        durationSummary += ` (~${weeks} minggu)`;
-                    }
-
-                    durationText.textContent = durationSummary;
-                    durationWrap.classList.remove('hidden');
-
-                    // Cek apakah rentang tanggal cocok dengan preset
-                    let matchedPreset = null;
-                    [1, 2, 3, 6].forEach(m => {
-                        if (calculateEndDateFromMonths(s, m) === e) {
-                            matchedPreset = m;
-                        }
-                    });
-
-                    if (matchedPreset !== null) {
-                        setActivePresetButton(matchedPreset);
-                        if (presetIndicator) {
-                            presetIndicator.textContent = `Preset: ${matchedPreset} Bulan`;
-                            presetIndicator.classList.remove('hidden');
-                        }
-                    } else {
-                        setActivePresetButton(null);
-                        if (presetIndicator) {
-                            presetIndicator.textContent = 'Durasi Kustom';
-                            presetIndicator.classList.remove('hidden');
-                        }
-                    }
-                } else {
-                    durationWrap.classList.add('hidden');
-                    setActivePresetButton(null);
-                }
-            } else {
-                durationWrap.classList.add('hidden');
-                setActivePresetButton(null);
-            }
-        }
-
-        function validateDates() {
-            const startDate = startInput.value;
-            const endDate = endInput.value;
-            updateDuration();
-
-            if (startDate && endDate) {
-                if (new Date(endDate) < new Date(startDate)) {
-                    alert('Tanggal selesai tidak boleh lebih awal dari tanggal mulai.');
-                    submitBtn.disabled = true;
-                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            }
-        }
-
-        // Submit loading state
-        document.getElementById('applyForm').addEventListener('submit', function() {
-            if(!submitBtn.disabled) {
-                submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mengirim...';
-                submitBtn.disabled = true;
-                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
-            }
-        });
-
-        startInput.addEventListener('change', validateDates);
-        endInput.addEventListener('change', validateDates);
-
-        // Inisialisasi jika ada old values (misal validation error dari server)
-        if (startInput.value && endInput.value) {
-            validateDates();
-        }
-    }
-
-    // Daftarkan listener sekali saja; script inline ini dijalankan ulang
-    // setiap navigasi Turbo, sehingga tanpa guard listener akan menumpuk.
-    if (!window.__pesertaApplyAutomaticWired) {
-        window.__pesertaApplyAutomaticWired = true;
-        document.addEventListener('turbo:load', initApplyAutomaticForm);
-    }
+    @push('scripts')
+    @vite('resources/js/peserta/apply-form.js')
+    <script type="application/json" id="peserta-apply-config">
+        {!! json_encode([
+            'formId' => 'applyForm',
+            'availabilityUrl' => null,
+            'csrfToken' => csrf_token(),
+            'enableAvailability' => false,
+            'isWaitingListInput' => false,
+        ]) !!}
     </script>
+    @endpush
 </x-app-layout>

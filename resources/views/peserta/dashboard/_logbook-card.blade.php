@@ -26,7 +26,7 @@
         </div>
         <div class="min-w-0 flex-1">
             <span class="block text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider leading-none">Pembimbing Lapangan</span>
-            <span class="text-xs font-bold text-slate-800 dark:text-gray-200 truncate block mt-0.5">{{ $activeApp->pembimbing_lapangan->name ?? 'Belum Ditunjuk' }}</span>
+            <span class="text-xs font-bold text-slate-800 dark:text-gray-200 truncate block mt-0.5">{{ $activeApp?->pembimbing_lapangan?->name ?? 'Belum Ditunjuk' }}</span>
         </div>
         <a href="{{ route('peserta.logbook.index') }}" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-sm font-bold text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 shrink-0">
             <i class="fas fa-arrow-right"></i>

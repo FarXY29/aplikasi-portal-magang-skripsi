@@ -10,7 +10,8 @@
 
         {{-- Mini Donut Chart SVG --}}
         @php
-            $totalDays = max(1, $stats['attendance']['hadir'] + $stats['attendance']['izin'] + $stats['attendance']['alpa'] + ($stats['attendance']['sakit'] ?? 0));
+            // Kontrak controller: izin sudah mencakup izin + sakit (lihat AttendanceService::historyData).
+            $totalDays = max(1, $stats['attendance']['hadir'] + $stats['attendance']['izin'] + $stats['attendance']['alpa']);
             $circumference = 2 * 3.14159 * 32;
             $hadirPct = ($stats['attendance']['hadir'] / $totalDays);
             $hadirOffset = $circumference * (1 - $hadirPct);
@@ -37,7 +38,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="flex items-center gap-1.5 text-slate-700 dark:text-gray-300 font-medium"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Izin/Sakit</span>
-                    <span class="font-black text-amber-700 dark:text-amber-400 font-mono">{{ $stats['attendance']['izin'] + ($stats['attendance']['sakit'] ?? 0) }}</span>
+                    <span class="font-black text-amber-700 dark:text-amber-400 font-mono">{{ $stats['attendance']['izin'] }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <span class="flex items-center gap-1.5 text-slate-700 dark:text-gray-300 font-medium"><span class="w-2 h-2 rounded-full bg-rose-600"></span> Alpa</span>

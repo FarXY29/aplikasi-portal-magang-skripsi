@@ -57,8 +57,13 @@
                         @php
                             $appStatus = $app->status instanceof \App\Enums\ApplicationStatus ? $app->status->value : $app->status;
                         @endphp
-                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 sm:p-5 rounded-2xl border transition hover:shadow-2xs cursor-pointer gap-4 {{ $appStatus == 'diterima' ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-200/80 dark:border-teal-900/60 hover:border-teal-400' : ($appStatus == 'selesai' ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-900/60 hover:border-blue-400' : ($appStatus == 'menunggu' ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200/80 dark:border-amber-900/60' : 'bg-white dark:bg-gray-800 border-slate-200/90 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-700')) }}"
-                            x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
+                        <div x-data class="flex flex-col lg:flex-row justify-between items-start lg:items-center p-4 sm:p-5 rounded-2xl border transition hover:shadow-2xs cursor-pointer gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 {{ $appStatus == 'diterima' ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-200/80 dark:border-teal-900/60 hover:border-teal-400' : ($appStatus == 'selesai' ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-900/60 hover:border-blue-400' : ($appStatus == 'menunggu' ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200/80 dark:border-amber-900/60' : 'bg-white dark:bg-gray-800 border-slate-200/90 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-700')) }}"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Lihat detail lamaran {{ $app->position->judul_posisi }} di {{ $app->position->instansi->nama_dinas }}"
+                            x-on:click="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')"
+                            x-on:keydown.enter.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')"
+                            x-on:keydown.space.prevent="$dispatch('open-modal', 'modal-lamaran-{{ $app->id }}')">
                             
                             <div class="w-full lg:flex-1 min-w-0">
                                 <div class="flex flex-wrap items-center gap-2 mb-1.5">
@@ -150,54 +155,47 @@
                                 </div>
 
                                 @if(in_array($app->display_status, ['diterima', 'belum mulai', 'selesai']))
+                                @php
+                                    // Bangun daftar dokumen sekali (menghindari 3 cabang duplikat).
+                                    // locked => tampil sebagai tombol non-aktif dengan ikon gembok.
+                                    $docBtn = 'min-h-[44px] justify-center px-3 py-2.5 rounded-xl text-xs font-bold shadow-2xs flex items-center justify-center gap-2';
+                                    $docs = [];
+
+                                    $docs[] = ['type' => 'link', 'route' => 'peserta.id_card.download', 'icon' => 'fa-id-card', 'label' => 'ID Card', 'class' => 'bg-emerald-700 text-white hover:bg-emerald-800 transition'];
+                                    $docs[] = ['type' => 'link', 'route' => 'peserta.loa.download', 'icon' => 'fa-file-contract', 'label' => 'Surat Balasan', 'class' => 'bg-indigo-700 text-white hover:bg-indigo-800 transition'];
+
+                                    if (in_array($app->display_status, ['diterima', 'selesai'])) {
+                                        $docs[] = ['type' => 'link', 'route' => 'peserta.logbook.print', 'icon' => 'fa-file-pdf', 'label' => 'Rekap Logbook', 'class' => 'bg-slate-800 dark:bg-gray-700 text-white hover:bg-slate-900 dark:hover:bg-gray-600 transition'];
+                                    }
+
+                                    if ($app->display_status === 'selesai') {
+                                        if (empty($app->saran_peserta)) {
+                                            $lockClass = 'bg-slate-200 dark:bg-gray-700 text-slate-500 dark:text-gray-400 cursor-not-allowed';
+                                            $lockTitle = 'Mohon isi saran dan evaluasi terlebih dahulu';
+                                            $docs[] = ['type' => 'locked', 'icon' => 'fa-lock', 'label' => 'Sertifikat (Kunci)', 'class' => $lockClass, 'title' => $lockTitle];
+                                            $docs[] = ['type' => 'locked', 'icon' => 'fa-lock', 'label' => 'Transkrip (Kunci)', 'class' => $lockClass, 'title' => $lockTitle];
+                                        } else {
+                                            $docs[] = ['type' => 'link', 'route' => 'peserta.sertifikat', 'icon' => 'fa-certificate', 'label' => 'Sertifikat', 'class' => 'bg-teal-700 text-white hover:bg-teal-800 transition'];
+                                            $docs[] = ['type' => 'link', 'route' => 'peserta.download.nilai', 'icon' => 'fa-file-alt', 'label' => 'Transkrip', 'class' => 'bg-teal-700 text-white hover:bg-teal-800 transition'];
+                                        }
+                                    }
+                                @endphp
                                 <div class="mb-6 bg-white dark:bg-gray-800 border border-slate-200/80 dark:border-gray-700 rounded-2xl p-4 sm:p-5 shadow-2xs">
                                     <h3 class="font-bold text-slate-800 dark:text-gray-200 text-xs flex items-center gap-2 mb-3 pb-2 border-b border-slate-100 dark:border-gray-700">
                                         <i class="fas fa-download text-teal-700 dark:text-teal-400"></i> Unduh Dokumen
                                     </h3>
                                     <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                                        @if($app->display_status == 'diterima')
-                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-700 text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-id-card"></i> ID Card
-                                            </a>
-                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-700 text-white rounded-xl text-xs font-bold hover:bg-indigo-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-file-contract"></i> Surat Balasan
-                                            </a>
-                                            <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-slate-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-slate-900 dark:hover:bg-gray-600 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-file-pdf"></i> Rekap Logbook
-                                            </a>
-                                        @elseif($app->display_status == 'belum mulai')
-                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-700 text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-id-card"></i> ID Card
-                                            </a>
-                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-700 text-white rounded-xl text-xs font-bold hover:bg-indigo-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-file-contract"></i> Surat Balasan
-                                            </a>
-                                        @elseif($app->display_status == 'selesai')
-                                            <a href="{{ route('peserta.id_card.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-emerald-700 text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-id-card"></i> ID Card
-                                            </a>
-                                            <a href="{{ route('peserta.loa.download', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-indigo-700 text-white rounded-xl text-xs font-bold hover:bg-indigo-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-file-contract"></i> Surat Balasan
-                                            </a>
-                                            <a href="{{ route('peserta.logbook.print', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-slate-800 dark:bg-gray-700 text-white rounded-xl text-xs font-bold hover:bg-slate-900 dark:hover:bg-gray-600 transition shadow-2xs flex items-center justify-center gap-2">
-                                                <i class="fas fa-file-pdf"></i> Rekap Logbook
-                                            </a>
-                                            @if(empty($app->saran_peserta))
-                                                <button type="button" class="min-h-[44px] justify-center px-3 py-2.5 bg-slate-200 dark:bg-gray-700 text-slate-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
-                                                    <i class="fas fa-lock"></i> Sertifikat (Kunci)
-                                                </button>
-                                                <button type="button" class="min-h-[44px] justify-center px-3 py-2.5 bg-slate-200 dark:bg-gray-700 text-slate-500 dark:text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2" title="Mohon isi saran dan evaluasi terlebih dahulu">
-                                                    <i class="fas fa-lock"></i> Transkrip (Kunci)
-                                                </button>
+                                        @foreach($docs as $doc)
+                                            @if($doc['type'] === 'link')
+                                                <a href="{{ route($doc['route'], $app->id) }}" target="_blank" class="{{ $docBtn }} {{ $doc['class'] }}">
+                                                    <i class="fas {{ $doc['icon'] }}"></i> {{ $doc['label'] }}
+                                                </a>
                                             @else
-                                                <a href="{{ route('peserta.sertifikat', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-700 text-white rounded-xl text-xs font-bold hover:bg-teal-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                    <i class="fas fa-certificate"></i> Sertifikat
-                                                </a>
-                                                <a href="{{ route('peserta.download.nilai', $app->id) }}" target="_blank" class="min-h-[44px] justify-center px-3 py-2.5 bg-teal-700 text-white rounded-xl text-xs font-bold hover:bg-teal-800 transition shadow-2xs flex items-center justify-center gap-2">
-                                                    <i class="fas fa-file-alt"></i> Transkrip
-                                                </a>
+                                                <button type="button" class="{{ $docBtn }} {{ $doc['class'] }}" title="{{ $doc['title'] }}" disabled aria-disabled="true">
+                                                    <i class="fas {{ $doc['icon'] }}"></i> {{ $doc['label'] }}
+                                                </button>
                                             @endif
-                                        @endif
+                                        @endforeach
                                     </div>
                                     <p class="text-[11px] text-slate-400 dark:text-gray-500 font-medium mt-3 flex items-center gap-1.5">
                                         <i class="fas fa-info-circle"></i> Dokumen dapat diunduh kembali kapan saja dari menu ini.
@@ -228,18 +226,21 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <form action="{{ route('peserta.saran.store', $app->id) }}" method="POST">
-                                                @csrf
-                                                <div class="mb-4">
-                                                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 uppercase mb-2">Beri Masukan Pembangun (Kerahasiaan Terjamin)</label>
-                                                    <textarea name="saran_peserta" rows="3" class="w-full min-h-[80px] rounded-xl border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 focus:border-teal-600 focus:ring focus:ring-teal-600/20 text-xs font-medium" placeholder="Tuliskan saran atau kritik membangun Anda mengenai instansi maupun pembimbing..." required></textarea>
-                                                </div>
-                                                <div class="flex justify-end">
-                                                    <button type="submit" class="min-h-[44px] px-5 py-2.5 bg-teal-700 text-white rounded-xl font-bold hover:bg-teal-800 shadow-2xs transition active:scale-95 text-xs uppercase tracking-wider flex items-center gap-2">
-                                                        <i class="fas fa-paper-plane"></i> Kirim Evaluasi
+                                            {{-- Satu-satunya formulir editable ada di banner dashboard (#saran-evaluasi).
+                                                 Di sini hanya menampilkan arahan, agar tidak ada dua form untuk aksi yang sama. --}}
+                                            <div class="bg-indigo-50/60 dark:bg-indigo-950/40 p-4 rounded-xl border border-indigo-200/80 dark:border-indigo-800/60">
+                                                <p class="text-xs text-indigo-800 dark:text-indigo-300 font-medium leading-relaxed">
+                                                    <i class="fas fa-info-circle mr-1"></i>
+                                                    Evaluasi &amp; saran belum diisi. Silakan isi melalui kartu <strong>Isi Evaluasi &amp; Saran Magang</strong> di halaman dashboard untuk membuka Sertifikat &amp; Transkrip.
+                                                </p>
+                                                <div class="flex justify-end mt-3">
+                                                    <button type="button"
+                                                        x-on:click.prevent="$dispatch('close'); document.getElementById('saran-evaluasi')?.scrollIntoView({ behavior: 'smooth', block: 'center' })"
+                                                        class="min-h-[44px] px-5 py-2.5 bg-indigo-700 text-white rounded-xl font-bold hover:bg-indigo-800 shadow-2xs transition active:scale-95 text-xs uppercase tracking-wider flex items-center gap-2">
+                                                        <i class="fas fa-arrow-up"></i> Isi Evaluasi di Dashboard
                                                     </button>
                                                 </div>
-                                            </form>
+                                            </div>
                                         @endif
                                     </div>
                                 @endif

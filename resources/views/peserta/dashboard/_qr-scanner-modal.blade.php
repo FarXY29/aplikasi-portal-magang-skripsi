@@ -1,5 +1,5 @@
 <!-- Modal Pemindai Dynamic QR Presensi Kantor -->
-<div id="modal-qr-scanner" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden transition-all duration-300">
+<div id="modal-qr-scanner" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden transition-all duration-300">
     <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 dark:border-gray-700 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
         
         <!-- Header Modal -->
@@ -15,8 +15,8 @@
                     <p class="text-[11px] text-teal-700 dark:text-teal-400 font-medium">Arahkan kamera ke layar Kiosk / TV kantor</p>
                 </div>
             </div>
-            <button type="button" onclick="closeQrScannerModal()" class="w-8 h-8 rounded-full bg-white dark:bg-gray-700 text-slate-400 hover:text-slate-700 dark:hover:text-white flex items-center justify-center text-xs shadow-2xs border border-slate-200 dark:border-gray-600 transition">
-                <i class="fas fa-times"></i>
+            <button type="button" id="qr-modal-close" aria-label="Tutup pemindai QR" onclick="closeQrScannerModal()" class="w-8 h-8 rounded-full bg-white dark:bg-gray-700 text-slate-400 hover:text-slate-700 dark:hover:text-white flex items-center justify-center text-xs shadow-2xs border border-slate-200 dark:border-gray-600 transition">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
 
