@@ -20,7 +20,7 @@
                     <span>{{ __('Password Saat Ini') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="current_password" name="current_password" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="current-password" />
-                <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-1" />
+                <x-ui.input-error :messages="$errors->updatePassword->get('current_password')" class="mt-1" />
             </div>
 
             <!-- Password Baru -->
@@ -29,7 +29,7 @@
                     <span>{{ __('Password Baru') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="password" name="password" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="new-password" />
-                <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-1" />
+                <x-ui.input-error :messages="$errors->updatePassword->get('password')" class="mt-1" />
             </div>
 
             <!-- Konfirmasi Password Baru -->
@@ -38,7 +38,7 @@
                     <span>{{ __('Konfirmasi Password Baru') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="password_confirmation" name="password_confirmation" type="password" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" autocomplete="new-password" />
-                <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-1" />
+                <x-ui.input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-1" />
             </div>
         </div>
 

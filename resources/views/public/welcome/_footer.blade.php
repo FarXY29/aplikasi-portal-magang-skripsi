@@ -9,7 +9,7 @@
                  <div class="md:col-span-5 flex flex-col items-start gap-4">
                      <div class="flex items-center gap-3">
                          <div class="bg-white dark:bg-gray-800/10 rounded-2xl p-2.5 backdrop-blur-md border border-white/10 flex items-center justify-center">
-                             <x-application-logo class="w-10 h-10 fill-current text-teal-400" />
+                             <x-ui.application-logo class="w-10 h-10 fill-current text-teal-400" />
                          </div>
                          <div>
                              <h4 class="font-extrabold text-lg leading-tight tracking-tight">SiMagang Kota Banjarmasin</h4>

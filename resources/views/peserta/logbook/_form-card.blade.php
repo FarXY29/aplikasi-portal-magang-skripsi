@@ -39,7 +39,7 @@
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
                         <textarea name="kegiatan" rows="5" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm shadow-xs transition hover:shadow-md resize-none font-medium" placeholder="Apa saja kegiatan yang Anda kerjakan hari ini?" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')"></textarea>
-                        <x-input-error :messages="$errors->get('kegiatan')" class="mt-2" />
+                        <x-ui.input-error :messages="$errors->get('kegiatan')" class="mt-2" />
                     </div>
 
                     <div class="mb-5">
@@ -67,7 +67,7 @@
                         <button type="button" id="remove-btn" onclick="removeImage()" class="hidden mt-2 text-xs text-rose-600 dark:text-rose-400 hover:underline font-bold items-center gap-1">
                             <i class="fas fa-trash"></i> Hapus Foto
                         </button>
-                        <x-input-error :messages="$errors->get('foto')" class="mt-2" />
+                        <x-ui.input-error :messages="$errors->get('foto')" class="mt-2" />
                     </div>
 
                     <div class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
@@ -81,8 +81,8 @@
                         <div id="coords-display" class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 hidden font-mono relative z-10 bg-white dark:bg-gray-800 inline-block px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700">
                             Lat: <span id="show-lat"></span>, Lng: <span id="show-lng"></span>
                         </div>
-                        <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
-                        <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+                        <x-ui.input-error :messages="$errors->get('latitude')" class="mt-2" />
+                        <x-ui.input-error :messages="$errors->get('longitude')" class="mt-2" />
                     </div>
 
                     <button type="submit" id="btn-submit" disabled 

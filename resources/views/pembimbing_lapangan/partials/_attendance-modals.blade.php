@@ -1,7 +1,7 @@
 @props(['row'])
 
 @if($row->proof_file)
-<x-modal name="modal-bukti-{{ $row->id }}" focusable>
+<x-ui.modal name="modal-bukti-{{ $row->id }}" focusable>
     <div class="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
         <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
             <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
@@ -26,14 +26,14 @@
         </div>
         
         <div class="mt-6 flex justify-end">
-            <x-secondary-button x-on:click="$dispatch('close')">Tutup</x-secondary-button>
+            <x-ui.secondary-button x-on:click="$dispatch('close')">Tutup</x-ui.secondary-button>
         </div>
     </div>
-</x-modal>
+</x-ui.modal>
 @endif
 
 @if($row->status != 'hadir' && $row->validation_status == 'pending')
-<x-modal name="modal-tolak-{{ $row->id }}" focusable>
+<x-ui.modal name="modal-tolak-{{ $row->id }}" focusable>
     <div class="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
         <h2 class="text-base font-bold text-rose-600 dark:text-rose-400 mb-4 border-b border-gray-100 dark:border-gray-700 pb-3 flex items-center gap-2">
             <i class="fas fa-user-times"></i> Tolak Pengajuan {{ ucfirst($row->status) }}
@@ -48,12 +48,12 @@
             </div>
             
             <div class="mt-6 flex justify-end gap-3">
-                <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                <x-ui.secondary-button x-on:click="$dispatch('close')">Batal</x-ui.secondary-button>
                 <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-xs transition">
                     Konfirmasi Tolak
                 </button>
             </div>
         </form>
     </div>
-</x-modal>
+</x-ui.modal>
 @endif

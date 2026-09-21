@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header
+        <x-ui.header
             icon="fas fa-chart-bar"
             :title="__('Laporan Penyerapan Kuota (City-Wide)')"
             countLabel="Total Terfilter:"
@@ -42,30 +42,30 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$penyerapan->count() > 0 ? route('admin.laporan.penyerapan_kuota.print', request()->query()) : null" />
 
             {{-- Summary KPI Stats Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Instansi"
                     :value="number_format($penyerapan->count())"
                     icon="fas fa-building"
                     color="teal"
                     tooltip="Total jumlah instansi/dinas Pemerintah Kota Banjarmasin yang membuka formasi kuota penerimaan magang." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Kuota Disediakan"
                     :value="number_format($totalKuotaKota)"
                     icon="fas fa-chair"
                     color="blue"
                     tooltip="Total akumulasi daya tampung kursi magang yang disediakan oleh seluruh instansi Pemko." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Peserta Terserap"
                     :value="number_format($totalTerserapKota)"
                     icon="fas fa-user-check"
                     color="emerald"
                     tooltip="Total peserta magang (diterima & selesai) yang telah menempati dan mengisi kuota magang di dinas." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Rerata Penyerapan Kota"
                     :value="$avgPenyerapanKota . '%'"
                     icon="fas fa-chart-pie"
@@ -78,7 +78,7 @@
             @if($penyerapan->count() > 0)
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <div class="lg:col-span-2">
-                        <x-report.chart-card
+                        <x-ui.chart-card
                             icon="fas fa-ranking-star"
                             iconColor="emerald"
                             title="TOP 10 Instansi dengan Penyerapan Tertinggi"
@@ -86,7 +86,7 @@
                             canvasId="chart-top-penyerapan"
                             height="h-64 md:h-80" />
                     </div>
-                    <x-report.chart-card
+                    <x-ui.chart-card
                         icon="fas fa-chart-pie"
                         iconColor="blue"
                         title="Distribusi Status Penyerapan"
@@ -169,7 +169,7 @@
                             <tr class="hover:bg-teal-50/50 dark:hover:bg-teal-500/5 transition group"
                                 x-show="!searchQuery || @js(strtolower($instansi->nama_dinas)).includes(searchQuery.toLowerCase())">
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.rank-badge :index="$index" :eligible="$instansi->persentase_penyerapan > 0" class="mx-auto" />
+                                    <x-ui.rank-badge :index="$index" :eligible="$instansi->persentase_penyerapan > 0" class="mx-auto" />
                                 </td>
                                 <td class="px-6 py-4 min-w-[220px] max-w-[320px]">
                                     <div class="flex items-center gap-3">
@@ -182,10 +182,10 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="slate" :mono="true">{{ $instansi->total_kuota }} Kursi</x-report.pill>
+                                    <x-ui.pill color="slate" :mono="true">{{ $instansi->total_kuota }} Kursi</x-ui.pill>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="emerald" :mono="true">{{ $instansi->total_terserap }} Orang</x-report.pill>
+                                    <x-ui.pill color="emerald" :mono="true">{{ $instansi->total_terserap }} Orang</x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
@@ -200,7 +200,7 @@
                                     @endphp
                                     <div class="relative group/penyerapan cursor-help" title="{{ $rumusFormula }}">
                                         <div class="flex items-center gap-3">
-                                            <x-report.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
+                                            <x-ui.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
                                             <span class="text-xs font-black font-mono text-slate-800 dark:text-white min-w-[45px] text-right">{{ $rate }}%</span>
                                         </div>
                                         {{-- Custom hover popup showing calculation details --}}
@@ -214,16 +214,16 @@
                                 </td>
                                 <td class="px-4 py-4 text-center">
                                     @if($instansi->persentase_penyerapan >= 80)
-                                        <x-report.pill color="emerald" class="uppercase text-[10px] font-black">Optimal</x-report.pill>
+                                        <x-ui.pill color="emerald" class="uppercase text-[10px] font-black">Optimal</x-ui.pill>
                                     @elseif($instansi->persentase_penyerapan >= 50)
-                                        <x-report.pill color="blue" class="uppercase text-[10px] font-black">Cukup</x-report.pill>
+                                        <x-ui.pill color="blue" class="uppercase text-[10px] font-black">Cukup</x-ui.pill>
                                     @else
-                                        <x-report.pill color="rose" class="uppercase text-[10px] font-black">Rendah</x-report.pill>
+                                        <x-ui.pill color="rose" class="uppercase text-[10px] font-black">Rendah</x-ui.pill>
                                     @endif
                                 </td>
                             </tr>
                             @empty
-                            <x-report.empty-state
+                            <x-ui.empty-state
                                 :colspan="6"
                                 title="Data penyerapan tidak ditemukan" />
                             @endforelse
@@ -274,18 +274,18 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 cursor-help" title="{{ $rumusFormula }}">
-                                <x-report.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
+                                <x-ui.progress :width="$rate" barClass="bg-gradient-to-r {{ $barBg }}" />
                                 @if($instansi->persentase_penyerapan >= 80)
-                                    <x-report.pill color="emerald" class="uppercase text-[10px] font-black whitespace-nowrap">Optimal</x-report.pill>
+                                    <x-ui.pill color="emerald" class="uppercase text-[10px] font-black whitespace-nowrap">Optimal</x-ui.pill>
                                 @elseif($instansi->persentase_penyerapan >= 50)
-                                    <x-report.pill color="blue" class="uppercase text-[10px] font-black whitespace-nowrap">Cukup</x-report.pill>
+                                    <x-ui.pill color="blue" class="uppercase text-[10px] font-black whitespace-nowrap">Cukup</x-ui.pill>
                                 @else
-                                    <x-report.pill color="rose" class="uppercase text-[10px] font-black whitespace-nowrap">Rendah</x-report.pill>
+                                    <x-ui.pill color="rose" class="uppercase text-[10px] font-black whitespace-nowrap">Rendah</x-ui.pill>
                                 @endif
                             </div>
                         </div>
                     @empty
-                    <x-report.empty-state
+                    <x-ui.empty-state
                         :mobile="true"
                         title="Data penyerapan tidak ditemukan" />
                     @endforelse

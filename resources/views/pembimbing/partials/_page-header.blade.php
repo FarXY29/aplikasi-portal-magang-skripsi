@@ -13,5 +13,5 @@
         </div>
         {{ __($title) }}
     </h2>
-    <x-pembimbing.student-switcher :applications="$applications" :current="$app" :route-name="$routeName" />
+    <x-ui.student-switcher :applications="$applications" :current="$app" :route-name="$routeName" />
 </div>

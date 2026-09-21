@@ -119,7 +119,7 @@
                         </div>
 
                         {{-- Modal Detail Lamaran --}}
-                        <x-modal name="modal-lamaran-{{ $app->id }}" focusable>
+                        <x-ui.modal name="modal-lamaran-{{ $app->id }}" focusable>
                             <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 text-slate-900 dark:text-gray-100">
                                 <div class="flex justify-between items-start mb-4 border-b border-slate-100 dark:border-gray-700 pb-3 gap-3">
                                     <h2 class="text-base font-bold text-slate-900 dark:text-gray-100 flex items-center gap-2">
@@ -249,7 +249,7 @@
                                     <button type="button" x-on:click.prevent="$dispatch('close')" class="min-h-[44px] px-5 py-2.5 bg-white dark:bg-gray-800 border border-slate-300 dark:border-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-900 rounded-xl font-bold text-xs transition uppercase tracking-wider">Tutup</button>
                                 </div>
                             </div>
-                        </x-modal>
+                        </x-ui.modal>
                     @empty
                         <x-ui.empty-state 
                             title="Tidak Ada Lamaran" 

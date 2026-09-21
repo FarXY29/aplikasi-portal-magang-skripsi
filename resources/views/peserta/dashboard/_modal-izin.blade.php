@@ -1,5 +1,5 @@
 {{-- Form Pengajuan Izin / Sakit Modal --}}
-<x-modal name="modal-izin" focusable>
+<x-ui.modal name="modal-izin" focusable>
     <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 text-slate-900 dark:text-gray-100">
         <h2 class="text-base font-bold text-slate-900 dark:text-gray-100 mb-4 pb-3 border-b border-slate-100 dark:border-gray-700 flex items-center gap-2">
             <i class="fas fa-file-alt text-amber-600"></i> Form Pengajuan Izin / Sakit
@@ -33,4 +33,4 @@
             </div>
         </form>
     </div>
-</x-modal>
+</x-ui.modal>

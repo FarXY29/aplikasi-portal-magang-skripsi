@@ -21,9 +21,9 @@
                 class="h-full"
             >
                 @if (session('status'))
-                    <x-auth.alert type="success" class="mb-5">
+                    <x-ui.alert type="success" class="mb-5">
                         {{ session('status') }}
-                    </x-auth.alert>
+                    </x-ui.alert>
                 @endif
 
                 <form method="POST" action="{{ route('password.email') }}" class="space-y-6">

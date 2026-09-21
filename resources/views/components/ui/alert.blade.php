@@ -29,30 +29,32 @@
     };
 @endphp
 
-<div 
-    @if($dismissible)
-        x-data="{ show: true }" 
-        x-show="show" 
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-2"
-    @endif
-    {{ $attributes->merge(['class' => "flex items-start gap-3 px-4 py-3 rounded-2xl border shadow-2xs {$classes}"]) }}
->
-    <div class="flex-shrink-0 mt-0.5">
-        <i class="{{ $iconClasses }} text-lg"></i>
+@if (isset($slot) && !empty(trim((string)$slot)))
+    <div 
+        @if($dismissible)
+            x-data="{ show: true }" 
+            x-show="show" 
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-2"
+        @endif
+        {{ $attributes->merge(['class' => "flex items-start gap-3 px-4 py-3 rounded-2xl border shadow-2xs {$classes}"]) }}
+    >
+        <div class="flex-shrink-0 mt-0.5">
+            <i class="{{ $iconClasses }} text-lg"></i>
+        </div>
+        <div class="flex-1 min-w-0 text-sm font-medium">
+            {{ $slot }}
+        </div>
+        @if($dismissible)
+            <button 
+                type="button" 
+                @click="show = false" 
+                class="flex-shrink-0 -mr-1.5 -mt-1.5 p-1.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 {{ $buttonClasses }}"
+                aria-label="Tutup alert"
+            >
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        @endif
     </div>
-    <div class="flex-1 min-w-0 text-sm font-medium">
-        {{ $slot }}
-    </div>
-    @if($dismissible)
-        <button 
-            type="button" 
-            @click="show = false" 
-            class="flex-shrink-0 -mr-1.5 -mt-1.5 p-1.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 {{ $buttonClasses }}"
-            aria-label="Tutup alert"
-        >
-            <i class="fas fa-times text-sm"></i>
-        </button>
-    @endif
-</div>
+@endif

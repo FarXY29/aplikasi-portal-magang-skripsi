@@ -182,7 +182,7 @@
                 <div class="flex items-center min-w-0">
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 min-w-0">
                         <div class="w-8 h-8 rounded-lg bg-teal-700 text-white flex items-center justify-center p-1 shadow-2xs flex-shrink-0">
-                            <x-application-logo class="w-full h-full fill-current text-white" />
+                            <x-ui.application-logo class="w-full h-full fill-current text-white" />
                         </div>
                         <div class="min-w-0">
                             <h1 class="text-sm font-black text-slate-900 dark:text-gray-100 leading-none truncate">Portal<span class="text-teal-700 dark:text-teal-400">Magang</span></h1>

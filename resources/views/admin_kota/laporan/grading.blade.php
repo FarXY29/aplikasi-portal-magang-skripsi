@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header
+        <x-ui.header
             icon="fas fa-chart-line"
             :title="__('Analisis Kompetensi & Performa')"
             countLabel="Total Terfilter:"
@@ -32,42 +32,42 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Back Navigation & Download Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$stats['total'] > 0 ? route('admin.laporan.grading.print', array_merge(request()->query(), ['format' => 'pdf'])) : null" />
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Dinilai"
                     :value="number_format($stats['total'])"
                     icon="fas fa-users"
                     color="teal"
                     tooltip="Total seluruh peserta magang se-Kota Banjarmasin yang telah memiliki penilaian evaluasi akhir." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Sangat Baik"
                     :value="number_format($stats['sangat_baik'])"
                     icon="fas fa-check-circle"
                     color="emerald"
                     tooltip="Jumlah peserta dengan predikat 'Sangat Baik'. Kriteria Nilai Rata-Rata: 86,00 s.d. 100,00." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Baik"
                     :value="number_format($stats['baik'])"
                     icon="fas fa-thumbs-up"
                     color="blue"
                     tooltip="Jumlah peserta dengan predikat 'Baik'. Kriteria Nilai Rata-Rata: 71,00 s.d. 85,99." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Cukup"
                     :value="number_format($stats['cukup'])"
                     icon="fas fa-info-circle"
                     color="amber"
                     tooltip="Jumlah peserta dengan predikat 'Cukup'. Kriteria Nilai Rata-Rata: 56,00 s.d. 70,99." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Kurang"
                     :value="number_format($stats['kurang'])"
                     icon="fas fa-times-circle"
                     color="rose"
                     tooltip="Jumlah peserta dengan predikat 'Kurang'. Kriteria Nilai Rata-Rata: 0,00 s.d. 55,99." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Rerata Nilai"
                     :value="$stats['avg_nilai']"
                     icon="fas fa-star"
@@ -78,7 +78,7 @@
 
             {{-- Charts Row: Predikat Distribution + 3-Component Rerata Panel --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <x-report.chart-card
+                <x-ui.chart-card
                     icon="fas fa-chart-pie"
                     iconColor="emerald"
                     title="Distribusi Predikat"
@@ -96,7 +96,7 @@
                             </span>
                             <span class="text-sm font-black text-slate-800 dark:text-slate-200 font-mono">{{ $statsGlobal['avg_teknis'] }}/100</span>
                         </div>
-                        <x-report.progress :width="$statsGlobal['avg_teknis']" barClass="bg-blue-500" />
+                        <x-ui.progress :width="$statsGlobal['avg_teknis']" barClass="bg-blue-500" />
                     </div>
                     <div class="cursor-help" title="Rata-rata aspek kedisiplinan dan ketepatan waktu peserta. Rumus: (Total Nilai Disiplin / Jumlah Peserta Dinilai).">
                         <div class="flex justify-between items-center mb-2">
@@ -105,7 +105,7 @@
                             </span>
                             <span class="text-sm font-black text-slate-800 dark:text-slate-200 font-mono">{{ $statsGlobal['avg_disiplin'] }}/100</span>
                         </div>
-                        <x-report.progress :width="$statsGlobal['avg_disiplin']" barClass="bg-emerald-500" />
+                        <x-ui.progress :width="$statsGlobal['avg_disiplin']" barClass="bg-emerald-500" />
                     </div>
                     <div class="cursor-help" title="Rata-rata aspek etika, keaktifan, dan komunikasi peserta. Rumus: (Total Nilai Perilaku / Jumlah Peserta). Nilai Perilaku = (Adaptasi + Kreativitas + Kerajinan) / 3.">
                         <div class="flex justify-between items-center mb-2">
@@ -114,7 +114,7 @@
                             </span>
                             <span class="text-sm font-black text-slate-800 dark:text-slate-200 font-mono">{{ $statsGlobal['avg_perilaku'] }}/100</span>
                         </div>
-                        <x-report.progress :width="$statsGlobal['avg_perilaku']" barClass="bg-purple-500" />
+                        <x-ui.progress :width="$statsGlobal['avg_perilaku']" barClass="bg-purple-500" />
                     </div>
                 </div>
             </div>
@@ -315,7 +315,7 @@
                                 @forelse($gradedList as $index => $res)
                                 <tr class="hover:bg-teal-50/50 dark:hover:bg-teal-500/5 transition group cursor-pointer" @click="openRow = (openRow === {{ $index }} ? null : {{ $index }})">
                                     <td class="px-4 py-4 text-center">
-                                        <x-report.rank-badge :index="$index" :eligible="$isUnfiltered" class="mx-auto" />
+                                        <x-ui.rank-badge :index="$index" :eligible="$isUnfiltered" class="mx-auto" />
                                     </td>
                                     <td class="px-6 py-4 min-w-[200px] max-w-[260px]">
                                         <div class="flex items-center gap-3">
@@ -353,7 +353,7 @@
                                                 default => 'rose',
                                             };
                                         @endphp
-                                        <x-report.pill :color="$predikatColor" class="uppercase text-[10px] font-black">{{ $res['predikat'] }}</x-report.pill>
+                                        <x-ui.pill :color="$predikatColor" class="uppercase text-[10px] font-black">{{ $res['predikat'] }}</x-ui.pill>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-900/60 flex items-center justify-center mx-auto border border-slate-200 dark:border-slate-700">
@@ -423,7 +423,7 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <x-report.empty-state
+                                <x-ui.empty-state
                                     :colspan="6"
                                     title="Data tidak ditemukan"
                                     subtitle="Coba sesuaikan filter pencarian Anda." />
@@ -440,7 +440,7 @@
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3 min-w-0">
                                     <div class="shrink-0">
-                                        <x-report.rank-badge :index="$index" :eligible="$isUnfiltered" size="md" />
+                                        <x-ui.rank-badge :index="$index" :eligible="$isUnfiltered" size="md" />
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug line-clamp-2" title="{{ $res['nama'] }}">{{ $res['nama'] }}</h4>
@@ -458,7 +458,7 @@
                                             default => 'rose',
                                         };
                                     @endphp
-                                    <x-report.pill :color="$predikatColorMobile" class="uppercase text-[10px] font-black">{{ $res['predikat'] }}</x-report.pill>
+                                    <x-ui.pill :color="$predikatColorMobile" class="uppercase text-[10px] font-black">{{ $res['predikat'] }}</x-ui.pill>
                                 </div>
                             </div>
 
@@ -537,7 +537,7 @@
                             </div>
                         </div>
                         @empty
-                        <x-report.empty-state
+                        <x-ui.empty-state
                             :mobile="true"
                             title="Data tidak ditemukan"
                             subtitle="Coba sesuaikan filter pencarian Anda." />

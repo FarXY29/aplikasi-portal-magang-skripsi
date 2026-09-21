@@ -126,9 +126,9 @@
 
                                 <hr class="border-gray-100 dark:border-gray-700">
 
-                                <x-primary-button class="w-full justify-center py-3 text-xs">
+                                <x-ui.primary-button class="w-full justify-center py-3 text-xs">
                                     <i class="fas fa-file-pdf mr-2 text-sm"></i> Simpan & Generate PDF
-                                </x-primary-button>
+                                </x-ui.primary-button>
                                 
                                 <p class="text-center text-[11px] text-gray-400 dark:text-gray-500">
                                     File PDF akan otomatis terbuka di tab baru.

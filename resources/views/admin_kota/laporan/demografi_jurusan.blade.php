@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header
+        <x-ui.header
             icon="fas fa-graduation-cap"
             :title="__('Demografi Kualifikasi Jurusan')"
             countLabel="Total Kualifikasi:"
@@ -34,42 +34,42 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$jurusans->count() > 0 ? route('admin.laporan.demografi_jurusan.print', request()->query()) : null" />
 
             {{-- Summary KPI Stats Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Kualifikasi"
                     :value="number_format($jurusans->count())"
                     icon="fas fa-graduation-cap"
                     color="teal"
                     tooltip="Jumlah kualifikasi atau jurusan yang memiliki data lowongan pada laporan." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Lowongan Terbuka"
                     :value="number_format($totalLowongan)"
                     icon="fas fa-briefcase"
                     color="blue"
                     tooltip="Jumlah akumulasi seluruh posisi lowongan magang yang dipublikasikan oleh instansi Pemerintah Kota Banjarmasin." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Kuota Kursi"
                     :value="number_format($totalKuota)"
                     icon="fas fa-chair"
                     color="indigo"
                     tooltip="Total kapasitas daya tampung kursi peserta magang yang disediakan dari seluruh formasi lowongan terbuka." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Jurusan Terfavorit"
                     :value="$topJurusan"
                     icon="fas fa-star"
                     color="teal"
                     :featured="true"
                     :textMode="true"
-                    tooltip="Kualifikasi jurusan dengan alokasi total kuota penerimaan magang terbanyak di Kota Banjarmasin." />
+                    tooltip="Kualifikasi jurusan dengan jumlah formasi lowongan terbanyak se-Kota Banjarmasin." />
             </div>
 
             {{-- Chart: Top 10 Jurusan by Kuota --}}
             @if($jurusans->count() > 0)
-                <x-report.chart-card
+                <x-ui.chart-card
                     icon="fas fa-ranking-star"
                     iconColor="indigo"
                     title="TOP 10 Jurusan dengan Kuota Terbanyak"
@@ -136,7 +136,7 @@
                             <tr class="hover:bg-teal-50/50 dark:hover:bg-teal-500/5 transition group"
                                 x-show="!searchQuery || @js(strtolower((string) $jurusan->required_major)).includes(searchQuery.toLowerCase())">
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.rank-badge :index="$index" class="mx-auto" />
+                                    <x-ui.rank-badge :index="$index" class="mx-auto" />
                                 </td>
                                 <td class="px-6 py-4 min-w-[220px] max-w-[320px]">
                                     <div class="flex items-center gap-3">
@@ -149,23 +149,23 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="blue"><strong class="font-mono">{{ $jurusan->total_lowongan }}</strong>&nbsp;Lowongan</x-report.pill>
+                                    <x-ui.pill color="blue"><strong class="font-mono">{{ $jurusan->total_lowongan }}</strong>&nbsp;Lowongan</x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
                                         $percentage = round(($jurusan->total_kuota / $maxKuota) * 100);
                                     @endphp
                                     <div class="flex items-center gap-3">
-                                        <x-report.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-indigo-500" />
+                                        <x-ui.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-indigo-500" />
                                         <span class="text-[10px] font-bold font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $percentage }}%</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="teal" :mono="true">{{ $jurusan->total_kuota }} Kursi</x-report.pill>
+                                    <x-ui.pill color="teal" :mono="true">{{ $jurusan->total_kuota }} Kursi</x-ui.pill>
                                 </td>
                             </tr>
                             @empty
-                            <x-report.empty-state
+                            <x-ui.empty-state
                                 :colspan="5"
                                 title="Data jurusan tidak ditemukan" />
                             @endforelse
@@ -180,7 +180,7 @@
                         x-show="!searchQuery || @js(strtolower((string) $jurusan->required_major)).includes(searchQuery.toLowerCase())">
                         {{-- Header: Rank + Jurusan name --}}
                         <div class="flex items-center gap-3">
-                            <x-report.rank-badge :index="$index" size="md" />
+                            <x-ui.rank-badge :index="$index" size="md" />
                             <div class="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/25 text-xs shrink-0 flex items-center justify-center">
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
@@ -192,20 +192,20 @@
                         {{-- Detail box: counts + percentage + progress bar --}}
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-3.5 space-y-3 border border-slate-100 dark:border-slate-800/60">
                             <div class="flex items-center justify-between gap-2">
-                                <x-report.pill color="blue"><strong class="font-mono">{{ $jurusan->total_lowongan }}</strong>&nbsp;Lowongan</x-report.pill>
-                                <x-report.pill color="teal" :mono="true">{{ $jurusan->total_kuota }} Kursi</x-report.pill>
+                                <x-ui.pill color="blue"><strong class="font-mono">{{ $jurusan->total_lowongan }}</strong>&nbsp;Lowongan</x-ui.pill>
+                                <x-ui.pill color="teal" :mono="true">{{ $jurusan->total_kuota }} Kursi</x-ui.pill>
                             </div>
                             @php
                                 $percentage = round(($jurusan->total_kuota / $maxKuota) * 100);
                             @endphp
                             <div class="flex items-center gap-3">
-                                <x-report.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-indigo-500" />
+                                <x-ui.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-indigo-500" />
                                 <span class="text-[10px] font-bold font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $percentage }}%</span>
                             </div>
                         </div>
                     </div>
                     @empty
-                    <x-report.empty-state
+                    <x-ui.empty-state
                         :mobile="true"
                         title="Data jurusan tidak ditemukan" />
                     @endforelse

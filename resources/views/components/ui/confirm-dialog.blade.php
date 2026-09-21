@@ -21,7 +21,7 @@
         });
     "
 >
-    <x-modal name="ui-confirm-dialog" :show="false" maxWidth="sm">
+    <x-ui.modal name="ui-confirm-dialog" :show="false" maxWidth="sm">
         <!-- We use a custom x-show on the modal content to sync with our component state -->
         <div x-show="isOpen" @click.away="isOpen = false" class="p-6">
             <div class="flex items-center justify-center mb-4">
@@ -50,7 +50,7 @@
                 </button>
             </div>
         </div>
-    </x-modal>
+    </x-ui.modal>
     
     <!-- Sync modal visibility -->
     <div x-init="$watch('isOpen', value => {

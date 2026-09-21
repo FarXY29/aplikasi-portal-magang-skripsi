@@ -8,7 +8,7 @@
        @mouseenter="showTooltip($el, '{{ config('app.name', 'Portal Magang') }}', 'Banjarmasin')"
        @mouseleave="hideTooltip()">
         <div class="w-9 h-9 rounded-xl bg-teal-700 text-white flex items-center justify-center p-1.5 shadow-2xs group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
-            <x-application-logo class="w-full h-full fill-current text-white" />
+            <x-ui.application-logo class="w-full h-full fill-current text-white" />
         </div>
         <div x-show="!sidebarCollapsed" 
              x-transition:enter="transition ease-out duration-200"
@@ -350,7 +350,7 @@
             </div>
             
             <div class="flex items-center gap-1.5 flex-shrink-0">
-                <x-theme-toggle class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-slate-200 dark:border-gray-600" />
+                <x-ui.theme-toggle class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-slate-200 dark:border-gray-600" />
                 <form method="POST" action="{{ route('logout') }}" class="flex-shrink-0">
                     @csrf
                     <button type="submit" 
@@ -382,7 +382,7 @@
             <div class="flex flex-col items-center gap-2">
                 <div @mouseenter="showTooltip($el, 'Ganti Tema')"
                      @mouseleave="hideTooltip()">
-                    <x-theme-toggle class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-slate-200 dark:border-gray-600" />
+                    <x-ui.theme-toggle class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 active:scale-95 shadow-2xs border border-slate-200 dark:border-gray-600" />
                 </div>
 
                 <div @mouseenter="showTooltip($el, 'Logout')"

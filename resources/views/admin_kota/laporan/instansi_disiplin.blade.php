@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header
+        <x-ui.header
             icon="fas fa-building"
             :title="__('Analisis Kedisiplinan Instansi')"
             countLabel="Total Terfilter:"
@@ -35,43 +35,43 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Back Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$stats['total_instansi'] > 0 ? route('admin.laporan.instansi_disiplin.print', array_merge(request()->query(), ['format' => 'pdf'])) : null" />
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Instansi"
                     :value="number_format($stats['total_instansi'])"
                     icon="fas fa-building"
                     color="teal"
                     tooltip="Total jumlah instansi/dinas Pemerintah Kota Banjarmasin yang masuk dalam evaluasi kedisiplinan presensi." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Rerata Disiplin"
                     :value="$stats['avg_disiplin'] . '%'"
                     icon="fas fa-percentage"
                     color="teal"
                     :featured="true"
                     tooltip="Rata-rata persentase kedisiplinan instansi se-Kota Banjarmasin. Rumus Disiplin Instansi: 100% - ((Total Pelanggaran / Total Absensi) x 100%). Pelanggaran = Terlambat + Alpa." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Absensi"
                     :value="number_format($stats['total_kehadiran'])"
                     icon="fas fa-calendar-check"
                     color="blue"
                     tooltip="Total seluruh log entri presensi/kehadiran peserta magang pada instansi yang dinilai." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Pelanggaran"
                     :value="number_format($stats['total_pelanggaran'])"
                     icon="fas fa-exclamation-triangle"
                     color="rose"
                     tooltip="Total akumulasi kasus pelanggaran presensi peserta magang. Rumus: Total Terlambat + Total Alpa." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Terlambat"
                     :value="number_format($stats['total_terlambat'])"
                     icon="fas fa-user-clock"
                     color="orange"
                     tooltip="Total kehadiran peserta yang waktu masuknya melewati jam kerja resmi instansi (clock_in > jam_mulai_masuk dinas)." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Alpa"
                     :value="number_format($stats['total_alpa'])"
                     icon="fas fa-user-times"
@@ -83,7 +83,7 @@
             @if($stats['total_instansi'] > 0)
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <div class="lg:col-span-2">
-                        <x-report.chart-card
+                        <x-ui.chart-card
                             icon="fas fa-medal"
                             iconColor="emerald"
                             title="TOP 10 Instansi Paling Disiplin"
@@ -91,7 +91,7 @@
                             canvasId="chart-top-disiplin"
                             height="h-64 md:h-80" />
                     </div>
-                    <x-report.chart-card
+                    <x-ui.chart-card
                         icon="fas fa-chart-pie"
                         iconColor="rose"
                         title="Komposisi Pelanggaran"
@@ -265,7 +265,7 @@
                                 @forelse($instansis as $index => $res)
                                 <tr class="hover:bg-teal-50/50 dark:hover:bg-teal-500/5 transition group cursor-pointer" @click="openRow = (openRow === {{ $index }} ? null : {{ $index }})">
                                     <td class="px-4 py-4 text-center">
-                                        <x-report.rank-badge :index="$index" :eligible="$isUnfiltered && $res->total_attendances > 0" class="mx-auto" />
+                                        <x-ui.rank-badge :index="$index" :eligible="$isUnfiltered && $res->total_attendances > 0" class="mx-auto" />
                                     </td>
                                     <td class="px-6 py-4 min-w-[220px] max-w-[320px]">
                                         <div class="flex items-center gap-3">
@@ -281,7 +281,7 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <x-report.pill color="slate"><strong class="font-mono">{{ $res->total_attendances }}</strong>&nbsp;<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Entri</span></x-report.pill>
+                                        <x-ui.pill color="slate"><strong class="font-mono">{{ $res->total_attendances }}</strong>&nbsp;<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Entri</span></x-ui.pill>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         @if($res->total_pelanggaran > 0)
@@ -381,7 +381,7 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <x-report.empty-state
+                                <x-ui.empty-state
                                     :colspan="6"
                                     title="Data tidak ditemukan"
                                     subtitle="Coba sesuaikan filter pencarian Anda." />
@@ -397,7 +397,7 @@
                             {{-- header: rank icon + name + status badge --}}
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <x-report.rank-badge :index="$index" :eligible="$isUnfiltered && $res->total_attendances > 0" size="md" />
+                                    <x-ui.rank-badge :index="$index" :eligible="$isUnfiltered && $res->total_attendances > 0" size="md" />
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-2">
                                             <div class="h-8 w-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 font-black border border-teal-200 dark:border-teal-500/25 text-[10px] shrink-0 flex items-center justify-center">
@@ -464,7 +464,7 @@
                                     }
                                 @endphp
                                 <div class="flex items-center gap-2">
-                                    <x-report.progress :width="$res->tingkat_disiplin" :barClass="$barColor" />
+                                    <x-ui.progress :width="$res->tingkat_disiplin" :barClass="$barColor" />
                                     <span class="px-2 py-0.5 rounded-lg text-[10px] font-black font-mono {{ $textColor }}">
                                         {{ number_format($res->tingkat_disiplin, 1) }}%
                                     </span>
@@ -503,7 +503,7 @@
                             </div>
                         </div>
                         @empty
-                        <x-report.empty-state
+                        <x-ui.empty-state
                             :mobile="true"
                             title="Data tidak ditemukan"
                             subtitle="Coba sesuaikan filter pencarian Anda." />

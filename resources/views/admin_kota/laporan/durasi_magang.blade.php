@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header
+        <x-ui.header
             icon="fas fa-business-time"
             :title="__('Rata-Rata Durasi Magang Instansi')"
             countLabel="Total Terfilter:"
@@ -34,41 +34,41 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$instansis->count() > 0 ? route('admin.laporan.durasi_magang.print', request()->query()) : null" />
 
             {{-- Summary KPI Stats Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Instansi"
                     :value="number_format($instansis->count())"
                     icon="fas fa-building"
                     color="teal"
                     tooltip="Total jumlah instansi/dinas Pemerintah Kota Banjarmasin yang terdaftar pada laporan durasi magang." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Peserta Terdokumentasi"
                     :value="number_format($totalPesertaEvaluasi)"
                     icon="fas fa-users"
                     color="blue"
                     tooltip="Jumlah peserta magang aktif & alumni yang memiliki data tanggal mulai dan selesai magang secara valid." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Rerata Kota (Hari)"
                     :value="$avgHariKota . ' Hari'"
                     icon="fas fa-calendar-day"
                     color="indigo"
                     tooltip="Rata-rata durasi magang instansi dalam satuan hari. Rumus per instansi: Total Selisih Hari (Tanggal Selesai - Tanggal Mulai) / Jumlah Peserta Magang." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Rerata Kota (Bulan)"
                     :value="$avgBulanKota . ' Bulan'"
                     icon="fas fa-clock"
                     color="teal"
                     :featured="true"
-                    tooltip="Rata-rata durasi magang instansi dalam satuan bulan (asumsi 1 bulan = 30 hari). Rumus: Rata-Rata Durasi Hari / 30 Hari." />
+                    tooltip="Rata-rata durasi magang instansi dalam satuan bulan. Konversi estimasi: Rerata Hari / 30 hari." />
             </div>
 
             {{-- Chart: Top 10 Durasi Terpanjang --}}
             @if($instansis->count() > 0)
-                <x-report.chart-card
+                <x-ui.chart-card
                     icon="fas fa-hourglass-half"
                     iconColor="teal"
                     title="TOP 10 Instansi dengan Durasi Magang Terpanjang"
@@ -149,26 +149,26 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="slate"><strong class="font-mono">{{ $instansi->applications->count() }}</strong>&nbsp;<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Orang</span></x-report.pill>
+                                    <x-ui.pill color="slate"><strong class="font-mono">{{ $instansi->applications->count() }}</strong>&nbsp;<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Orang</span></x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
                                         $percentage = min(100, round(($instansi->avg_durasi_hari / 180) * 100));
                                     @endphp
                                     <div class="flex items-center gap-3">
-                                        <x-report.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-emerald-500" />
+                                        <x-ui.progress :width="$percentage" barClass="bg-gradient-to-r from-teal-500 to-emerald-500" />
                                         <span class="text-[10px] font-bold font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $percentage }}%</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="slate" :mono="true">{{ $instansi->avg_durasi_hari }} Hari</x-report.pill>
+                                    <x-ui.pill color="slate" :mono="true">{{ $instansi->avg_durasi_hari }} Hari</x-ui.pill>
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <x-report.pill color="teal" :mono="true">{{ number_format($instansi->avg_durasi_bulan, 1) }} Bulan</x-report.pill>
+                                    <x-ui.pill color="teal" :mono="true">{{ number_format($instansi->avg_durasi_bulan, 1) }} Bulan</x-ui.pill>
                                 </td>
                             </tr>
                             @empty
-                            <x-report.empty-state
+                            <x-ui.empty-state
                                 :colspan="6"
                                 title="Data instansi tidak ditemukan" />
                             @endforelse
@@ -208,12 +208,12 @@
                             $percentageMobile = min(100, round(($instansi->avg_durasi_hari / 180) * 100));
                         @endphp
                         <div class="flex items-center gap-3">
-                            <x-report.progress :width="$percentageMobile" barClass="bg-gradient-to-r from-teal-500 to-emerald-500" />
+                            <x-ui.progress :width="$percentageMobile" barClass="bg-gradient-to-r from-teal-500 to-emerald-500" />
                             <span class="text-[10px] font-bold font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $percentageMobile }}%</span>
                         </div>
                     </div>
                     @empty
-                    <x-report.empty-state
+                    <x-ui.empty-state
                         :mobile="true"
                         title="Data instansi tidak ditemukan" />
                     @endforelse

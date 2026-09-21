@@ -139,7 +139,7 @@
                         <div class="flex items-center gap-3.5">
                             <i class="fas fa-palette w-5 text-center text-slate-400"></i> Mode Gelap
                         </div>
-                        <x-theme-toggle class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all shadow-2xs border border-slate-200 dark:border-gray-600" />
+                        <x-ui.theme-toggle class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-gray-600 dark:hover:text-white transition-all shadow-2xs border border-slate-200 dark:border-gray-600" />
                     </div>
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full mt-2">

@@ -16,7 +16,7 @@
 
             {{-- Filter Bar --}}
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 print:hidden space-y-5">
-                <x-pembimbing.filter-bar
+                <x-ui.filter-bar
                     route-name="pembimbing.peserta.logbook"
                     :app="$app"
                     :applications="$applications"
@@ -55,7 +55,7 @@
                 </div>
             @endif
 
-            <x-pembimbing.pagination :paginator="$logs" />
+            <x-ui.pagination :paginator="$logs" />
         </div>
     </div>
 

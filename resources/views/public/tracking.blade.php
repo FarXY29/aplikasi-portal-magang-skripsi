@@ -49,7 +49,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-3 group focus:outline-none">
                 <div class="bg-teal-700 text-white rounded-xl p-2 shadow-2xs flex items-center justify-center">
-                    <x-application-logo class="w-6 h-6 fill-current text-white" />
+                    <x-ui.application-logo class="w-6 h-6 fill-current text-white" />
                 </div>
                 <div class="flex flex-col">
                     <span class="text-base font-black text-slate-900 dark:text-white uppercase leading-none font-display">SiMagang</span>
@@ -70,7 +70,7 @@
                         <i class="fas fa-sign-in-alt"></i> Masuk
                     </a>
                 @endauth
-                <x-theme-toggle class="p-2 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200/50 dark:border-gray-700/50" />
+                <x-ui.theme-toggle class="p-2 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200/50 dark:border-gray-700/50" />
             </div>
         </div>
     </header>

@@ -62,6 +62,6 @@
     @endif
 
     @if ($hasError)
-        <x-input-error :messages="$errorBag->get($name)" class="mt-1.5 ml-1" />
+        <x-ui.input-error :messages="$errorBag->get($name)" class="mt-1.5 ml-1" />
     @endif
 </div>

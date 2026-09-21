@@ -41,7 +41,7 @@
                     @endif
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Format: JPG, PNG. Maksimal ukuran 2MB. Disarankan pas foto formal atau rapi.</p>
-                <x-input-error class="mt-2" :messages="$errors->get('photo')" />
+                <x-ui.input-error class="mt-2" :messages="$errors->get('photo')" />
             </div>
         </div>
 
@@ -52,7 +52,7 @@
                     <span>{{ __('Nama Lengkap') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="name" name="name" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
-                <x-input-error class="mt-1" :messages="$errors->get('name')" />
+                <x-ui.input-error class="mt-1" :messages="$errors->get('name')" />
             </div>
 
             <!-- Username -->
@@ -62,7 +62,7 @@
                 </label>
                 <input id="username" name="username" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('username', $user->username) }}" required autocomplete="username" placeholder="username_anda" />
                 <p class="text-[11px] text-gray-400 dark:text-gray-500">Digunakan untuk login alternatif selain email.</p>
-                <x-input-error class="mt-1" :messages="$errors->get('username')" />
+                <x-ui.input-error class="mt-1" :messages="$errors->get('username')" />
             </div>
 
             <!-- Email -->
@@ -71,7 +71,7 @@
                     <span>{{ __('Alamat Email') }}</span> <span class="text-red-500">*</span>
                 </label>
                 <input id="email" name="email" type="email" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('email', $user->email) }}" required autocomplete="username" />
-                <x-input-error class="mt-1" :messages="$errors->get('email')" />
+                <x-ui.input-error class="mt-1" :messages="$errors->get('email')" />
 
                 @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                     <div class="mt-2 p-3 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 rounded-lg text-xs text-amber-800 dark:text-amber-300 flex items-center justify-between">
@@ -132,7 +132,7 @@
                         class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 dark:hover:file:bg-teal-900 cursor-pointer border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-2xs" 
                         accept="image/png, image/jpeg, image/jpg" />
                     <p class="text-[11px] text-gray-400 dark:text-gray-500 italic">Tanda tangan ini otomatis dijadikan paraf pada rekap logbook mahasiswa dan dokumen penilaian.</p>
-                    <x-input-error class="mt-1" :messages="$errors->get('signature')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('signature')" />
                 </div>
 
                 {{-- Preview Box --}}
@@ -181,7 +181,7 @@
                         <span>{{ __('NIDN / NIP / NIK') }}</span>
                     </label>
                     <input id="nik" name="nik" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('nik', $user->nik) }}" placeholder="Nomor Induk Dosen / Pegawai" />
-                    <x-input-error class="mt-1" :messages="$errors->get('nik')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('nik')" />
                 </div>
 
                 <!-- No HP -->
@@ -190,7 +190,7 @@
                         <span>{{ __('Nomor WhatsApp') }}</span>
                     </label>
                     <input id="phone" name="phone" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('phone', $user->phone) }}" placeholder="Contoh: 0812xxxx" />
-                    <x-input-error class="mt-1" :messages="$errors->get('phone')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('phone')" />
                 </div>
 
                 <!-- Asal Instansi -->
@@ -200,7 +200,7 @@
                     </label>
                     <input id="asal_instansi" name="asal_instansi" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('asal_instansi', $user->asal_instansi) }}" placeholder="Contoh: Universitas Lambung Mangkurat" required />
                     <p class="text-xs text-teal-600 dark:text-teal-400 mt-1 font-bold"><i class="fas fa-info-circle mr-1"></i> Penting! Ketikkan nama kampus persis dengan yang diketik mahasiswa agar mereka bisa menemukan nama Anda di pilihan pembimbing.</p>
-                    <x-input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
                 </div>
             </div>
         </div>
@@ -220,7 +220,7 @@
                     </label>
                     <input id="nik" name="nik" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('nik', $user->nik) }}" placeholder="Nomor Induk Mahasiswa" />
                     <p class="text-[11px] text-gray-400 dark:text-gray-500">Nomor ini akan tercetak di sertifikat magang.</p>
-                    <x-input-error class="mt-1" :messages="$errors->get('nik')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('nik')" />
                 </div>
 
                 <!-- No HP -->
@@ -229,7 +229,7 @@
                         <span>{{ __('Nomor WhatsApp') }}</span>
                     </label>
                     <input id="phone" name="phone" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('phone', $user->phone) }}" placeholder="Contoh: 0812xxxx" />
-                    <x-input-error class="mt-1" :messages="$errors->get('phone')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('phone')" />
                 </div>
 
                 <!-- Asal Instansi -->
@@ -239,7 +239,7 @@
                     </label>
                     <input id="asal_instansi" name="asal_instansi" type="text" class="w-full min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-2xs transition-all outline-none focus:border-teal-600 dark:focus:border-teal-500 focus:ring-3 focus:ring-teal-600/15" value="{{ old('asal_instansi', $user->asal_instansi) }}" placeholder="Contoh: Universitas Lambung Mangkurat" required />
                     <p class="text-[11px] text-gray-400 dark:text-gray-500">Tulis nama lengkap instansi agar Dosen dapat menemukan data Anda.</p>
-                    <x-input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('asal_instansi')" />
                 </div>
 
                 <!-- Jurusan / Program Studi Terstandarisasi -->
@@ -289,8 +289,8 @@
                     </div>
                     <input type="hidden" name="major" :value="customMajor" x-show="!isCustom">
                     <p class="text-[11px] text-gray-400 dark:text-gray-500">Menentukan posisi magang yang sesuai dengan kualifikasi Anda.</p>
-                    <x-input-error class="mt-1" :messages="$errors->get('major')" />
-                    <x-input-error class="mt-1" :messages="$errors->get('major_id')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('major')" />
+                    <x-ui.input-error class="mt-1" :messages="$errors->get('major_id')" />
                 </div>
 
                 <!-- Pemilihan Pembimbing Sekolah -->
@@ -317,7 +317,7 @@
                         <p class="text-xs text-red-500 dark:text-red-400 mt-2 font-medium"><i class="fas fa-exclamation-circle mr-1"></i> Pastikan nama Asal Kampus Anda benar. Jika sudah benar namun tetap kosong, berarti dosen pembimbing Anda belum membuat akun.</p>
                     @endif
                     
-                    <x-input-error class="mt-2" :messages="$errors->get('pembimbing_sekolah_id')" />
+                    <x-ui.input-error class="mt-2" :messages="$errors->get('pembimbing_sekolah_id')" />
                 </div>
             </div>
         </div>

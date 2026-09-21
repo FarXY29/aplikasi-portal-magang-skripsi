@@ -140,9 +140,9 @@
                     </div>
 
                     <div>
-                        <x-primary-button class="w-full justify-center py-2 text-xs">
+                        <x-ui.primary-button class="w-full justify-center py-2 text-xs">
                             <i class="fas fa-search mr-1.5"></i> Terapkan Filter
-                        </x-primary-button>
+                        </x-ui.primary-button>
                     </div>
                 </form>
             </div>

@@ -67,12 +67,12 @@
         {{-- Top Floating Utilities (Theme Toggle & Quick Home) --}}
         <header class="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 sm:px-8">
             <a href="{{ route('home') }}" class="group flex items-center gap-2.5 rounded-full border border-slate-200/80 bg-white/80 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs backdrop-blur-md transition hover:border-teal-600/40 hover:bg-white dark:border-gray-800 dark:bg-gray-900/70 dark:text-gray-300 dark:hover:border-teal-500/40 dark:hover:bg-gray-900">
-                <x-application-logo class="h-4 w-4 fill-current text-teal-700 dark:text-teal-400" />
+                <x-ui.application-logo class="h-4 w-4 fill-current text-teal-700 dark:text-teal-400" />
                 <span>Portal Magang</span>
             </a>
 
             <div class="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 p-1 shadow-2xs backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/70">
-                <x-theme-toggle class="!p-1.5" />
+                <x-ui.theme-toggle class="!p-1.5" />
             </div>
         </header>
 

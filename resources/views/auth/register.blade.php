@@ -113,7 +113,7 @@
                                 </div>
                             </label>
                         </div>
-                        <x-input-error :messages="$errors->get('role')" class="mt-1.5" />
+                        <x-ui.input-error :messages="$errors->get('role')" class="mt-1.5" />
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">

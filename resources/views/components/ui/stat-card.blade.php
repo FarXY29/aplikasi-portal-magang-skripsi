@@ -2,80 +2,96 @@
     'title' => 'Statistik',
     'value' => '0',
     'icon' => 'fas fa-chart-bar',
-    'color' => 'indigo',
+    'color' => 'teal',
+    'tooltip' => null,
+    'featured' => false,
+    'textMode' => false,
     'subtitle' => null,
     'href' => null,
 ])
 
 @php
-    $colorMap = [
-        'indigo' => [
-            'bg' => 'bg-white',
-            'border' => 'border-indigo-100/90 hover:border-indigo-300',
-            'iconBg' => 'bg-indigo-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'emerald' => [
-            'bg' => 'bg-white',
-            'border' => 'border-emerald-100/90 hover:border-emerald-300',
-            'iconBg' => 'bg-emerald-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'amber' => [
-            'bg' => 'bg-white',
-            'border' => 'border-amber-100/90 hover:border-amber-300',
-            'iconBg' => 'bg-amber-500 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'rose' => [
-            'bg' => 'bg-white',
-            'border' => 'border-rose-100/90 hover:border-rose-300',
-            'iconBg' => 'bg-rose-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'blue' => [
-            'bg' => 'bg-white',
-            'border' => 'border-blue-100/90 hover:border-blue-300',
-            'iconBg' => 'bg-blue-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'teal' => [
-            'bg' => 'bg-white',
-            'border' => 'border-teal-100/90 hover:border-teal-300',
-            'iconBg' => 'bg-teal-700 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'purple' => [
-            'bg' => 'bg-white',
-            'border' => 'border-purple-100/90 hover:border-purple-300',
-            'iconBg' => 'bg-purple-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
-        'green' => [
-            'bg' => 'bg-white',
-            'border' => 'border-green-100/90 hover:border-green-300',
-            'iconBg' => 'bg-green-600 text-white shadow-2xs',
-            'text' => 'text-slate-900',
-        ],
+    $hoverMap = [
+        'teal' => 'hover:border-teal-500/40 hover:shadow-teal-500/10',
+        'blue' => 'hover:border-blue-500/40 hover:shadow-blue-500/10',
+        'emerald' => 'hover:border-emerald-500/40 hover:shadow-emerald-500/10',
+        'indigo' => 'hover:border-indigo-500/40 hover:shadow-indigo-500/10',
+        'amber' => 'hover:border-amber-500/40 hover:shadow-amber-500/10',
+        'orange' => 'hover:border-orange-500/40 hover:shadow-orange-500/10',
+        'rose' => 'hover:border-rose-500/40 hover:shadow-rose-500/10',
+        'purple' => 'hover:border-purple-500/40 hover:shadow-purple-500/10',
+        'slate' => 'hover:border-slate-500/40 hover:shadow-slate-500/10',
+        'green' => 'hover:border-emerald-500/40 hover:shadow-emerald-500/10',
+        'red' => 'hover:border-rose-500/40 hover:shadow-rose-500/10',
+        'yellow' => 'hover:border-amber-500/40 hover:shadow-amber-500/10',
+        'gray' => 'hover:border-slate-500/40 hover:shadow-slate-500/10',
     ];
 
-    $style = $colorMap[$color] ?? $colorMap['indigo'];
+    $iconMap = [
+        'teal' => 'bg-teal-500 shadow-teal-500/30',
+        'blue' => 'bg-blue-500 shadow-blue-500/30',
+        'emerald' => 'bg-emerald-500 shadow-emerald-500/30',
+        'indigo' => 'bg-indigo-500 shadow-indigo-500/30',
+        'amber' => 'bg-amber-500 shadow-amber-500/30',
+        'orange' => 'bg-orange-500 shadow-orange-500/30',
+        'rose' => 'bg-rose-500 shadow-rose-500/30',
+        'purple' => 'bg-purple-500 shadow-purple-500/30',
+        'slate' => 'bg-slate-500 shadow-slate-500/30',
+        'green' => 'bg-emerald-500 shadow-emerald-500/30',
+        'red' => 'bg-rose-500 shadow-rose-500/30',
+        'yellow' => 'bg-amber-500 shadow-amber-500/30',
+        'gray' => 'bg-slate-500 shadow-slate-500/30',
+    ];
+
+    $hover = $hoverMap[$color] ?? $hoverMap['teal'];
+    $iconBg = $iconMap[$color] ?? $iconMap['teal'];
     $tag = $href ? 'a' : 'div';
+
+    $valueClass = $textMode
+        ? 'text-xs md:text-sm font-extrabold leading-snug line-clamp-2'
+        : 'text-xl md:text-2xl font-extrabold tracking-tight font-mono';
 @endphp
 
-<{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group block relative overflow-hidden rounded-2xl border p-4 xl:p-6 shadow-2xs transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xs {$style['bg']} {$style['border']} dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600"]) }}>
-    <div class="flex items-start justify-between gap-2 xl:gap-4">
-        <div class="min-w-0">
-            <p class="text-[10px] xl:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-gray-400 truncate">{{ $title }}</p>
-            <h3 class="mt-2 text-xl xl:text-3xl font-extrabold tracking-tight {{ $style['text'] }} dark:text-gray-100">{{ $value }}</h3>
-            @if($subtitle)
-                <p class="mt-1 text-xs font-medium text-slate-500 dark:text-gray-400 flex items-center gap-1">
-                    {{ $subtitle }}
-                </p>
-            @endif
+@if($featured)
+    <{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => 'group relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-teal-500 to-emerald-600 p-4 md:p-5 shadow-lg shadow-teal-500/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-teal-500/30 cursor-help']) }}
+        @if($tooltip) title="{{ $tooltip }}" @endif>
+        <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-teal-50/90">{{ $title }}</p>
+                <h3 class="mt-2 {{ $valueClass }} text-white" @if($textMode) title="{{ $value }}" @endif>{{ $value }}</h3>
+                @if($subtitle)
+                    <p class="mt-1 text-[10px] md:text-xs font-semibold text-teal-50/80">{{ $subtitle }}</p>
+                @endif
+            </div>
+            <div class="flex h-10 w-10 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 border border-white/20 text-white shadow-md transition-transform duration-300 group-hover:scale-110">
+                <i class="{{ $icon }} text-base"></i>
+            </div>
         </div>
-        <div class="flex h-10 w-10 xl:h-12 xl:w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-2xs dark:shadow-none transition-transform duration-300 group-hover:scale-105 {{ $style['iconBg'] }}">
-            <i class="{{ $icon }} text-base xl:text-lg"></i>
+        @if(isset($slot) && !empty(trim((string)$slot)))
+            <div class="mt-3 pt-2.5 border-t border-white/20">
+                {{ $slot }}
+            </div>
+        @endif
+    </{{ $tag }}>
+@else
+    <{{ $tag }} @if($href) href="{{ $href }}" @endif {{ $attributes->merge(['class' => "group relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800/40 bg-white dark:bg-[#161f33] p-4 md:p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-help {$hover}"]) }}
+        @if($tooltip) title="{{ $tooltip }}" @endif>
+        <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ $title }}</p>
+                <h3 class="mt-2 {{ $valueClass }} text-slate-900 dark:text-white" @if($textMode) title="{{ $value }}" @endif>{{ $value }}</h3>
+                @if($subtitle)
+                    <p class="mt-1 text-[10px] md:text-xs font-semibold text-slate-500 dark:text-slate-400">{{ $subtitle }}</p>
+                @endif
+            </div>
+            <div class="flex h-10 w-10 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-xl text-white shadow-md transition-transform duration-300 group-hover:scale-110 {{ $iconBg }}">
+                <i class="{{ $icon }} text-base"></i>
+            </div>
         </div>
-    </div>
-</{{ $tag }}>
+        @if(isset($slot) && !empty(trim((string)$slot)))
+            <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/60">
+                {{ $slot }}
+            </div>
+        @endif
+    </{{ $tag }}>
+@endif

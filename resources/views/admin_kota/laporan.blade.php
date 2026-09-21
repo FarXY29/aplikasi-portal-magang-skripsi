@@ -1,9 +1,9 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <x-report.header icon="fas fa-chart-pie" :title="__('Laporan Statistik Instansi')" />
+        <x-ui.header icon="fas fa-chart-pie" :title="__('Laporan Statistik Instansi')" />
     </x-slot>
 
     @include('admin_kota.laporan.partials.chart-loader')
@@ -30,43 +30,43 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$laporan->count() > 0 ? route('admin.laporan.print', request()->query()) : null" />
 
             {{-- Stats Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Instansi"
                     :value="number_format($stats['total_instansi'])"
                     icon="fas fa-building"
                     color="teal"
                     tooltip="Total seluruh instansi/dinas Pemerintah Kota Banjarmasin yang terdaftar dalam sistem portal magang." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Lowongan Aktif"
                     :value="number_format($stats['total_lowongan'])"
                     icon="fas fa-briefcase"
                     color="blue"
                     tooltip="Jumlah posisi lowongan magang berstatus terbuka (buka) yang sedang ditawarkan seluruh instansi." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Pelamar"
                     :value="number_format($stats['total_pelamar'])"
                     icon="fas fa-users"
                     color="indigo"
                     tooltip="Total akumulasi berkas pendaftaran/lamaran peserta yang masuk ke seluruh instansi Pemko." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Diterima / Lulus"
                     :value="number_format($stats['total_diterima'])"
                     icon="fas fa-user-check"
                     color="emerald"
                     tooltip="Jumlah peserta magang yang telah diterima (status 'diterima') atau telah lulus/selesai (status 'selesai') secara akumulatif di seluruh instansi." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Seleksi Kota"
                     :value="$stats['avg_seleksi_rate'] . '%'"
                     icon="fas fa-percentage"
                     color="amber"
                     :featured="true"
                     tooltip="Rata-rata persentase kelulusan seleksi tingkat kota. Rumus: (Total Diterima / Total Pelamar) x 100%." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Instansi Favorit"
                     :value="$stats['fav_dinas']"
                     icon="fas fa-award"
@@ -90,7 +90,7 @@
             {{-- Charts Row --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div class="lg:col-span-2">
-                    <x-report.chart-card
+                    <x-ui.chart-card
                         icon="fas fa-ranking-star"
                         iconColor="teal"
                         title="TOP 10 Instansi Paling Diminati"
@@ -98,7 +98,7 @@
                         canvasId="chart-top-pelamar"
                         height="h-64 md:h-80" />
                 </div>
-                <x-report.chart-card
+                <x-ui.chart-card
                     icon="fas fa-chart-pie"
                     iconColor="emerald"
                     title="Komposisi Hasil Seleksi"
@@ -190,18 +190,18 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <x-report.pill color="slate" :mono="true">{{ $data['lowongan_aktif'] }} Posisi</x-report.pill>
+                                    <x-ui.pill color="slate" :mono="true">{{ $data['lowongan_aktif'] }} Posisi</x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <x-report.pill color="blue" :mono="true">{{ $data['total_pelamar'] }} Orang</x-report.pill>
+                                    <x-ui.pill color="blue" :mono="true">{{ $data['total_pelamar'] }} Orang</x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <x-report.pill color="emerald" :mono="true">{{ $data['total_magang'] }} Orang</x-report.pill>
+                                    <x-ui.pill color="emerald" :mono="true">{{ $data['total_magang'] }} Orang</x-ui.pill>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex flex-col items-center gap-1.5">
                                         <span class="font-black text-slate-900 dark:text-white font-mono">{{ $data['seleksi_rate'] }}%</span>
-                                        <x-report.progress :width="$data['seleksi_rate']" height="h-1.5" class="w-24" />
+                                        <x-ui.progress :width="$data['seleksi_rate']" height="h-1.5" class="w-24" />
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
@@ -211,7 +211,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <x-report.empty-state
+                            <x-ui.empty-state
                                 :colspan="7"
                                 title="Data instansi tidak ditemukan"
                                 subtitle="Coba sesuaikan kata kunci pencarian Anda." />
@@ -237,15 +237,15 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Lowongan Aktif</p>
-                                <x-report.pill color="slate" :mono="true">{{ $data['lowongan_aktif'] }} Posisi</x-report.pill>
+                                <x-ui.pill color="slate" :mono="true">{{ $data['lowongan_aktif'] }} Posisi</x-ui.pill>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Total Pelamar</p>
-                                <x-report.pill color="blue" :mono="true">{{ $data['total_pelamar'] }} Orang</x-report.pill>
+                                <x-ui.pill color="blue" :mono="true">{{ $data['total_pelamar'] }} Orang</x-ui.pill>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Diterima</p>
-                                <x-report.pill color="emerald" :mono="true">{{ $data['total_magang'] }} Orang</x-report.pill>
+                                <x-ui.pill color="emerald" :mono="true">{{ $data['total_magang'] }} Orang</x-ui.pill>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800/60">
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Rasio Peminat</p>
@@ -261,11 +261,11 @@
                                 <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tingkat Seleksi</p>
                                 <span class="font-black text-slate-900 dark:text-white font-mono text-sm">{{ $data['seleksi_rate'] }}%</span>
                             </div>
-                            <x-report.progress :width="$data['seleksi_rate']" height="h-1.5" />
+                            <x-ui.progress :width="$data['seleksi_rate']" height="h-1.5" />
                         </div>
                     </div>
                     @empty
-                    <x-report.empty-state
+                    <x-ui.empty-state
                         :mobile="true"
                         title="Data instansi tidak ditemukan"
                         subtitle="Coba sesuaikan kata kunci pencarian Anda." />

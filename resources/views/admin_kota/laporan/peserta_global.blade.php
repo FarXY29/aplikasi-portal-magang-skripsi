@@ -89,30 +89,30 @@
         <div class="max-w-7xl mx-auto space-y-5 md:space-y-6">
 
             {{-- Back Navigation & Export Buttons --}}
-            <x-report.toolbar
+            <x-ui.toolbar
                 :printRoute="$stats['total'] > 0 ? route('admin.laporan.peserta_global.print', array_merge(request()->query(), ['format' => 'pdf'])) : null" />
 
             {{-- Ringkasan Statistik Utama --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Total Peserta"
                     :value="number_format($stats['total'])"
                     icon="fas fa-users"
                     color="teal"
                     tooltip="Jumlah seluruh peserta yang sesuai dengan filter laporan saat ini." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Aktif Magang"
                     :value="number_format($stats['aktif'])"
                     icon="fas fa-user-check"
                     color="emerald"
                     tooltip="Jumlah peserta magang dengan status 'diterima' yang saat ini sedang aktif menjalani kegiatan magang di instansi Pemko." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Selesai Magang"
                     :value="number_format($stats['selesai'])"
                     icon="fas fa-graduation-cap"
                     color="blue"
                     tooltip="Jumlah alumni peserta magang yang telah menyelesaikan seluruh program magang secara tuntas (status 'selesai')." />
-                <x-report.stat-card
+                <x-ui.stat-card
                     title="Pending / Menunggu"
                     :value="number_format($stats['pending'])"
                     icon="fas fa-clock"
@@ -123,7 +123,7 @@
             {{-- Chart: Distribusi Status --}}
             @if($stats['total'] > 0)
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <x-report.chart-card
+                    <x-ui.chart-card
                         icon="fas fa-chart-pie"
                         iconColor="teal"
                         title="Distribusi Status Peserta"
@@ -586,7 +586,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <x-report.empty-state
+                            <x-ui.empty-state
                                 :colspan="6"
                                 icon="fas fa-user-circle"
                                 title="Tidak Ada Data Peserta"
@@ -648,7 +648,7 @@
                         </div>
                     </div>
                     @empty
-                    <x-report.empty-state
+                    <x-ui.empty-state
                         :mobile="true"
                         icon="fas fa-user-circle"
                         title="Tidak Ada Data Peserta"

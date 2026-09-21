@@ -32,13 +32,13 @@
                 </div>
 
                 @if (session('status') == 'verification-link-sent')
-                    <x-auth.alert type="success" class="mb-5">
+                    <x-ui.alert type="success" class="mb-5">
                         {{ __('Tautan verifikasi baru telah berhasil dikirim ke alamat email Anda.') }}
-                    </x-auth.alert>
+                    </x-ui.alert>
                 @elseif (session('status'))
-                    <x-auth.alert type="info" class="mb-5">
+                    <x-ui.alert type="info" class="mb-5">
                         {{ session('status') }}
-                    </x-auth.alert>
+                    </x-ui.alert>
                 @endif
 
                 @if (Auth::check())

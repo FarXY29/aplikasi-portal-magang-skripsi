@@ -26,13 +26,13 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Deskripsi Kegiatan <span class="text-rose-500">*</span></label>
                             <textarea name="kegiatan" rows="4" class="w-full rounded-2xl border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:border-teal-500 focus:ring-teal-500 text-xs sm:text-sm font-medium shadow-xs resize-none" required oninvalid="this.setCustomValidity('Harap isi bidang ini.')" oninput="this.setCustomValidity('')" x-model="editKegiatan"></textarea>
-                            <x-input-error :messages="$errors->get('kegiatan')" class="mt-2" />
+                            <x-ui.input-error :messages="$errors->get('kegiatan')" class="mt-2" />
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Ganti Foto (Opsional)</label>
                             <input type="file" name="foto" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 dark:file:bg-teal-950/60 file:text-teal-700 dark:file:text-teal-300 hover:file:bg-teal-100 border border-gray-300 dark:border-gray-700 rounded-xl p-1 bg-white dark:bg-gray-900 cursor-pointer">
                             <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-2 font-medium">Abaikan jika tidak ada perubahan bukti dokumentasi.</p>
-                            <x-input-error :messages="$errors->get('foto')" class="mt-2" />
+                            <x-ui.input-error :messages="$errors->get('foto')" class="mt-2" />
                         </div>
                     </div>
                 </div>

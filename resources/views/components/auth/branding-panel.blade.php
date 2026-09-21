@@ -26,7 +26,7 @@
     {{-- Hero Main Branding Content --}}
     <div class="relative z-10 my-6 md:my-0 text-center md:text-left">
         <div class="mx-auto mb-4 flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl border border-white/25 bg-white/15 p-3 shadow-2xl backdrop-blur-md transition-transform duration-300 hover:rotate-3 md:mx-0">
-            <x-application-logo class="h-10 w-10 sm:h-12 sm:w-12 fill-current text-white drop-shadow-md" />
+            <x-ui.application-logo class="h-10 w-10 sm:h-12 sm:w-12 fill-current text-white drop-shadow-md" />
         </div>
         
         <div class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-widest text-teal-100 backdrop-blur-md mb-2">

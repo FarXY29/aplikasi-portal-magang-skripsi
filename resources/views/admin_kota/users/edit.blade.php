@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
@@ -34,31 +34,31 @@
                             </div>
 
                             <div>
-                                <x-input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
-                                <x-text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required 
+                                <x-ui.input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
+                                <x-ui.text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required 
                                     oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                     oninput="this.setCustomValidity('')" />
-                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                                <x-ui.input-error :messages="$errors->get('name')" class="mt-2" />
                             </div>
 
                             <div>
-                                <x-input-label for="email" value="Email Login" class="mb-2 font-bold" />
-                                <x-text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required 
+                                <x-ui.input-label for="email" value="Email Login" class="mb-2 font-bold" />
+                                <x-ui.text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required 
                                     oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                     oninput="this.setCustomValidity('')" />
-                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                <x-ui.input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 
                             <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                <x-input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
-                                <x-text-input id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" />
+                                <x-ui.input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
+                                <x-ui.text-input id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" />
                             </div>
 
                             <div>
-                                <x-input-label for="password" value="Password Baru (Kosongkan jika tidak diubah)" class="mb-2 font-bold" />
-                                <x-text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" />
+                                <x-ui.input-label for="password" value="Password Baru (Kosongkan jika tidak diubah)" class="mb-2 font-bold" />
+                                <x-ui.text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" />
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">*Hanya isi jika user meminta reset password.</p>
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                <x-ui.input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
                         </div>
 

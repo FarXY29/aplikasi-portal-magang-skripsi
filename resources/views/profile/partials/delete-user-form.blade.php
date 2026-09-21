@@ -30,7 +30,7 @@
         </button>
     </div>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
+    <x-ui.modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-6 sm:p-7 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
             @csrf
             @method('delete')
@@ -63,7 +63,7 @@
                     placeholder="{{ __('Masukkan password Anda') }}"
                 />
 
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-1" />
+                <x-ui.input-error :messages="$errors->userDeletion->get('password')" class="mt-1" />
             </div>
 
             <div class="mt-7 pt-5 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-3">
@@ -77,5 +77,5 @@
                 </button>
             </div>
         </form>
-    </x-modal>
+    </x-ui.modal>
 </section>

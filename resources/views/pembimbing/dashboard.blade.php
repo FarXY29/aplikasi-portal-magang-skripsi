@@ -59,7 +59,7 @@
                         @include('pembimbing.partials._student-cards', ['applications' => $applications])
                     @endif
 
-                    <x-pembimbing.pagination :paginator="$applications" />
+                    <x-ui.pagination :paginator="$applications" />
                 </div>
             </div>
 
