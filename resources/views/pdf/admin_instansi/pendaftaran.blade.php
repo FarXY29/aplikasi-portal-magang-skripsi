@@ -159,35 +159,7 @@
     </table>
 
     {{-- Ringkasan Statistik 6 Status (Formal Government Box Grid) --}}
-    <div class="section-title">Ringkasan Statistik Status Pendaftaran</div>
-    <table class="stats-table">
-        <tr>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Total Pendaftar</div>
-                <div class="stat-value stat-total">{{ number_format($stats['total']) }}</div>
-            </td>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Pending (Baru)</div>
-                <div class="stat-value stat-pending">{{ number_format($stats['pending']) }}</div>
-            </td>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Daftar Tunggu</div>
-                <div class="stat-value stat-menunggu">{{ number_format($stats['menunggu']) }}</div>
-            </td>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Diterima / Aktif</div>
-                <div class="stat-value stat-diterima">{{ number_format($stats['diterima']) }}</div>
-            </td>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Ditolak</div>
-                <div class="stat-value stat-ditolak">{{ number_format($stats['ditolak']) }}</div>
-            </td>
-            <td style="width: 16.66%;">
-                <div class="stat-header">Selesai Magang</div>
-                <div class="stat-value stat-selesai">{{ number_format($stats['selesai']) }}</div>
-            </td>
-        </tr>
-    </table>
+    @include('pdf.partials.stats_pendaftaran', ['stats' => $stats])
 
     {{-- Tabel Utama Data Pelacakan (6 Kolom A4 Landscape) --}}
     <div class="section-title">Data Pelacakan Permohonan Pendaftaran Magang</div>
