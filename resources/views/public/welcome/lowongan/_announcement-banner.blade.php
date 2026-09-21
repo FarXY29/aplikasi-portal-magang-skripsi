@@ -1,6 +1,6 @@
 {{-- Global Announcement Banner --}}
 @php
-    $globalAnnouncement = $globalAnnouncement ?? \App\Models\Setting::where('key', 'announcement')->value('value');
+    $globalAnnouncement = $globalAnnouncement ?? null;
 @endphp
 @if(!empty($globalAnnouncement))
     <div class="reveal bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent border border-amber-500/30 dark:border-amber-500/40 rounded-[2rem] p-5 sm:p-8 shadow-xs flex flex-col md:flex-row gap-5 items-start md:items-center justify-between mb-10 overflow-hidden relative w-full" style="--reveal-delay: 0ms" x-intersect.once="$el.classList.add('revealed')">

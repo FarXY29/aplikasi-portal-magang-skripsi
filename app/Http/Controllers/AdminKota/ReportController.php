@@ -60,8 +60,9 @@ class ReportController extends Controller
     public function laporanInstansi()
     {
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
+        $printSettings = Setting::all()->pluck('value', 'key');
 
-        return view('admin_kota.instansi.laporan_instansi', compact('instansis'));
+        return view('admin_kota.instansi.laporan_instansi', compact('instansis', 'printSettings'));
     }
 
     /**
@@ -99,6 +100,7 @@ class ReportController extends Controller
         }
         $data['title'] = $title;
         $data['request'] = $request;
+        $data['namaDinasFilter'] = $request->filled('instansi_id') ? (Instansi::find($request->instansi_id)?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas';
 
         return $this->pdfService->stream('pdf.admin_kota.laporan_global', $data, 'Laporan-Global-Peserta.pdf', 'a4', 'portrait', true);
     }
@@ -127,6 +129,7 @@ class ReportController extends Controller
         }
         $data['title'] = $title;
         $data['request'] = $request;
+        $data['namaDinasFilter'] = $request->filled('instansi_id') ? (Instansi::find($request->instansi_id)?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas / SKPD Pemko Banjarmasin';
 
         return $this->pdfService->stream('pdf.admin_kota.pendaftaran', $data, 'Laporan-Pendaftaran-Pelacakan-Pemko.pdf', 'a4', 'landscape', true);
     }

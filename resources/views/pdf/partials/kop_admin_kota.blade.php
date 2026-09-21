@@ -1,25 +1,13 @@
 @php
     $logoPath = $kop_logo_path ?? null;
-    if (!$logoPath) {
-        $customLogo = \App\Models\Setting::value('kop_logo');
-        if (!empty($customLogo)) {
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($customLogo)) {
-                $logoPath = \Illuminate\Support\Facades\Storage::disk('public')->path($customLogo);
-            } elseif (file_exists(storage_path('app/public/' . $customLogo))) {
-                $logoPath = storage_path('app/public/' . $customLogo);
-            } elseif (file_exists(public_path('storage/' . $customLogo))) {
-                $logoPath = public_path('storage/' . $customLogo);
-            }
-        }
-    }
     if (!$logoPath || !file_exists($logoPath)) {
         $defaultLogo = public_path('images/Banjarmasin_Logo.svg.png');
         $logoPath = file_exists($defaultLogo) ? $defaultLogo : null;
     }
 
-    $line1 = $kop_line1 ?? \App\Models\Setting::value('kop_line1', 'PEMERINTAH KOTA BANJARMASIN');
-    $line2 = $kop_line2 ?? \App\Models\Setting::value('kop_line2', 'BADAN KESATUAN BANGSA DAN POLITIK');
-    $line3 = $kop_line3 ?? \App\Models\Setting::value('kop_line3', 'Jalan RE Martadinata No. 1, Telp (0511) 3352932, Pos-el: bakesbangpol@banjarmasinkota.go.id, Banjarmasin 70111');
+    $line1 = $kop_line1 ?? 'PEMERINTAH KOTA BANJARMASIN';
+    $line2 = $kop_line2 ?? 'BADAN KESATUAN BANGSA DAN POLITIK';
+    $line3 = $kop_line3 ?? 'Jalan RE Martadinata No. 1, Telp (0511) 3352932, Pos-el: bakesbangpol@banjarmasinkota.go.id, Banjarmasin 70111';
 @endphp
 
 <table class="kop-surat" style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 0;">

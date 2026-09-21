@@ -136,7 +136,7 @@
             <td style="width: 50%;">
                 <strong>Dicetak Tanggal:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WITA<br>
                 <strong>Pencetak:</strong> {{ Auth::user()->name ?? 'Super Admin' }} (Super Admin Kota Banjarmasin)<br>
-                <strong>Dinas / SKPD:</strong> {{ request('instansi_id') ? (\App\Models\Instansi::find(request('instansi_id'))?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas / SKPD Pemko Banjarmasin' }}
+                <strong>Dinas / SKPD:</strong> {{ $namaDinasFilter ?? (request('instansi_id') ? 'Filter Terpilih' : 'Semua Dinas / SKPD Pemko Banjarmasin') }}
             </td>
             <td style="width: 50%; text-align: right; vertical-align: top;">
                 @if(isset($request) && $request->filled('status') && $request->status !== 'semua')

@@ -7,6 +7,7 @@ use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\MajorCategory;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -197,6 +198,7 @@ class LowonganController extends Controller
                 'totalInstansi' => Instansi::count(),
                 'totalLowongan' => InternshipPosition::where('status', 'buka')->count(),
                 'totalAlumni' => Application::where('status', 'selesai')->count(),
+                'globalAnnouncement' => Setting::value('announcement'),
             ];
         });
 
@@ -205,19 +207,22 @@ class LowonganController extends Controller
         $totalInstansi = $cachedData['totalInstansi'];
         $totalLowongan = $cachedData['totalLowongan'];
         $totalAlumni = $cachedData['totalAlumni'];
+        $globalAnnouncement = $cachedData['globalAnnouncement'];
 
         if ($request->ajax() || $request->header('X-Alpine-Fetch') || $request->query('partial') === 'grid') {
             return view('public.welcome._lowongan-grid', compact(
                 'lowongans', 'instansis', 'majorCategories',
                 'totalInstansi', 'totalLowongan', 'totalAlumni',
-                'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount'
+                'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount',
+                'globalAnnouncement'
             ));
         }
 
         return view('public.welcome', compact(
             'lowongans', 'instansis', 'majorCategories',
             'totalInstansi', 'totalLowongan', 'totalAlumni',
-            'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount'
+            'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount',
+            'globalAnnouncement'
         )); 
     }
 

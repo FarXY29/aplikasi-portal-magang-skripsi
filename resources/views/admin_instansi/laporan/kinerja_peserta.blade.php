@@ -109,6 +109,19 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700/60 text-sm" x-data="{ openRow: null }">
                             @forelse($kinerja as $app)
+                            @php
+                                $rowHadir = $app->attendances->where('status', 'hadir')->count();
+                                $rowSakit = $app->attendances->where('status', 'sakit')->count();
+                                $rowIzin = $app->attendances->where('status', 'izin')->count();
+                                $rowAlfa = $app->attendances->where('status', 'alfa')->count();
+                                $rowAttTotal = $app->attendances->count();
+                                $rowAttPending = $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count();
+
+                                $rowLogTotal = $app->logs->count();
+                                $rowLogDisetujui = $app->logs->where('status_validasi', 'disetujui')->count();
+                                $rowLogRevisi = $app->logs->where('status_validasi', 'revisi')->count();
+                                $rowLogPending = $app->logs->where('status_validasi', 'pending')->count();
+                            @endphp
                             <tr class="hover:bg-blue-50/15 dark:hover:bg-blue-900/20 transition cursor-pointer" @click="openRow = openRow === {{ $loop->index }} ? null : {{ $loop->index }}">
                                 <td class="px-5 py-4 text-xs text-gray-400 dark:text-gray-500 text-center font-bold">{{ $loop->iteration }}</td>
                                 <td class="px-5 py-4">
@@ -141,7 +154,7 @@
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-black {{ $attColor }}">
                                         {{ round($attRate, 1) }}%
                                     </span>
-                                    <div class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">{{ $app->attendances->where('status', 'hadir')->count() }}/{{ $app->attendances->count() }} hari</div>
+                                    <div class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">{{ $rowHadir }}/{{ $rowAttTotal }} hari</div>
                                 </td>
                                 <td class="px-5 py-4 text-center">
                                     @php
@@ -151,7 +164,7 @@
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-black {{ $logColor }}">
                                         {{ round($logRate, 1) }}%
                                     </span>
-                                    <div class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} disetujui</div>
+                                    <div class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 font-semibold">{{ $rowLogDisetujui }} disetujui</div>
                                 </td>
                                 <td class="px-5 py-4 text-center">
                                     @if($app->avg_nilai > 0)
@@ -174,30 +187,29 @@
                                         
                                         {{-- Detail Absensi --}}
                                         <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-xs space-y-3">
-                                            <h4 class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
+                                             <h4 class="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2 border-b pb-2 border-gray-100 dark:border-gray-700">
                                                 <i class="fas fa-calendar-alt text-teal-600 dark:text-teal-400"></i> Rincian Absensi
                                             </h4>
                                             <div class="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
                                                 <div class="flex justify-between">
                                                     <span>Hadir:</span>
-                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->attendances->where('status', 'hadir')->count() }} hari</span>
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $rowHadir }} hari</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Sakit:</span>
-                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->attendances->where('status', 'sakit')->count() }} hari</span>
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $rowSakit }} hari</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Izin:</span>
-                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->attendances->where('status', 'izin')->count() }} hari</span>
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $rowIzin }} hari</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Tanpa Keterangan (Alfa):</span>
-                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->attendances->where('status', 'alfa')->count() }} hari</span>
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $rowAlfa }} hari</span>
                                                 </div>
                                                 <div class="flex justify-between border-t pt-1.5 border-gray-100 dark:border-gray-700 mt-1 font-bold">
                                                     <span>Izin/Sakit Pending:</span>
-                                                    @php $pendAtt = $app->attendances->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count(); @endphp
-                                                    <span class="{{ $pendAtt > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendAtt }} hari</span>
+                                                    <span class="{{ $rowAttPending > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $rowAttPending }} hari</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -210,20 +222,19 @@
                                             <div class="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
                                                 <div class="flex justify-between">
                                                     <span>Total Jurnal Harian:</span>
-                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $app->logs->count() }} entri</span>
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{{ $rowLogTotal }} entri</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Disetujui Pembimbing:</span>
-                                                    <span class="font-bold text-green-600 dark:text-green-400">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</span>
+                                                    <span class="font-bold text-green-600 dark:text-green-400">{{ $rowLogDisetujui }} entri</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Ditolak / Perlu Revisi:</span>
-                                                    <span class="font-bold text-red-600 dark:text-red-400">{{ $app->logs->where('status_validasi', 'revisi')->count() }} entri</span>
+                                                    <span class="font-bold text-red-600 dark:text-red-400">{{ $rowLogRevisi }} entri</span>
                                                 </div>
                                                 <div class="flex justify-between">
                                                     <span>Belum Divalidasi:</span>
-                                                    @php $pendLogs = $app->logs->where('status_validasi', 'pending')->count(); @endphp
-                                                    <span class="font-bold {{ $pendLogs > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $pendLogs }} entri</span>
+                                                    <span class="font-bold {{ $rowLogPending > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-gray-200' }}">{{ $rowLogPending }} entri</span>
                                                 </div>
                                             </div>
                                         </div>

@@ -176,6 +176,14 @@
         </thead>
         <tbody>
             @forelse($kinerja as $app)
+                @php
+                    $cntHadir = $app->attendances->where('status', 'hadir')->count();
+                    $cntSakitIzin = $app->attendances->whereIn('status', ['sakit', 'izin'])->count();
+                    $cntAlpa = $app->attendances->where('status', 'alpa')->count();
+                    $cntLogTotal = $app->logs->count();
+                    $cntLogDisetujui = $app->logs->where('status_validasi', 'disetujui')->count();
+                    $cntLogPendingRevisi = $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count();
+                @endphp
                 {{-- Baris Profil Peserta --}}
                 <tr style="background-color: #f8fafc;">
                     <td class="text-center">{{ $loop->iteration }}</td>
@@ -209,16 +217,16 @@
                                     <table class="detail-table">
                                         <tr>
                                             <td>Hadir:</td>
-                                            <td class="text-bold text-center">{{ $app->attendances->where('status', 'hadir')->count() }} hari</td>
+                                            <td class="text-bold text-center">{{ $cntHadir }} hari</td>
                                         </tr>
                                         <tr>
                                             <td>Sakit / Izin:</td>
-                                            <td class="text-bold text-center">{{ $app->attendances->whereIn('status', ['sakit', 'izin'])->count() }} hari</td>
+                                            <td class="text-bold text-center">{{ $cntSakitIzin }} hari</td>
                                         </tr>
                                         <tr>
                                             <td>Alpa / Tanpa Ket.:</td>
-                                            <td class="text-bold text-center {{ $app->attendances->where('status', 'alpa')->count() > 0 ? 'text-bold' : '' }}" style="{{ $app->attendances->where('status', 'alpa')->count() > 0 ? 'color: #b91c1c;' : '' }}">
-                                                {{ $app->attendances->where('status', 'alpa')->count() }} hari
+                                            <td class="text-bold text-center {{ $cntAlpa > 0 ? 'text-bold' : '' }}" style="{{ $cntAlpa > 0 ? 'color: #b91c1c;' : '' }}">
+                                                {{ $cntAlpa }} hari
                                             </td>
                                         </tr>
                                     </table>
@@ -234,16 +242,16 @@
                                     <table class="detail-table">
                                         <tr>
                                             <td>Total Jurnal:</td>
-                                            <td class="text-bold text-center">{{ $app->logs->count() }} entri</td>
+                                            <td class="text-bold text-center">{{ $cntLogTotal }} entri</td>
                                         </tr>
                                         <tr>
                                             <td>Disetujui:</td>
-                                            <td class="text-bold text-center" style="color: #15803d;">{{ $app->logs->where('status_validasi', 'disetujui')->count() }} entri</td>
+                                            <td class="text-bold text-center" style="color: #15803d;">{{ $cntLogDisetujui }} entri</td>
                                         </tr>
                                         <tr>
                                             <td>Pending / Revisi:</td>
-                                            <td class="text-bold text-center" style="{{ $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count() > 0 ? 'color: #b91c1c;' : '' }}">
-                                                {{ $app->logs->whereIn('status_validasi', ['pending', 'revisi'])->count() }} entri
+                                            <td class="text-bold text-center" style="{{ $cntLogPendingRevisi > 0 ? 'color: #b91c1c;' : '' }}">
+                                                {{ $cntLogPendingRevisi }} entri
                                             </td>
                                         </tr>
                                     </table>

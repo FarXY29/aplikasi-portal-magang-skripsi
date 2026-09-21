@@ -31,12 +31,15 @@
                     </div>
                 </div>
                 
+                @php
+                    $disetujuiCount = $logs->where('status_validasi', 'disetujui')->count();
+                @endphp
                 <div class="flex flex-wrap gap-2.5 text-xs font-bold">
                     <div class="px-3.5 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xs text-gray-600 dark:text-gray-300">
                         Total Log: <span class="text-teal-600 dark:text-teal-400 font-extrabold">{{ $logs->count() }}</span>
                     </div>
                     <div class="px-3.5 py-1.5 bg-green-50 dark:bg-green-950/60 border border-green-200 dark:border-green-800 rounded-xl shadow-xs text-green-700 dark:text-green-300">
-                        Disetujui: <span class="font-extrabold">{{ $logs->where('status_validasi', 'disetujui')->count() }}</span>
+                        Disetujui: <span class="font-extrabold">{{ $disetujuiCount }}</span>
                     </div>
                 </div>
             </div>

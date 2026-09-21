@@ -126,7 +126,7 @@
             </td>
             <td style="width: 50%; text-align: right; vertical-align: top;">
                 <strong>Asal Kampus:</strong> {{ $request->instansi ?: 'Semua Sekolah/Kampus' }} &nbsp;|&nbsp;
-                <strong>Dinas:</strong> {{ $request->instansi_id ? (\App\Models\Instansi::find($request->instansi_id)?->nama_dinas ?? 'Filter Terpilih') : 'Semua Dinas' }}
+                <strong>Dinas:</strong> {{ $namaDinasFilter ?? ($request->instansi_id ? 'Filter Terpilih' : 'Semua Dinas') }}
                 @if(isset($request) && $request->filled('start_date') && $request->filled('end_date'))
                     <br><strong>Periode Magang:</strong> {{ \Carbon\Carbon::parse($request->start_date)->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse($request->end_date)->format('d/m/Y') }}
                     @if($request->filled('periode_preset'))

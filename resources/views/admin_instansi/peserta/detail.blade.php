@@ -37,14 +37,25 @@
                     </div>
                 </div>
                 
+                @php
+                    $logDisetujuiCount = 0;
+                    $logPendingCount = 0;
+                    foreach ($logs as $l) {
+                        if ($l->status_validasi === 'disetujui') {
+                            $logDisetujuiCount++;
+                        } elseif ($l->status_validasi === 'pending') {
+                            $logPendingCount++;
+                        }
+                    }
+                @endphp
                 <div class="flex gap-4 text-center">
                     <div class="px-4 py-2 bg-green-50 dark:bg-green-950/60 rounded-xl border border-green-100 dark:border-green-800/60">
                         <p class="text-xs font-bold text-green-700 dark:text-green-300 uppercase">Disetujui</p>
-                        <p class="text-xl font-black text-green-700 dark:text-green-400">{{ $logs->where('status_validasi', 'disetujui')->count() }}</p>
+                        <p class="text-xl font-black text-green-700 dark:text-green-400">{{ $logDisetujuiCount }}</p>
                     </div>
                     <div class="px-4 py-2 bg-amber-50 dark:bg-amber-950/60 rounded-xl border border-amber-100 dark:border-amber-800/60">
                         <p class="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase">Pending</p>
-                        <p class="text-xl font-black text-amber-700 dark:text-amber-400">{{ $logs->where('status_validasi', 'pending')->count() }}</p>
+                        <p class="text-xl font-black text-amber-700 dark:text-amber-400">{{ $logPendingCount }}</p>
                     </div>
                 </div>
             </div>

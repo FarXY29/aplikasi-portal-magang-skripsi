@@ -72,7 +72,7 @@
 
                     @php
                         $adminInstansi = Auth::user()?->instansi;
-                        $printSettings = \App\Models\Setting::all()->pluck('value', 'key');
+                        $printSettings = $printSettings ?? collect();
                         $namaPejabat = $adminInstansi?->nama_pejabat ?? ($printSettings['pejabat_name'] ?? '-');
                         $jabatanPejabat = $adminInstansi?->jabatan_pejabat ?? ($printSettings['pejabat_jabatan'] ?? '-');
                         $nipPejabat = $adminInstansi?->nip_pejabat ?? ($printSettings['pejabat_nip'] ?? null);

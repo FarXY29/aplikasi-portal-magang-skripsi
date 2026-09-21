@@ -143,11 +143,26 @@
 
     @php
         $jamMasukInstansi = $app->position->instansi->jam_mulai_masuk ?? '08:00:00';
-        $cntHadirTepat = $data->where('status', 'hadir')->filter(fn($r) => $r->clock_in && $r->clock_in <= $jamMasukInstansi)->count();
-        $cntHadirTelat = $data->where('status', 'hadir')->filter(fn($r) => $r->clock_in && $r->clock_in > $jamMasukInstansi)->count();
-        $cntIzin = $data->where('status', 'izin')->count();
-        $cntSakit = $data->where('status', 'sakit')->count();
-        $cntAlpa = $data->where('status', 'alpa')->count();
+        $cntHadirTepat = 0;
+        $cntHadirTelat = 0;
+        $cntIzin = 0;
+        $cntSakit = 0;
+        $cntAlpa = 0;
+        foreach ($data as $r) {
+            if ($r->status === 'hadir') {
+                if ($r->clock_in && $r->clock_in <= $jamMasukInstansi) {
+                    $cntHadirTepat++;
+                } else {
+                    $cntHadirTelat++;
+                }
+            } elseif ($r->status === 'izin') {
+                $cntIzin++;
+            } elseif ($r->status === 'sakit') {
+                $cntSakit++;
+            } elseif ($r->status === 'alpa') {
+                $cntAlpa++;
+            }
+        }
         $totalRecord = $data->count();
     @endphp
 
