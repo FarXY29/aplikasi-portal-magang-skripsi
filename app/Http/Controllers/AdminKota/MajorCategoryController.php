@@ -35,7 +35,7 @@ class MajorCategoryController extends Controller
 
         $categories = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
 
-        return view('admin_kota.majors.categories.index', compact('categories'));
+        return view('admin_kota.jurusan.kategori.index', compact('categories'));
     }
 
     /**
@@ -43,7 +43,7 @@ class MajorCategoryController extends Controller
      */
     public function create()
     {
-        return view('admin_kota.majors.categories.create');
+        return view('admin_kota.jurusan.kategori.create');
     }
 
     /**
@@ -88,7 +88,7 @@ class MajorCategoryController extends Controller
     {
         $category = MajorCategory::findOrFail($id);
 
-        return view('admin_kota.majors.categories.edit', compact('category'));
+        return view('admin_kota.jurusan.kategori.edit', compact('category'));
     }
 
     /**

@@ -34,14 +34,14 @@ class AdminUserController extends Controller
         $users = $query->latest()->paginate(10);
         $users->appends($request->all());
 
-        return view('admin_kota.users.index', compact('users'));
+        return view('admin_kota.pengguna.index', compact('users'));
     }
 
     public function create()
     {
         $instansis = Instansi::all();
 
-        return view('admin_kota.users.create', compact('instansis'));
+        return view('admin_kota.pengguna.create', compact('instansis'));
     }
 
     public function store(Request $request)
@@ -89,7 +89,7 @@ class AdminUserController extends Controller
         $instansis = Instansi::all();
         $portalRole = $user->getPrimaryPortalRole();
 
-        return view('admin_kota.users.edit', compact('user', 'instansis', 'portalRole'));
+        return view('admin_kota.pengguna.edit', compact('user', 'instansis', 'portalRole'));
     }
 
     public function update(Request $request, $id)
@@ -171,7 +171,7 @@ class AdminUserController extends Controller
         $participants = $query->latest()->paginate(10);
         $participants->appends($request->all());
 
-        return view('admin_kota.users.logbooks', compact('participants'));
+        return view('admin_kota.pengguna.logbooks', compact('participants'));
     }
 
     // 2. Detail Logbook Peserta Tertentu
@@ -192,7 +192,7 @@ class AdminUserController extends Controller
         // Ambil logbooknya
         $logs = DailyLog::where('application_id', $app->id)->orderBy('tanggal', 'desc')->get();
 
-        return view('admin_kota.users.logbook_detail', compact('user', 'app', 'logs'));
+        return view('admin_kota.pengguna.logbook_detail', compact('user', 'app', 'logs'));
     }
 
     // Cetak Laporan Data Master Peserta (PDF)

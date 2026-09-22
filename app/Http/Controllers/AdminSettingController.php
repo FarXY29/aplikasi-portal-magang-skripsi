@@ -30,7 +30,7 @@ class AdminSettingController extends Controller
                 : null;
         });
 
-        return view('admin_kota.settings.index', compact('settings', 'backups'));
+        return view('admin_kota.pengaturan.index', compact('settings', 'backups'));
     }
 
     public function update(UpdateSystemSettingsRequest $request, AuditLogService $auditLogService)

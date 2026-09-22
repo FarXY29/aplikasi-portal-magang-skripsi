@@ -95,12 +95,12 @@
 
                             {{-- Role --}}
                             <td class="px-5 py-3.5 whitespace-nowrap">
-                                @include('admin_kota.users.partials._role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
+                                @include('admin_kota.pengguna.partials._role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
                             </td>
 
                             {{-- Detail / Contact --}}
                             <td class="px-5 py-3.5 text-xs text-gray-500 dark:text-gray-400">
-                                @include('admin_kota.users.partials._user-detail', ['user' => $user])
+                                @include('admin_kota.pengguna.partials._user-detail', ['user' => $user])
                             </td>
 
                             {{-- Actions --}}
@@ -153,12 +153,12 @@
                             </div>
                         </div>
                         <div class="shrink-0">
-                            @include('admin_kota.users.partials._role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
+                            @include('admin_kota.pengguna.partials._role-badge', ['role' => $user->getPrimaryPortalRole() ?? $user->role])
                         </div>
                     </div>
 
                     <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400 space-y-2">
-                        @include('admin_kota.users.partials._user-detail', ['user' => $user])
+                        @include('admin_kota.pengguna.partials._user-detail', ['user' => $user])
                     </div>
 
                     <div class="flex gap-2 pt-1 justify-end">

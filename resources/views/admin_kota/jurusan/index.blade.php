@@ -239,5 +239,5 @@
         </div>
 
     </div>
-    @include('admin_kota.majors.partials._major-category-form-script')
+    @include('admin_kota.jurusan.partials._major-category-form-script')
 </x-app-layout>

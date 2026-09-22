@@ -36,10 +36,10 @@
                 @csrf
 
                 <div class="space-y-8">
-                    @include('admin_kota.settings.partials._identity')
-                    @include('admin_kota.settings.partials._pejabat')
-                    @include('admin_kota.settings.partials._kop')
-                    @include('admin_kota.settings.partials._pengumuman')
+                    @include('admin_kota.pengaturan.partials._identity')
+                    @include('admin_kota.pengaturan.partials._pejabat')
+                    @include('admin_kota.pengaturan.partials._kop')
+                    @include('admin_kota.pengaturan.partials._pengumuman')
 
                     <div class="flex items-center justify-end pt-2">
                         <button type="submit" class="inline-flex items-center px-8 py-3 bg-gray-900 dark:bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-gray-800 dark:hover:bg-teal-500 hover:shadow-xl transition transform hover:-translate-y-0.5 active:scale-95">
@@ -49,7 +49,7 @@
                 </div>
             </form>
 
-            @include('admin_kota.settings.partials._backup')
+            @include('admin_kota.pengaturan.partials._backup')
         </div>
     </div>
 </x-app-layout>

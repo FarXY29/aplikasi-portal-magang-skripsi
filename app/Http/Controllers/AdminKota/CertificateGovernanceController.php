@@ -67,7 +67,7 @@ class CertificateGovernanceController extends Controller
         $certificates = $query->latest('published_at')->paginate(12)->withQueryString();
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
 
-        return view('admin_kota.certificates.index', compact(
+        return view('admin_kota.sertifikat.index', compact(
             'certificates',
             'instansis',
             'totalCertificates',
@@ -88,7 +88,7 @@ class CertificateGovernanceController extends Controller
             'revokedBy',
         ])->findOrFail($id);
 
-        return view('admin_kota.certificates.show', compact('certificate'));
+        return view('admin_kota.sertifikat.show', compact('certificate'));
     }
 
     /**
@@ -193,6 +193,6 @@ class CertificateGovernanceController extends Controller
             'filter_status' => $request->status,
         ];
 
-        return $this->pdfService->stream('pdf.admin_kota.certificates_register', $data, 'Buku-Register-Sertifikat-Magang.pdf', 'a4', 'landscape');
+        return $this->pdfService->stream('pdf.admin_kota.sertifikat_register', $data, 'Buku-Register-Sertifikat-Magang.pdf', 'a4', 'landscape');
     }
 }

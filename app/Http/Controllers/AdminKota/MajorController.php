@@ -51,7 +51,7 @@ class MajorController extends Controller
         $majors = $query->orderBy('name', 'asc')->paginate(12)->withQueryString();
         $categories = MajorCategory::orderBy('name', 'asc')->get();
 
-        return view('admin_kota.majors.index', compact('majors', 'categories'));
+        return view('admin_kota.jurusan.index', compact('majors', 'categories'));
     }
 
     /**
@@ -61,7 +61,7 @@ class MajorController extends Controller
     {
         $categories = MajorCategory::orderBy('name', 'asc')->get();
 
-        return view('admin_kota.majors.create', compact('categories'));
+        return view('admin_kota.jurusan.create', compact('categories'));
     }
 
     /**
@@ -112,7 +112,7 @@ class MajorController extends Controller
         $major = Major::findOrFail($id);
         $categories = MajorCategory::orderBy('name', 'asc')->get();
 
-        return view('admin_kota.majors.edit', compact('major', 'categories'));
+        return view('admin_kota.jurusan.edit', compact('major', 'categories'));
     }
 
     /**

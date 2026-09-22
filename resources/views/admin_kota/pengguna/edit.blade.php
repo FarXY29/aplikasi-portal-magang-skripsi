@@ -3,31 +3,26 @@
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
-                <i class="fas fa-user-plus text-teal-600 dark:text-teal-400"></i>
-                {{ __('Tambah Pengguna Baru') }}
-            </h2>
-        </div>
+        <x-ui.page-header 
+            title="Edit Data Pengguna"
+            :breadcrumbs="[
+                ['label' => 'Manajemen User', 'url' => route('admin.users.index')],
+                ['label' => 'Edit']
+            ]"
+        />
     </x-slot>
 
     <div class="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            
-            <div class="mb-6">
-                <a href="{{ route('admin.users.index') }}" class="group inline-flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-sm">
-                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
-                    </div>
-                    Kembali ke Manajemen User
-                </a>
-            </div>
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100 dark:border-gray-700">
                 
-                <form action="{{ route('admin.users.store') }}" method="POST" class="p-8">
+                <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="p-8">
                     @csrf
+                    @method('PUT')
                     
+                    @php($currentRole = old('role', $portalRole ?? $user->role))
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         
                         <div class="space-y-6">
@@ -35,12 +30,12 @@
                                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                     <i class="fas fa-id-card text-teal-500 dark:text-teal-400"></i> Identitas Akun
                                 </h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Informasi dasar untuk login sistem.</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Perbarui informasi login pengguna.</p>
                             </div>
 
                             <div>
                                 <x-ui.input-label for="name" value="Nama Lengkap" class="mb-2 font-bold" />
-                                <x-ui.text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name') }}" placeholder="Nama Lengkap User" required 
+                                <x-ui.text-input id="name" name="name" type="text" icon="fas fa-user" value="{{ old('name', $user->name) }}" placeholder="Nama Lengkap User" required 
                                     oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                     oninput="this.setCustomValidity('')" />
                                 <x-ui.input-error :messages="$errors->get('name')" class="mt-2" />
@@ -48,17 +43,21 @@
 
                             <div>
                                 <x-ui.input-label for="email" value="Email Login" class="mb-2 font-bold" />
-                                <x-ui.text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email') }}" placeholder="email@example.com" required 
+                                <x-ui.text-input id="email" name="email" type="email" icon="fas fa-envelope" value="{{ old('email', $user->email) }}" placeholder="email@example.com" required 
                                     oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
                                     oninput="this.setCustomValidity('')" />
                                 <x-ui.input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 
+                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <x-ui.input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
+                                <x-ui.text-input id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" />
+                            </div>
+
                             <div>
-                                <x-ui.input-label for="password" value="Password" class="mb-2 font-bold" />
-                                <x-ui.text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" required 
-                                    oninvalid="this.setCustomValidity('Harap isi bidang ini.')"
-                                    oninput="this.setCustomValidity('')" />
+                                <x-ui.input-label for="password" value="Password Baru (Kosongkan jika tidak diubah)" class="mb-2 font-bold" />
+                                <x-ui.text-input id="password" name="password" type="password" icon="fas fa-lock" placeholder="Minimal 8 karakter" />
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">*Hanya isi jika user meminta reset password.</p>
                                 <x-ui.input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
                         </div>
@@ -66,9 +65,9 @@
                         <div class="space-y-6">
                             <div class="pb-2 border-b border-gray-100 dark:border-gray-700 mb-4">
                                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                    <i class="fas fa-user-tag text-blue-500 dark:text-blue-400"></i> Peran & Akses
+                                    <i class="fas fa-user-tag text-blue-500 dark:text-blue-400"></i> Pengaturan Akses
                                 </h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Tentukan hak akses pengguna ini.</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Sesuaikan peran dan afiliasi pengguna.</p>
                             </div>
 
                             <div>
@@ -79,57 +78,62 @@
                                     </span>
                                     <select name="role" id="roleSelect" onchange="toggleFields()"
                                         class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-teal-500 focus:border-teal-500 transition shadow-sm cursor-pointer font-bold text-sm">
-                                        <option value="peserta" {{ old('role', 'peserta') === 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
-                                        <option value="pembimbing" {{ old('role') === 'pembimbing' ? 'selected' : '' }}>Dosen / Guru Pembimbing</option>
-                                        <option value="pembimbing_lapangan" {{ old('role') === 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan (Pegawai)</option>
-                                        <option value="admin_instansi" {{ old('role') === 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
+                                        <option value="peserta" {{ $currentRole === 'peserta' ? 'selected' : '' }}>Peserta Magang</option>
+                                        <option value="pembimbing" {{ $currentRole === 'pembimbing' ? 'selected' : '' }}>Dosen / Guru Pembimbing</option>
+                                        <option value="pembimbing_lapangan" {{ $currentRole === 'pembimbing_lapangan' ? 'selected' : '' }}>Pembimbing Lapangan (Pegawai)</option>
+                                        <option value="admin_instansi" {{ $currentRole === 'admin_instansi' ? 'selected' : '' }}>Admin Instansi</option>
+                                        @if($portalRole === 'admin_kota')
+                                            <option value="admin_kota" {{ $currentRole === 'admin_kota' ? 'selected' : '' }}>Super Admin Kota</option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300" id="conditionalContainer">
+                            <div class="bg-gray-50 dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-700 transition-all duration-300">
                                 
-                                <div id="instansiDinasField" class="hidden">
+                                <div id="instansiDinasField" class="{{ in_array($currentRole, ['admin_instansi', 'pembimbing_lapangan']) ? '' : 'hidden' }}">
                                     <label class="block text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2 tracking-wide">
-                                        <i class="fas fa-building mr-1"></i> Asal Instansi (Wajib)
+                                        <i class="fas fa-building mr-1"></i> Asal Instansi
                                     </label>
                                     <select name="instansi_id" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 text-sm focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">-- Pilih Instansi --</option>
                                         @foreach($instansis as $instansi)
-                                            <option value="{{ $instansi->id }}" {{ old('instansi_id') == $instansi->id ? 'selected' : '' }}>{{ $instansi->nama_dinas }}</option>
+                                            <option value="{{ $instansi->id }}" {{ old('instansi_id', $user->instansi_id) == $instansi->id ? 'selected' : '' }}>
+                                                {{ $instansi->nama_dinas }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                    <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">*Admin/Pembimbing Lapangan akan terikat pada instansi ini.</p>
                                 </div>
 
-                                <div id="asalSekolahField">
+                                <div id="asalSekolahField" class="{{ in_array($currentRole, ['peserta', 'pembimbing']) ? '' : 'hidden' }}">
                                     <label class="block text-xs font-bold text-green-600 dark:text-green-400 uppercase mb-2 tracking-wide">
                                         <i class="fas fa-university mr-1"></i> Asal Sekolah / Kampus
                                     </label>
-                                    <input type="text" name="asal_instansi" value="{{ old('asal_instansi') }}"
+                                    <input type="text" name="asal_instansi" value="{{ old('asal_instansi', $user->asal_instansi) }}"
                                         class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-green-500 focus:border-green-500" 
                                         placeholder="Contoh: Universitas Lambung Mangkurat">
                                 </div>
 
-                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <x-ui.input-label for="phone" value="Nomor HP (Opsional)" class="mb-2 font-bold" />
-                                    <x-ui.text-input id="phone" name="phone" type="text" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx" />
-                                </div>
-
-                                <div id="noneField" class="hidden text-center text-gray-400 dark:text-gray-500 text-sm py-2">
+                                <div id="noneField" class="{{ $currentRole === 'admin_kota' ? '' : 'hidden' }} text-center text-gray-400 dark:text-gray-500 text-sm py-2">
                                     <i class="fas fa-info-circle mr-1"></i> Super Admin memiliki akses penuh.
                                 </div>
                             </div>
+
+                            @if($user->created_at)
+                                <div class="text-xs text-gray-400 dark:text-gray-500 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                    Terdaftar sejak: {{ $user->created_at->translatedFormat('d F Y') }}
+                                </div>
+                            @endif
 
                         </div>
                     </div>
 
                     <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:space-x-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('admin.users.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm text-center">
+                        <a href="{{ route('admin.users.index') }}" class="w-full sm:w-auto px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm text-sm text-center">
                             Batal
                         </a>
                         <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-500/20 transition transform active:scale-95 flex items-center justify-center text-sm">
-                            <i class="fas fa-save mr-2"></i> Simpan Pengguna
+                            <i class="fas fa-save mr-2"></i> Perbarui Data
                         </button>
                     </div>
                 </form>
@@ -138,5 +142,5 @@
         </div>
     </div>
 
-@include('admin_kota.users.partials._toggle-fields-script')
+@include('admin_kota.pengguna.partials._toggle-fields-script')
 </x-app-layout>
