@@ -171,4 +171,28 @@ class UiComponentsTest extends TestCase
         $rootInputErr = Blade::render('<x-input-error :messages="[\'Format salah\']" />');
         $this->assertStringContainsString('Format salah', $rootInputErr);
     }
+
+    public function test_badge_maps_statuses_to_appropriate_variants(): void
+    {
+        $approved = Blade::render('<x-ui.badge status="disetujui" />');
+        $this->assertStringContainsString('bg-emerald-50', $approved);
+        $this->assertStringContainsString('fa-check-circle', $approved);
+
+        $pending = Blade::render('<x-ui.badge status="revisi" />');
+        $this->assertStringContainsString('bg-amber-50', $pending);
+        $this->assertStringContainsString('fa-clock', $pending);
+
+        $rejected = Blade::render('<x-ui.badge status="alfa" />');
+        $this->assertStringContainsString('bg-rose-50', $rejected);
+        $this->assertStringContainsString('fa-times-circle', $rejected);
+    }
+
+    public function test_pill_supports_color_aliases(): void
+    {
+        $green = Blade::render('<x-ui.pill color="green">Hijau</x-ui.pill>');
+        $this->assertStringContainsString('bg-emerald-50', $green);
+
+        $red = Blade::render('<x-ui.pill color="red">Merah</x-ui.pill>');
+        $this->assertStringContainsString('bg-rose-50', $red);
+    }
 }
