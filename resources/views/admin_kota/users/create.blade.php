@@ -138,5 +138,5 @@
         </div>
     </div>
 
-@include('admin_kota.users.partials.toggle-fields-script')
+@include('admin_kota.users.partials._toggle-fields-script')
 </x-app-layout>

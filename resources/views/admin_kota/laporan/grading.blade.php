@@ -11,7 +11,7 @@
             countSuffix="Peserta" />
     </x-slot>
 
-    @include('admin_kota.laporan.partials.chart-loader')
+    @include('admin_kota.laporan.partials._chart-loader')
 
     @php
         $isUnfiltered = !request('q') && !request('instansi') && !request('instansi_id') && !request('predikat');

@@ -82,7 +82,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
+                                @include('admin_kota.partials._audit-action-badge', ['action' => $log->action])
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-gray-900 dark:text-gray-100 font-medium">{{ $log->auditable_type ? class_basename($log->auditable_type) : '-' }}</div>
@@ -118,7 +118,7 @@
                             <div class="font-medium text-gray-900 dark:text-gray-100">{{ $log->created_at->format('d/m/Y H:i:s') }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $log->ip_address }}</div>
                         </div>
-                        @include('admin_kota.partials.audit-action-badge', ['action' => $log->action])
+                        @include('admin_kota.partials._audit-action-badge', ['action' => $log->action])
                     </div>
 
                     {{-- Detail block --}}

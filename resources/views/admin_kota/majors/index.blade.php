@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
     @endpush
@@ -239,5 +239,5 @@
         </div>
 
     </div>
-    @include('admin_kota.majors.partials.major-category-form-script')
+    @include('admin_kota.majors.partials._major-category-form-script')
 </x-app-layout>

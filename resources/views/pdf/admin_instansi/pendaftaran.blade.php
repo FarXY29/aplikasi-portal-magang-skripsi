@@ -127,7 +127,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
+    @include('pdf.partials._kop_admin_instansi', ['instansi' => $instansi ?? null])
 
     <div class="judul-laporan">LAPORAN PENDAFTARAN &amp; PELACAKAN STATUS PERMOHONAN MAGANG</div>
 
@@ -159,7 +159,7 @@
     </table>
 
     {{-- Ringkasan Statistik 6 Status (Formal Government Box Grid) --}}
-    @include('pdf.partials.stats_pendaftaran', ['stats' => $stats])
+    @include('pdf.partials._stats_pendaftaran', ['stats' => $stats])
 
     {{-- Tabel Utama Data Pelacakan (6 Kolom A4 Landscape) --}}
     <div class="section-title">Data Pelacakan Permohonan Pendaftaran Magang</div>
@@ -259,10 +259,10 @@
     </table>
 
     {{-- Blok Tanda Tangan Pejabat Instansi --}}
-    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
+    @include('pdf.partials._ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Footer Penomoran Halaman Resmi --}}
-    @include('pdf.partials.footer_page_number')
+    @include('pdf.partials._footer_page_number')
 
 </body>
 </html>

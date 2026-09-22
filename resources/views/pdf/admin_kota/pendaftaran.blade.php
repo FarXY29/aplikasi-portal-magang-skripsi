@@ -127,7 +127,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_kota')
+    @include('pdf.partials._kop_admin_kota')
 
     <div class="judul-laporan">{{ $title ?? 'LAPORAN PENDAFTARAN & PELACAKAN PERMOHONAN MAGANG REAL-TIME' }}</div>
 
@@ -161,7 +161,7 @@
     </table>
 
     {{-- Ringkasan Statistik 6 Status (Formal Government Box Grid) --}}
-    @include('pdf.partials.stats_pendaftaran', ['stats' => $stats])
+    @include('pdf.partials._stats_pendaftaran', ['stats' => $stats])
 
     {{-- Tabel Utama Pelacakan Pendaftaran (7 Kolom A4 Landscape) --}}
     <div class="section-title">Daftar Rincian Permohonan Pendaftaran Magang</div>
@@ -246,10 +246,10 @@
     </table>
 
     {{-- Blok Tanda Tangan Pejabat Kota Banjarmasin --}}
-    @include('pdf.partials.ttd_admin_kota')
+    @include('pdf.partials._ttd_admin_kota')
 
     {{-- Penomoran Halaman & Catatan Kaki Resmi --}}
-    @include('pdf.partials.footer_page_number')
+    @include('pdf.partials._footer_page_number')
 
 </body>
 </html>

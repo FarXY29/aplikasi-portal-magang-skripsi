@@ -6,7 +6,7 @@
         <x-ui.header icon="fas fa-chart-pie" :title="__('Laporan Statistik Instansi')" />
     </x-slot>
 
-    @include('admin_kota.laporan.partials.chart-loader')
+    @include('admin_kota.laporan.partials._chart-loader')
 
     @php
         $chartTopPelamar = collect($laporan)

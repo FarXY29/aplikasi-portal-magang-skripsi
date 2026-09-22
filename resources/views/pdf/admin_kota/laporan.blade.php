@@ -106,7 +106,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_kota')
+    @include('pdf.partials._kop_admin_kota')
 
     <div class="judul-laporan">LAPORAN REKAPITULASI PROGRAM MAGANG KOTA BANJARMASIN</div>
 
@@ -204,10 +204,10 @@
     </table>
 
     {{-- Blok Tanda Tangan --}}
-    @include('pdf.partials.ttd_admin_kota')
+    @include('pdf.partials._ttd_admin_kota')
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
-    @include('pdf.partials.footer_page_number')
+    @include('pdf.partials._footer_page_number')
 
 </body>
 </html>

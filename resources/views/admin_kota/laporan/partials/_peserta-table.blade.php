@@ -78,7 +78,7 @@
                     </td>
 
                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                        @include('admin_kota.laporan.partials.application-status-badge', ['status' => $data->status])
+                        @include('admin_kota.laporan.partials._application-status-badge', ['status' => $data->status])
                     </td>
                 </tr>
                 @empty
@@ -111,7 +111,7 @@
                         <div class="text-xs text-slate-400 dark:text-slate-500 font-medium truncate mt-0.5">{{ $data->user->email ?? '-' }}</div>
                     </div>
                 </div>
-                @include('admin_kota.laporan.partials.application-status-badge', ['status' => $data->status, 'extraClass' => 'shrink-0'])
+                @include('admin_kota.laporan.partials._application-status-badge', ['status' => $data->status, 'extraClass' => 'shrink-0'])
             </div>
 
             {{-- detail block: key-value mini grid --}}

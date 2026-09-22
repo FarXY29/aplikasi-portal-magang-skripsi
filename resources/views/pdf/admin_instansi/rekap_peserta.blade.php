@@ -111,7 +111,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi', ['instansi' => $instansi ?? null])
+    @include('pdf.partials._kop_admin_instansi', ['instansi' => $instansi ?? null])
 
     <div class="judul-laporan">LAPORAN REKAPITULASI PESERTA MAGANG</div>
 
@@ -222,10 +222,10 @@
     </table>
 
     {{-- Blok Tanda Tangan --}}
-    @include('pdf.partials.ttd_admin_instansi', ['instansi' => $instansi ?? null])
+    @include('pdf.partials._ttd_admin_instansi', ['instansi' => $instansi ?? null])
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
-    @include('pdf.partials.footer_page_number')
+    @include('pdf.partials._footer_page_number')
 
 </body>
 </html>

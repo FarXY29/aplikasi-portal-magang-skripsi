@@ -108,7 +108,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi', ['instansi' => $app->position->instansi])
+    @include('pdf.partials._kop_admin_instansi', ['instansi' => $app->position->instansi])
 
     <div class="judul-formulir">FORMULIR PENILAIAN PRAKTIK KERJA LAPANGAN (PKL) / MAGANG</div>
 

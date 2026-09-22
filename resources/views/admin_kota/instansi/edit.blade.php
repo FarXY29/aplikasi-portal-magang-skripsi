@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <x-ui.page-header 
             title="Edit Data Instansi"
@@ -276,5 +276,5 @@
     </div>
 
 
-@include('admin_kota.instansi.partials.leaflet-map')
+@include('admin_kota.instansi.partials._leaflet-map')
 </x-app-layout>

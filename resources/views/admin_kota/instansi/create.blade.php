@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-extrabold text-2xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
@@ -287,5 +287,5 @@
     </div>
 
 
-@include('admin_kota.instansi.partials.leaflet-map')
+@include('admin_kota.instansi.partials._leaflet-map')
 </x-app-layout>

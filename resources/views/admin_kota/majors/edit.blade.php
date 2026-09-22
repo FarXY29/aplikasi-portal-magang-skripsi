@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-amber-600 dark:bg-amber-500 text-white flex items-center justify-center shadow-sm">
@@ -158,5 +158,5 @@
         </div>
 
     </div>
-    @include('admin_kota.majors.partials.major-category-form-script')
+    @include('admin_kota.majors.partials._major-category-form-script')
 </x-app-layout>

@@ -129,7 +129,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi', ['instansi' => $app->position->instansi])
+    @include('pdf.partials._kop_admin_instansi', ['instansi' => $app->position->instansi])
 
     <div class="date-section">
         Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}

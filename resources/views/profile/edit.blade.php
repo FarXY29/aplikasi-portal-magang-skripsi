@@ -50,17 +50,17 @@
             <div class="space-y-6 animate-fade-in">
                 <!-- 1. Form Update Informasi Dasar -->
                 <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col rounded-xl border border-gray-200 dark:border-gray-700/80 shadow-xs p-6 sm:p-8 transition-all">
-                    @include('profile.partials.update-profile-information-form')
+                    @include('profile.partials._update-profile-information-form')
                 </div>
 
                 <!-- 2. Form Ganti Password -->
                 <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col rounded-xl border border-gray-200 dark:border-gray-700/80 shadow-xs p-6 sm:p-8 transition-all">
-                    @include('profile.partials.update-password-form')
+                    @include('profile.partials._update-password-form')
                 </div>
 
                 <!-- 3. Form Hapus Akun -->
                 <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col rounded-xl border border-gray-200 dark:border-gray-700/80 shadow-xs p-6 sm:p-8 transition-all">
-                    @include('profile.partials.delete-user-form')
+                    @include('profile.partials._delete-user-form')
                 </div>
             </div>
 

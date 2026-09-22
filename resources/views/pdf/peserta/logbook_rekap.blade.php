@@ -114,7 +114,7 @@
 </head>
 <body>
 
-    @include('pdf.partials.kop_admin_instansi', ['instansi' => $app->position->instansi])
+    @include('pdf.partials._kop_admin_instansi', ['instansi' => $app->position->instansi])
 
     <div class="judul-laporan">LEMBAR REKAPITULASI AKTIVITAS &amp; LOGBOOK HARIAN MAGANG</div>
 
@@ -242,14 +242,14 @@
     </table>
 
     {{-- Blok Tanda Tangan Dual Signature --}}
-    @include('pdf.partials.ttd_admin_instansi', [
+    @include('pdf.partials._ttd_admin_instansi', [
         'mode' => 'dual',
         'instansi' => $app->position->instansi,
         'pembimbing_lapangan' => $app->pembimbing_lapangan
     ])
 
     {{-- Penomoran Halaman & Catatan Kaki --}}
-    @include('pdf.partials.footer_page_number')
+    @include('pdf.partials._footer_page_number')
 
 </body>
 </html>
