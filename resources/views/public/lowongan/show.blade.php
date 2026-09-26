@@ -3,18 +3,26 @@
         $cleanDinas = trim(str_ireplace(['dinas', 'badan', 'kantor', 'bagian', 'sekretariat'], '', $position->instansi->nama_dinas ?? ''));
         $initials = strtoupper(substr($cleanDinas, 0, 2));
         $isOpen = $position->status === 'buka' && $position->kuota > 0;
+        $isPeserta = auth()->check() && auth()->user()->hasPortalRole('peserta');
+        $isMatch = $isPeserta ? $position->matchesUser(auth()->user()) : false;
+        $reqLabel = $position->requiredMajorCategory?->name ?? $position->required_major ?? 'Semua Jurusan';
     @endphp
 
-    <div class="w-full max-w-4xl mx-auto py-6 pb-28 md:pb-8 px-4 sm:px-6">
-        <!-- Breadcrumb / Back button -->
-        <div class="mb-6 flex items-center justify-between">
+    <div class="w-full max-w-4xl mx-auto py-6 pb-28 md:pb-8 px-4 sm:px-6" x-data="{ copied: false }">
+        <!-- Breadcrumb / Back button & Share -->
+        <div class="mb-6 flex items-center justify-between gap-3">
             <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-4 py-2 rounded-xl border border-teal-200 dark:border-teal-800/60 transition shadow-2xs">
                 <i class="fas fa-arrow-left text-xs"></i>
                 <span>Kembali ke Daftar Lowongan</span>
             </a>
-            <span class="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest hidden sm:inline">
-                Detail Lowongan
-            </span>
+
+            <button @click="if (navigator.share) { navigator.share({ title: '{{ addslashes($position->judul_posisi) }} - {{ addslashes($position->instansi->nama_dinas ?? 'Pemerintah Kota Banjarmasin') }}', text: 'Lowongan Magang: {{ addslashes($position->judul_posisi) }} di {{ addslashes($position->instansi->nama_dinas ?? 'Pemerintah Kota Banjarmasin') }}', url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2500); }"
+                    type="button"
+                    class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-gray-700 transition shadow-2xs cursor-pointer"
+                    title="Bagikan lowongan ini">
+                <i :class="copied ? 'fas fa-check text-emerald-500' : 'fas fa-share-nodes text-teal-600 dark:text-teal-400'"></i>
+                <span x-text="copied ? 'Tersalin!' : 'Bagikan'">Bagikan</span>
+            </button>
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl border border-slate-200/80 dark:border-gray-700 overflow-hidden">
@@ -37,6 +45,14 @@
                                     Tutup
                                 </span>
                             @endif
+
+                            @if($position->requiredMajorCategory)
+                                <span class="inline-flex items-center gap-1 bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60 text-[10px] px-2.5 py-1 rounded-lg font-bold">
+                                    <i class="fas fa-layer-group text-[9px]"></i>
+                                    <span>{{ $position->requiredMajorCategory->name }}</span>
+                                </span>
+                            @endif
+
                             @if($isOpen && $position->kuota < 3)
                                 <span class="inline-flex items-center gap-1 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/60 text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">
                                     🔥 Sisa {{ $position->kuota }} Kursi
@@ -52,7 +68,7 @@
                         </p>
                         @if(!empty($position->instansi->alamat))
                             <p class="text-xs text-slate-500 dark:text-gray-400 flex items-start gap-2 pt-1 leading-relaxed font-medium">
-                                <i class="fas fa-map-marker-alt text-rose-500 shrink-0 mt-0.5 animate-bounce"></i>
+                                <i class="fas fa-map-marker-alt text-rose-500 shrink-0 mt-0.5"></i>
                                 <span>{{ $position->instansi->alamat }}</span>
                             </p>
                         @endif
@@ -72,9 +88,9 @@
 
                 <div class="bg-slate-50 dark:bg-gray-900/60 border border-slate-100 dark:border-gray-700/80 rounded-2xl p-4 flex flex-col justify-between shadow-2xs">
                     <span class="text-[9px] font-extrabold text-slate-400 dark:text-gray-500 uppercase tracking-widest">Kualifikasi</span>
-                    <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100 mt-1.5 truncate flex items-center gap-1.5" title="{{ $position->required_major ?? 'Semua Jurusan' }}">
+                    <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100 mt-1.5 truncate flex items-center gap-1.5" title="{{ $reqLabel }}">
                         <i class="fas fa-graduation-cap text-teal-600 dark:text-teal-400 text-xs"></i>
-                        <span class="truncate">{{ $position->required_major ?? 'Semua Jurusan' }}</span>
+                        <span class="truncate">{{ $reqLabel }}</span>
                     </span>
                 </div>
 
@@ -97,16 +113,58 @@
 
             <!-- Content Details -->
             <div class="p-6 sm:p-8 space-y-6">
+                @auth
+                    @if($isPeserta)
+                        <!-- Qualification Match Feedback Card -->
+                        @if($isMatch)
+                            <div class="p-4 sm:p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-3.5 shadow-2xs">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <i class="fas fa-check text-base"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase tracking-wider">Kualifikasi Sesuai</h4>
+                                    <p class="text-xs text-emerald-800/90 dark:text-emerald-300/90 mt-0.5 font-medium leading-relaxed">
+                                        Jurusan Anda memenuhi syarat untuk mendaftar posisi magang ini.
+                                    </p>
+                                </div>
+                            </div>
+                        @else
+                            <div class="p-4 sm:p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center gap-3.5 shadow-2xs">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <i class="fas fa-lock text-base"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-amber-900 dark:text-amber-200 uppercase tracking-wider">Kualifikasi Tidak Sesuai</h4>
+                                    <p class="text-xs text-amber-800/90 dark:text-amber-300/90 mt-0.5 font-medium leading-relaxed">
+                                        Posisi ini membutuhkan kualifikasi khusus: <strong>{{ $reqLabel }}</strong>.
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                @endauth
+
                 <!-- Deskripsi Pekerjaan -->
                 <div class="space-y-3">
                     <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-gray-100 uppercase tracking-wider flex items-center gap-2">
-                        <i class="fas fa-file-lines text-teal-600 dark:text-teal-400"></i> Deskripsi Pekerjaan & Persyaratan
+                        <i class="fas fa-file-lines text-teal-600 dark:text-teal-400"></i> Deskripsi Pekerjaan
                     </h3>
                     <div class="prose prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-slate-100 dark:border-gray-700/70 text-xs sm:text-sm font-medium leading-relaxed">
-                        {!! $position->deskripsi ? (str_contains($position->deskripsi, '<') ? $position->deskripsi : nl2br(e($position->deskripsi))) : '<p>Tidak ada deskripsi rinci.</p>' !!}
-                        {!! $position->deskripsi ? (str_contains($position->deskripsi, '<') ? \App\Services\HtmlSanitizer::clean($position->deskripsi) : nl2br(e($position->deskripsi))) : '<p>Tidak ada deskripsi rinci.</p>' !!}
+                        {!! $position->deskripsi ? (str_contains($position->deskripsi, '<') ? \App\Services\HtmlSanitizer::clean($position->deskripsi) : nl2br(e($position->deskripsi))) : '<p>Tidak ada rincian deskripsi pekerjaan.</p>' !!}
                     </div>
                 </div>
+
+                <!-- Persyaratan Khusus -->
+                @if(!empty($position->persyaratan))
+                    <div class="space-y-3">
+                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-gray-100 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fas fa-list-check text-teal-600 dark:text-teal-400"></i> Persyaratan Khusus
+                        </h3>
+                        <div class="prose prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-slate-100 dark:border-gray-700/70 text-xs sm:text-sm font-medium leading-relaxed">
+                            {!! str_contains($position->persyaratan, '<') ? \App\Services\HtmlSanitizer::clean($position->persyaratan) : nl2br(e($position->persyaratan)) !!}
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Informasi Penempatan & Kantor -->
                 @if($position->instansi)
@@ -114,7 +172,7 @@
                         <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-gray-100 uppercase tracking-wider flex items-center gap-2">
                             <i class="fas fa-building-circle-check text-teal-600 dark:text-teal-400"></i> Informasi Kantor & Penempatan
                         </h3>
-                        
+
                         <div class="bg-slate-50 dark:bg-gray-900/50 border border-slate-200/80 dark:border-gray-700/70 rounded-2xl p-5 space-y-4 text-xs sm:text-sm">
                             @if(!empty($position->instansi->nama_pejabat))
                                 <div class="flex items-start gap-3">
@@ -169,20 +227,14 @@
                 </a>
 
                 @auth
-                    @if(auth()->user()->hasPortalRole('peserta'))
-                        @php
-                            $isMatch = $position->matchesUser(auth()->user());
-                        @endphp
+                    @if($isPeserta)
                         @if($isOpen)
                             @if($isMatch)
-                                <a href="{{ route('peserta.daftar.form', $position->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                <a href="{{ route('peserta.daftar.form', $position->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-black shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2 active:scale-95">
                                     <span>Ajukan Lamaran</span>
                                     <i class="fas fa-arrow-right text-xs"></i>
                                 </a>
                             @else
-                                @php
-                                    $reqLabel = $position->requiredMajorCategory?->name ?? $position->required_major;
-                                @endphp
                                 <button disabled title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}" class="bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-5 py-3 rounded-xl font-bold cursor-not-allowed text-xs uppercase tracking-wider flex items-center gap-1.5">
                                     <i class="fas fa-lock text-xs"></i>
                                     <span>Syarat Tidak Sesuai (Khusus: {{ Str::limit($reqLabel, 24) }})</span>
@@ -200,7 +252,7 @@
                     @endif
                 @else
                     @if($isOpen)
-                        <a href="{{ route('peserta.daftar.form', $position->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2">
+                        <a href="{{ route('peserta.daftar.form', $position->id) }}" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-black shadow-md transition text-xs uppercase tracking-wider flex items-center gap-2 active:scale-95">
                             <span>Masuk & Lamar</span>
                             <i class="fas fa-arrow-right text-xs"></i>
                         </a>
@@ -221,10 +273,7 @@
 
             <div class="flex-grow">
                 @auth
-                    @if(auth()->user()->hasPortalRole('peserta'))
-                        @php
-                            $isMatch = $position->matchesUser(auth()->user());
-                        @endphp
+                    @if($isPeserta)
                         @if($isOpen)
                             @if($isMatch)
                                 <a href="{{ route('peserta.daftar.form', $position->id) }}" class="w-full bg-teal-600 hover:bg-teal-700 text-white h-12 px-5 rounded-2xl font-black shadow-lg shadow-teal-600/30 transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95">
@@ -232,9 +281,6 @@
                                     <i class="fas fa-arrow-right text-xs"></i>
                                 </a>
                             @else
-                                @php
-                                    $reqLabel = $position->requiredMajorCategory?->name ?? $position->required_major;
-                                @endphp
                                 <button disabled title="Kualifikasi yang dibutuhkan: {{ $reqLabel }}" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 h-12 px-4 rounded-2xl font-bold cursor-not-allowed text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
                                     <i class="fas fa-lock text-xs"></i>
                                     <span class="truncate">Syarat Tidak Sesuai ({{ Str::limit($reqLabel, 20) }})</span>

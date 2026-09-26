@@ -1,9 +1,9 @@
 <!-- Lowongan Pekerjaan Section -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full" 
-     x-data="lowonganGridManager()" 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full"
+     x-data="lowonganGridManager()"
      x-init="initGrid()"
      id="lowongan-explorer-container">
-    
+
     {{-- Global Announcement & Penempatan Otomatis Banners --}}
     @include('public.welcome.lowongan._announcement-banner')
 
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Vacancies Card Grid (Live Results) -->
-    <div x-show="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full">
+    <div x-show="!isLoading" id="vacancies-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full">
         @forelse($lowongans as $loker)
             @include('public.welcome.lowongan._job-card', [
                 'loker' => $loker,
@@ -56,16 +56,16 @@
                         Tidak ada posisi magang aktif yang sesuai dengan kombinasi filter atau kata kunci saat ini. Anda dapat mereset filter atau mencoba opsi alokasi cerdas.
                     @endif
                 </p>
-                
+
                 <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
                     @if(($isPeserta ?? false) && ($userHasMajor ?? false) && ($filterJurusanScope ?? '') === 'my_major')
                         <button type="button" @click="setFilterJurusan('all')" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md uppercase tracking-wider active:scale-95">
                             <i class="fas fa-globe text-xs"></i> Lihat Semua Lowongan
                         </button>
                     @endif
-                    <a href="{{ route('home') }}#lowongan" class="inline-flex items-center gap-2 bg-slate-900 dark:bg-teal-600 hover:bg-teal-600 dark:hover:bg-teal-500 text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md uppercase tracking-wider">
+                    <button type="button" @click="resetAllFilters()" class="inline-flex items-center gap-2 bg-slate-900 dark:bg-teal-600 hover:bg-teal-600 dark:hover:bg-teal-500 text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md uppercase tracking-wider cursor-pointer">
                         <i class="fas fa-undo text-xs"></i> Reset Semua Filter
-                    </a>
+                    </button>
                     <a href="{{ route('peserta.apply_automatic.form') }}" class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 px-6 py-3 rounded-2xl text-xs font-bold transition uppercase tracking-wider">
                         <i class="fas fa-wand-magic-sparkles text-xs"></i> Coba Penempatan Otomatis
                     </a>
@@ -73,9 +73,14 @@
             </div>
         @endforelse
     </div>
-    
-    {{-- Pagination --}}
-    @include('public.welcome.lowongan._pagination')
+
+    {{-- Pagination Container --}}
+    <div id="lowongan-pagination-container">
+        @include('public.welcome.lowongan._pagination')
+    </div>
+
+    {{-- Centralized Single Dynamic Detail Modal --}}
+    @include('public.welcome.lowongan._detail-modal')
 
     {{-- Scripts --}}
     @include('public.welcome.lowongan._grid-scripts')

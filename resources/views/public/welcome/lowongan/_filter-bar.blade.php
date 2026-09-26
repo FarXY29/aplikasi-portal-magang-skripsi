@@ -7,19 +7,20 @@
     </div>
     
     <div class="flex items-center gap-3">
-        <div class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-teal-50/80 dark:bg-teal-950/40 border border-teal-200/70 dark:border-teal-800/50 text-teal-700 dark:text-teal-300 text-xs font-bold shadow-2xs">
-            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+        <div id="lowongan-results-count" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-teal-50/80 dark:bg-teal-950/40 border border-teal-200/70 dark:border-teal-800/50 text-teal-700 dark:text-teal-300 text-xs font-bold shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-teal-500" :class="{ 'animate-ping': isLoading, 'animate-pulse': !isLoading }"></span>
             <span>Ditemukan <strong>{{ $lowongans->total() }}</strong> Posisi</span>
         </div>
 
         @if(request()->anyFilled(['posisi', 'instansi_id', 'jurusan', 'major_category_id', 'search', 'sort']) || (request('filter_jurusan') === 'all' && ($userHasMajor ?? false)))
-            <a href="{{ route('home') }}#lowongan" class="group flex items-center bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 px-4 py-2.5 rounded-2xl text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition duration-300 shadow-2xs">
+            <a href="{{ route('home') }}#lowongan" @click.prevent="resetAllFilters()" class="group flex items-center bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 px-4 py-2.5 rounded-2xl text-xs font-bold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition duration-300 shadow-2xs cursor-pointer">
                 <i class="fas fa-undo-alt mr-1.5 group-hover:-rotate-180 transition-transform duration-500 text-xs"></i> Reset
             </a>
         @endif
     </div>
 </div>
 
+<div id="matching-qualification-banner">
 @if(($isPeserta ?? false) && ($userHasMajor ?? false))
     <!-- Smart Qualification Filter Banner -->
     <div class="reveal mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 dark:to-transparent border border-teal-200/80 dark:border-teal-800/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs" style="--reveal-delay: 25ms" x-intersect.once="$el.classList.add('revealed')">
@@ -81,8 +82,10 @@
         </a>
     </div>
 @endif
+</div>
 
 <!-- Active Filter Chips Bar (Touch-Swipeable on Mobile) -->
+<div id="active-filter-chips-container">
 @php
     $activeInstansi = request('instansi_id') ? $instansis->firstWhere('id', request('instansi_id')) : null;
     $activeCategory = request('major_category_id') && isset($majorCategories) ? $majorCategories->firstWhere('id', request('major_category_id')) : null;
@@ -98,7 +101,7 @@
             @php
                 $querySearch = request()->except('search');
             @endphp
-            <a href="{{ route('home', $querySearch) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+            <a href="{{ route('home', $querySearch) }}#lowongan" data-filter-key="search" @click.prevent="removeFilter('search')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group cursor-pointer">
                 <span>Kata Kunci: <em>"{{ request('search') }}"</em></span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
             </a>
@@ -108,7 +111,7 @@
             @php
                 $queryInstansi = request()->except('instansi_id');
             @endphp
-            <a href="{{ route('home', $queryInstansi) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+            <a href="{{ route('home', $queryInstansi) }}#lowongan" data-filter-key="instansi_id" @click.prevent="removeFilter('instansi_id')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group cursor-pointer">
                 <i class="fas fa-building text-teal-600 dark:text-teal-400 text-xs"></i>
                 <span>{{ Str::limit($activeInstansi->nama_dinas, 24) }}</span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -119,7 +122,7 @@
             @php
                 $queryCategory = request()->except('major_category_id');
             @endphp
-            <a href="{{ route('home', $queryCategory) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+            <a href="{{ route('home', $queryCategory) }}#lowongan" data-filter-key="major_category_id" @click.prevent="removeFilter('major_category_id')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group cursor-pointer">
                 <i class="fas fa-layer-group text-teal-600 dark:text-teal-400 text-xs"></i>
                 <span>{{ $activeCategory->name }}</span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -130,7 +133,7 @@
             @php
                 $queryJurusan = request()->except('jurusan');
             @endphp
-            <a href="{{ route('home', $queryJurusan) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+            <a href="{{ route('home', $queryJurusan) }}#lowongan" data-filter-key="jurusan" @click.prevent="removeFilter('jurusan')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group cursor-pointer">
                 <i class="fas fa-graduation-cap text-teal-600 dark:text-teal-400 text-xs"></i>
                 <span>Jurusan: "{{ request('jurusan') }}"</span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -142,7 +145,7 @@
                 $querySort = request()->except('sort');
                 $sortLabel = request('sort') === 'deadline_asc' ? 'Batas Waktu' : 'Kuota';
             @endphp
-            <a href="{{ route('home', $querySort) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group">
+            <a href="{{ route('home', $querySort) }}#lowongan" data-filter-key="sort" @click.prevent="removeFilter('sort')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-rose-400 hover:text-rose-600 transition shadow-2xs group cursor-pointer">
                 <i class="fas fa-arrow-down-short-wide text-teal-600 dark:text-teal-400 text-xs"></i>
                 <span>Urut: {{ $sortLabel }}</span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
@@ -153,31 +156,33 @@
             @php
                 $queryNoFilterJurusan = request()->except('filter_jurusan');
             @endphp
-            <a href="{{ route('home', $queryNoFilterJurusan) }}#lowongan" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-teal-400 hover:text-teal-600 transition shadow-2xs group">
+            <a href="{{ route('home', $queryNoFilterJurusan) }}#lowongan" data-filter-key="filter_jurusan" @click.prevent="removeFilter('filter_jurusan')" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 font-bold hover:border-teal-400 hover:text-teal-600 transition shadow-2xs group cursor-pointer">
                 <i class="fas fa-globe text-teal-600 dark:text-teal-400 text-xs"></i>
                 <span>Mode: Semua Lowongan</span>
                 <i class="fas fa-times text-[10px] text-slate-400 group-hover:text-rose-500 transition"></i>
             </a>
         @endif
 
-        <a href="{{ route('home') }}#lowongan" class="shrink-0 text-rose-600 dark:text-rose-400 hover:underline font-bold text-xs ml-auto pl-2">
+        <a href="{{ route('home') }}#lowongan" @click.prevent="resetAllFilters()" class="shrink-0 text-rose-600 dark:text-rose-400 hover:underline font-bold text-xs ml-auto pl-2 cursor-pointer">
             Reset
         </a>
     </div>
 @endif
+</div>
 
 <!-- 1. MOBILE COMPACT FILTER BAR (Screen < sm / Mobile Phones) -->
 <div class="sm:hidden mb-5 space-y-3">
     <!-- Live Search Input Box -->
     <div class="relative w-full">
-        <input type="text" 
-               name="search" 
-               x-model="filterState.search" 
-               @input.debounce.400ms="applyFilter()" 
-               placeholder="Cari posisi atau dinas..." 
+        <input type="text"
+               name="search"
+               x-model="filterState.search"
+               @input.debounce.350ms="applyFilter()"
+               placeholder="Cari posisi atau dinas..."
                class="w-full pl-11 pr-10 py-3.5 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 shadow-2xs focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-            <i class="fas fa-search text-sm text-teal-600 dark:text-teal-400"></i>
+            <i class="fas fa-circle-notch fa-spin text-sm text-teal-600 dark:text-teal-400" x-show="isLoading" x-cloak></i>
+            <i class="fas fa-search text-sm text-teal-600 dark:text-teal-400" x-show="!isLoading"></i>
         </div>
         <button type="button" x-show="filterState.search && filterState.search.length > 0" @click="filterState.search = ''; applyFilter()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
             <i class="fas fa-times-circle text-sm"></i>
@@ -274,8 +279,14 @@
                     <i class="fas fa-graduation-cap text-teal-600 dark:text-teal-400"></i> Cari Jurusan / Posisi
                 </label>
                 <div class="relative w-full">
-                    <input type="text" name="jurusan" id="jurusan-input" x-model="filterState.jurusan" @input.debounce.400ms="applyFilter()" value="{{ request('jurusan') }}" placeholder="Contoh: Informatika, Akuntansi..." 
-                        class="w-full px-4 py-3.5 border border-slate-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-bold bg-slate-50/50 dark:bg-gray-900 focus:bg-white dark:focus:bg-gray-900 transition duration-300 text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 shadow-xs">
+                    <input type="text" name="jurusan" id="jurusan-input" x-model="filterState.jurusan" @input.debounce.350ms="applyFilter()" value="{{ request('jurusan') }}" placeholder="Contoh: Informatika, Akuntansi..."
+                        class="w-full pl-4 pr-10 py-3.5 border border-slate-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-bold bg-slate-50/50 dark:bg-gray-900 focus:bg-white dark:focus:bg-gray-900 transition duration-300 text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 shadow-xs">
+                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fas fa-circle-notch fa-spin text-sm text-teal-600 dark:text-teal-400" x-show="isLoading" x-cloak></i>
+                        <button type="button" x-show="!isLoading && filterState.jurusan && filterState.jurusan.length > 0" @click="filterState.jurusan = ''; applyFilter()" class="pointer-events-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
+                            <i class="fas fa-times-circle text-xs"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -85,33 +85,34 @@
                 Lacak Status Permohonan Magang
             </h1>
             <p class="text-xs sm:text-sm md:text-base text-teal-100/90 max-w-2xl mx-auto font-medium leading-relaxed mb-8">
-                Ketahui status seleksi dan verifikasi berkas magang Anda secara langsung. Masukkan Nomor Registrasi atau Email pendaftaran Anda.
+                Ketahui status seleksi dan verifikasi berkas magang Anda secara langsung. Masukkan Nomor Registrasi (contoh: REG-202608-XXXXX) atau Token Verifikasi Anda.
             </p>
 
             <!-- Search Form -->
-            <form id="tracking-search-form" 
-                  action="{{ route('tracking.search') }}" 
-                  method="GET" 
-                  @submit.prevent="executeSearch()" 
+            <form id="tracking-search-form"
+                  action="{{ route('tracking.search') }}"
+                  method="GET"
+                  @submit.prevent="executeSearch()"
                   class="max-w-2xl mx-auto">
                 <div class="bg-white dark:bg-gray-800 p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 flex flex-col sm:flex-row gap-2">
                     <div class="relative flex-1 flex items-center">
                         <i class="fas fa-search absolute left-4 text-slate-400 dark:text-gray-500 text-sm"></i>
-                        <input type="text" 
-                               name="keyword" 
+                        <input type="text"
+                               name="keyword"
                                x-model="keyword"
-                               required 
-                               placeholder="Contoh: REG-202608-XXXXX atau email@kampus.ac.id" 
-                               class="w-full pl-11 pr-10 py-3 bg-transparent border-0 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:ring-0 text-xs sm:text-sm font-semibold">
-                        <button type="button" 
-                                x-show="keyword.length > 0" 
-                                @click="keyword = ''; results = []; searched = false; errorMsg = '';" 
+                               @input="keyword = keyword.toUpperCase()"
+                               required
+                               placeholder="Contoh: REG-202608-XXXXX atau Token Verifikasi"
+                               class="w-full pl-11 pr-10 py-3 bg-transparent border-0 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:ring-0 text-xs sm:text-sm font-semibold uppercase">
+                        <button type="button"
+                                x-show="keyword.length > 0"
+                                @click="keyword = ''; results = []; searched = false; errorMsg = '';"
                                 class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
                                 title="Hapus">
                             <i class="fas fa-times text-xs"></i>
                         </button>
                     </div>
-                    <button type="submit" 
+                    <button type="submit"
                             :disabled="loading"
                             class="px-6 py-3.5 bg-teal-700 hover:bg-teal-800 disabled:opacity-75 disabled:cursor-not-allowed text-white rounded-xl sm:rounded-2xl font-black text-xs uppercase tracking-wider shadow-md transition active:scale-95 flex items-center justify-center gap-2 shrink-0">
                         <template x-if="loading">
@@ -128,6 +129,26 @@
                         </template>
                     </button>
                 </div>
+
+                <!-- Recent Searches Chips (LocalStorage) -->
+                <template x-if="recentSearches && recentSearches.length > 0">
+                    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
+                        <span class="text-teal-200/80 font-bold flex items-center gap-1.5 text-[11px]">
+                            <i class="fas fa-history text-[10px]"></i> Riwayat:
+                        </span>
+                        <template x-for="item in recentSearches" :key="item">
+                            <div class="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 backdrop-blur-md text-white px-2.5 py-1 rounded-lg border border-white/20 transition cursor-pointer font-mono font-bold text-[11px] shadow-2xs">
+                                <span @click="useRecentSearch(item)" x-text="item"></span>
+                                <button type="button" @click.stop="removeRecentSearch(item)" class="text-teal-200 hover:text-white ml-1" title="Hapus">
+                                    <i class="fas fa-times text-[9px]"></i>
+                                </button>
+                            </div>
+                        </template>
+                        <button type="button" @click="clearRecentSearches()" class="text-teal-200 hover:text-white text-[10px] underline ml-1 font-semibold cursor-pointer">
+                            Hapus Riwayat
+                        </button>
+                    </div>
+                </template>
                 
                 <template x-if="errorMsg">
                     <p class="text-xs text-rose-300 font-bold mt-2 text-left px-2 flex items-center gap-1.5" x-text="errorMsg"></p>
@@ -312,7 +333,7 @@
                 </div>
                 <h3 class="text-lg font-black text-slate-900 dark:text-white mb-2">Permohonan Tidak Ditemukan</h3>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-                    Tidak ditemukan permohonan magang dengan kata kunci <strong class="text-slate-800 dark:text-gray-200" x-text="'&quot;' + keyword + '&quot;'"></strong>. Pastikan Nomor Registrasi atau Email pendaftaran Anda sudah benar.
+                    Tidak ditemukan permohonan magang dengan kata kunci <strong class="text-slate-800 dark:text-gray-200" x-text="'&quot;' + keyword + '&quot;'"></strong>. Pastikan Nomor Registrasi atau Token Verifikasi pendaftaran Anda sudah benar.
                 </p>
                 <button type="button" @click="keyword = ''; results = []; searched = false;" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-slate-800 dark:text-white rounded-xl text-xs font-bold transition">
                     <i class="fas fa-arrow-left"></i> Coba Kata Kunci Lain
@@ -367,20 +388,58 @@
             searched: @json($searched ?? false),
             results: @json($formattedApplications ?? []),
             errorMsg: '',
+            recentSearches: [],
 
             initApp() {
+                try {
+                    const stored = localStorage.getItem('simagang_recent_tracking');
+                    if (stored) {
+                        this.recentSearches = JSON.parse(stored);
+                    }
+                } catch(e) {
+                    this.recentSearches = [];
+                }
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const queryKeyword = urlParams.get('keyword');
-                if (queryKeyword && queryKeyword.trim().length >= 2 && !this.searched) {
-                    this.keyword = queryKeyword.trim();
+                if (queryKeyword && queryKeyword.trim().length >= 4 && !this.searched) {
+                    this.keyword = queryKeyword.trim().toUpperCase();
                     this.executeSearch();
                 }
             },
 
+            saveRecentSearch(term) {
+                if (!term || term.length < 4) return;
+                term = term.toUpperCase();
+                this.recentSearches = [term, ...this.recentSearches.filter(t => t !== term)].slice(0, 5);
+                try {
+                    localStorage.setItem('simagang_recent_tracking', JSON.stringify(this.recentSearches));
+                } catch(e) {}
+            },
+
+            useRecentSearch(term) {
+                this.keyword = term;
+                this.executeSearch();
+            },
+
+            removeRecentSearch(term) {
+                this.recentSearches = this.recentSearches.filter(t => t !== term);
+                try {
+                    localStorage.setItem('simagang_recent_tracking', JSON.stringify(this.recentSearches));
+                } catch(e) {}
+            },
+
+            clearRecentSearches() {
+                this.recentSearches = [];
+                try {
+                    localStorage.removeItem('simagang_recent_tracking');
+                } catch(e) {}
+            },
+
             async executeSearch() {
-                const cleanKeyword = this.keyword ? this.keyword.trim() : '';
-                if (cleanKeyword.length < 2) {
-                    this.errorMsg = 'Silakan masukkan minimal 2 karakter Nomor Registrasi atau Email pendaftaran.';
+                const cleanKeyword = this.keyword ? this.keyword.trim().toUpperCase() : '';
+                if (cleanKeyword.length < 4) {
+                    this.errorMsg = 'Silakan masukkan minimal 4 karakter Nomor Registrasi atau Token Verifikasi.';
                     return;
                 }
 
@@ -408,7 +467,11 @@
                     if (json && json.success) {
                         this.results = json.data || [];
                         this.searched = true;
-                        
+
+                        if (this.results.length > 0) {
+                            this.saveRecentSearch(cleanKeyword);
+                        }
+
                         // Update URL tanpa reload
                         const newUrl = window.location.pathname + '?keyword=' + encodeURIComponent(cleanKeyword);
                         window.history.pushState({ keyword: cleanKeyword }, '', newUrl);
