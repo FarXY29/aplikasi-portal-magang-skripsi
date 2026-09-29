@@ -226,6 +226,21 @@
    7. LOGBOOK CARDS
    -------------------------------------------------------------------------- */
 
+/* Sticky translucent header used by the logbook timeline panel. */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(243, 244, 246, 1);
+}
+
+.dark .glass-effect {
+    background: rgba(31, 41, 55, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+}
+
 .logbook-card {
     position: relative;
     transition: box-shadow 0.3s ease, transform 0.2s ease;

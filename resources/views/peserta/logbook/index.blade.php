@@ -1,20 +1,6 @@
 <x-app-layout>
     @push('head')
         <meta name="turbo-cache-control" content="no-cache">
-        <style>
-            .glass-effect {
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border-bottom: 1px solid rgba(243, 244, 246, 1);
-            }
-            .dark .glass-effect {
-                background: rgba(31, 41, 55, 0.85);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border-bottom: 1px solid rgba(55, 65, 81, 0.5);
-            }
-        </style>
     @endpush
 
     <x-slot name="header">
@@ -31,14 +17,7 @@
     <div x-data="logbookData()" class="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
-            <div class="mb-6 print:hidden">
-                <a href="{{ route('peserta.dashboard') }}" class="group flex items-center text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                    <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center mr-2 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-xs">
-                        <i class="fas fa-arrow-left text-xs text-gray-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
-                    </div>
-                    Kembali ke Dashboard
-                </a>
-            </div>
+            @include('peserta._back-link', ['href' => route('peserta.dashboard'), 'label' => 'Kembali ke Dashboard'])
 
             @if(session('success'))
                 <x-ui.alert type="success" class="mb-4">
@@ -73,18 +52,43 @@
                                 
                                     <!-- Status Filters -->
                                 <div class="flex flex-wrap gap-2">
-                                    <button type="button" @click="filter = 'semua'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'semua'" :class="filter === 'semua' ? 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5">
-                                        Semua <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->total() }}</span>
-                                    </button>
-                                    <button type="button" @click="filter = 'pending'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'pending'" :class="filter === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
-                                        Pending
-                                    </button>
-                                    <button type="button" @click="filter = 'disetujui'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'disetujui'" :class="filter === 'disetujui' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
-                                        Disetujui
-                                    </button>
-                                    <button type="button" @click="filter = 'revisi'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === 'revisi'" :class="filter === 'revisi' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition">
-                                        Revisi
-                                    </button>
+                                    @php
+                                        // Literal class strings per pill (Tailwind JIT-safe). Active vs idle states preserved.
+                                        $filterPills = [
+                                            'semua' => [
+                                                'label' => 'Semua',
+                                                'active' => 'bg-gray-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-xs',
+                                                'idle' => 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700/50',
+                                                'extra' => 'flex items-center gap-1.5',
+                                            ],
+                                            'pending' => [
+                                                'label' => 'Pending',
+                                                'active' => 'bg-amber-500 text-white shadow-xs',
+                                                'idle' => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800/60',
+                                                'extra' => '',
+                                            ],
+                                            'disetujui' => [
+                                                'label' => 'Disetujui',
+                                                'active' => 'bg-emerald-600 text-white shadow-xs',
+                                                'idle' => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-800/60',
+                                                'extra' => '',
+                                            ],
+                                            'revisi' => [
+                                                'label' => 'Revisi',
+                                                'active' => 'bg-rose-600 text-white shadow-xs',
+                                                'idle' => 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60',
+                                                'extra' => '',
+                                            ],
+                                        ];
+                                    @endphp
+                                    @foreach($filterPills as $value => $pill)
+                                        <button type="button" @click="filter = '{{ $value }}'; $nextTick(() => $refs.filterForm.submit())" :aria-pressed="filter === '{{ $value }}'" :class="filter === '{{ $value }}' ? '{{ $pill['active'] }}' : '{{ $pill['idle'] }}'" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-bold transition {{ $pill['extra'] }}">
+                                            {{ $pill['label'] }}
+                                            @if($value === 'semua')
+                                                <span class="bg-white/20 dark:bg-gray-800/40 px-1.5 py-0.5 rounded-full text-[10px]">{{ $logs->total() }}</span>
+                                            @endif
+                                        </button>
+                                    @endforeach
                                 </div>
                                 
                             </div>
@@ -115,18 +119,16 @@
                         <!-- Card Grid -->
                         <div class="p-6 bg-gray-50/50 dark:bg-gray-900/50 flex-1 overflow-y-auto">
                             @if($logs->isEmpty())
-                                <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500 py-16">
-                                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3 border border-gray-200 dark:border-gray-700">
-                                        <i class="far fa-clipboard text-3xl text-gray-400 dark:text-gray-500"></i>
-                                    </div>
-                                    @if(request()->filled('status') || request()->filled('date') || request()->filled('month'))
-                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Tidak Ada Jurnal Sesuai Filter</p>
-                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Coba ubah filter status atau tanggal yang dipilih.</p>
-                                    @else
-                                        <p class="font-bold text-gray-700 dark:text-gray-300 text-lg">Belum Ada Jurnal</p>
-                                        <p class="text-xs mt-1 text-center max-w-sm font-medium text-gray-500 dark:text-gray-400">Mulai tulis aktivitas pertama Anda menggunakan formulir di sebelah kiri.</p>
-                                    @endif
-                                </div>
+                                @php
+                                    $isNarrowed = request()->filled('status') || request()->filled('date') || request()->filled('month');
+                                @endphp
+                                <x-ui.empty-state
+                                    mobile
+                                    icon="far fa-clipboard"
+                                    :title="$isNarrowed ? 'Tidak Ada Jurnal Sesuai Filter' : 'Belum Ada Jurnal'"
+                                    :description="$isNarrowed
+                                        ? 'Coba ubah filter status atau tanggal yang dipilih.'
+                                        : 'Mulai tulis aktivitas pertama Anda menggunakan formulir di sebelah kiri.'" />
                             @else
                                 @php
                                     $badges = [
@@ -237,7 +239,6 @@
         <!-- Modal Edit / Revisi Jurnal -->
         @include('peserta.logbook._edit-modal')
 
-        </div>
     </div>
 
     @push('scripts')
