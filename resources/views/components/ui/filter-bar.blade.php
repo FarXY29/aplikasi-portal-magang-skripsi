@@ -19,8 +19,9 @@
 ])
 
 @php
-    $formAction = $action ?? ($routeName ? ($app ? route($routeName, $app->id) : route($routeName)) : '#');
-    $hasRichFeatures = !empty($routeName) || !empty($statusOptions) || $app !== null;
+    $isApplicationModel = $app instanceof \App\Models\Application;
+    $formAction = $action ?? ($routeName ? ($isApplicationModel ? route($routeName, $app->id) : route($routeName)) : '#');
+    $hasRichFeatures = !empty($routeName) || !empty($statusOptions) || $isApplicationModel;
 @endphp
 
 @if(!$hasRichFeatures)
@@ -56,7 +57,7 @@
         $isFiltered ??= request()->hasAny(['search', $statusField])
             || (request('filter_type') && request('filter_type') !== 'semua')
             || (request('date') && request('date') !== $today);
-        $resetUrl = $resetUrl ?? ($routeName && $app ? route($routeName, $app->id) : null);
+        $resetUrl = $resetUrl ?? ($routeName && $isApplicationModel ? route($routeName, $app->id) : null);
     @endphp
 
     <form action="{{ $formAction }}" method="{{ $method }}"
@@ -164,7 +165,7 @@
             <div class="flex flex-wrap items-center gap-2">
                 @if($isFiltered || (isset($applications) && count($applications) > 1))
                     <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Filter Aktif:</span>
-                    @if($app?->user)
+                    @if($isApplicationModel && $app->user)
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
                             <i class="fas fa-user-graduate text-[10px]"></i> {{ $app->user->name }}
                         </span>

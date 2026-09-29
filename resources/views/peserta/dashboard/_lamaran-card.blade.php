@@ -61,7 +61,7 @@
     </div>
 
     <div class="flex flex-wrap items-center gap-2 justify-start lg:justify-end w-full lg:w-auto shrink-0 mt-3 lg:mt-0" x-on:click.stop>
-        @if(in_array($app->status?->value, ['pending', 'menunggu']) || ($app->status?->value === 'diterima' && $app->display_status === 'belum mulai'))
+        @if(in_array($appStatus, ['pending', 'menunggu']) || ($appStatus === 'diterima' && $app->display_status === 'belum mulai'))
             <form action="{{ route('peserta.lamaran.batal', $app->id) }}" method="POST" @submit.prevent="$dispatch('open-confirm', { message: 'Apakah Anda yakin ingin membatalkan lamaran magang ini? Tindakan ini tidak dapat dikembalikan.', onConfirm: () => $el.submit() })">
                 @csrf
                 <button type="submit" class="min-h-[44px] w-full sm:w-auto justify-center px-3 sm:px-4 py-2.5 bg-rose-700 text-white rounded-xl text-xs font-bold hover:bg-rose-800 transition shadow-2xs flex items-center justify-center gap-2">

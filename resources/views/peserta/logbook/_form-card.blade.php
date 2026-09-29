@@ -1,6 +1,6 @@
 <div class="xl:col-span-4">
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xs border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-8">
-        @if($activeApp->status === 'selesai' || $activeApp->status_value === 'selesai')
+        @if($activeApp->status_value === 'selesai')
             <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40">
                 <h3 class="font-extrabold text-gray-800 dark:text-gray-100 flex items-center gap-2 text-base">
                     <i class="fas fa-lock text-amber-600 dark:text-amber-400"></i> Logbook Dikunci

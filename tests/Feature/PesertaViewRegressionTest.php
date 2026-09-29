@@ -10,6 +10,7 @@ use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -287,5 +288,44 @@ class PesertaViewRegressionTest extends TestCase
         $response = $this->actingAs($user)->get(route('peserta.loa.download', $app->id));
         $response->assertOk();
     }
-}
 
+    public function test_absensi_page_renders_with_active_filters_without_crashing(): void
+    {
+        $user = $this->createPeserta();
+        $position = $this->createPosition();
+        Application::create([
+            'user_id' => $user->id,
+            'internship_position_id' => $position->id,
+            'cv_path' => '-',
+            'surat_pengantar_path' => '-',
+            'status' => 'diterima',
+            'tanggal_mulai' => now()->subDays(10)->toDateString(),
+            'tanggal_selesai' => now()->addDays(20)->toDateString(),
+        ]);
+
+        $response = $this->actingAs($user)->get(route('peserta.absensi.index', [
+            'status' => 'hadir',
+            'search' => 'proyek',
+            'sort' => 'asc',
+        ]));
+
+        $response->assertOk();
+        // Memastikan tidak merender kontrol filter pembimbing yang bocor
+        $response->assertDontSee('name="filter_type"', false);
+        $response->assertDontSee('Bulanan', false);
+        // Memastikan badge aktif merender teks label dengan benar di dalam kontainer chip
+        $response->assertSee('Status: hadir');
+        $response->assertSee('\'proyek\'', false);
+        $response->assertSee('Terlama Pertama');
+    }
+
+    public function test_filter_bar_component_renders_simple_slot_without_container_collision(): void
+    {
+        $rendered = Blade::render('<x-ui.filter-bar :action="\'/target-url\'"><span>Slot Uji Filter</span></x-ui.filter-bar>');
+
+        $this->assertStringContainsString('action="/target-url"', $rendered);
+        $this->assertStringContainsString('Slot Uji Filter', $rendered);
+        $this->assertStringNotContainsString('x-data="{', $rendered);
+        $this->assertStringNotContainsString('filterType', $rendered);
+    }
+}

@@ -8,9 +8,9 @@
 
     Slot: the visible filter label (rendered escaped).
 --}}
-@props(['icon', 'removeUrl', 'title'])
+@props(['icon', 'removeUrl', 'title', 'label' => null, 'class' => ''])
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60']) }}>
-    <i class="{{ $icon }} text-[10px]"></i> {{ $slot }}
+<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 ' . $class]) }}>
+    <i class="{{ $icon }} text-[10px]"></i> {!! $label ?? $slot !!}
     <a href="{{ $removeUrl }}" class="hover:text-rose-500 transition ml-1" title="{{ $title }}"><i class="fas fa-times"></i></a>
 </span>

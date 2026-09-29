@@ -102,7 +102,8 @@
                                     'icon' => 'fas fa-search',
                                     'removeUrl' => request()->fullUrlWithQuery(['search' => null]),
                                     'title' => 'Hapus pencarian',
-                                ])'<span>{{ request('search') }}</span>'
+                                    'label' => '<span>\'' . e(request('search')) . '\'</span>',
+                                ])
                             @endif
                             @if(request('month'))
                                 @php
@@ -119,7 +120,8 @@
                                     'icon' => 'far fa-calendar-alt',
                                     'removeUrl' => request()->fullUrlWithQuery(['month' => null]),
                                     'title' => 'Hapus filter bulan',
-                                ]){{ $selectedMonthLabel }}
+                                    'label' => e($selectedMonthLabel),
+                                ])
                             @endif
                             @if(request('status'))
                                 @include('peserta.absensi._active-filter-badge', [
@@ -127,14 +129,16 @@
                                     'removeUrl' => request()->fullUrlWithQuery(['status' => null]),
                                     'title' => 'Hapus filter status',
                                     'class' => 'capitalize',
-                                ])Status: {{ request('status') }}
+                                    'label' => 'Status: ' . e(request('status')),
+                                ])
                             @endif
                             @if(request('sort') && request('sort') !== 'desc')
                                 @include('peserta.absensi._active-filter-badge', [
                                     'icon' => 'fas fa-sort',
                                     'removeUrl' => request()->fullUrlWithQuery(['sort' => null]),
                                     'title' => 'Reset urutan',
-                                ])Terlama Pertama
+                                    'label' => 'Terlama Pertama',
+                                ])
                             @endif
                         </div>
                     @endif
