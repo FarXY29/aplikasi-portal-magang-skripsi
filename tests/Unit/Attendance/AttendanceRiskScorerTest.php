@@ -14,7 +14,7 @@ class AttendanceRiskScorerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->scorer = new AttendanceRiskScorer();
+        $this->scorer = new AttendanceRiskScorer;
     }
 
     public function test_no_signals_scores_zero_low(): void

@@ -2,8 +2,8 @@
 
 namespace App\Services\Attendance;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Cache\Lock;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -35,7 +35,7 @@ class AttendanceLockService
             (int) config('attendance.lock_ttl', 10)
         );
 
-        if (!$lock->get()) {
+        if (! $lock->get()) {
             return false;
         }
 

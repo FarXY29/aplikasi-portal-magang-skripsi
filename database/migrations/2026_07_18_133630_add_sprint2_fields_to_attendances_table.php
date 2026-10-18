@@ -15,7 +15,7 @@ return new class extends Migration
             // Kolom Geotagging & Network
             $table->decimal('latitude_in', 10, 8)->nullable()->after('clock_in');
             $table->decimal('longitude_in', 11, 8)->nullable()->after('latitude_in');
-            
+
             $table->decimal('latitude_out', 10, 8)->nullable()->after('clock_out');
             $table->decimal('longitude_out', 11, 8)->nullable()->after('latitude_out');
 
@@ -36,7 +36,7 @@ return new class extends Migration
                 'latitude_out',
                 'longitude_out',
                 'ip_address',
-                'device_info'
+                'device_info',
             ]);
         });
     }

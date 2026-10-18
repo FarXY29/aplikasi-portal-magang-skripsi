@@ -16,7 +16,7 @@ class StoreCertificateRequest extends FormRequest
         $applicationId = $this->route('applicationId');
 
         return [
-            'nomor_sertifikat' => ['required', 'string', 'max:100', 'unique:applications,nomor_sertifikat,' . $applicationId],
+            'nomor_sertifikat' => ['required', 'string', 'max:100', 'unique:applications,nomor_sertifikat,'.$applicationId],
             'tanggal_sertifikat' => ['required', 'date'],
         ];
     }

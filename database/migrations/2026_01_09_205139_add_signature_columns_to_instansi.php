@@ -10,7 +10,7 @@ return new class extends Migration
     {
 
         // Tambah kolom signature di tabel users (untuk Pembimbing Lapangan)
-        if (!Schema::hasColumn('users', 'signature')) {
+        if (! Schema::hasColumn('users', 'signature')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->string('signature')->nullable()->after('password');
             });

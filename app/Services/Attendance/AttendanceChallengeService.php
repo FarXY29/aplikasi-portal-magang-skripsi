@@ -47,7 +47,7 @@ class AttendanceChallengeService
      */
     public function consume(Authenticatable|int $user, ?string $nonce): bool
     {
-        if (!is_string($nonce) || $nonce === '' || strlen($nonce) > 64) {
+        if (! is_string($nonce) || $nonce === '' || strlen($nonce) > 64) {
             return false;
         }
 
@@ -58,6 +58,6 @@ class AttendanceChallengeService
 
     private function cacheKey(int|string $userId, string $nonce): string
     {
-        return "attendance:nonce:{$userId}:" . hash('sha256', $nonce);
+        return "attendance:nonce:{$userId}:".hash('sha256', $nonce);
     }
 }

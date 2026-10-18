@@ -44,6 +44,6 @@ class ProfileUpdateRequest extends FormRequest
         }
 
         // 4. Return All Rules
-        return $rules; 
+        return $rules;
     }
 }

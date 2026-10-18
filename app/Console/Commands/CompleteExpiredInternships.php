@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Application;
 use App\Services\ApplicationLifecycleService;
+use Illuminate\Console\Command;
 
 class CompleteExpiredInternships extends Command
 {
@@ -39,7 +39,7 @@ class CompleteExpiredInternships extends Command
             }
             $this->info("Successfully completed {$count} expired internship(s).");
         } else {
-            $this->info("No expired internships found.");
+            $this->info('No expired internships found.');
         }
     }
 }

@@ -51,7 +51,7 @@ class InternshipPosition extends Model
      */
     public function matchesUser(?User $user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return true;
         }
 
@@ -70,11 +70,11 @@ class InternshipPosition extends Model
         $userMajorDetail = $user->majorDetail;
         $userMajorName = trim((string) ($userMajorDetail?->name ?? ''));
         $userMajorRaw = trim((string) ($user->major ?? ''));
-        $userMajorCombined = trim($userMajorName . ' ' . $userMajorRaw);
+        $userMajorCombined = trim($userMajorName.' '.$userMajorRaw);
         $userMajorLower = strtolower($userMajorCombined);
-        
+
         $userDegreeLevel = strtoupper(trim((string) ($userMajorDetail?->degree_level ?? '')));
-        if (empty($userDegreeLevel) && !empty($userMajorRaw)) {
+        if (empty($userDegreeLevel) && ! empty($userMajorRaw)) {
             if (preg_match('/\[?(S1|D3|D4|SMK|SMA|S2)\]?/i', $userMajorRaw, $matches)) {
                 $userDegreeLevel = strtoupper($matches[1]);
             }
@@ -84,9 +84,9 @@ class InternshipPosition extends Model
 
         // 3. Validasi Jenjang Pendidikan (Degree Level Check)
         // Posisi khusus SMK saja (tidak membuka S1/D3/Sederajat)
-        $isReqSmkOnly = (preg_match('/\b(smk|sma)\b/i', $reqMajorLower) && !preg_match('/\b(s1|d3|d4|sederajat|semua)\b/i', $reqMajorLower));
+        $isReqSmkOnly = (preg_match('/\b(smk|sma)\b/i', $reqMajorLower) && ! preg_match('/\b(s1|d3|d4|sederajat|semua)\b/i', $reqMajorLower));
         // Posisi khusus perguruan tinggi saja (tidak membuka SMK/SMA/Sederajat)
-        $isReqHigherEdOnly = (preg_match('/\b(s1|d3|d4|s2)\b/i', $reqMajorLower) && !preg_match('/\b(smk|sma|sederajat|semua)\b/i', $reqMajorLower));
+        $isReqHigherEdOnly = (preg_match('/\b(s1|d3|d4|s2)\b/i', $reqMajorLower) && ! preg_match('/\b(smk|sma|sederajat|semua)\b/i', $reqMajorLower));
 
         $isUserHigherEd = in_array($userDegreeLevel, ['S1', 'D3', 'D4', 'S2']);
         $isUserSmk = in_array($userDegreeLevel, ['SMK', 'SMA']);
@@ -106,7 +106,7 @@ class InternshipPosition extends Model
         // 4. Jika lowongan memiliki required_major_category_id spesifik (Primary Boundary)
         if ($reqCategoryId) {
             // Pelamar wajib memiliki major_id dengan kategori rumpun yang sama
-            if (!$userCategoryId || (int) $userCategoryId !== (int) $reqCategoryId) {
+            if (! $userCategoryId || (int) $userCategoryId !== (int) $reqCategoryId) {
                 return false;
             }
 
@@ -116,7 +116,7 @@ class InternshipPosition extends Model
             }
 
             $reqCatName = strtolower(trim((string) ($this->requiredMajorCategory?->name ?? '')));
-            if (!empty($reqCatName) && $reqMajorLower === $reqCatName) {
+            if (! empty($reqCatName) && $reqMajorLower === $reqCatName) {
                 return true;
             }
         }
@@ -127,19 +127,19 @@ class InternshipPosition extends Model
 
         // 5. Normalisasi & Token Keyword Matching (Hanya dari nama jurusan spesifik peserta)
         $stopWords = [
-            'dan', 'atau', 'jurusan', 'program', 'studi', 'prodi', 'fakultas', 'bidang', 'keahlian', 
+            'dan', 'atau', 'jurusan', 'program', 'studi', 'prodi', 'fakultas', 'bidang', 'keahlian',
             'semua', 'khusus', 'sederajat', 'min', 'minimal', 'jenjang', 'diutamakan', 'terbuka', 'untuk',
-            'ilmu', 'teknologi', 'rekayasa', 'sains', 'pendidikan', 'pengembangan', 'tingkat', 'ahli'
+            'ilmu', 'teknologi', 'rekayasa', 'sains', 'pendidikan', 'pengembangan', 'tingkat', 'ahli',
         ];
-        
+
         $cleanReq = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $reqMajorLower);
         $cleanReq = preg_replace('/\b(smk|sma|s1|d3|d4|s2)\b/i', ' ', $cleanReq);
 
         $cleanUser = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $userMajorLower);
         $cleanUser = preg_replace('/\b(smk|sma|s1|d3|d4|s2)\b/i', ' ', $cleanUser);
 
-        $reqTokens = array_values(array_filter(explode(' ', $cleanReq), fn($t) => strlen($t) >= 3 && !in_array($t, $stopWords)));
-        $userTokens = array_values(array_filter(explode(' ', $cleanUser), fn($t) => strlen($t) >= 3 && !in_array($t, $stopWords)));
+        $reqTokens = array_values(array_filter(explode(' ', $cleanReq), fn ($t) => strlen($t) >= 3 && ! in_array($t, $stopWords)));
+        $userTokens = array_values(array_filter(explode(' ', $cleanUser), fn ($t) => strlen($t) >= 3 && ! in_array($t, $stopWords)));
 
         // Jika tidak ada token spesifik lagi pada syarat lowongan
         if (empty($reqTokens)) {
@@ -151,7 +151,7 @@ class InternshipPosition extends Model
         }
 
         // Direct Substring Check pada nama jurusan spesifik peserta
-        if (!empty($userMajorName)) {
+        if (! empty($userMajorName)) {
             $cleanUserMajorName = strtolower(trim($userMajorName));
             if (str_contains($reqMajorLower, $cleanUserMajorName) || str_contains($cleanUserMajorName, $reqMajorLower)) {
                 return true;
@@ -160,7 +160,7 @@ class InternshipPosition extends Model
 
         // Cek irisan kata langsung (misal: "informatika", "komputer", "akuntansi", "hukum")
         $intersect = array_intersect($reqTokens, $userTokens);
-        if (!empty($intersect)) {
+        if (! empty($intersect)) {
             return true;
         }
 
@@ -178,8 +178,8 @@ class InternshipPosition extends Model
         ];
 
         foreach ($clusters as $cluster) {
-            $reqHasCluster = !empty(array_intersect($reqTokens, $cluster));
-            $userHasCluster = !empty(array_intersect($userTokens, $cluster));
+            $reqHasCluster = ! empty(array_intersect($reqTokens, $cluster));
+            $userHasCluster = ! empty(array_intersect($userTokens, $cluster));
             if ($reqHasCluster && $userHasCluster) {
                 return true;
             }

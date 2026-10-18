@@ -7,7 +7,7 @@ use App\Models\InternshipPosition;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\InternshipPosition>
+ * @extends Factory<InternshipPosition>
  */
 class InternshipPositionFactory extends Factory
 {

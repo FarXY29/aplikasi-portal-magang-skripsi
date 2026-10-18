@@ -32,8 +32,8 @@ class UiComponentsTest extends TestCase
 
         // 2. Plain PHP array with multiple items
         $appsArray = [
-            (object)['id' => 1, 'user' => (object)['name' => 'Budi Santoso']],
-            (object)['id' => 2, 'user' => (object)['name' => 'Siti Rahma']],
+            (object) ['id' => 1, 'user' => (object) ['name' => 'Budi Santoso']],
+            (object) ['id' => 2, 'user' => (object) ['name' => 'Siti Rahma']],
         ];
         $renderedArray = Blade::render('<x-ui.student-switcher :applications="$apps" />', ['apps' => $appsArray]);
         $this->assertStringContainsString('Budi Santoso', $renderedArray);
@@ -41,7 +41,7 @@ class UiComponentsTest extends TestCase
 
         // 3. Collection with single item
         $appsCollection = collect([
-            (object)['id' => 1, 'user' => (object)['name' => 'Ahmad Dani']],
+            (object) ['id' => 1, 'user' => (object) ['name' => 'Ahmad Dani']],
         ]);
         $renderedSingle = Blade::render('<x-ui.student-switcher :applications="$apps" :current="$apps->first()" />', ['apps' => $appsCollection]);
         $this->assertStringContainsString('Ahmad Dani', $renderedSingle);

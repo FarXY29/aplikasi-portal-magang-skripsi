@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Application;
 use App\Models\DailyLog;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class PembimbingLogbookService
@@ -14,10 +14,10 @@ class PembimbingLogbookService
      * Siapkan data logbook: filter parsing, query, dropdown mahasiswa bimbingan.
      *
      * @return array{
-     *     logs: \Illuminate\Database\Eloquent\Collection,
+     *     logs: Collection,
      *     filterType: string,
      *     selectedDate: string,
-     *     interns: \Illuminate\Database\Eloquent\Collection
+     *     interns: Collection
      * }
      */
     public function logbookData(int $applicationId, $request): array
@@ -42,7 +42,7 @@ class PembimbingLogbookService
             $query->whereBetween('tanggal', [$startOfWeek, $endOfWeek]);
         } elseif ($filterType === 'bulanan') {
             $query->whereMonth('tanggal', $carbonDate->month)
-                  ->whereYear('tanggal', $carbonDate->year);
+                ->whereYear('tanggal', $carbonDate->year);
         }
 
         // Filter berdasarkan Status Validasi
@@ -60,9 +60,9 @@ class PembimbingLogbookService
 
         // Data mahasiswa bimbingan lain untuk dropdown switcher
         $interns = Application::where('pembimbing_lapangan_id', Auth::id())
-                    ->whereIn('status', ['diterima', 'selesai'])
-                    ->with('user')
-                    ->get();
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->with('user')
+            ->get();
 
         return compact('logs', 'filterType', 'selectedDate', 'interns');
     }

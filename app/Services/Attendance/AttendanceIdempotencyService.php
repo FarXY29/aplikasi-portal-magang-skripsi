@@ -25,7 +25,7 @@ class AttendanceIdempotencyService
     {
         $key = $request->header('Idempotency-Key') ?: $request->input('idempotency_key');
 
-        if (!is_string($key) || $key === '') {
+        if (! is_string($key) || $key === '') {
             return null;
         }
 
@@ -81,11 +81,11 @@ class AttendanceIdempotencyService
 
     private function cacheKey(string $key): string
     {
-        return 'attendance:idem:' . hash('sha256', $key);
+        return 'attendance:idem:'.hash('sha256', $key);
     }
 
     private function inflightKey(string $key): string
     {
-        return 'attendance:idem-inflight:' . hash('sha256', $key);
+        return 'attendance:idem-inflight:'.hash('sha256', $key);
     }
 }

@@ -20,13 +20,13 @@ class LowonganController extends Controller
     {
         $user = auth()->user();
         $isPeserta = $user && $user->hasPortalRole('peserta');
-        $userHasMajor = $isPeserta && (!empty($user->major_id) || !empty($user->major));
+        $userHasMajor = $isPeserta && (! empty($user->major_id) || ! empty($user->major));
         $userMajorLabel = $userHasMajor ? ($user->majorDetail?->name ?? $user->major) : null;
 
         $filterJurusanScope = 'all';
         if ($userHasMajor) {
             $filterJurusanScope = $request->get('filter_jurusan', 'my_major');
-            if (!in_array($filterJurusanScope, ['my_major', 'all'])) {
+            if (! in_array($filterJurusanScope, ['my_major', 'all'])) {
                 $filterJurusanScope = 'my_major';
             }
         }
@@ -39,14 +39,14 @@ class LowonganController extends Controller
                 ->where('kuota', '>', 0)
                 ->with(['requiredMajorCategory'])
                 ->get()
-                ->filter(fn($p) => $p->matchesUser($user))
+                ->filter(fn ($p) => $p->matchesUser($user))
                 ->pluck('id');
             $totalMatchingCount = $matchingPositionIds->count();
         }
 
         $query = InternshipPosition::with(['instansi', 'requiredMajorCategory'])
-                    ->where('status', 'buka')
-                    ->where('kuota', '>', 0); 
+            ->where('status', 'buka')
+            ->where('kuota', '>', 0);
 
         // 0. Terapkan Penyaringan Sesuai Jurusan Saya jika aktif
         if ($userHasMajor && $filterJurusanScope === 'my_major') {
@@ -65,54 +65,54 @@ class LowonganController extends Controller
             $catCode = strtoupper((string) ($cat?->code ?? ''));
             $catName = (string) ($cat?->name ?? '');
 
-            $query->where(function($q) use ($catId, $catCode, $catName) {
+            $query->where(function ($q) use ($catId, $catCode, $catName) {
                 $q->where('required_major_category_id', $catId);
 
-                if (!empty($catName)) {
+                if (! empty($catName)) {
                     $q->orWhere('required_major', 'like', "%{$catName}%");
                 }
-                if (!empty($catCode)) {
+                if (! empty($catCode)) {
                     $q->orWhere('required_major', 'like', "%{$catCode}%");
                 }
 
                 // Keyword mapping per rumpun code
                 if (in_array($catCode, ['TIK', 'IT', 'KOMP', 'TI'])) {
                     $q->orWhere('required_major', 'like', '%informatika%')
-                      ->orWhere('required_major', 'like', '%komputer%')
-                      ->orWhere('required_major', 'like', '%software%')
-                      ->orWhere('required_major', 'like', '%rpl%')
-                      ->orWhere('required_major', 'like', '%tkj%')
-                      ->orWhere('required_major', 'like', '%sistem informasi%');
+                        ->orWhere('required_major', 'like', '%komputer%')
+                        ->orWhere('required_major', 'like', '%software%')
+                        ->orWhere('required_major', 'like', '%rpl%')
+                        ->orWhere('required_major', 'like', '%tkj%')
+                        ->orWhere('required_major', 'like', '%sistem informasi%');
                 } elseif (in_array($catCode, ['EKBIS', 'AKT', 'MNJ', 'EKONOMI'])) {
                     $q->orWhere('required_major', 'like', '%akuntansi%')
-                      ->orWhere('required_major', 'like', '%manajemen%')
-                      ->orWhere('required_major', 'like', '%keuangan%')
-                      ->orWhere('required_major', 'like', '%ekonomi%')
-                      ->orWhere('required_major', 'like', '%bisnis%')
-                      ->orWhere('required_major', 'like', '%pajak%');
+                        ->orWhere('required_major', 'like', '%manajemen%')
+                        ->orWhere('required_major', 'like', '%keuangan%')
+                        ->orWhere('required_major', 'like', '%ekonomi%')
+                        ->orWhere('required_major', 'like', '%bisnis%')
+                        ->orWhere('required_major', 'like', '%pajak%');
                 } elseif (in_array($catCode, ['HKM', 'HUKUM'])) {
                     $q->orWhere('required_major', 'like', '%hukum%')
-                      ->orWhere('required_major', 'like', '%legal%')
-                      ->orWhere('required_major', 'like', '%syariah%');
+                        ->orWhere('required_major', 'like', '%legal%')
+                        ->orWhere('required_major', 'like', '%syariah%');
                 } elseif (in_array($catCode, ['DSN', 'DKV', 'DESAIN', 'SENI'])) {
                     $q->orWhere('required_major', 'like', '%desain%')
-                      ->orWhere('required_major', 'like', '%dkv%')
-                      ->orWhere('required_major', 'like', '%grafis%')
-                      ->orWhere('required_major', 'like', '%multimedia%')
-                      ->orWhere('required_major', 'like', '%animasi%');
+                        ->orWhere('required_major', 'like', '%dkv%')
+                        ->orWhere('required_major', 'like', '%grafis%')
+                        ->orWhere('required_major', 'like', '%multimedia%')
+                        ->orWhere('required_major', 'like', '%animasi%');
                 } elseif (in_array($catCode, ['KES', 'KESH', 'MEDIS', 'KESEHATAN'])) {
                     $q->orWhere('required_major', 'like', '%kesehatan%')
-                      ->orWhere('required_major', 'like', '%medis%')
-                      ->orWhere('required_major', 'like', '%keperawatan%')
-                      ->orWhere('required_major', 'like', '%kebidanan%')
-                      ->orWhere('required_major', 'like', '%farmasi%')
-                      ->orWhere('required_major', 'like', '%epidemiologi%');
+                        ->orWhere('required_major', 'like', '%medis%')
+                        ->orWhere('required_major', 'like', '%keperawatan%')
+                        ->orWhere('required_major', 'like', '%kebidanan%')
+                        ->orWhere('required_major', 'like', '%farmasi%')
+                        ->orWhere('required_major', 'like', '%epidemiologi%');
                 } elseif (in_array($catCode, ['TEK', 'TKN', 'TEKNIK'])) {
                     $q->orWhere('required_major', 'like', '%sipil%')
-                      ->orWhere('required_major', 'like', '%arsitektur%')
-                      ->orWhere('required_major', 'like', '%elektro%')
-                      ->orWhere('required_major', 'like', '%mesin%')
-                      ->orWhere('required_major', 'like', '%lingkungan%');
+                        ->orWhere('required_major', 'like', '%arsitektur%')
+                        ->orWhere('required_major', 'like', '%elektro%')
+                        ->orWhere('required_major', 'like', '%mesin%')
+                        ->orWhere('required_major', 'like', '%lingkungan%');
                 }
             });
         }
@@ -120,31 +120,31 @@ class LowonganController extends Controller
         // 3. Filter Jurusan / Keyword Tertentu
         if ($request->filled('jurusan')) {
             $jurusan = trim($request->jurusan);
-            $query->where(function($q) use ($jurusan) {
+            $query->where(function ($q) use ($jurusan) {
                 $q->where('required_major', 'like', "%{$jurusan}%")
-                  ->orWhereHas('requiredMajorCategory', function($sq) use ($jurusan) {
-                      $sq->where('name', 'like', "%{$jurusan}%")
-                        ->orWhere('code', 'like', "%{$jurusan}%");
-                  });
+                    ->orWhereHas('requiredMajorCategory', function ($sq) use ($jurusan) {
+                        $sq->where('name', 'like', "%{$jurusan}%")
+                            ->orWhere('code', 'like', "%{$jurusan}%");
+                    });
 
                 // Mapping kata kunci populer dari quick filter pills
                 if (stripos($jurusan, 'informatika') !== false || stripos($jurusan, 'it') !== false) {
                     $q->orWhere('required_major', 'like', '%komputer%')
-                      ->orWhere('required_major', 'like', '%sistem informasi%')
-                      ->orWhere('required_major', 'like', '%rpl%')
-                      ->orWhere('required_major', 'like', '%tkj%');
+                        ->orWhere('required_major', 'like', '%sistem informasi%')
+                        ->orWhere('required_major', 'like', '%rpl%')
+                        ->orWhere('required_major', 'like', '%tkj%');
                 } elseif (stripos($jurusan, 'akuntansi') !== false || stripos($jurusan, 'keuangan') !== false) {
                     $q->orWhere('required_major', 'like', '%akuntansi%')
-                      ->orWhere('required_major', 'like', '%keuangan%')
-                      ->orWhere('required_major', 'like', '%pajak%');
+                        ->orWhere('required_major', 'like', '%keuangan%')
+                        ->orWhere('required_major', 'like', '%pajak%');
                 } elseif (stripos($jurusan, 'administrasi') !== false) {
                     $q->orWhere('required_major', 'like', '%administrasi%')
-                      ->orWhere('required_major', 'like', '%perkantoran%')
-                      ->orWhere('required_major', 'like', '%manajemen%');
+                        ->orWhere('required_major', 'like', '%perkantoran%')
+                        ->orWhere('required_major', 'like', '%manajemen%');
                 } elseif (stripos($jurusan, 'desain') !== false) {
                     $q->orWhere('required_major', 'like', '%dkv%')
-                      ->orWhere('required_major', 'like', '%grafis%')
-                      ->orWhere('required_major', 'like', '%multimedia%');
+                        ->orWhere('required_major', 'like', '%grafis%')
+                        ->orWhere('required_major', 'like', '%multimedia%');
                 } elseif (stripos($jurusan, 'smk') !== false) {
                     $q->orWhere('required_major', 'like', '%smk%');
                 } elseif (stripos($jurusan, 'sma') !== false) {
@@ -158,24 +158,24 @@ class LowonganController extends Controller
         // 4. Pencarian Terpadu (Posisi / Instansi / Keyword)
         if ($request->filled('search')) {
             $search = trim($request->search);
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('judul_posisi', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%")
-                  ->orWhere('required_major', 'like', "%{$search}%")
-                  ->orWhereHas('instansi', function($sq) use ($search) {
-                      $sq->where('nama_dinas', 'like', "%{$search}%")
-                        ->orWhere('alamat', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('requiredMajorCategory', function($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%")
-                        ->orWhere('code', 'like', "%{$search}%");
-                  });
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhere('required_major', 'like', "%{$search}%")
+                    ->orWhereHas('instansi', function ($sq) use ($search) {
+                        $sq->where('nama_dinas', 'like', "%{$search}%")
+                            ->orWhere('alamat', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('requiredMajorCategory', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%")
+                            ->orWhere('code', 'like', "%{$search}%");
+                    });
             });
         }
 
         // 5. Filter Posisi Langsung
         if ($request->filled('posisi')) {
-            $query->where('judul_posisi', 'like', '%' . trim($request->posisi) . '%');
+            $query->where('judul_posisi', 'like', '%'.trim($request->posisi).'%');
         }
 
         // 6. Pengurutan Data (Sorting)
@@ -189,7 +189,7 @@ class LowonganController extends Controller
         }
 
         $lowongans = $query->paginate(9);
-        $lowongans->appends($request->query())->fragment('lowongan'); 
+        $lowongans->appends($request->query())->fragment('lowongan');
 
         $cachedData = Cache::remember('landing_page_stats_v3', 3600, function () {
             return [
@@ -223,7 +223,7 @@ class LowonganController extends Controller
             'totalInstansi', 'totalLowongan', 'totalAlumni',
             'isPeserta', 'userHasMajor', 'userMajorLabel', 'filterJurusanScope', 'totalMatchingCount',
             'globalAnnouncement'
-        )); 
+        ));
     }
 
     /**

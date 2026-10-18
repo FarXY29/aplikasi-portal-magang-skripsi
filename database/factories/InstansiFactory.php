@@ -6,7 +6,7 @@ use App\Models\Instansi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Instansi>
+ * @extends Factory<Instansi>
  */
 class InstansiFactory extends Factory
 {
@@ -20,7 +20,7 @@ class InstansiFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_dinas' => 'Dinas ' . fake()->unique()->company(),
+            'nama_dinas' => 'Dinas '.fake()->unique()->company(),
             'kode_unit_kerja' => strtoupper(fake()->unique()->bothify('UNIT-###??')),
             'alamat' => fake()->address(),
             'max_total_quota' => 10,

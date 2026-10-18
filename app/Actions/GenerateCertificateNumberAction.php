@@ -3,13 +3,13 @@
 namespace App\Actions;
 
 use App\Models\Application;
-use Illuminate\Support\Str;
+use App\Services\CertificateService;
 
 class GenerateCertificateNumberAction
 {
     protected $certificateService;
 
-    public function __construct(\App\Services\CertificateService $certificateService)
+    public function __construct(CertificateService $certificateService)
     {
         $this->certificateService = $certificateService;
     }

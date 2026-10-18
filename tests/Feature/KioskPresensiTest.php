@@ -2,16 +2,17 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Instansi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class KioskPresensiTest extends TestCase
 {
     use RefreshDatabase;
 
     private Instansi $instansi;
+
     private User $adminUser;
 
     protected function setUp(): void
@@ -76,4 +77,3 @@ class KioskPresensiTest extends TestCase
         $this->assertStringContainsString('<svg', $response->json('svg'));
     }
 }
-

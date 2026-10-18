@@ -13,7 +13,7 @@ class NotificationController extends Controller
     public function getUnread(Request $request)
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['unread_count' => 0, 'notifications' => []]);
         }
 
@@ -25,7 +25,7 @@ class NotificationController extends Controller
             ->map(function ($notif) {
                 return [
                     'id' => $notif->id,
-                    'read' => !is_null($notif->read_at),
+                    'read' => ! is_null($notif->read_at),
                     'title' => $notif->data['title'] ?? 'Notifikasi Baru',
                     'message' => $notif->data['message'] ?? '',
                     'type' => $notif->data['type'] ?? 'info',

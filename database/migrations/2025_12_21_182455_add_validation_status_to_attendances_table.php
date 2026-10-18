@@ -23,5 +23,5 @@ return new class extends Migration
         Schema::table('attendances', function (Blueprint $table) {
             $table->dropColumn(['validation_status', 'pembimbing_lapangan_note']);
         });
-}
+    }
 };

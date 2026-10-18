@@ -60,12 +60,12 @@ class NetworkAnomalyRule extends AttendanceFraudRule
             // IPv6: tampilkan 2 grup pertama.
             $parts = explode(':', $ip);
 
-            return implode(':', array_slice($parts, 0, 2)) . ':…';
+            return implode(':', array_slice($parts, 0, 2)).':…';
         }
 
         // IPv4: tampilkan 2 oktet pertama.
         $parts = explode('.', $ip);
 
-        return ($parts[0] ?? '*') . '.' . ($parts[1] ?? '*') . '.x.x';
+        return ($parts[0] ?? '*').'.'.($parts[1] ?? '*').'.x.x';
     }
 }

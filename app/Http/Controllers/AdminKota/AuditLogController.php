@@ -28,12 +28,12 @@ class AuditLogController extends Controller
         // Filter Search (User name atau model ID)
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->whereHas('user', function($u) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($u) use ($search) {
                     $u->where('name', 'like', "%{$search}%");
                 })
-                ->orWhere('auditable_id', 'like', "%{$search}%")
-                ->orWhere('action', 'like', "%{$search}%");
+                    ->orWhere('auditable_id', 'like', "%{$search}%")
+                    ->orWhere('action', 'like', "%{$search}%");
             });
         }
 

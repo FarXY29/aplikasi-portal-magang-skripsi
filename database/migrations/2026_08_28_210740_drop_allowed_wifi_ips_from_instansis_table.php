@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (!Schema::hasColumn('instansis', 'allowed_wifi_ips')) {
+        if (! Schema::hasColumn('instansis', 'allowed_wifi_ips')) {
             Schema::table('instansis', function (Blueprint $table) {
                 $table->text('allowed_wifi_ips')->nullable();
             });

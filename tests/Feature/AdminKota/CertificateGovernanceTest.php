@@ -25,7 +25,7 @@ class CertificateGovernanceTest extends TestCase
     {
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Uji Sertifikasi',
-            'kode_unit_kerja' => 'INST-TEST-CERT-' . uniqid(),
+            'kode_unit_kerja' => 'INST-TEST-CERT-'.uniqid(),
             'alamat' => 'Jl. Uji Sertifikat',
             'latitude' => -3.31,
             'longitude' => 114.59,
@@ -53,8 +53,8 @@ class CertificateGovernanceTest extends TestCase
             'tanggal_mulai' => now()->subMonths(3),
             'tanggal_selesai' => now(),
             'nilai_angka' => 88.5,
-            'nomor_sertifikat' => 'MG-TEST-' . uniqid(),
-            'token_verifikasi' => 'TOKEN_TEST_CERT_' . uniqid(),
+            'nomor_sertifikat' => 'MG-TEST-'.uniqid(),
+            'token_verifikasi' => 'TOKEN_TEST_CERT_'.uniqid(),
             'cv_path' => 'dummy/cv.pdf',
             'surat_pengantar_path' => 'dummy/surat.pdf',
         ]);

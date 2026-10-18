@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\AuditLog;
 use App\Models\Application;
+use App\Models\AuditLog;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;

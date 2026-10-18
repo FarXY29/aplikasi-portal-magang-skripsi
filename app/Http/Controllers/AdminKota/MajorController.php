@@ -29,10 +29,10 @@ class MajorController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($catQuery) use ($search) {
-                      $catQuery->where('name', 'like', "%{$search}%")
-                               ->orWhere('code', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('category', function ($catQuery) use ($search) {
+                        $catQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('code', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -77,7 +77,7 @@ class MajorController extends Controller
                 'max:255',
                 Rule::unique('majors')->where(function ($query) use ($request) {
                     return $query->where('major_category_id', $request->major_category_id)
-                                 ->where('degree_level', $request->degree_level);
+                        ->where('degree_level', $request->degree_level);
                 }),
             ],
             'degree_level' => ['required', Rule::in(['SMK', 'D3', 'D4', 'S1', 'S2'])],
@@ -101,7 +101,7 @@ class MajorController extends Controller
         ]);
 
         return redirect()->route('admin.master.majors.index')
-            ->with('success', 'Program studi ' . $major->name . ' (' . $major->degree_level . ') berhasil ditambahkan.');
+            ->with('success', 'Program studi '.$major->name.' ('.$major->degree_level.') berhasil ditambahkan.');
     }
 
     /**
@@ -130,7 +130,7 @@ class MajorController extends Controller
                 'max:255',
                 Rule::unique('majors')->where(function ($query) use ($request) {
                     return $query->where('major_category_id', $request->major_category_id)
-                                 ->where('degree_level', $request->degree_level);
+                        ->where('degree_level', $request->degree_level);
                 })->ignore($major->id),
             ],
             'degree_level' => ['required', Rule::in(['SMK', 'D3', 'D4', 'S1', 'S2'])],
@@ -154,7 +154,7 @@ class MajorController extends Controller
         ]);
 
         return redirect()->route('admin.master.majors.index')
-            ->with('success', 'Program studi ' . $major->name . ' (' . $major->degree_level . ') berhasil diperbarui.');
+            ->with('success', 'Program studi '.$major->name.' ('.$major->degree_level.') berhasil diperbarui.');
     }
 
     /**
@@ -163,7 +163,7 @@ class MajorController extends Controller
     public function toggleStatus($id)
     {
         $major = Major::findOrFail($id);
-        $major->is_active = !$major->is_active;
+        $major->is_active = ! $major->is_active;
         $major->save();
 
         $statusText = $major->is_active ? 'diaktifkan' : 'dinonaktifkan';
@@ -172,7 +172,7 @@ class MajorController extends Controller
             'is_active' => $major->is_active,
         ]);
 
-        return back()->with('success', 'Status program studi ' . $major->name . ' berhasil ' . $statusText . '.');
+        return back()->with('success', 'Status program studi '.$major->name.' berhasil '.$statusText.'.');
     }
 
     /**
@@ -183,10 +183,10 @@ class MajorController extends Controller
         $major = Major::withCount('users')->findOrFail($id);
 
         if ($major->users_count > 0) {
-            return back()->with('error', 'Program studi tidak dapat dihapus karena telah terhubung dengan data ' . $major->users_count . ' peserta magang.');
+            return back()->with('error', 'Program studi tidak dapat dihapus karena telah terhubung dengan data '.$major->users_count.' peserta magang.');
         }
 
-        $majorName = $major->name . ' (' . $major->degree_level . ')';
+        $majorName = $major->name.' ('.$major->degree_level.')';
         $major->delete();
 
         $this->auditLogService->record('major.deleted', null, [
@@ -194,6 +194,6 @@ class MajorController extends Controller
         ]);
 
         return redirect()->route('admin.master.majors.index')
-            ->with('success', 'Program studi ' . $majorName . ' berhasil dihapus.');
+            ->with('success', 'Program studi '.$majorName.' berhasil dihapus.');
     }
 }

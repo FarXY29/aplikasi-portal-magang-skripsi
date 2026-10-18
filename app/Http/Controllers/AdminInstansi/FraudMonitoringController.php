@@ -102,12 +102,12 @@ class FraudMonitoringController extends Controller
             return back()->with('error', 'Data terlalu banyak (>50.000 baris). Persempit filter rentang waktu atau peserta.');
         }
 
-        $filename = 'laporan-fraud-' . now()->format('Y-m-d-Hi') . '.csv';
+        $filename = 'laporan-fraud-'.now()->format('Y-m-d-Hi').'.csv';
 
         return response()->stream(function () use ($query) {
             $out = fopen('php://output', 'w');
             // BOM UTF-8 agar Excel baca karakter Indonesia dengan benar.
-            fwrite($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fwrite($out, chr(0xEF).chr(0xBB).chr(0xBF));
 
             fputcsv($out, [
                 'Waktu Server', 'Peserta', 'Tipe', 'Risk Score', 'Status', 'Keputusan',
@@ -134,14 +134,14 @@ class FraudMonitoringController extends Controller
                     $a->location_margin,
                     $a->ip_address,
                     $a->user_agent,
-                    $top ? $top->code . ' (+' . $top->score_delta . ')' : '-',
+                    $top ? $top->code.' (+'.$top->score_delta.')' : '-',
                 ]);
             });
 
             fclose($out);
         }, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'Cache-Control' => 'no-store',
         ]);
     }

@@ -94,7 +94,7 @@ class EmailViewsTest extends TestCase
 
         Mail::to($app->user->email)->send(new InternshipEndingMail($app));
 
-        Mail::assertQueued(InternshipEndingMail::class, function (InternshipEndingMail $mail) use ($app) {
+        Mail::assertQueued(InternshipEndingMail::class, function (InternshipEndingMail $mail) {
             $html = $mail->render();
 
             $this->assertStringContainsString('7 hari ke depan', $html);

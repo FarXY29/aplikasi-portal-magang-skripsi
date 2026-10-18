@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('daily_logs', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('application_id')->constrained();
-        $table->date('tanggal');
-        $table->text('kegiatan');
-        $table->string('bukti_foto_path')->nullable();
-        $table->enum('status_validasi', ['pending', 'disetujui', 'revisi']);
-        $table->text('komentar_pembimbing_lapangan')->nullable();
-        $table->timestamps();
-    });
+            $table->id();
+            $table->foreignId('application_id')->constrained();
+            $table->date('tanggal');
+            $table->text('kegiatan');
+            $table->string('bukti_foto_path')->nullable();
+            $table->enum('status_validasi', ['pending', 'disetujui', 'revisi']);
+            $table->text('komentar_pembimbing_lapangan')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

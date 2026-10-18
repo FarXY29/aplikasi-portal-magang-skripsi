@@ -37,7 +37,7 @@ class TrackingTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Komunikasi dan Informatika',
-            'kode_unit_kerja' => 'DISKOMINFO-' . uniqid(),
+            'kode_unit_kerja' => 'DISKOMINFO-'.uniqid(),
             'alamat' => 'Jl. RE Martadinata',
         ]);
 
@@ -79,7 +79,7 @@ class TrackingTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Pendidikan',
-            'kode_unit_kerja' => 'DISDIK-' . uniqid(),
+            'kode_unit_kerja' => 'DISDIK-'.uniqid(),
             'alamat' => 'Jl. Pierre Tendean',
         ]);
 
@@ -106,7 +106,7 @@ class TrackingTest extends TestCase
         $response->assertDontSee($application->nomor_registrasi);
 
         // Searching by token verifikasi SHOULD return records
-        if (!empty($application->token_verifikasi)) {
+        if (! empty($application->token_verifikasi)) {
             $tokenResponse = $this->get(route('tracking.search', ['keyword' => $application->token_verifikasi]));
             $tokenResponse->assertStatus(200);
             $tokenResponse->assertSee($application->nomor_registrasi);
@@ -123,7 +123,7 @@ class TrackingTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Perhubungan',
-            'kode_unit_kerja' => 'DISHUB-' . uniqid(),
+            'kode_unit_kerja' => 'DISHUB-'.uniqid(),
             'alamat' => 'Jl. Perhubungan',
         ]);
 

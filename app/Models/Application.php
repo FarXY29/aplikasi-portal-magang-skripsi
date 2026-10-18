@@ -54,9 +54,9 @@ class Application extends Model
 
         static::creating(function ($model) {
             if (empty($model->nomor_registrasi)) {
-                $prefix = 'REG-' . now()->format('Ym') . '-';
+                $prefix = 'REG-'.now()->format('Ym').'-';
                 do {
-                    $regNumber = $prefix . strtoupper(Str::random(5));
+                    $regNumber = $prefix.strtoupper(Str::random(5));
                 } while (static::where('nomor_registrasi', $regNumber)->exists());
                 $model->nomor_registrasi = $regNumber;
             }
@@ -196,7 +196,7 @@ class Application extends Model
             $avg >= 90 => 'A (Sangat Baik)',
             $avg >= 80 => 'B (Baik)',
             $avg >= 70 => 'C (Cukup)',
-            default    => 'D (Kurang)',
+            default => 'D (Kurang)',
         };
     }
 

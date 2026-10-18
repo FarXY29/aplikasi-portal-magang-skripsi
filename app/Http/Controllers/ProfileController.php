@@ -55,7 +55,7 @@ class ProfileController extends Controller
         unset($validated['photo'], $validated['signature']);
 
         if ($user->hasPortalRole('peserta') || $user->role === 'peserta') {
-            if (!empty($validated['major_id'])) {
+            if (! empty($validated['major_id'])) {
                 $majorObj = Major::find($validated['major_id']);
                 if ($majorObj) {
                     $validated['major'] = $majorObj->name;
@@ -78,7 +78,7 @@ class ProfileController extends Controller
             if ($user->signature && Storage::disk('public')->exists($user->signature)) {
                 Storage::disk('public')->delete($user->signature);
             }
-            
+
             $path = $request->file('signature')->store('signatures', 'public');
             $user->signature = $path;
         }

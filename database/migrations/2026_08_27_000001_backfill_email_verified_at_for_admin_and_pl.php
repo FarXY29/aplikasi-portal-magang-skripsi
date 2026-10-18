@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -26,7 +27,7 @@ return new class extends Migration
 
                 if ($exemptRoleIds->isNotEmpty()) {
                     $userIdsWithSpatieRole = DB::table('model_has_roles')
-                        ->where('model_type', \App\Models\User::class)
+                        ->where('model_type', User::class)
                         ->whereIn('role_id', $exemptRoleIds)
                         ->pluck('model_id');
 
@@ -49,4 +50,3 @@ return new class extends Migration
         // Data update backfill tidak perlu dibalikkan secara destruktif
     }
 };
-

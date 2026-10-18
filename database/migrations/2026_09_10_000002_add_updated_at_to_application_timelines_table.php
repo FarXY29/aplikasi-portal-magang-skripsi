@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('application_timelines') && !Schema::hasColumn('application_timelines', 'updated_at')) {
+        if (Schema::hasTable('application_timelines') && ! Schema::hasColumn('application_timelines', 'updated_at')) {
             Schema::table('application_timelines', function (Blueprint $table) {
                 $table->timestamp('updated_at')->nullable()->after('created_at');
             });

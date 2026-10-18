@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('instansis', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama_dinas');
-        $table->string('alamat');
-        $table->string('kode_unit_kerja');
-        $table->double('latitude')->nullable();
-        $table->double('longitude')->nullable();
-        $table->timestamps();
-    });
+            $table->id();
+            $table->string('nama_dinas');
+            $table->string('alamat');
+            $table->string('kode_unit_kerja');
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

@@ -15,21 +15,21 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            
+
             // --- TAMBAHAN PENTING DI SINI ---
             $table->string('asal_instansi')->nullable(); // <--- Tambahkan ini
             $table->enum('role', ['admin_kota', 'admin_instansi', 'pembimbing_lapangan', 'peserta', 'pembimbing']) // <--- Tambahkan 'pembimbing'
-                  ->default('peserta');
+                ->default('peserta');
             // --------------------------------
-            
+
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
+
             // Kolom tambahan lain (jika Anda menaruhnya di file ini)
             $table->foreignId('instansi_id')->nullable();
             $table->string('nik')->nullable();
             $table->string('phone')->nullable();
-            
+
             $table->rememberToken();
             $table->timestamps();
         });

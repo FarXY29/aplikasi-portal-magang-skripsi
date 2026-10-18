@@ -17,7 +17,7 @@ enum ApplicationStatus: string
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Pending => 'Menunggu Review',
             self::Menunggu => 'Daftar Tunggu (Antrean)',
             self::Diterima => 'Aktif Magang / Diterima',
@@ -33,7 +33,7 @@ enum ApplicationStatus: string
      */
     public function badgeClass(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Pending => 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800/60',
             self::Menunggu => 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200/80 dark:border-indigo-800/60',
             self::Diterima => 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60',
@@ -49,7 +49,7 @@ enum ApplicationStatus: string
      */
     public function icon(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Pending => 'fas fa-clock',
             self::Menunggu => 'fas fa-list-ol',
             self::Diterima => 'fas fa-check-circle',

@@ -28,8 +28,8 @@ return new class extends Migration
             $table->integer('nilai_adaptasi')->nullable();
             $table->integer('nilai_kreatifitas')->nullable();
             $table->integer('nilai_skill_pengetahuan')->nullable();
-            
-            if (!Schema::hasColumn('applications', 'nilai_disiplin')) {
+
+            if (! Schema::hasColumn('applications', 'nilai_disiplin')) {
                 $table->integer('nilai_disiplin')->nullable();
             }
         });
@@ -42,9 +42,9 @@ return new class extends Migration
     {
         Schema::table('applications', function (Blueprint $table) {
             $table->dropColumn([
-                'nilai_kerajinan', 'nilai_adaptasi', 'nilai_kreatifitas', 'nilai_skill_pengetahuan'
+                'nilai_kerajinan', 'nilai_adaptasi', 'nilai_kreatifitas', 'nilai_skill_pengetahuan',
             ]);
-            
+
             $table->integer('nilai_sikap')->nullable();
             $table->integer('nilai_kesungguhan')->nullable();
             $table->integer('nilai_mandiri')->nullable();

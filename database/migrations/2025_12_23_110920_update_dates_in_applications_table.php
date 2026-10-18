@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('applications', function (Blueprint $table) {
             // Pastikan kolom ini ada dan bertipe DATE
-            if (!Schema::hasColumn('applications', 'tanggal_mulai')) {
+            if (! Schema::hasColumn('applications', 'tanggal_mulai')) {
                 $table->date('tanggal_mulai')->nullable();
             }
-            if (!Schema::hasColumn('applications', 'tanggal_selesai')) {
+            if (! Schema::hasColumn('applications', 'tanggal_selesai')) {
                 $table->date('tanggal_selesai')->nullable();
             }
         });

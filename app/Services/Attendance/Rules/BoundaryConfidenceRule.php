@@ -28,7 +28,7 @@ class BoundaryConfidenceRule extends AttendanceFraudRule
 
     public function evaluate(AttendanceFraudContext $context): ?FraudSignal
     {
-        if (!$context->hasClientLocation() || $context->instansi === null) {
+        if (! $context->hasClientLocation() || $context->instansi === null) {
             return null;
         }
 

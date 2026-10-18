@@ -5,8 +5,8 @@ namespace App\Providers;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             // tersebut agar QR yang dibuat dari request web tidak berisi localhost.
             if ($forwardedHost && $forwardedProto === 'https') {
                 $publicHost = trim(explode(',', $forwardedHost)[0]);
-                URL::forceRootUrl('https://' . $publicHost);
+                URL::forceRootUrl('https://'.$publicHost);
             }
 
             if ($forwardedProto === 'https' || str_contains(request()->header('host', ''), 'trycloudflare.com')) {

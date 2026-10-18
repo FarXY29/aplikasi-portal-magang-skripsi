@@ -43,16 +43,16 @@ return new class extends Migration
                 $singkatan = 'BAPENDA';
             } elseif (stripos($nama, 'kepegawaian') !== false || stripos($nama, 'bkd') !== false) {
                 $singkatan = 'BKD';
-            } elseif (!empty($nama)) {
+            } elseif (! empty($nama)) {
                 // Buat akronim dari huruf depan setiap kata bermakna
                 $words = preg_split('/\s+/', preg_replace('/[^a-zA-Z0-9\s]/', '', $nama));
                 $acronym = '';
                 foreach ($words as $w) {
-                    if (strlen($w) > 0 && !in_array(strtolower($w), ['dan', 'di', 'ke', 'dari', 'kota', 'pemerintah'])) {
+                    if (strlen($w) > 0 && ! in_array(strtolower($w), ['dan', 'di', 'ke', 'dari', 'kota', 'pemerintah'])) {
                         $acronym .= strtoupper($w[0]);
                     }
                 }
-                $singkatan = !empty($acronym) ? substr($acronym, 0, 15) : 'SKPD';
+                $singkatan = ! empty($acronym) ? substr($acronym, 0, 15) : 'SKPD';
             }
 
             if ($singkatan) {

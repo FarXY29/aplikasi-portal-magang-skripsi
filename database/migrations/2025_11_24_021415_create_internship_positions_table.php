@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('internship_positions', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('instansi_id')->constrained();
-        $table->string('judul_posisi'); // Contoh: Programmer Web, Staff Admin
-        $table->text('deskripsi');
-        $table->integer('kuota');
-        $table->date('batas_daftar');
-        $table->enum('status', ['buka', 'tutup']);
-        $table->timestamps();
-    });
+            $table->id();
+            $table->foreignId('instansi_id')->constrained();
+            $table->string('judul_posisi'); // Contoh: Programmer Web, Staff Admin
+            $table->text('deskripsi');
+            $table->integer('kuota');
+            $table->date('batas_daftar');
+            $table->enum('status', ['buka', 'tutup']);
+            $table->timestamps();
+        });
     }
 
     /**

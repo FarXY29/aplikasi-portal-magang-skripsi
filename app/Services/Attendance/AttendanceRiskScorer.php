@@ -14,7 +14,7 @@ use App\Enums\AttendanceFraudStatus;
 class AttendanceRiskScorer
 {
     /**
-     * @param Collection<int, FraudSignal> $signals
+     * @param  Collection<int, FraudSignal>  $signals
      */
     public function score(iterable $signals): AttendanceFraudResult
     {

@@ -12,7 +12,7 @@ class InvalidApplicationStateTransitionException extends RuntimeException
         public readonly ?int $applicationId = null,
         string $message = ''
     ) {
-        $msg = $message ?: "Transisi status lamaran magang tidak valid dari [{$fromStatus}] ke [{$toStatus}]" . ($applicationId ? " untuk lamaran ID #{$applicationId}." : '.');
+        $msg = $message ?: "Transisi status lamaran magang tidak valid dari [{$fromStatus}] ke [{$toStatus}]".($applicationId ? " untuk lamaran ID #{$applicationId}." : '.');
         parent::__construct($msg);
     }
 }

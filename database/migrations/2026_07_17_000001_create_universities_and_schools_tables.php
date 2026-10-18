@@ -32,10 +32,10 @@ return new class extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'university_id')) {
+            if (! Schema::hasColumn('users', 'university_id')) {
                 $table->foreignId('university_id')->nullable()->after('instansi_id')->constrained('universities')->nullOnDelete();
             }
-            if (!Schema::hasColumn('users', 'school_id')) {
+            if (! Schema::hasColumn('users', 'school_id')) {
                 $table->foreignId('school_id')->nullable()->after('university_id')->constrained('schools')->nullOnDelete();
             }
         });

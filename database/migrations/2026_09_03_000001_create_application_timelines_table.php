@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('application_timelines')) {
+        if (! Schema::hasTable('application_timelines')) {
             Schema::create('application_timelines', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('application_id')->constrained('applications')->cascadeOnDelete();

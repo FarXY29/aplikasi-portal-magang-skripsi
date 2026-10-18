@@ -28,8 +28,8 @@ class MajorCategoryController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -72,13 +72,13 @@ class MajorCategoryController extends Controller
         if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Rumpun keilmuan ' . $category->name . ' berhasil ditambahkan.',
+                'message' => 'Rumpun keilmuan '.$category->name.' berhasil ditambahkan.',
                 'category' => $category,
             ], 201);
         }
 
         return redirect()->route('admin.master.major-categories.index')
-            ->with('success', 'Rumpun keilmuan ' . $category->name . ' berhasil ditambahkan.');
+            ->with('success', 'Rumpun keilmuan '.$category->name.' berhasil ditambahkan.');
     }
 
     /**
@@ -117,7 +117,7 @@ class MajorCategoryController extends Controller
         ]);
 
         return redirect()->route('admin.master.major-categories.index')
-            ->with('success', 'Rumpun keilmuan ' . $category->name . ' berhasil diperbarui.');
+            ->with('success', 'Rumpun keilmuan '.$category->name.' berhasil diperbarui.');
     }
 
     /**
@@ -139,6 +139,6 @@ class MajorCategoryController extends Controller
         ]);
 
         return redirect()->route('admin.master.major-categories.index')
-            ->with('success', 'Rumpun keilmuan ' . $categoryName . ' berhasil dihapus.');
+            ->with('success', 'Rumpun keilmuan '.$categoryName.' berhasil dihapus.');
     }
 }

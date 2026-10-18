@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('google_id')->nullable()->after('email');
             // Ubah password jadi nullable agar user Google tidak wajib punya password
-            $table->string('password')->nullable()->change(); 
+            $table->string('password')->nullable()->change();
         });
     }
 
