@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Attendance;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ClockInRequest extends FormRequest
@@ -24,7 +25,7 @@ class ClockInRequest extends FormRequest
      * Catatan: kewajiban latitude/longitude saat instansi memiliki geofence
      * aktif di-resolve di controller (butuh konteks instansi user).
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {

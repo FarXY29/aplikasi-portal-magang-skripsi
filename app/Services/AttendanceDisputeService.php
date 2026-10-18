@@ -11,9 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class AttendanceDisputeService
 {
-    public function __construct(private AuditLogService $auditLogService)
-    {
-    }
+    public function __construct(private AuditLogService $auditLogService) {}
 
     /**
      * Submit an attendance dispute by the participant.
@@ -41,7 +39,7 @@ class AttendanceDisputeService
         }
 
         $proposedStatus = $data['proposed_status'] ?? 'hadir';
-        if (!in_array($proposedStatus, ['hadir', 'izin', 'sakit'], true)) {
+        if (! in_array($proposedStatus, ['hadir', 'izin', 'sakit'], true)) {
             $proposedStatus = 'hadir';
         }
 
@@ -73,11 +71,11 @@ class AttendanceDisputeService
         ?string $reviewerNotes,
         User $reviewer
     ): AttendanceDispute {
-        if (!$dispute->isPending()) {
+        if (! $dispute->isPending()) {
             throw new \DomainException('Sanggahan ini sudah pernah diproses sebelumnya.');
         }
 
-        if (!in_array($action, ['approve', 'reject'], true)) {
+        if (! in_array($action, ['approve', 'reject'], true)) {
             throw new \InvalidArgumentException("Aksi review [{$action}] tidak dikenali.");
         }
 
@@ -95,7 +93,7 @@ class AttendanceDisputeService
                 $attendance->update([
                     'status' => $dispute->proposed_status ?: 'hadir',
                     'validation_status' => 'approved',
-                    'pembimbing_lapangan_note' => 'Disetujui via Sanggahan: ' . ($reviewerNotes ?: 'Sanggahan diterima oleh reviewer'),
+                    'pembimbing_lapangan_note' => 'Disetujui via Sanggahan: '.($reviewerNotes ?: 'Sanggahan diterima oleh reviewer'),
                 ]);
 
                 $this->auditLogService->record('attendance.dispute_approved', $dispute, [

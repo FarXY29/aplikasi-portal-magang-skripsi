@@ -16,19 +16,22 @@ return new class extends Migration
                 $table->index('status');
                 $table->index('internship_position_id');
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         try {
             Schema::table('attendances', function (Blueprint $table) {
                 $table->index(['application_id', 'date']);
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         try {
             Schema::table('daily_logs', function (Blueprint $table) {
                 $table->index(['application_id', 'tanggal']);
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
     }
 
     /**
@@ -41,18 +44,21 @@ return new class extends Migration
                 $table->dropIndex(['status']);
                 $table->dropIndex(['internship_position_id']);
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         try {
             Schema::table('attendances', function (Blueprint $table) {
                 $table->dropIndex(['application_id', 'date']);
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         try {
             Schema::table('daily_logs', function (Blueprint $table) {
                 $table->dropIndex(['application_id', 'tanggal']);
             });
-        } catch (\Exception $e) {}
+        } catch (Exception $e) {
+        }
     }
 };

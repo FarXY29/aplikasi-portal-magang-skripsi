@@ -13,8 +13,7 @@ class FraudSignal
         public readonly string $severity, // low | medium | high | critical
         public readonly int $scoreDelta,
         public readonly array $metadata = [],
-    ) {
-    }
+    ) {}
 
     public function describe(): string
     {

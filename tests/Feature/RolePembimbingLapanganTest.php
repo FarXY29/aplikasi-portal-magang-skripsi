@@ -2,9 +2,15 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use App\Models\Application;
+use App\Models\DailyLog;
+use App\Models\Instansi;
+use App\Models\InternshipPosition;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class RolePembimbingLapanganTest extends TestCase
 {
@@ -20,11 +26,11 @@ class RolePembimbingLapanganTest extends TestCase
 
     public function test_pembimbing_lapangan_can_upload_signature_in_profile()
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
+        Storage::fake('public');
 
         $user = User::factory()->create(['role' => 'pembimbing_lapangan']);
 
-        $file = \Illuminate\Http\UploadedFile::fake()->image('signature.png', 200, 100);
+        $file = UploadedFile::fake()->image('signature.png', 200, 100);
 
         $response = $this->actingAs($user)->patch(route('profile.update'), [
             'name' => $user->name,
@@ -37,7 +43,7 @@ class RolePembimbingLapanganTest extends TestCase
 
         $user->refresh();
         $this->assertNotNull($user->signature);
-        \Illuminate\Support\Facades\Storage::disk('public')->assertExists($user->signature);
+        Storage::disk('public')->assertExists($user->signature);
     }
 
     public function test_pembimbing_lapangan_signature_is_preserved_when_updating_profile_without_new_file()
@@ -63,8 +69,8 @@ class RolePembimbingLapanganTest extends TestCase
 
     public function test_pembimbing_lapangan_profile_edit_page_renders_signature_section()
     {
-        \Illuminate\Support\Facades\Storage::fake('public');
-        \Illuminate\Support\Facades\Storage::disk('public')->put('signatures/existing_signature.png', 'dummy_content');
+        Storage::fake('public');
+        Storage::disk('public')->put('signatures/existing_signature.png', 'dummy_content');
 
         $user = User::factory()->create([
             'role' => 'pembimbing_lapangan',
@@ -89,21 +95,21 @@ class RolePembimbingLapanganTest extends TestCase
             'asal_instansi' => 'Universitas Lambung Mangkurat',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Kominfo',
             'kode_unit_kerja' => 'DISKOMINFO-01',
             'alamat' => 'Banjarmasin',
             'ttd_kepala' => 'signatures/dummy_kepala.png',
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Software Engineer Intern',
             'kuota' => 5,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $peserta->id,
             'internship_position_id' => $position->id,
             'pembimbing_lapangan_id' => $pl->id,
@@ -114,7 +120,7 @@ class RolePembimbingLapanganTest extends TestCase
             'tanggal_selesai' => now()->addMonths(3)->toDateString(),
         ]);
 
-        \App\Models\DailyLog::create([
+        DailyLog::create([
             'application_id' => $app->id,
             'tanggal' => now()->toDateString(),
             'kegiatan' => 'Mengerjakan modul backend dan integrasi API.',

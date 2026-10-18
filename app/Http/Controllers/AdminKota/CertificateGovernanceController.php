@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class CertificateGovernanceController extends Controller
 {
     protected AuditLogService $auditLogService;
+
     protected PdfExportService $pdfService;
 
     public function __construct(AuditLogService $auditLogService, PdfExportService $pdfService)
@@ -28,7 +29,7 @@ class CertificateGovernanceController extends Controller
     public function index(Request $request)
     {
         $query = Certificate::with([
-            'application.user',
+            'application.user.majorDetail',
             'application.position.instansi',
             'revokedBy',
         ]);
@@ -37,15 +38,15 @@ class CertificateGovernanceController extends Controller
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_sertifikat', 'like', "%{$search}%")
-                  ->orWhere('token_verifikasi', 'like', "%{$search}%")
-                  ->orWhereHas('application.user', function ($u) use ($search) {
-                      $u->where('name', 'like', "%{$search}%")
-                        ->orWhere('nik', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('application.position.instansi', function ($i) use ($search) {
-                      $i->where('nama_dinas', 'like', "%{$search}%");
-                  });
+                    ->orWhere('token_verifikasi', 'like', "%{$search}%")
+                    ->orWhereHas('application.user', function ($u) use ($search) {
+                        $u->where('name', 'like', "%{$search}%")
+                            ->orWhere('nik', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('application.position.instansi', function ($i) use ($search) {
+                        $i->where('nama_dinas', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -122,7 +123,7 @@ class CertificateGovernanceController extends Controller
             'reason' => $request->revoked_reason,
         ]);
 
-        return back()->with('success', 'Sertifikat ' . $certificate->nomor_sertifikat . ' berhasil dicabut status keabsahannya.');
+        return back()->with('success', 'Sertifikat '.$certificate->nomor_sertifikat.' berhasil dicabut status keabsahannya.');
     }
 
     /**
@@ -148,7 +149,7 @@ class CertificateGovernanceController extends Controller
             'user_name' => $certificate->application?->user?->name,
         ]);
 
-        return back()->with('success', 'Status sertifikat ' . $certificate->nomor_sertifikat . ' berhasil dipulihkan menjadi Aktif / Sah.');
+        return back()->with('success', 'Status sertifikat '.$certificate->nomor_sertifikat.' berhasil dipulihkan menjadi Aktif / Sah.');
     }
 
     /**
@@ -157,7 +158,7 @@ class CertificateGovernanceController extends Controller
     public function exportPdf(Request $request)
     {
         $query = Certificate::with([
-            'application.user',
+            'application.user.majorDetail',
             'application.position.instansi',
             'revokedBy',
         ]);
@@ -181,7 +182,7 @@ class CertificateGovernanceController extends Controller
 
         $ttd_image_path = null;
         if (! empty($settings['ttd_image']) && Storage::disk('public')->exists($settings['ttd_image'])) {
-            $ttd_image_path = public_path('storage/' . $settings['ttd_image']);
+            $ttd_image_path = public_path('storage/'.$settings['ttd_image']);
         }
 
         $data = [

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\AuditLog;
 use App\Models\DatabaseBackup;
+use Ifsnop\Mysqldump\Mysqldump;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -54,14 +55,14 @@ class CreateDatabaseBackup implements ShouldQueue
                 'lock-tables' => false,
                 'add-drop-trigger' => true,
                 'disable-foreign-keys-check' => true,
-                'compress' => \Ifsnop\Mysqldump\Mysqldump::NONE,
+                'compress' => Mysqldump::NONE,
             ];
 
             $pdoSettings = [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             ];
 
-            $dump = new \Ifsnop\Mysqldump\Mysqldump(
+            $dump = new Mysqldump(
                 $dsn,
                 $settings['username'],
                 $settings['password'],

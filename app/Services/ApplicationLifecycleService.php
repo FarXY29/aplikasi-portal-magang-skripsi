@@ -8,6 +8,7 @@ use App\Models\Application;
 class ApplicationLifecycleService
 {
     protected $generateCertificateNumberAction;
+
     private ApplicationStateTransitionService $transitionService;
 
     public function __construct(

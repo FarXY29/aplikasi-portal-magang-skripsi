@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Peserta;
 
+use App\Exceptions\CancellationPolicyException;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\Attendance;
-use App\Services\InternshipApplicationService;
+use App\Services\ApplicationStateTransitionService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,8 +27,8 @@ class DashboardController extends Controller
         $endDate = $request->input('end_date');
 
         $query = Application::where('user_id', $user->id)
-                            ->with(['position.instansi', 'certificate'])
-                            ->latest();
+            ->with(['position.instansi', 'certificate'])
+            ->latest();
 
         if ($statusFilter && $statusFilter !== 'semua') {
             $query->where('status', $statusFilter);
@@ -45,16 +46,16 @@ class DashboardController extends Controller
 
         // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $activeApp = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->with(['position.instansi', 'pembimbing_lapangan'])
-                        ->first();
+            ->where('status', 'diterima')
+            ->with(['position.instansi', 'pembimbing_lapangan'])
+            ->first();
 
-        if (!$activeApp) {
+        if (! $activeApp) {
             $activeApp = Application::where('user_id', $user->id)
-                            ->where('status', 'selesai')
-                            ->with(['position.instansi', 'pembimbing_lapangan', 'certificate'])
-                            ->latest('updated_at')
-                            ->first();
+                ->where('status', 'selesai')
+                ->with(['position.instansi', 'pembimbing_lapangan', 'certificate'])
+                ->latest('updated_at')
+                ->first();
         }
 
         // Cek Absensi Hari Ini
@@ -65,28 +66,40 @@ class DashboardController extends Controller
 
         if ($activeApp) {
             $attendanceToday = Attendance::where('application_id', $activeApp->id)
-                                ->where('date', Carbon::now()->format('Y-m-d'))
-                                ->first();
+                ->where('date', Carbon::now()->format('Y-m-d'))
+                ->first();
             $jamKerja = $activeApp->position->instansi;
 
-            $logsCount = $activeApp->logs()->count();
-            $logsValidated = $activeApp->logs()->where('status_validasi', 'disetujui')->count();
+            $logStats = $activeApp->logs()->toBase()->selectRaw("
+                COUNT(*) as total,
+                SUM(CASE WHEN status_validasi = 'disetujui' THEN 1 ELSE 0 END) as validated
+            ")->first();
 
-            $attendances = Attendance::where('application_id', $activeApp->id)->get();
+            $attStats = Attendance::where('application_id', $activeApp->id)
+                ->toBase()
+                ->selectRaw("
+                    SUM(CASE WHEN status = 'hadir' THEN 1 ELSE 0 END) as hadir,
+                    SUM(CASE WHEN status IN ('izin', 'sakit') THEN 1 ELSE 0 END) as izin,
+                    SUM(CASE WHEN status = 'alpa' THEN 1 ELSE 0 END) as alpa
+                ")->first();
+
             $attendanceStats = [
-                'hadir' => $attendances->where('status', 'hadir')->count(),
-                'izin' => $attendances->whereIn('status', ['izin', 'sakit'])->count(),
-                'alpa' => $attendances->where('status', 'alpa')->count(),
+                'hadir' => (int) ($attStats->hadir ?? 0),
+                'izin' => (int) ($attStats->izin ?? 0),
+                'alpa' => (int) ($attStats->alpa ?? 0),
             ];
+
+            $logsCount = (int) ($logStats->total ?? 0);
+            $logsValidated = (int) ($logStats->validated ?? 0);
 
             $startDate = Carbon::parse($activeApp->tanggal_mulai)->startOfDay();
             $endDate = Carbon::parse($activeApp->tanggal_selesai)->startOfDay();
-            
+
             $totalDays = (int) $startDate->diffInDays($endDate) + 1;
             $elapsedDays = (int) $startDate->diffInDays(Carbon::now()->startOfDay(), false) + 1;
-            
+
             $elapsedDays = max(0, min($elapsedDays, $totalDays));
-            
+
             $progressPercent = $totalDays > 0 ? round(($elapsedDays / $totalDays) * 100) : 0;
 
             $stats = [
@@ -104,7 +117,7 @@ class DashboardController extends Controller
         return view('peserta.dashboard', compact('myApplications', 'activeApp', 'attendanceToday', 'jamKerja', 'stats', 'daysRemaining'));
     }
 
-    public function cancelApplication($id, \App\Services\ApplicationStateTransitionService $transitionService)
+    public function cancelApplication($id, ApplicationStateTransitionService $transitionService)
     {
         $app = Application::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
@@ -115,10 +128,10 @@ class DashboardController extends Controller
                 Auth::id(),
                 true
             );
-        } catch (\App\Exceptions\CancellationPolicyException $e) {
+        } catch (CancellationPolicyException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->with('error', 'Gagal membatalkan lamaran: ' . $e->getMessage());
+            return back()->with('error', 'Gagal membatalkan lamaran: '.$e->getMessage());
         }
 
         return back()->with('success', 'Lamaran magang berhasil dibatalkan.');
@@ -129,23 +142,27 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $finishedAppQuery = Application::where('user_id', $user->id)
-                        ->where('status', 'selesai')
-                        ->with(['position.instansi', 'user', 'certificate']);
+            ->where('status', 'selesai')
+            ->with(['position.instansi', 'pembimbing_lapangan', 'user.university', 'user.school', 'user.majorDetail', 'certificate']);
 
         $finishedApp = $id
             ? $finishedAppQuery->whereKey($id)->first()
             : $finishedAppQuery->latest('updated_at')->first();
 
-        if (!$finishedApp) {
+        if (! $finishedApp) {
             return back()->with('error', 'Anda belum menyelesaikan program magang manapun.');
         }
 
         if ($finishedApp->certificate?->isRevoked()) {
-            return redirect()->route('peserta.dashboard')->with('error', 'Sertifikat ini telah dicabut / dibatalkan oleh Pemerintah Kota. Alasan: ' . ($finishedApp->certificate->revoked_reason ?? 'Pencabutan administratif.'));
+            return redirect()->route('peserta.dashboard')->with('error', 'Sertifikat ini telah dicabut / dibatalkan oleh Pemerintah Kota. Alasan: '.($finishedApp->certificate->revoked_reason ?? 'Pencabutan administratif.'));
         }
 
         if (empty($user->nik) || empty($user->asal_instansi)) {
             return redirect()->route('profile.edit')->with('error', 'Mohon lengkapi NIK dan Asal Instansi sebelum download sertifikat.');
+        }
+
+        if (empty($finishedApp->nomor_sertifikat) && (float) $finishedApp->avg_nilai <= 0) {
+            return redirect()->route('peserta.dashboard')->with('error', 'Peserta belum dinilai oleh pembimbing lapangan. Sertifikat tidak dapat diterbitkan.');
         }
 
         if (empty($finishedApp->saran_peserta)) {
@@ -154,15 +171,16 @@ class DashboardController extends Controller
 
         $pdf = Pdf::loadView('pdf.peserta.sertifikat', ['app' => $finishedApp]);
         $pdf->setPaper('a4', 'landscape');
+
         return $pdf->stream('Sertifikat-Magang-'.$user->name.'.pdf');
     }
 
     public function downloadLoA($id)
     {
         $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan'])
-                    ->where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         if ($app->status?->value != 'diterima' && $app->status?->value != 'selesai') {
             return back()->with('error', 'Surat hanya tersedia bagi peserta yang sudah DITERIMA.');
@@ -170,18 +188,18 @@ class DashboardController extends Controller
 
         $pdf = Pdf::loadView('pdf.peserta.loa', compact('app'));
         $pdf->setPaper('a4', 'portrait');
-        
-        return $pdf->stream('LoA_' . $app->user->name . '.pdf');
+
+        return $pdf->stream('LoA_'.$app->user->name.'.pdf');
     }
 
     public function downloadIdCard($id)
     {
         $app = Application::with(['user', 'position.instansi'])
-                    ->where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
-        if (!in_array($app->status?->value, ['diterima', 'selesai'])) {
+        if (! in_array($app->status?->value, ['diterima', 'selesai'])) {
             return back()->with('error', 'ID Card hanya tersedia bagi peserta yang sudah DITERIMA.');
         }
 
@@ -195,17 +213,18 @@ class DashboardController extends Controller
 
         $pdf = Pdf::loadView('pdf.peserta.id_card', compact('app'));
         $pdf->setPaper([0, 0, 153.07, 242.64], 'portrait');
-        
-        return $pdf->stream('ID_Card_' . $app->user->name . '.pdf');
+
+        return $pdf->stream('ID_Card_'.$app->user->name.'.pdf');
     }
 
     public function downloadTranskrip($id)
     {
-        $app = Application::where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+        $app = Application::with(['user.university', 'user.school', 'user.majorDetail', 'position.instansi', 'pembimbing_lapangan'])
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
-        if ($app->status?->value !== 'selesai' || !$app->nilai_rata_rata) {
+        if ($app->status?->value !== 'selesai' || ! $app->nilai_rata_rata) {
             return back()->with('error', 'Transkrip belum tersedia. Tunggu penilaian dari pembimbing_lapangan.');
         }
 
@@ -214,6 +233,7 @@ class DashboardController extends Controller
         }
 
         $pdf = Pdf::loadView('pdf.peserta.transkrip_nilai', compact('app'));
+
         return $pdf->stream('Transkrip-Magang-'.$app->user->name.'.pdf');
     }
 }

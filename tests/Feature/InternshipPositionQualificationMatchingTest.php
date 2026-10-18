@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\Major;
@@ -19,11 +18,17 @@ class InternshipPositionQualificationMatchingTest extends TestCase
     use DatabaseTransactions;
 
     private MajorCategory $catTIK;
+
     private MajorCategory $catEKBIS;
+
     private MajorCategory $catHUKUM;
+
     private Major $majorIlmuHukum;
+
     private Major $majorInformatikaS1;
+
     private Major $majorRPLSMK;
+
     private Instansi $instansi;
 
     protected function setUp(): void
@@ -73,10 +78,11 @@ class InternshipPositionQualificationMatchingTest extends TestCase
             'role' => 'peserta',
             'major_id' => $major->id,
             'major' => $majorString,
-            'nik' => '63710' . str_pad((string) rand(10000000000, 99999999999), 11, '0', STR_PAD_LEFT),
+            'nik' => '63710'.str_pad((string) rand(10000000000, 99999999999), 11, '0', STR_PAD_LEFT),
             'asal_instansi' => 'Universitas Lambung Mangkurat',
         ]);
         $peserta->assignRole('peserta');
+
         return $peserta;
     }
 
@@ -265,4 +271,3 @@ class InternshipPositionQualificationMatchingTest extends TestCase
         ]);
     }
 }
-

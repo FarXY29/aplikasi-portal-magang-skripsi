@@ -20,18 +20,27 @@ class ReportService
 
         $this->applyInstansiRekapFilters($query, $request);
 
-        $statsQuery = clone $query;
+        $statsRow = (clone $query)->toBase()->reorder()->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'diterima' THEN 1 ELSE 0 END) as aktif,
+            SUM(CASE WHEN status = 'selesai' THEN 1 ELSE 0 END) as selesai,
+            SUM(CASE WHEN status IN ('pending', 'menunggu') THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as ditolak
+        ")->first();
+
+        $totalKampus = (clone $query)
+            ->join('users', 'applications.user_id', '=', 'users.id')
+            ->whereNotNull('users.asal_instansi')
+            ->distinct('users.asal_instansi')
+            ->count('users.asal_instansi');
+
         $stats = [
-            'total' => (clone $statsQuery)->count(),
-            'aktif' => (clone $statsQuery)->where('status', 'diterima')->count(),
-            'selesai' => (clone $statsQuery)->where('status', 'selesai')->count(),
-            'pending' => (clone $statsQuery)->whereIn('status', ['pending', 'menunggu'])->count(),
-            'ditolak' => (clone $statsQuery)->where('status', 'ditolak')->count(),
-            'total_kampus' => (clone $statsQuery)
-                ->join('users', 'applications.user_id', '=', 'users.id')
-                ->whereNotNull('users.asal_instansi')
-                ->distinct('users.asal_instansi')
-                ->count('users.asal_instansi'),
+            'total' => (int) ($statsRow->total ?? 0),
+            'aktif' => (int) ($statsRow->aktif ?? 0),
+            'selesai' => (int) ($statsRow->selesai ?? 0),
+            'pending' => (int) ($statsRow->pending ?? 0),
+            'ditolak' => (int) ($statsRow->ditolak ?? 0),
+            'total_kampus' => (int) $totalKampus,
         ];
 
         $this->applyInstansiRekapSort($query, $request);
@@ -46,7 +55,6 @@ class ReportService
     public function getApplicationTrackingReportData(?int $instansiId = null, ?Request $request = null, bool $paginate = true): array
     {
         $request = $request ?? request();
-        $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan']);
         $query = Application::with(['user.university', 'user.school', 'position.instansi', 'pembimbing_lapangan', 'timelines']);
 
         if ($instansiId !== null) {
@@ -87,26 +95,34 @@ class ReportService
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_registrasi', 'like', "%{$search}%")
-                  ->orWhere('id', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($u) use ($search) {
-                      $u->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('asal_instansi', 'like', "%{$search}%")
-                        ->orWhere('major', 'like', "%{$search}%");
-                  });
+                    ->orWhere('id', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($u) use ($search) {
+                        $u->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%")
+                            ->orWhere('asal_instansi', 'like', "%{$search}%")
+                            ->orWhere('major', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Hitung statistik ringkasan
-        $statsQuery = clone $query;
+        $statsRow = (clone $query)->toBase()->reorder()->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'menunggu' THEN 1 ELSE 0 END) as menunggu,
+            SUM(CASE WHEN status = 'diterima' THEN 1 ELSE 0 END) as diterima,
+            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as ditolak,
+            SUM(CASE WHEN status = 'selesai' THEN 1 ELSE 0 END) as selesai
+        ")->first();
+
         $stats = [
-            'total' => (clone $statsQuery)->count(),
-            'pending' => (clone $statsQuery)->where('status', 'pending')->count(),
-            'menunggu' => (clone $statsQuery)->where('status', 'menunggu')->count(),
-            'diterima' => (clone $statsQuery)->where('status', 'diterima')->count(),
-            'ditolak' => (clone $statsQuery)->where('status', 'ditolak')->count(),
-            'selesai' => (clone $statsQuery)->where('status', 'selesai')->count(),
+            'total' => (int) ($statsRow->total ?? 0),
+            'pending' => (int) ($statsRow->pending ?? 0),
+            'menunggu' => (int) ($statsRow->menunggu ?? 0),
+            'diterima' => (int) ($statsRow->diterima ?? 0),
+            'ditolak' => (int) ($statsRow->ditolak ?? 0),
+            'selesai' => (int) ($statsRow->selesai ?? 0),
         ];
 
         // Pengurutan
@@ -611,7 +627,7 @@ class ReportService
                     $sub->where('tanggal_mulai', '<=', $end)
                         ->where('tanggal_selesai', '>=', $start);
                 })->orWhereBetween('tanggal_mulai', [$start, $end])
-                  ->orWhereBetween('tanggal_selesai', [$start, $end]);
+                    ->orWhereBetween('tanggal_selesai', [$start, $end]);
             });
         } elseif ($request->filled('start_date')) {
             $query->where(function ($q) use ($request) {
@@ -654,7 +670,7 @@ class ReportService
                 DB::raw("SUM(CASE WHEN applications.status = 'diterima' THEN 1 ELSE 0 END) as total_aktif"),
                 DB::raw("SUM(CASE WHEN applications.status = 'selesai' THEN 1 ELSE 0 END) as total_selesai"),
                 DB::raw("SUM(CASE WHEN applications.status IN ('pending', 'menunggu') THEN 1 ELSE 0 END) as total_pending"),
-                DB::raw("COUNT(applications.id) as total_peserta")
+                DB::raw('COUNT(applications.id) as total_peserta')
             )
             ->groupBy('users.asal_instansi')
             ->orderByDesc('total_peserta')

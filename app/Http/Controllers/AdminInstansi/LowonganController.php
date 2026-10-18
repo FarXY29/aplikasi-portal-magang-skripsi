@@ -7,8 +7,9 @@ use App\Http\Requests\AdminInstansi\LowonganRequest;
 use App\Models\InternshipPosition;
 use App\Models\MajorCategory;
 use App\Services\HtmlSanitizer;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LowonganController extends Controller
 {
@@ -19,10 +20,10 @@ class LowonganController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('judul_posisi', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%")
-                  ->orWhere('required_major', 'like', "%{$search}%");
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhere('required_major', 'like', "%{$search}%");
             });
         }
 
@@ -31,12 +32,14 @@ class LowonganController extends Controller
         }
 
         $lowongans = $query->latest()->get();
+
         return view('admin_instansi.lowongan.index', compact('lowongans'));
     }
 
     public function createLowongan()
     {
-        $categories = MajorCategory::with(['majors' => fn($q) => $q->where('is_active', true)])->orderBy('name')->get();
+        $categories = MajorCategory::with(['majors' => fn ($q) => $q->where('is_active', true)])->orderBy('name')->get();
+
         return view('admin_instansi.lowongan.create', compact('categories'));
     }
 
@@ -57,12 +60,13 @@ class LowonganController extends Controller
             'judul_posisi' => $request->judul_posisi,
             'required_major_category_id' => $request->required_major_category_id,
             'required_major' => $requiredMajor,
-            'deskripsi' => $request->deskripsi,
             'deskripsi' => HtmlSanitizer::clean($request->deskripsi),
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,
-            'status' => 'buka'
+            'status' => 'buka',
         ]);
+
+        Cache::forget('landing_page_stats_v3');
 
         return redirect()->route('dinas.lowongan.index')->with('success', 'Lowongan berhasil dibuat!');
     }
@@ -70,11 +74,11 @@ class LowonganController extends Controller
     public function editLowongan($id)
     {
         $loker = InternshipPosition::where('id', $id)
-                    ->where('instansi_id', Auth::user()->instansi_id)
-                    ->firstOrFail();
+            ->where('instansi_id', Auth::user()->instansi_id)
+            ->firstOrFail();
         $this->authorize('manage', $loker);
 
-        $categories = MajorCategory::with(['majors' => fn($q) => $q->where('is_active', true)])->orderBy('name')->get();
+        $categories = MajorCategory::with(['majors' => fn ($q) => $q->where('is_active', true)])->orderBy('name')->get();
 
         return view('admin_instansi.lowongan.edit', compact('loker', 'categories'));
     }
@@ -82,8 +86,8 @@ class LowonganController extends Controller
     public function updateLowongan(LowonganRequest $request, $id)
     {
         $loker = InternshipPosition::where('id', $id)
-                    ->where('instansi_id', Auth::user()->instansi_id)
-                    ->firstOrFail();
+            ->where('instansi_id', Auth::user()->instansi_id)
+            ->firstOrFail();
         $this->authorize('manage', $loker);
 
         $category = null;
@@ -100,12 +104,13 @@ class LowonganController extends Controller
             'judul_posisi' => $request->judul_posisi,
             'required_major_category_id' => $request->required_major_category_id,
             'required_major' => $requiredMajor,
-            'deskripsi' => $request->deskripsi,
             'deskripsi' => HtmlSanitizer::clean($request->deskripsi),
             'kuota' => $request->kuota,
             'batas_daftar' => $request->batas_daftar,
-            'status' => $request->status
+            'status' => $request->status,
         ]);
+
+        Cache::forget('landing_page_stats_v3');
 
         return redirect()->route('dinas.lowongan.index')->with('success', 'Lowongan berhasil diperbarui!');
     }
@@ -115,6 +120,9 @@ class LowonganController extends Controller
         $loker = InternshipPosition::where('id', $id)->where('instansi_id', Auth::user()->instansi_id)->firstOrFail();
         $this->authorize('manage', $loker);
         $loker->delete();
+
+        Cache::forget('landing_page_stats_v3');
+
         return back()->with('success', 'Lowongan dihapus.');
     }
 }

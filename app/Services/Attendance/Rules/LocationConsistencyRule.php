@@ -19,8 +19,7 @@ class LocationConsistencyRule extends AttendanceFraudRule
 
     public function __construct(
         private readonly GeoDistanceService $geo,
-    ) {
-    }
+    ) {}
 
     public function code(): string
     {
@@ -34,7 +33,7 @@ class LocationConsistencyRule extends AttendanceFraudRule
 
     public function evaluate(AttendanceFraudContext $context): ?FraudSignal
     {
-        if (!$context->hasClientLocation()) {
+        if (! $context->hasClientLocation()) {
             return null;
         }
 

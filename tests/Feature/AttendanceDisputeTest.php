@@ -8,6 +8,7 @@ use App\Models\AttendanceDispute;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
+use App\Services\ApplicationStateTransitionService;
 use Carbon\Carbon;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -25,21 +26,30 @@ class AttendanceDisputeTest extends TestCase
     use DatabaseTransactions;
 
     private Instansi $instansiA;
+
     private Instansi $instansiB;
+
     private InternshipPosition $positionA;
+
     private User $pesertaOwner;
+
     private User $pesertaOther;
+
     private User $mentorAssigned;
+
     private User $mentorOther;
+
     private User $adminInstansiA;
+
     private Application $application;
+
     private Attendance $attendance;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        if (!Schema::hasTable('attendance_disputes') || !Schema::hasTable('application_timelines')) {
+        if (! Schema::hasTable('attendance_disputes') || ! Schema::hasTable('application_timelines')) {
             Artisan::call('migrate');
         }
 
@@ -289,7 +299,7 @@ class AttendanceDisputeTest extends TestCase
             'status' => AttendanceDispute::STATUS_PENDING,
         ]);
 
-        $transitionService = app(\App\Services\ApplicationStateTransitionService::class);
+        $transitionService = app(ApplicationStateTransitionService::class);
         $transitionService->expel($this->application, 'Melanggar aturan berat', $this->adminInstansiA->id);
 
         $this->assertEquals(AttendanceDispute::STATUS_REJECTED, $dispute->fresh()->status);

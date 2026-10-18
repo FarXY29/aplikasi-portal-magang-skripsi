@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\ApplicationStatus;
 use App\Models\Application;
 use App\Models\Attendance;
+use App\Services\Attendance\GeoDistanceService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -21,9 +23,10 @@ class AttendanceService
 
         if ($now->lessThan($targetTime)) {
             $label = $type === 'masuk' ? 'datang' : 'pulang';
+
             return [
                 'is_valid' => false,
-                'message' => "Absen {$label} belum dibuka. Jadwal absen {$label} dimulai pukul " . $targetTime->format('H:i'),
+                'message' => "Absen {$label} belum dibuka. Jadwal absen {$label} dimulai pukul ".$targetTime->format('H:i'),
             ];
         }
 
@@ -50,7 +53,7 @@ class AttendanceService
                 return [
                     'is_valid' => false,
                     'distance_meters' => $jarakMeter,
-                    'message' => "Gagal Absen {$type}! Posisi Anda berada di luar radius kantor (" . number_format($jarakMeter, 0) . " meter, batas maksimal {$maxRadiusMeters} meter).",
+                    'message' => "Gagal Absen {$type}! Posisi Anda berada di luar radius kantor (".number_format($jarakMeter, 0)." meter, batas maksimal {$maxRadiusMeters} meter).",
                 ];
             }
 
@@ -69,7 +72,7 @@ class AttendanceService
      */
     public function calculateDistance($lat1, $lon1, $lat2, $lon2): float
     {
-        return app(\App\Services\Attendance\GeoDistanceService::class)
+        return app(GeoDistanceService::class)
             ->distanceKm((float) $lat1, (float) $lon1, (float) $lat2, (float) $lon2);
     }
 
@@ -77,7 +80,7 @@ class AttendanceService
      * Siapkan data riwayat absensi: periodMonths, query, summary.
      *
      * @return array{
-     *     application: \App\Models\Application,
+     *     application: Application,
      *     periodMonths: array<string, string>,
      *     attendanceSummary: array{total: int, hadir: int, izin: int, alpa: int},
      *     query: Builder
@@ -87,14 +90,14 @@ class AttendanceService
     {
         // Prioritaskan status 'diterima' (aktif), jika tidak ada baru gunakan 'selesai' (riwayat)
         $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->first();
+            ->where('status', ApplicationStatus::Diterima)
+            ->first();
 
-        if (!$application) {
+        if (! $application) {
             $application = Application::where('user_id', $user->id)
-                            ->where('status', 'selesai')
-                            ->latest('updated_at')
-                            ->first();
+                ->where('status', ApplicationStatus::Selesai)
+                ->latest('updated_at')
+                ->first();
         }
 
         // Generate daftar pilihan bulan berdasarkan rentang tanggal magang peserta (terbaru -> terlama)
@@ -124,18 +127,18 @@ class AttendanceService
             $monthVal = trim($request->month);
             if (preg_match('/^\d{4}-\d{1,2}$/', $monthVal)) {
                 [$yr, $mo] = explode('-', $monthVal);
-                $query->whereYear('date', (int)$yr)
-                      ->whereMonth('date', (int)$mo);
-            } elseif (is_numeric($monthVal) && (int)$monthVal >= 1 && (int)$monthVal <= 12) {
-                $query->whereMonth('date', (int)$monthVal);
+                $query->whereYear('date', (int) $yr)
+                    ->whereMonth('date', (int) $mo);
+            } elseif (is_numeric($monthVal) && (int) $monthVal >= 1 && (int) $monthVal <= 12) {
+                $query->whereMonth('date', (int) $monthVal);
                 if ($request->filled('year')) {
-                    $query->whereYear('date', (int)$request->year);
+                    $query->whereYear('date', (int) $request->year);
                 }
             } else {
                 try {
                     $monthDate = Carbon::parse($monthVal);
                     $query->whereMonth('date', $monthDate->month)
-                          ->whereYear('date', $monthDate->year);
+                        ->whereYear('date', $monthDate->year);
                 } catch (\Exception $e) {
                     // Abaikan jika format bulan tidak valid
                 }
@@ -143,11 +146,18 @@ class AttendanceService
         }
 
         // Summary counts (berdasarkan query bulan jika ada, sebelum filter status & search agar statistik tetap komprehensif)
+        $summaryRow = (clone $query)->toBase()->reorder()->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'hadir' THEN 1 ELSE 0 END) as hadir,
+            SUM(CASE WHEN status IN ('izin', 'sakit') THEN 1 ELSE 0 END) as izin,
+            SUM(CASE WHEN status = 'alpa' THEN 1 ELSE 0 END) as alpa
+        ")->first();
+
         $attendanceSummary = [
-            'total' => (clone $query)->count(),
-            'hadir' => (clone $query)->where('status', 'hadir')->count(),
-            'izin'  => (clone $query)->whereIn('status', ['izin', 'sakit'])->count(),
-            'alpa'  => (clone $query)->where('status', 'alpa')->count(),
+            'total' => (int) ($summaryRow->total ?? 0),
+            'hadir' => (int) ($summaryRow->hadir ?? 0),
+            'izin' => (int) ($summaryRow->izin ?? 0),
+            'alpa' => (int) ($summaryRow->alpa ?? 0),
         ];
 
         // Filter berdasarkan status

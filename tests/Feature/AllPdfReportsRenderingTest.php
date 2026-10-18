@@ -8,10 +8,7 @@ use App\Models\DailyLog;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
-use App\Services\PdfExportService;
-use App\Services\ReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Tests\TestCase;
 
 class AllPdfReportsRenderingTest extends TestCase
@@ -19,11 +16,17 @@ class AllPdfReportsRenderingTest extends TestCase
     use RefreshDatabase;
 
     protected $adminKota;
+
     protected $adminInstansi;
+
     protected $pembimbing;
+
     protected $peserta;
+
     protected $instansi;
+
     protected $position;
+
     protected $appModel;
 
     protected function setUp(): void

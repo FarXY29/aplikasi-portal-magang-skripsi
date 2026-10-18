@@ -6,6 +6,10 @@ use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\AttendanceDispute;
 use App\Models\DailyLog;
+use App\Models\Instansi;
+use App\Models\Setting;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +43,7 @@ class StorageAccessController extends Controller
         if (Storage::disk('private')->exists($path)) {
             $disk = 'private';
         } elseif (Storage::disk('public')->exists($path)) {
-            \Illuminate\Support\Facades\Log::warning("Serving legacy sensitive document from public disk fallback: {$path}");
+            Log::warning("Serving legacy sensitive document from public disk fallback: {$path}");
             $disk = 'public';
         } else {
             abort(404, 'Berkas tidak ditemukan.');
@@ -114,27 +118,29 @@ class StorageAccessController extends Controller
         abort_unless($user, 401);
 
         // 1. Check Instansi ttd_kepala
-        $instansi = \App\Models\Instansi::where('ttd_kepala', 'like', '%/'.$this->like($filename))->first();
+        $instansi = Instansi::where('ttd_kepala', 'like', '%/'.$this->like($filename))->first();
         if ($instansi) {
             abort_unless(
                 $user->hasPortalRole('admin_kota') ||
                 ($user->hasPortalRole('admin_instansi') && (int) $user->instansi_id === (int) $instansi->id),
                 403
             );
+
             return [$instansi->ttd_kepala, $instansi];
         }
 
         // 2. Check Setting ttd_image
-        $setting = \App\Models\Setting::where('key', 'ttd_image')
+        $setting = Setting::where('key', 'ttd_image')
             ->where('value', 'like', '%/'.$this->like($filename))
             ->first();
         if ($setting) {
             abort_unless($user->hasPortalRole('admin_kota'), 403);
+
             return [$setting->value, $setting];
         }
 
         // 3. Check User signature
-        $targetUser = \App\Models\User::where('signature', 'like', '%/'.$this->like($filename))->first();
+        $targetUser = User::where('signature', 'like', '%/'.$this->like($filename))->first();
         if ($targetUser) {
             abort_unless(
                 $user->hasPortalRole('admin_kota') ||
@@ -142,6 +148,7 @@ class StorageAccessController extends Controller
                 ($user->hasPortalRole('admin_instansi') && (int) $user->instansi_id === (int) $targetUser->instansi_id),
                 403
             );
+
             return [$targetUser->signature, $targetUser];
         }
 

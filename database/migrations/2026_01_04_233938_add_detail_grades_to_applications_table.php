@@ -4,8 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up() {
+return new class extends Migration
+{
+    public function up()
+    {
         Schema::table('applications', function (Blueprint $table) {
             // Menambahkan 10 Kriteria Penilaian
             $table->integer('nilai_sikap')->nullable();          // 1. Sikap/Sopan santun
@@ -18,17 +20,18 @@ return new class extends Migration {
             $table->integer('nilai_serap_hal_baru')->nullable(); // 8. Kemampuan Menyerap Hal Baru
             $table->integer('nilai_inisiatif')->nullable();      // 9. Inisiatif dan Kreatifitas
             $table->integer('nilai_kepuasan')->nullable();       // 10. Kepuasan Pemberi Kerja Praktek
-            
+
             $table->decimal('nilai_rata_rata', 5, 2)->nullable(); // Untuk menyimpan hasil akhir
         });
     }
 
-    public function down() {
+    public function down()
+    {
         Schema::table('applications', function (Blueprint $table) {
             $table->dropColumn([
-                'nilai_sikap', 'nilai_disiplin', 'nilai_kesungguhan', 'nilai_mandiri', 
-                'nilai_kerjasama', 'nilai_ketelitian', 'nilai_pendapat', 
-                'nilai_serap_hal_baru', 'nilai_inisiatif', 'nilai_kepuasan', 'nilai_rata_rata'
+                'nilai_sikap', 'nilai_disiplin', 'nilai_kesungguhan', 'nilai_mandiri',
+                'nilai_kerjasama', 'nilai_ketelitian', 'nilai_pendapat',
+                'nilai_serap_hal_baru', 'nilai_inisiatif', 'nilai_kepuasan', 'nilai_rata_rata',
             ]);
         });
     }

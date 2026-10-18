@@ -2,24 +2,23 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class ApplicationTest extends TestCase
 {
     use DatabaseTransactions;
+
     /**
      * A basic feature test example.
      */
     public function test_peserta_can_view_internship_positions(): void
     {
         $user = User::factory()->create([
-            'role' => 'peserta'
+            'role' => 'peserta',
         ]);
 
         $response = $this->actingAs($user)->get('/lowongan');
@@ -30,7 +29,7 @@ class ApplicationTest extends TestCase
     public function test_peserta_can_see_application_form(): void
     {
         $user = User::factory()->create([
-            'role' => 'peserta'
+            'role' => 'peserta',
         ]);
 
         $instansi = Instansi::create([
@@ -46,10 +45,10 @@ class ApplicationTest extends TestCase
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Software Engineer Test',
             'kuota' => 5,
-            'status' => 'buka'
+            'status' => 'buka',
         ]);
 
-        $response = $this->actingAs($user)->get('/peserta/daftar/' . $position->id);
+        $response = $this->actingAs($user)->get('/peserta/daftar/'.$position->id);
 
         $response->assertStatus(200);
     }

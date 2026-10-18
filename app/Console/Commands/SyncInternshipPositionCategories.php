@@ -82,4 +82,3 @@ class SyncInternshipPositionCategories extends Command
         return Command::SUCCESS;
     }
 }
-

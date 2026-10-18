@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -17,7 +18,9 @@ class ApplicationAcceptedMail extends Mailable implements ShouldQueue, ShouldQue
     use Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 60;
+
     public array $backoff = [10, 60, 300];
 
     public $application;
@@ -54,7 +57,7 @@ class ApplicationAcceptedMail extends Mailable implements ShouldQueue, ShouldQue
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

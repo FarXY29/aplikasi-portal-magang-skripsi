@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Models\Role;
@@ -13,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     public const PORTAL_ROLES = [
         'admin_kota',
@@ -63,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'school_id',
         'nik',
         'phone',
-        'asal_instansi', 
+        'asal_instansi',
         'major',
         'major_id',
         'nama_pembimbing_sekolah',
@@ -93,41 +95,49 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     // Relasi ke INSTANSI (Untuk Admin Dinas / Pembimbing Lapangan)
-    public function instansi() {
+    public function instansi()
+    {
         return $this->belongsTo(Instansi::class);
     }
 
     // Relasi ke Universitas (Master Data PT)
-    public function university() {
+    public function university()
+    {
         return $this->belongsTo(University::class);
     }
 
     // Relasi ke Sekolah (Master Data Sekolah Menengah)
-    public function school() {
+    public function school()
+    {
         return $this->belongsTo(School::class);
     }
 
     // Relasi ke Master Data Jurusan / Program Studi
-    public function majorDetail() {
+    public function majorDetail()
+    {
         return $this->belongsTo(Major::class, 'major_id');
     }
 
     // Relasi ke LAMARAN (APPLICATIONS)
-    public function applications() {
+    public function applications()
+    {
         return $this->hasMany(Application::class);
     }
 
-    public function bimbingan() {
+    public function bimbingan()
+    {
         return $this->hasMany(Application::class, 'pembimbing_lapangan_id');
     }
 
     // Relasi peserta ke pembimbing sekolahnya
-    public function pembimbing_sekolah() {
+    public function pembimbing_sekolah()
+    {
         return $this->belongsTo(User::class, 'pembimbing_sekolah_id');
     }
 
     // Relasi pembimbing sekolah ke mahasiswanya
-    public function mahasiswa_bimbingan() {
+    public function mahasiswa_bimbingan()
+    {
         return $this->hasMany(User::class, 'pembimbing_sekolah_id');
     }
 
@@ -143,6 +153,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function getNomorIndukAttribute(): ?string
+    {
+        return $this->attributes['nik'] ?? null;
+    }
+
+    public function getNipAttribute(): ?string
     {
         return $this->attributes['nik'] ?? null;
     }
@@ -256,10 +271,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         if ($len <= 8) {
-            return substr($nik, 0, 2) . str_repeat('*', $len - 4) . substr($nik, -2);
+            return substr($nik, 0, 2).str_repeat('*', $len - 4).substr($nik, -2);
         }
 
-        return substr($nik, 0, 4) . str_repeat('*', max(4, $len - 8)) . substr($nik, -4);
+        return substr($nik, 0, 4).str_repeat('*', max(4, $len - 8)).substr($nik, -4);
     }
 
     public function hasPortalPermission(string $permission): bool
@@ -320,9 +335,9 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         try {
-            $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+            $this->notify(new VerifyEmail);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi: ' . $e->getMessage());
+            Log::error('Gagal mengirim email verifikasi: '.$e->getMessage());
         }
     }
 

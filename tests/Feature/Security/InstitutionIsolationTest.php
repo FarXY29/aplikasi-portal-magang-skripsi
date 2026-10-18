@@ -18,12 +18,19 @@ class InstitutionIsolationTest extends TestCase
     use DatabaseTransactions;
 
     private Instansi $instansiA;
+
     private Instansi $instansiB;
+
     private User $adminA;
+
     private User $adminB;
+
     private InternshipPosition $posisiA;
+
     private InternshipPosition $posisiB;
+
     private User $mentorA;
+
     private User $mentorB;
 
     protected function setUp(): void

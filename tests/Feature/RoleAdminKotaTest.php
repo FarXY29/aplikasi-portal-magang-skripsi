@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Application;
+use App\Models\Certificate;
+use App\Models\Instansi;
+use App\Models\InternshipPosition;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
-use App\Models\User;
 
 class RoleAdminKotaTest extends TestCase
 {
@@ -45,7 +49,7 @@ class RoleAdminKotaTest extends TestCase
     public function test_admin_kota_can_access_instansi_create_and_edit_page()
     {
         $user = User::factory()->create(['role' => 'admin_kota']);
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Kominfo Test',
             'alamat' => 'Jl. Lambung Mangkurat',
             'kode_unit_kerja' => 'DISKOMINFO-TEST',
@@ -69,13 +73,13 @@ class RoleAdminKotaTest extends TestCase
             'name' => 'Peserta Nilai Sertifikat',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Pendidikan Test',
             'alamat' => 'Jl. Veteran',
             'kode_unit_kerja' => 'DISDIK-TEST',
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Staff Pengajar Test',
             'kuota' => 2,
@@ -84,7 +88,7 @@ class RoleAdminKotaTest extends TestCase
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $peserta->id,
             'internship_position_id' => $position->id,
             'status' => 'selesai',
@@ -102,7 +106,7 @@ class RoleAdminKotaTest extends TestCase
             'predikat' => 'Sangat Baik',
         ]);
 
-        $cert = \App\Models\Certificate::create([
+        $cert = Certificate::create([
             'application_id' => $app->id,
             'nomor_sertifikat' => 'CERT-TEST-001',
             'token_verifikasi' => 'tokentest123456',

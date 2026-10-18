@@ -2,16 +2,17 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Models\Instansi;
 use App\Services\Attendance\DynamicQrService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class DynamicQrServiceTest extends TestCase
 {
     use RefreshDatabase;
 
     private DynamicQrService $service;
+
     private Instansi $instansi;
 
     protected function setUp(): void

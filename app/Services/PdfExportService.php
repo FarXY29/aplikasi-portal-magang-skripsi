@@ -2,21 +2,16 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class PdfExportService
 {
     /**
      * Generate and stream a PDF file.
-     *
-     * @param string $view
-     * @param array $data
-     * @param string $filename
-     * @param string $paper
-     * @param string $orientation
-     * @param bool $withSignature
-     * @return \Illuminate\Http\Response
      */
     public function stream(
         string $view,
@@ -37,12 +32,20 @@ class PdfExportService
     }
 
     /**
+     * Get settings memoized per request.
+     */
+    private function getSettings(): Collection
+    {
+        return once(fn () => Setting::all()->pluck('value', 'key'));
+    }
+
+    /**
      * Inject Kop data from settings if not already present in data.
      */
     public function injectKopData(array $data, $settings = null): array
     {
         if ($settings === null) {
-            $settings = \App\Models\Setting::all()->pluck('value', 'key');
+            $settings = $this->getSettings();
         }
 
         if (! array_key_exists('kop_line1', $data)) {
@@ -59,12 +62,12 @@ class PdfExportService
 
         if (! array_key_exists('kop_logo_path', $data)) {
             $logoPath = null;
-            if (! empty($settings['kop_logo']) && \Illuminate\Support\Facades\Storage::disk('public')->exists($settings['kop_logo'])) {
+            if (! empty($settings['kop_logo']) && Storage::disk('public')->exists($settings['kop_logo'])) {
                 $rawImg = $settings['kop_logo'];
-                if (file_exists(storage_path('app/public/' . $rawImg))) {
-                    $logoPath = storage_path('app/public/' . $rawImg);
-                } elseif (file_exists(public_path('storage/' . $rawImg))) {
-                    $logoPath = public_path('storage/' . $rawImg);
+                if (file_exists(storage_path('app/public/'.$rawImg))) {
+                    $logoPath = storage_path('app/public/'.$rawImg);
+                } elseif (file_exists(public_path('storage/'.$rawImg))) {
+                    $logoPath = public_path('storage/'.$rawImg);
                 }
             }
 
@@ -85,7 +88,7 @@ class PdfExportService
     public function injectSignatureData(array $data, $settings = null): array
     {
         if ($settings === null) {
-            $settings = \App\Models\Setting::all()->pluck('value', 'key');
+            $settings = $this->getSettings();
         }
 
         if (! array_key_exists('pejabat_nama', $data) && ! array_key_exists('pejabat_nip', $data) && ! array_key_exists('pejabat_jabatan', $data)) {
@@ -98,14 +101,14 @@ class PdfExportService
             $ttdPath = null;
             if (! empty($settings['ttd_image'])) {
                 $rawImg = $settings['ttd_image'];
-                if (\Illuminate\Support\Facades\Storage::disk('private')->exists($rawImg)) {
-                    $ttdPath = \Illuminate\Support\Facades\Storage::disk('private')->path($rawImg);
-                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawImg)) {
-                    $ttdPath = \Illuminate\Support\Facades\Storage::disk('public')->path($rawImg);
-                } elseif (file_exists(storage_path('app/public/' . $rawImg))) {
-                    $ttdPath = storage_path('app/public/' . $rawImg);
-                } elseif (file_exists(public_path('storage/' . $rawImg))) {
-                    $ttdPath = public_path('storage/' . $rawImg);
+                if (Storage::disk('private')->exists($rawImg)) {
+                    $ttdPath = Storage::disk('private')->path($rawImg);
+                } elseif (Storage::disk('public')->exists($rawImg)) {
+                    $ttdPath = Storage::disk('public')->path($rawImg);
+                } elseif (file_exists(storage_path('app/public/'.$rawImg))) {
+                    $ttdPath = storage_path('app/public/'.$rawImg);
+                } elseif (file_exists(public_path('storage/'.$rawImg))) {
+                    $ttdPath = public_path('storage/'.$rawImg);
                 }
             }
             $data['ttd_image_path'] = $ttdPath;
@@ -116,13 +119,6 @@ class PdfExportService
 
     /**
      * Generate and force download a PDF file.
-     *
-     * @param string $view
-     * @param array $data
-     * @param string $filename
-     * @param string $paper
-     * @param string $orientation
-     * @return \Illuminate\Http\Response
      */
     public function download(
         string $view,
@@ -140,10 +136,6 @@ class PdfExportService
     /**
      * Get the raw PDF instance if custom manipulation is required.
      *
-     * @param string $view
-     * @param array $data
-     * @param string $paper
-     * @param string $orientation
      * @return \Barryvdh\DomPDF\PDF
      */
     public function make(
@@ -153,6 +145,7 @@ class PdfExportService
         string $orientation = 'portrait'
     ) {
         $data = $this->injectKopData($data);
+
         return Pdf::loadView($view, $data)->setPaper($paper, $orientation);
     }
 }

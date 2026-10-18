@@ -5,8 +5,9 @@ namespace App\Services;
 use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardService
 {
@@ -22,7 +23,7 @@ class AdminDashboardService
      *     pendingApplications: int,
      *     lolosPercentage: float,
      *     tolakPercentage: float,
-     *     recentInstansis: \Illuminate\Database\Eloquent\Collection,
+     *     recentInstansis: Collection,
      *     instansiStats: LengthAwarePaginator,
      *     maxPelamar: int,
      *     statusLabels: string[],

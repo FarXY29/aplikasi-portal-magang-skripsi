@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -32,7 +33,7 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -78,7 +79,7 @@ class RegisteredUserController extends Controller
         // Jika role peserta atau pembimbing, jangan langsung diloginkan.
         // Wajib verifikasi email terlebih dahulu sebelum bisa login.
         if (in_array($user->role, ['peserta', 'pembimbing'])) {
-            return redirect()->route('login')->with('status', 'Registrasi berhasil! Link verifikasi telah dikirim ke alamat email Anda (' . $user->email . '). Silakan verifikasi email Anda terlebih dahulu sebelum login.');
+            return redirect()->route('login')->with('status', 'Registrasi berhasil! Link verifikasi telah dikirim ke alamat email Anda ('.$user->email.'). Silakan verifikasi email Anda terlebih dahulu sebelum login.');
         }
 
         Auth::login($user);

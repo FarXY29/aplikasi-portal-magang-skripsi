@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class MassDummySeeder extends Seeder
 {
@@ -40,7 +39,7 @@ class MassDummySeeder extends Seeder
             'updated_at' => $now,
         ]);
 
-        $this->command->info("Instansi dan Posisi dibuat.");
+        $this->command->info('Instansi dan Posisi dibuat.');
 
         // Buat 500 Peserta
         $users = [];
@@ -61,7 +60,7 @@ class MassDummySeeder extends Seeder
         }
 
         $userIds = DB::table('users')->where('email', 'like', 'peserta.test%@example.com')->pluck('id')->toArray();
-        $this->command->info("500 User Peserta dibuat.");
+        $this->command->info('500 User Peserta dibuat.');
 
         // Buat 500 Applications (Diterima)
         $applications = [];
@@ -81,9 +80,9 @@ class MassDummySeeder extends Seeder
         foreach (array_chunk($applications, 100) as $chunk) {
             DB::table('applications')->insert($chunk);
         }
-        
+
         $appIds = DB::table('applications')->where('internship_position_id', $positionId)->pluck('id')->toArray();
-        $this->command->info("500 Application (Diterima) dibuat.");
+        $this->command->info('500 Application (Diterima) dibuat.');
 
         // Buat 10000 Attendances (20 hari x 500 user)
         $attendances = [];
@@ -105,7 +104,7 @@ class MassDummySeeder extends Seeder
         foreach (array_chunk($attendances, 1000) as $chunk) {
             DB::table('attendances')->insert($chunk);
         }
-        $this->command->info("10000 Data Absensi dibuat.");
+        $this->command->info('10000 Data Absensi dibuat.');
 
         // Buat 10000 Daily Logs
         $logbooks = [];
@@ -125,8 +124,8 @@ class MassDummySeeder extends Seeder
         foreach (array_chunk($logbooks, 1000) as $chunk) {
             DB::table('daily_logs')->insert($chunk);
         }
-        $this->command->info("10000 Data Daily Log dibuat.");
+        $this->command->info('10000 Data Daily Log dibuat.');
 
-        $this->command->info("Selesai! Mass Dummy Data berhasil digenerate.");
+        $this->command->info('Selesai! Mass Dummy Data berhasil digenerate.');
     }
 }

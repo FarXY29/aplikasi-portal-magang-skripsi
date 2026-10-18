@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\Application;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
@@ -18,7 +17,9 @@ class InternshipCompleted extends Mailable implements ShouldQueue, ShouldQueueAf
     use Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 60;
+
     public array $backoff = [10, 60, 300];
 
     public $application;

@@ -7,7 +7,6 @@ use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use App\Notifications\ApplicationStatusNotification;
-use App\Services\InternshipApplicationService;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -34,7 +33,7 @@ class NotificationTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Lingkungan Hidup',
-            'kode_unit_kerja' => 'DLH-' . uniqid(),
+            'kode_unit_kerja' => 'DLH-'.uniqid(),
             'alamat' => 'Jl. Pangeran Hidayatullah',
         ]);
 
@@ -78,7 +77,7 @@ class NotificationTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Kesehatan',
-            'kode_unit_kerja' => 'DINKES-' . uniqid(),
+            'kode_unit_kerja' => 'DINKES-'.uniqid(),
             'alamat' => 'Jl. Tirta Dharma',
         ]);
 
@@ -121,7 +120,7 @@ class NotificationTest extends TestCase
 
         $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Sosial',
-            'kode_unit_kerja' => 'DINSOS-' . uniqid(),
+            'kode_unit_kerja' => 'DINSOS-'.uniqid(),
             'alamat' => 'Jl. Mayjen Sutoyo S',
         ]);
 

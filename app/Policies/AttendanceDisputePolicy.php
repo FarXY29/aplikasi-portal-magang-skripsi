@@ -51,12 +51,13 @@ class AttendanceDisputePolicy
         }
 
         $app = $dispute->attendance?->application;
-        if (!$app) {
+        if (! $app) {
             return false;
         }
 
         if ($user->hasPortalRole('admin_instansi')) {
             $instansiId = $app->position?->instansi_id;
+
             return $instansiId !== null && (int) $user->instansi_id === (int) $instansiId;
         }
 

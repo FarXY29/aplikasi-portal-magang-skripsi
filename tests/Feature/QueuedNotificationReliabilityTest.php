@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ApplicationStatus;
 use App\Listeners\LogFailedQueueJob;
 use App\Listeners\LogNotificationFailure;
 use App\Mail\ApplicationAcceptedMail;
@@ -17,8 +16,10 @@ use App\Notifications\ApplicationStatusNotification;
 use App\Services\ApplicationStateTransitionService;
 use Carbon\Carbon;
 use Database\Seeders\RoleAndPermissionSeeder;
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Artisan;
@@ -38,16 +39,20 @@ class QueuedNotificationReliabilityTest extends TestCase
     use DatabaseTransactions;
 
     private ApplicationStateTransitionService $transitionService;
+
     private User $peserta;
+
     private User $adminInstansi;
+
     private Instansi $instansi;
+
     private InternshipPosition $position;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        if (!Schema::hasTable('application_timelines') || !Schema::hasTable('attendance_disputes')) {
+        if (! Schema::hasTable('application_timelines') || ! Schema::hasTable('attendance_disputes')) {
             Artisan::call('migrate');
         }
 
@@ -265,6 +270,7 @@ class QueuedNotificationReliabilityTest extends TestCase
                     $this->assertStringContainsString('SMTP Connection Timeout', $context['exception']);
                     $this->assertArrayNotHasKey('password', $context);
                     $this->assertArrayNotHasKey('token', $context);
+
                     return true;
                 })
             );
@@ -282,6 +288,7 @@ class QueuedNotificationReliabilityTest extends TestCase
                     $this->assertStringContainsString('SMTP Connection Timeout', $context['exception']);
                     $this->assertArrayNotHasKey('password', $context);
                     $this->assertArrayNotHasKey('token', $context);
+
                     return true;
                 })
             );
@@ -304,6 +311,7 @@ class QueuedNotificationReliabilityTest extends TestCase
                     $this->assertSame(ApplicationStatusNotification::class, $context['notification']);
                     $this->assertSame($app->id, $context['application_id']);
                     $this->assertSame($this->peserta->id, $context['notifiable_id']);
+
                     return true;
                 })
             );
@@ -315,13 +323,13 @@ class QueuedNotificationReliabilityTest extends TestCase
             ['sample_data' => 'test']
         );
 
-        $listener = new LogNotificationFailure();
+        $listener = new LogNotificationFailure;
         $listener->handle($event);
     }
 
     public function test_log_failed_queue_job_listener_handles_job_failed_event(): void
     {
-        $jobMock = \Mockery::mock(\Illuminate\Contracts\Queue\Job::class);
+        $jobMock = \Mockery::mock(Job::class);
         $jobMock->shouldReceive('resolveName')->andReturn('App\Mail\ApplicationAcceptedMail');
         $jobMock->shouldReceive('getQueue')->andReturn('default');
         $jobMock->shouldReceive('attempts')->andReturn(3);
@@ -338,13 +346,14 @@ class QueuedNotificationReliabilityTest extends TestCase
                     $this->assertSame('App\Mail\ApplicationAcceptedMail', $context['job']);
                     $this->assertSame(3, $context['attempts']);
                     $this->assertSame('Queue max attempts reached', $context['exception_message']);
+
                     return true;
                 })
             );
 
         $event = new JobFailed('database', $jobMock, $exception);
 
-        $listener = new LogFailedQueueJob();
+        $listener = new LogFailedQueueJob;
         $listener->handle($event);
     }
 
@@ -353,7 +362,7 @@ class QueuedNotificationReliabilityTest extends TestCase
         $app = $this->createTestApplication();
         $notification = new ApplicationStatusNotification($app, 'Fail Anonymous', 'Fail Message');
 
-        $anonymousNotifiable = new \Illuminate\Notifications\AnonymousNotifiable();
+        $anonymousNotifiable = new AnonymousNotifiable;
 
         Log::shouldReceive('error')
             ->once()
@@ -363,6 +372,7 @@ class QueuedNotificationReliabilityTest extends TestCase
                     $this->assertSame('mail', $context['channel']);
                     $this->assertSame('Illuminate\Notifications\AnonymousNotifiable', $context['notifiable_type']);
                     $this->assertNull($context['notifiable_id']);
+
                     return true;
                 })
             );
@@ -374,7 +384,7 @@ class QueuedNotificationReliabilityTest extends TestCase
             []
         );
 
-        $listener = new LogNotificationFailure();
+        $listener = new LogNotificationFailure;
         $listener->handle($event);
     }
 
@@ -407,4 +417,3 @@ class QueuedNotificationReliabilityTest extends TestCase
         $this->assertSame($app->id, $unserialized->application->id);
     }
 }
-

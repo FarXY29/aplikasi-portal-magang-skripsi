@@ -7,6 +7,8 @@ use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ReportApplicationAndRekapGlobalTest extends TestCase
@@ -14,15 +16,25 @@ class ReportApplicationAndRekapGlobalTest extends TestCase
     use RefreshDatabase;
 
     protected User $adminKota;
+
     protected User $peserta1;
+
     protected User $peserta2;
+
     protected User $peserta3;
+
     protected Instansi $instansiA;
+
     protected Instansi $instansiB;
+
     protected InternshipPosition $posisiA;
+
     protected InternshipPosition $posisiB;
+
     protected Application $app1;
+
     protected Application $app2;
+
     protected Application $app3;
 
     protected function setUp(): void
@@ -189,7 +201,7 @@ class ReportApplicationAndRekapGlobalTest extends TestCase
         $response->assertSee('Universitas Lambung Mangkurat');
         $response->assertSee('Politeknik Negeri Banjarmasin');
 
-        /** @var \Illuminate\Support\Collection $rekapKampus */
+        /** @var Collection $rekapKampus */
         $rekapKampus = $response->viewData('rekapKampus');
         $this->assertNotEmpty($rekapKampus);
 
@@ -226,7 +238,7 @@ class ReportApplicationAndRekapGlobalTest extends TestCase
 
     public function test_admin_kota_can_access_cv_document_via_storage_route(): void
     {
-        \Illuminate\Support\Facades\Storage::disk('private')->put('documents/cv/dummy1.pdf', 'dummy cv content');
+        Storage::disk('private')->put('documents/cv/dummy1.pdf', 'dummy cv content');
         $this->app1->update(['cv_path' => 'documents/cv/dummy1.pdf']);
 
         $response = $this->actingAs($this->adminKota)

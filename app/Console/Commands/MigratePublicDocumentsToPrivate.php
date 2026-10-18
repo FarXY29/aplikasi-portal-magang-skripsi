@@ -27,6 +27,7 @@ class MigratePublicDocumentsToPrivate extends Command
 
             if (! Storage::disk('public')->exists($path)) {
                 $missing++;
+
                 return;
             }
 

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    public const PERIODS = ['hari_ini', '7_hari', '30_hari', 'semester', 'tahun'];
+
     /**
      * Dashboard Utama Admin Dinas/Instansi
      */
@@ -23,7 +25,8 @@ class DashboardController extends Controller
         $user = Auth::user();
         $instansi = $user->instansi;
 
-        $period = $request->query('period', '30_hari');
+        $rawPeriod = (string) $request->query('period', '30_hari');
+        $period = in_array($rawPeriod, self::PERIODS, true) ? $rawPeriod : '30_hari';
 
         $periodText = match ($period) {
             'hari_ini' => 'Hari Ini',
@@ -110,7 +113,7 @@ class DashboardController extends Controller
         $totalApplications = $periodAppCount > 0 ? $periodAppCount : (int) $statusCounts->sum();
         $activeInterns = (int) ($statusCounts['diterima'] ?? 0);
         $completedInterns = (int) ($statusCounts['selesai'] ?? 0);
-        $pendingApplications = (int) ($statusCounts['pending'] ?? 0);
+        $pendingApplications = (int) ($statusCounts['pending'] ?? 0) + (int) ($statusCounts['menunggu'] ?? 0);
         $rejectedApplications = (int) ($statusCounts['ditolak'] ?? 0);
 
         [$trendLabels, $trendData] = $this->buildTrend($positionIds, $period);
@@ -137,8 +140,8 @@ class DashboardController extends Controller
 
         // Ringkasan fraud: attendance ditandai (medium ke atas) + attempt mencurigakan.
         $flaggedAttendances = Attendance::whereHas('application', function ($q) use ($positionIds) {
-                $q->whereIn('internship_position_id', $positionIds);
-            })
+            $q->whereIn('internship_position_id', $positionIds);
+        })
             ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
             ->whereNotNull('fraud_status')
             ->where('fraud_status', '!=', 'low')

@@ -13,15 +13,25 @@ class ApplicationTimeline extends Model
     public const UPDATED_AT = null;
 
     public const EVENT_SUBMITTED = 'submitted';
+
     public const EVENT_VERIFIED = 'verified';
+
     public const EVENT_ACCEPTED = 'accepted';
+
     public const EVENT_REJECTED = 'rejected';
+
     public const EVENT_WAITING_LIST = 'waiting_list';
+
     public const EVENT_PROMOTED = 'promoted';
+
     public const EVENT_CANCELLED = 'cancelled';
+
     public const EVENT_STARTED = 'started';
+
     public const EVENT_COMPLETED = 'completed';
+
     public const EVENT_EXPELLED = 'expelled';
+
     public const EVENT_CERTIFICATE_ISSUED = 'certificate_issued';
 
     protected $fillable = [

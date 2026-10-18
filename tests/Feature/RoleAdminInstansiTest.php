@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Application;
+use App\Models\Attendance;
+use App\Models\Instansi;
+use App\Models\InternshipPosition;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Instansi;
-use App\Models\Attendance;
 
 class RoleAdminInstansiTest extends TestCase
 {
@@ -19,12 +21,12 @@ class RoleAdminInstansiTest extends TestCase
             'kode_unit_kerja' => 'DIN-01',
             'alamat' => 'Alamat Test',
             'nama_pejabat' => 'Pejabat Test',
-            'nip_pejabat' => '123456789'
+            'nip_pejabat' => '123456789',
         ]);
 
         $user = User::factory()->create([
             'role' => 'admin_instansi',
-            'instansi_id' => $instansi->id
+            'instansi_id' => $instansi->id,
         ]);
 
         $response = $this->actingAs($user)->get(route('dinas.dashboard'));
@@ -49,7 +51,7 @@ class RoleAdminInstansiTest extends TestCase
                 'trendLabels',
                 'trendData',
                 'periodText',
-                'period'
+                'period',
             ]);
     }
 
@@ -60,7 +62,7 @@ class RoleAdminInstansiTest extends TestCase
             'kode_unit_kerja' => 'DIN-02',
             'alamat' => 'Alamat Test',
             'nama_pejabat' => 'Pejabat Test',
-            'nip_pejabat' => '123456789'
+            'nip_pejabat' => '123456789',
         ]);
 
         $admin = User::factory()->create([
@@ -73,7 +75,7 @@ class RoleAdminInstansiTest extends TestCase
             'name' => 'Peserta Kinerja Test',
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Staff IT Test',
             'kuota' => 5,
@@ -82,7 +84,7 @@ class RoleAdminInstansiTest extends TestCase
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $peserta->id,
             'internship_position_id' => $position->id,
             'status' => 'diterima',

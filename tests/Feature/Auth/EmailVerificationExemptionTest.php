@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\Instansi;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -199,4 +198,3 @@ class EmailVerificationExemptionTest extends TestCase
         $this->assertEquals('new_peserta@test.local', $peserta->fresh()->email);
     }
 }
-

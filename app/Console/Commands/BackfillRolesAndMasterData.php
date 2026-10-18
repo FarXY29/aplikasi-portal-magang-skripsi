@@ -6,7 +6,6 @@ use App\Models\School;
 use App\Models\University;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Role;
 
 class BackfillRolesAndMasterData extends Command
 {
@@ -49,18 +48,19 @@ class BackfillRolesAndMasterData extends Command
         $masterCount = 0;
 
         foreach ($users as $user) {
-            if (!empty($user->asal_instansi)) {
+            if (! empty($user->asal_instansi)) {
                 $asal = trim($user->asal_instansi);
-                
+
                 // Cari di universitas terlebih dahulu
                 $univ = $universities->first(function ($u) use ($asal) {
                     return stripos($u->name, $asal) !== false || stripos($asal, $u->name) !== false || ($u->acronym && stripos($asal, $u->acronym) !== false);
                 });
 
-                if ($univ && !$user->university_id) {
+                if ($univ && ! $user->university_id) {
                     $user->university_id = $univ->id;
                     $user->save();
                     $masterCount++;
+
                     continue;
                 }
 
@@ -69,7 +69,7 @@ class BackfillRolesAndMasterData extends Command
                     return stripos($s->name, $asal) !== false || stripos($asal, $s->name) !== false;
                 });
 
-                if ($school && !$user->school_id) {
+                if ($school && ! $user->school_id) {
                     $user->school_id = $school->id;
                     $user->save();
                     $masterCount++;
@@ -78,6 +78,7 @@ class BackfillRolesAndMasterData extends Command
         }
 
         $this->info("Berhasil memetakan {$masterCount} pengguna ke tabel master universities / schools.");
+
         return Command::SUCCESS;
     }
 }

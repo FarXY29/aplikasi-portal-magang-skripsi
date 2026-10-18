@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Attendance;
-use App\Models\Application;
-use App\Models\Instansi;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Enums\ApplicationStatus;
+use App\Enums\AttendanceStatus;
 use App\Http\Requests\Attendance\ClockInRequest;
 use App\Http\Requests\Attendance\PermissionRequest;
-use App\Services\AuditLogService;
-use App\Services\AttendanceService;
+use App\Models\Application;
+use App\Models\Attendance;
+use App\Models\Instansi;
+use App\Services\Attendance\AttendanceAttemptService;
 use App\Services\Attendance\AttendanceChallengeService;
-use App\Services\Attendance\AttendanceIdempotencyService;
-use App\Services\Attendance\AttendanceLockService;
 use App\Services\Attendance\AttendanceFraudContext;
 use App\Services\Attendance\AttendanceFraudDetector;
 use App\Services\Attendance\AttendanceFraudResult;
-use App\Services\Attendance\AttendanceAttemptService;
-use App\Services\Attendance\GeoDistanceService;
+use App\Services\Attendance\AttendanceIdempotencyService;
+use App\Services\Attendance\AttendanceLockService;
 use App\Services\Attendance\DynamicQrService;
+use App\Services\Attendance\GeoDistanceService;
+use App\Services\AttendanceService;
+use App\Services\AuditLogService;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
@@ -36,8 +38,7 @@ class AttendanceController extends Controller
         private readonly AttendanceAttemptService $attempts,
         private readonly GeoDistanceService $geo,
         private readonly DynamicQrService $dynamicQr,
-    ) {
-    }
+    ) {}
 
     /**
      * Tampilkan riwayat absen (Attendance History) untuk Peserta
@@ -52,7 +53,7 @@ class AttendanceController extends Controller
         $attendanceSummary = $historyData['attendanceSummary'];
         $query = $historyData['query'];
 
-        if (!$application) {
+        if (! $application) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif untuk melihat absensi.');
         }
 
@@ -79,7 +80,7 @@ class AttendanceController extends Controller
     {
         $user = $request->user();
 
-        if (!$user || $user->role !== 'peserta') {
+        if (! $user || $user->role !== 'peserta') {
             return response()->json(['message' => 'Tidak diizinkan.'], 403);
         }
 
@@ -132,11 +133,11 @@ class AttendanceController extends Controller
 
         // 1. Resolve Aplikasi Magang Aktif
         $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->with('position.instansi')
-                        ->first();
+            ->where('status', ApplicationStatus::Diterima)
+            ->with('position.instansi')
+            ->first();
 
-        if (!$application) {
+        if (! $application) {
             return back()->with('error', $type === 'clock_in'
                 ? 'Anda tidak memiliki status magang aktif untuk melakukan absensi.'
                 : 'Status magang tidak aktif.');
@@ -150,13 +151,13 @@ class AttendanceController extends Controller
 
         if ($todayCarbon->lt($startDate)) {
             return back()->with('error', $type === 'clock_in'
-                ? 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.'
+                ? 'Masa magang Anda belum dimulai. Silakan kembali pada '.$startDate->translatedFormat('d F Y').'.'
                 : 'Masa magang Anda belum dimulai.');
         }
 
         if ($todayCarbon->gt($endDate)) {
             return back()->with('error', $type === 'clock_in'
-                ? 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.'
+                ? 'Masa magang Anda telah berakhir pada '.$endDate->translatedFormat('d F Y').'.'
                 : 'Masa magang Anda telah berakhir.');
         }
 
@@ -166,14 +167,14 @@ class AttendanceController extends Controller
             $waktuBuka = Carbon::parse($jamMulai);
 
             if ($now->lessThan($waktuBuka)) {
-                return back()->with('error', 'Absen datang belum dibuka. Jadwal absen masuk dimulai pukul ' . $waktuBuka->format('H:i'));
+                return back()->with('error', 'Absen datang belum dibuka. Jadwal absen masuk dimulai pukul '.$waktuBuka->format('H:i'));
             }
         } else {
             $jamPulang = $instansi->jam_mulai_pulang ?? '16:00:00';
             $waktuBolehPulang = Carbon::parse($jamPulang);
 
             if ($now->lessThan($waktuBolehPulang)) {
-                return back()->with('error', 'Belum waktunya pulang! Absen pulang baru dibuka pukul ' . $waktuBolehPulang->format('H:i'));
+                return back()->with('error', 'Belum waktunya pulang! Absen pulang baru dibuka pukul '.$waktuBolehPulang->format('H:i'));
             }
         }
 
@@ -201,7 +202,7 @@ class AttendanceController extends Controller
 
             if ($distanceMeters > $radiusAbsen) {
                 return back()->with('error', ($type === 'clock_in' ? 'Gagal Absen Datang!' : 'Gagal Absen Pulang!')
-                    . ' Posisi Anda berada di luar radius kantor (' . number_format($distanceMeters, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+                    .' Posisi Anda berada di luar radius kantor ('.number_format($distanceMeters, 0).' meter, batas maksimal '.$radiusAbsen.' meter).');
             }
         }
 
@@ -210,7 +211,7 @@ class AttendanceController extends Controller
             $qrToken = $request->input('qr_token');
             $qrVerification = $this->dynamicQr->verifyToken($instansi, $qrToken, $now->getTimestamp());
 
-            if (!$qrVerification['valid']) {
+            if (! $qrVerification['valid']) {
                 $errorMsg = match ($qrVerification['reason']) {
                     'missing_token' => 'Gagal Absen! Instansi Anda mewajibkan scan Dynamic QR di layar kantor.',
                     'expired' => 'Gagal Absen! Kode Dynamic QR sudah kedaluwarsa (berputar tiap 30 detik). Silakan scan ulang dari layar monitor kantor.',
@@ -232,14 +233,14 @@ class AttendanceController extends Controller
             $consumed = $this->challenge->consume($user, $nonce);
 
             // Hanya bila nonce GAGAL dikonsumsi → signal hard INVALID_NONCE.
-            if (!$consumed) {
+            if (! $consumed) {
                 $nonceResult = $this->fraudDetector->scoreNonceInvalid([
                     'nonce_present' => is_string($nonce) && $nonce !== '',
                     'consumed' => false,
                 ]);
             }
 
-            if ($requireNonce && !$consumed) {
+            if ($requireNonce && ! $consumed) {
                 // Attempt replay/nonce invalid tetap tercatat sebagai bukti.
                 $context = $this->buildContext($request, $user, $application, $instansi, $type, $now, $latitude, $longitude, $distanceMeters);
                 $this->attempts->record($context, $nonceResult, null, 'rejected');
@@ -259,7 +260,7 @@ class AttendanceController extends Controller
 
         // 6. ATOMIC LOCK (P0 §5.5) — double-click / multi-tab / race.
         $lockAcquired = $this->lock->acquire($user);
-        if (!$lockAcquired) {
+        if (! $lockAcquired) {
             return back()->with('error', 'Permintaan absensi Anda sedang diproses. Mohon tunggu beberapa saat.');
         }
 
@@ -294,19 +295,19 @@ class AttendanceController extends Controller
         // 7. Pre-check duplicate & record existing (behavior existing).
         if ($type === 'clock_in') {
             $existing = Attendance::where('application_id', $application->id)
-                            ->where('date', $today)
-                            ->first();
+                ->where('date', $today)
+                ->first();
 
             if ($existing) {
                 return back()->with('error', 'Anda sudah mengisi data absensi hari ini.');
             }
         } else {
             $attendance = Attendance::where('application_id', $application->id)
-                            ->where('date', $today)
-                            ->where('status', 'hadir')
-                            ->first();
+                ->where('date', $today)
+                ->where('status', 'hadir')
+                ->first();
 
-            if (!$attendance) {
+            if (! $attendance) {
                 return back()->with('error', 'Anda belum melakukan absen datang hari ini.');
             }
 
@@ -365,27 +366,27 @@ class AttendanceController extends Controller
                         'message' => 'Berhasil Absen Datang! Selamat beraktivitas.',
                     ];
                 } else {
-                    // Guard race: hanya update bila clock_out masih null.
+                    // Guard race: atomic update hanya bila clock_out masih null.
                     $updated = Attendance::where('application_id', $application->id)
-                                ->where('date', $today)
-                                ->where('status', 'hadir')
-                                ->whereNull('clock_out')
-                                ->update([
-                                    'clock_out' => $now->format('H:i:s'), // SERVER time authoritative
-                                    'latitude_out' => $latitude,
-                                    'longitude_out' => $longitude,
-                                    'risk_score' => $fraudEnabled ? $fraudResult->score : null,
-                                    'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
-                                ]);
+                        ->where('date', $today)
+                        ->where('status', AttendanceStatus::Hadir->value)
+                        ->whereNull('clock_out')
+                        ->update([
+                            'clock_out' => $now->format('H:i:s'), // SERVER time authoritative
+                            'latitude_out' => $latitude,
+                            'longitude_out' => $longitude,
+                            'risk_score' => $fraudEnabled ? $fraudResult->score : null,
+                            'fraud_status' => $fraudEnabled ? $fraudResult->status->value : null,
+                        ]);
 
                     if ($updated === 0) {
                         return null;
                     }
 
                     $attendance = Attendance::where('application_id', $application->id)
-                                ->where('date', $today)
-                                ->where('status', 'hadir')
-                                ->first();
+                        ->where('date', $today)
+                        ->where('status', AttendanceStatus::Hadir->value)
+                        ->first();
 
                     app(AuditLogService::class)->record('attendance.clocked_out', $attendance, [
                         'application_id' => $application->id,
@@ -455,10 +456,10 @@ class AttendanceController extends Controller
         $today = Carbon::now()->format('Y-m-d');
 
         $application = Application::where('user_id', $user->id)
-                        ->where('status', 'diterima')
-                        ->first();
+            ->where('status', 'diterima')
+            ->first();
 
-        if (!$application) {
+        if (! $application) {
             return back()->with('error', 'Status magang tidak aktif.');
         }
 
@@ -476,8 +477,8 @@ class AttendanceController extends Controller
 
         // 2. Cek Duplikasi
         $existing = Attendance::where('application_id', $application->id)
-                        ->where('date', $today)
-                        ->first();
+            ->where('date', $today)
+            ->first();
 
         if ($existing) {
             return back()->with('error', 'Anda sudah mengisi data absensi/izin hari ini.');
@@ -497,7 +498,7 @@ class AttendanceController extends Controller
                     'proof_file' => $path,
                     'clock_in' => null, // Tidak ada jam masuk
                     'clock_out' => null, // Tidak ada jam pulang
-                    'validation_status' => 'pending'
+                    'validation_status' => 'pending',
                 ]);
 
                 app(AuditLogService::class)->record('attendance.permission_requested', $attendance, [
@@ -505,7 +506,7 @@ class AttendanceController extends Controller
                     'status' => $request->status,
                 ]);
             });
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Storage::disk('private')->delete($path);
 
             if ($e instanceof QueryException && $this->isDuplicateEntry($e)) {
@@ -536,17 +537,15 @@ class AttendanceController extends Controller
         $historyCount = (int) config('attendance.location_history_count', 10);
 
         // Histori terbaru milik user (lintas application untuk deteksi pola).
+        $todayDateStr = $now->toDateString();
         $history = Attendance::whereHas('application', fn ($q) => $q->where('user_id', $user->id))
-            ->whereDate('date', '<=', $now->toDateString())
+            ->where('date', '<=', $todayDateStr)
             ->latest('date')
             ->limit($historyCount)
             ->get();
 
-        // Attendance terakhir SEBELUM request ini untuk impossible travel.
-        $previous = Attendance::whereHas('application', fn ($q) => $q->where('user_id', $user->id))
-            ->whereDate('date', '<=', $now->toDateString())
-            ->orderByDesc('date')
-            ->first();
+        // Attendance terakhir SEBELUM request ini untuk impossible travel (reused from history).
+        $previous = $history->first();
 
         $lastNetwork = $this->attempts->lastAttemptNetwork($user->id);
 

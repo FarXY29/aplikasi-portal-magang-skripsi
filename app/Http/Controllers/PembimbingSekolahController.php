@@ -132,9 +132,9 @@ class PembimbingSekolahController extends Controller
      */
     private function mentoredApplicationsQuery(User $pembimbing)
     {
-        return Application::with(['user', 'position.instansi'])
+        return Application::with(['user.majorDetail', 'position.instansi'])
             ->whereHas('user', function ($query) use ($pembimbing) {
-                $query->where('role', 'peserta')
+                $query->portalRole('peserta')
                     ->where('pembimbing_sekolah_id', $pembimbing->id);
             })
             ->whereIn('status', self::MENTORED_STATUSES);

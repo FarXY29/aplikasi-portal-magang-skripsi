@@ -14,9 +14,13 @@ class PendaftaranPdfExportTest extends TestCase
     use DatabaseTransactions;
 
     protected $adminKota;
+
     protected $adminInstansi;
+
     protected $instansi;
+
     protected $position;
+
     protected $application;
 
     protected function setUp(): void

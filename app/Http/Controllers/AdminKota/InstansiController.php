@@ -25,9 +25,9 @@ class InstansiController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_dinas', 'like', "%{$search}%")
-                  ->orWhere('kode_unit_kerja', 'like', "%{$search}%");
+                    ->orWhere('kode_unit_kerja', 'like', "%{$search}%");
             });
         }
 
@@ -73,7 +73,7 @@ class InstansiController extends Controller
             $instansi = Instansi::create($data);
 
             $adminUser = User::create([
-                'name' => 'Admin ' . $request->nama_dinas,
+                'name' => 'Admin '.$request->nama_dinas,
                 'email' => $request->email_admin,
                 'password' => Hash::make($request->password_admin),
                 'role' => 'admin_instansi',
@@ -95,6 +95,7 @@ class InstansiController extends Controller
     {
         $instansi = Instansi::findOrFail($id);
         $adminUser = User::where('instansi_id', $instansi->id)->portalRole('admin_instansi')->first();
+
         return view('admin_kota.instansi.edit', compact('instansi', 'adminUser'));
     }
 
@@ -108,7 +109,7 @@ class InstansiController extends Controller
 
         $request->validate([
             'nama_dinas' => 'required|string|max:255',
-            'kode_unit_kerja' => 'required|string|max:50|unique:instansis,kode_unit_kerja,'.$instansi->id, 
+            'kode_unit_kerja' => 'required|string|max:50|unique:instansis,kode_unit_kerja,'.$instansi->id,
             'singkatan' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:255',
             'alamat' => 'required|string',
@@ -148,9 +149,9 @@ class InstansiController extends Controller
                 }
                 $adminUser->save();
                 $adminUser->syncPrimaryRole();
-            } elseif (!$adminUser && $request->email_admin && $request->filled('password_admin')) {
+            } elseif (! $adminUser && $request->email_admin && $request->filled('password_admin')) {
                 $adminUser = User::create([
-                    'name' => 'Admin ' . $request->nama_dinas,
+                    'name' => 'Admin '.$request->nama_dinas,
                     'email' => $request->email_admin,
                     'password' => Hash::make($request->password_admin),
                     'role' => 'admin_instansi',
@@ -171,6 +172,7 @@ class InstansiController extends Controller
     {
         $instansi = Instansi::findOrFail($id);
         $instansi->delete();
+
         return back()->with('success', 'Data INSTANSI dan Akun Admin terkait telah dihapus.');
     }
 }

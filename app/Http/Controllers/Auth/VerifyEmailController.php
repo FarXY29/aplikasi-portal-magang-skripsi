@@ -27,6 +27,7 @@ class VerifyEmailController extends Controller
             if (Auth::check() && Auth::id() == $user->id) {
                 return redirect()->intended(RouteServiceProvider::HOME.'?verified=1');
             }
+
             return redirect()->route('login')->with('status', 'Email Anda sudah diverifikasi sebelumnya. Silakan login.');
         }
 

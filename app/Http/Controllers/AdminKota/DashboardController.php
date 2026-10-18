@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
-    public function __construct(private AdminDashboardService $dashboardService)
-    {
-    }
+    public const PERIODS = ['hari_ini', '7_hari', '30_hari', 'semester', 'tahun'];
+
+    public function __construct(private AdminDashboardService $dashboardService) {}
 
     /**
      * Tampilkan Dashboard Admin Kota (Superadmin)
@@ -19,8 +19,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $period = $request->query('period', '30_hari');
-        $allowedPeriods = ['hari_ini', '7_hari', '30_hari', 'semester', 'tahun'];
-        if (! in_array($period, $allowedPeriods, true)) {
+        if (! in_array($period, self::PERIODS, true)) {
             $period = '30_hari';
         }
 

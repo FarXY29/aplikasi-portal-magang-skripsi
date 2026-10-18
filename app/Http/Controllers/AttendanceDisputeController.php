@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceDisputeController extends Controller
 {
-    public function __construct(private AttendanceDisputeService $disputeService)
-    {
-    }
+    public function __construct(private AttendanceDisputeService $disputeService) {}
 
     /**
      * Submit an attendance dispute (for participant).

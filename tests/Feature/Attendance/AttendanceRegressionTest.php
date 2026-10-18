@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Attendance;
 
+use App\Http\Controllers\AttendanceController;
 use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\AttendanceAttempt;
@@ -11,6 +12,7 @@ use App\Models\InternshipPosition;
 use App\Models\User;
 use App\Services\Attendance\AttendanceLockService;
 use App\Services\Attendance\DynamicQrService;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -27,6 +29,7 @@ class AttendanceRegressionTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private array $appSetup;
 
     protected function setUp(): void
@@ -114,7 +117,7 @@ class AttendanceRegressionTest extends TestCase
 
         // Jam dari SERVER (Asia/Makassar), bukan client — toleran boundary
         // menit (POST dan assert bisa berbeda beberapa detik).
-        $clockInMinute = \Carbon\Carbon::parse($attendance->clock_in);
+        $clockInMinute = Carbon::parse($attendance->clock_in);
         $this->assertTrue(
             abs($clockInMinute->diffInSeconds(now())) <= 120,
             "clock_in ({$attendance->clock_in}) seharusnya waktu server terkini"
@@ -213,7 +216,7 @@ class AttendanceRegressionTest extends TestCase
         $this->actingAs($this->peserta)
             ->get(route('peserta.absensi.index'))
             ->assertOk()
-            ->assertSee(\Carbon\Carbon::parse($legacy->date)->translatedFormat('d M Y'));
+            ->assertSee(Carbon::parse($legacy->date)->translatedFormat('d M Y'));
     }
 
     public function test_attendance_history_page_renders_with_mixed_records(): void
@@ -659,7 +662,7 @@ class AttendanceRegressionTest extends TestCase
 
     public function test_is_duplicate_entry_helper_detects_all_driver_unique_violations(): void
     {
-        $controller = app(\App\Http\Controllers\AttendanceController::class);
+        $controller = app(AttendanceController::class);
 
         // 1. MySQL duplicate entry error (code string "23000", errorInfo[1] = 1062)
         $pdoException = new \PDOException("SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-2026-09-01' for key 'attendances_application_id_date_unique'", 23000);
@@ -668,22 +671,21 @@ class AttendanceRegressionTest extends TestCase
         $this->assertTrue($controller->isDuplicateEntry($mySqlDuplicate));
 
         // 2. PostgreSQL unique violation (code string "23505")
-        $pgPdo = new \PDOException("SQLSTATE[23505]: Unique violation: 7 ERROR: duplicate key value violates unique constraint", 23505);
+        $pgPdo = new \PDOException('SQLSTATE[23505]: Unique violation: 7 ERROR: duplicate key value violates unique constraint', 23505);
         $pgPdo->errorInfo = ['23505', 7, 'duplicate key value violates unique constraint'];
         $pgDuplicate = new QueryException('pgsql', 'INSERT INTO attendances...', [], $pgPdo);
         $this->assertTrue($controller->isDuplicateEntry($pgDuplicate));
 
         // 3. SQLite unique violation
-        $sqlitePdo = new \PDOException("SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: attendances.application_id, attendances.date", 23000);
+        $sqlitePdo = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: attendances.application_id, attendances.date', 23000);
         $sqlitePdo->errorInfo = ['23000', 19, 'UNIQUE constraint failed: attendances.application_id, attendances.date'];
         $sqliteDuplicate = new QueryException('sqlite', 'INSERT INTO attendances...', [], $sqlitePdo);
         $this->assertTrue($controller->isDuplicateEntry($sqliteDuplicate));
 
         // 4. Non-duplicate QueryException (e.g. foreign key or column not found)
-        $fkPdo = new \PDOException("SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails", 23000);
+        $fkPdo = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails', 23000);
         $fkPdo->errorInfo = ['23000', 1452, 'Cannot add or update a child row: a foreign key constraint fails'];
         $fkException = new QueryException('mysql', 'INSERT INTO attendances...', [], $fkPdo);
         $this->assertFalse($controller->isDuplicateEntry($fkException));
     }
 }
-

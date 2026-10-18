@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Providers\AppServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -25,7 +26,7 @@ class QrScannerTest extends TestCase
             'HTTP_X_FORWARDED_PROTO' => 'https',
         ])->get(route('qr.scanner'));
         config(['app.public_url' => 'https://portal-ujicoba.ngrok-free.app']);
-        (new \App\Providers\AppServiceProvider($this->app))->boot();
+        (new AppServiceProvider($this->app))->boot();
 
         $this->assertSame(
             'https://portal-ujicoba.ngrok-free.app/verify-certificate/demo-token',

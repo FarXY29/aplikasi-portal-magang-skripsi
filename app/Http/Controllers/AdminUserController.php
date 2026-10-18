@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Application;
 use App\Models\DailyLog;
 use App\Models\Instansi;
-use App\Models\Setting;
 use App\Models\User;
+use App\Services\PdfExportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
@@ -196,7 +195,7 @@ class AdminUserController extends Controller
     }
 
     // Cetak Laporan Data Master Peserta (PDF)
-    public function printParticipants(\App\Services\PdfExportService $pdfService)
+    public function printParticipants(PdfExportService $pdfService)
     {
         // Ambil hanya user dengan role 'peserta'
         // Urutkan berdasarkan nama agar rapi, hanya kolom yang dipakai template PDF

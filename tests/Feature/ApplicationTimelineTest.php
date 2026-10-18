@@ -24,15 +24,18 @@ class ApplicationTimelineTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private User $adminInstansi;
+
     private Instansi $instansi;
+
     private InternshipPosition $position;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        if (!Schema::hasTable('application_timelines') || !Schema::hasTable('attendance_disputes')) {
+        if (! Schema::hasTable('application_timelines') || ! Schema::hasTable('attendance_disputes')) {
             Artisan::call('migrate');
         }
 

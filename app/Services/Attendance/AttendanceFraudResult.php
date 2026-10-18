@@ -12,14 +12,13 @@ use Illuminate\Support\Collection;
 class AttendanceFraudResult
 {
     /**
-     * @param Collection<int, FraudSignal> $signals
+     * @param  Collection<int, FraudSignal>  $signals
      */
     public function __construct(
         public readonly int $score,
         public readonly AttendanceFraudStatus $status,
         public readonly Collection $signals,
-    ) {
-    }
+    ) {}
 
     public static function clean(): self
     {
@@ -44,7 +43,7 @@ class AttendanceFraudResult
     public function indicatorLabels(): array
     {
         return $this->signals
-            ->map(fn (FraudSignal $s) => $s->code . ': ' . $s->describe())
+            ->map(fn (FraudSignal $s) => $s->code.': '.$s->describe())
             ->values()->all();
     }
 
@@ -84,4 +83,3 @@ class AttendanceFraudResult
         return AttendanceOperationalDecision::Accepted;
     }
 }
-

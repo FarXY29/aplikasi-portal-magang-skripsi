@@ -16,13 +16,21 @@ class PersonalizedLowonganFilterTest extends TestCase
     use DatabaseTransactions;
 
     private MajorCategory $catTIK;
+
     private MajorCategory $catHUKUM;
+
     private Major $majorIlmuHukum;
+
     private Major $majorInformatika;
+
     private Instansi $instansi;
+
     private InternshipPosition $posisiProgrammer;
+
     private InternshipPosition $posisiLegal;
+
     private InternshipPosition $posisiSemuaJurusan;
+
     private InternshipPosition $posisiDesain;
 
     protected function setUp(): void
@@ -99,10 +107,11 @@ class PersonalizedLowonganFilterTest extends TestCase
             'role' => 'peserta',
             'major_id' => $major?->id,
             'major' => $majorString,
-            'nik' => '63710' . str_pad((string) rand(10000000000, 99999999999), 11, '0', STR_PAD_LEFT),
+            'nik' => '63710'.str_pad((string) rand(10000000000, 99999999999), 11, '0', STR_PAD_LEFT),
             'asal_instansi' => 'Universitas Lambung Mangkurat',
         ]);
         $peserta->assignRole('peserta');
+
         return $peserta;
     }
 
@@ -190,4 +199,3 @@ class PersonalizedLowonganFilterTest extends TestCase
         $this->assertTrue($lowonganIds->contains($this->posisiLegal->id));
     }
 }
-

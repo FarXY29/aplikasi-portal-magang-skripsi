@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Peserta;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreApplicationRequest extends FormRequest
@@ -17,7 +18,7 @@ class StoreApplicationRequest extends FormRequest
     /**
      * Aturan validasi input untuk pendaftaran magang.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {

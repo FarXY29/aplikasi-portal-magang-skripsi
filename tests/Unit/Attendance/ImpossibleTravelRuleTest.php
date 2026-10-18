@@ -4,13 +4,11 @@ namespace Tests\Unit\Attendance;
 
 use App\Models\Application;
 use App\Models\Attendance;
-use App\Models\Instansi;
 use App\Models\User;
 use App\Services\Attendance\AttendanceFraudContext;
 use App\Services\Attendance\GeoDistanceService;
 use App\Services\Attendance\Rules\ImpossibleTravelRule;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class ImpossibleTravelRuleTest extends TestCase
@@ -20,14 +18,14 @@ class ImpossibleTravelRuleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->rule = new ImpossibleTravelRule(new GeoDistanceService());
+        $this->rule = new ImpossibleTravelRule(new GeoDistanceService);
     }
 
     private function makeContext(array $overrides = []): AttendanceFraudContext
     {
         $defaults = [
-            'user' => new User(),
-            'application' => new Application(),
+            'user' => new User,
+            'application' => new Application,
             'instansi' => null,
             'attendanceType' => 'clock_in',
             'latitude' => -3.316694,
@@ -66,7 +64,7 @@ class ImpossibleTravelRuleTest extends TestCase
             'latitude_in' => -3.3000,
             'longitude_in' => 114.590111,
         ]);
-        $previous->setRelation('application', new Application());
+        $previous->setRelation('application', new Application);
 
         $result = $this->rule->evaluate($this->makeContext([
             'previousAttendance' => $previous,

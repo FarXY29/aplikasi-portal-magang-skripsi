@@ -20,18 +20,31 @@ class ApplicationAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Instansi $instansiA;
+
     private Instansi $instansiB;
+
     private InternshipPosition $positionA;
+
     private InternshipPosition $positionB;
+
     private User $pesertaOwner;
+
     private User $pesertaOther;
+
     private User $adminInstansiA;
+
     private User $adminInstansiB;
+
     private User $pembimbingSekolahAssigned;
+
     private User $pembimbingSekolahOther;
+
     private User $pembimbingLapanganAssigned;
+
     private User $pembimbingLapanganOther;
+
     private User $adminKota;
+
     private Application $applicationA;
 
     protected function setUp(): void

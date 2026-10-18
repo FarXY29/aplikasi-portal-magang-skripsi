@@ -45,8 +45,7 @@ class AttendanceFraudContext
         public readonly int $recentAttemptCount,
         /** Jarak meter ke instansi (dihitung geofence) */
         public readonly ?float $distanceToInstance,
-    ) {
-    }
+    ) {}
 
     /**
      * Selisih waktu client vs server dalam detik (positif = client lebih baru).

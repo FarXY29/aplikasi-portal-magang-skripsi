@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Instansi extends Model
 {
@@ -20,8 +21,8 @@ class Instansi extends Model
         'nip_pejabat',
         'jabatan_pejabat',
         'max_total_quota',
-        'jam_mulai_masuk', 
-        'jam_mulai_pulang', 
+        'jam_mulai_masuk',
+        'jam_mulai_pulang',
         'latitude',
         'longitude',
         'radius_absen',
@@ -41,7 +42,7 @@ class Instansi extends Model
     public function ensureKioskToken(): string
     {
         if (empty($this->kiosk_token)) {
-            $this->kiosk_token = \Illuminate\Support\Str::random(32);
+            $this->kiosk_token = Str::random(32);
             $this->save();
         }
 
@@ -53,7 +54,7 @@ class Instansi extends Model
      */
     public function getSingkatanAttribute($value): string
     {
-        if (!empty($value)) {
+        if (! empty($value)) {
             return strtoupper($value);
         }
 
@@ -65,12 +66,12 @@ class Instansi extends Model
         $words = preg_split('/\s+/', preg_replace('/[^a-zA-Z0-9\s]/', '', $nama));
         $acronym = '';
         foreach ($words as $w) {
-            if (strlen($w) > 0 && !in_array(strtolower($w), ['dan', 'di', 'ke', 'dari', 'kota', 'pemerintah'])) {
+            if (strlen($w) > 0 && ! in_array(strtolower($w), ['dan', 'di', 'ke', 'dari', 'kota', 'pemerintah'])) {
                 $acronym .= strtoupper($w[0]);
             }
         }
 
-        return !empty($acronym) ? substr($acronym, 0, 15) : 'INSTANSI';
+        return ! empty($acronym) ? substr($acronym, 0, 15) : 'INSTANSI';
     }
 
     protected static function boot()
@@ -88,7 +89,7 @@ class Instansi extends Model
     {
         return $this->hasMany(InternshipPosition::class);
     }
-    
+
     // Relasi: Satu INSTANSI punya banyak User (Admin Dinas/Pembimbing Lapangan)
     public function users()
     {
@@ -99,8 +100,8 @@ class Instansi extends Model
     {
         // Menghubungkan INSTANSI langsung ke Application melewati InternshipPosition
         return $this->hasManyThrough(
-            \App\Models\Application::class,
-            \App\Models\InternshipPosition::class,
+            Application::class,
+            InternshipPosition::class,
             'instansi_id',                // Foreign key di tabel internship_positions
             'internship_position_id', // Foreign key di tabel applications
             'id',                     // Local key di tabel instansis

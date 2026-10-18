@@ -16,7 +16,9 @@ class ApplicationStatusNotification extends Notification implements ShouldQueue,
     use Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $timeout = 60;
+
     public array $backoff = [10, 60, 300];
 
     public function __construct(

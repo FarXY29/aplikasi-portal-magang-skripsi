@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
+use App\Models\ApplicationTimeline;
 use App\Models\Certificate;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CertificateController extends Controller
@@ -28,9 +29,9 @@ class CertificateController extends Controller
         $app = Application::with(['user', 'position.instansi', 'pembimbing_lapangan', 'certificate'])
             ->where(function ($query) use ($token) {
                 $query->where('token_verifikasi', $token)
-                      ->orWhereHas('certificate', function ($q) use ($token) {
-                          $q->where('token_verifikasi', $token);
-                      });
+                    ->orWhereHas('certificate', function ($q) use ($token) {
+                        $q->where('token_verifikasi', $token);
+                    });
             })
             ->whereIn('status', ['diterima', 'selesai'])
             ->first();
@@ -38,7 +39,7 @@ class CertificateController extends Controller
         return view('public.verifikasi.verify', [
             'app' => $app,
             'searchedToken' => $token,
-            'isValid' => !is_null($app),
+            'isValid' => ! is_null($app),
         ]);
     }
 
@@ -55,8 +56,8 @@ class CertificateController extends Controller
             'pembimbing_lapangan',
             'certificate',
         ])
-        ->where('token_verifikasi', $token)
-        ->first();
+            ->where('token_verifikasi', $token)
+            ->first();
 
         $idCardStatus = 'invalid';
         if ($app) {
@@ -78,7 +79,7 @@ class CertificateController extends Controller
         return view('public.verifikasi.id_card', [
             'app' => $app,
             'searchedToken' => $token,
-            'isValid' => !is_null($app),
+            'isValid' => ! is_null($app),
             'idCardStatus' => $idCardStatus,
         ]);
     }
@@ -115,7 +116,7 @@ class CertificateController extends Controller
 
         if ($app) {
             // Jika aplikasi sudah memiliki nomor sertifikat atau berstatus selesai, arahkan ke sertifikat
-            if (!empty($app->nomor_sertifikat) || $app->status_value === 'selesai') {
+            if (! empty($app->nomor_sertifikat) || $app->status_value === 'selesai') {
                 return redirect()->route('certificate.verify', $app->token_verifikasi ?? $keyword);
             }
 
@@ -139,7 +140,7 @@ class CertificateController extends Controller
     {
         // Ambil data aplikasi, pastikan statusnya valid
         $app = Application::with(['user', 'position.instansi'])
-                ->findOrFail($applicationId);
+            ->findOrFail($applicationId);
 
         $this->authorize('manageActiveIntern', $app);
 
@@ -156,10 +157,11 @@ class CertificateController extends Controller
         // Format: 001/MAGANG/NAMA-DINAS/TAHUN
         $year = date('Y');
         $count = Application::whereNotNull('nomor_sertifikat')
+            ->whereHas('position', fn ($q) => $q->where('instansi_id', $app->position->instansi_id))
             ->whereYear('created_at', $year)
             ->count() + 1;
-        $kodeDinas = $app->position->instansi->kode_instansi ?? strtoupper(Str::slug($app->position->instansi->nama_dinas));
-        $autoNumber = sprintf("%03d/MAGANG/%s/%s", $count, $kodeDinas, $year);
+        $kodeDinas = $app->position->instansi->singkatan ?? strtoupper(Str::slug($app->position->instansi->nama_dinas));
+        $autoNumber = sprintf('%03d/MAGANG/%s/%s', $count, $kodeDinas, $year);
 
         return view('admin_instansi.sertifikat.create', compact('app', 'autoNumber'));
     }
@@ -178,7 +180,7 @@ class CertificateController extends Controller
         ]);
 
         $request->validate([
-            'nomor_sertifikat' => 'required|string|max:100|unique:applications,nomor_sertifikat,' . $applicationId,
+            'nomor_sertifikat' => 'required|string|max:100|unique:applications,nomor_sertifikat,'.$applicationId,
             'tanggal_sertifikat' => 'required|date',
         ]);
 
@@ -202,7 +204,6 @@ class CertificateController extends Controller
         // 1. Simpan Data Legalitas Sertifikat di Application
         $app->update([
             'nomor_sertifikat' => $request->nomor_sertifikat,
-            'updated_at' => $request->tanggal_sertifikat . ' ' . now()->format('H:i:s'), 
             'token_verifikasi' => $tokenVerifikasi,
         ]);
 
@@ -212,14 +213,14 @@ class CertificateController extends Controller
             [
                 'nomor_sertifikat' => $request->nomor_sertifikat,
                 'token_verifikasi' => $tokenVerifikasi,
-                'signer_name' => $app->position?->instansi?->nama_kepala ?? 'Kepala Instansi',
+                'signer_name' => $app->position?->instansi?->nama_pejabat ?? 'Kepala Instansi',
                 'status' => 'active',
                 'published_at' => Carbon::parse($request->tanggal_sertifikat),
             ]
         );
 
         $app->recordTimeline(
-            \App\Models\ApplicationTimeline::EVENT_CERTIFICATE_ISSUED,
+            ApplicationTimeline::EVENT_CERTIFICATE_ISSUED,
             $previousStatus,
             'selesai',
             ['nomor_sertifikat' => $request->nomor_sertifikat],
@@ -233,7 +234,7 @@ class CertificateController extends Controller
             'instansi' => $app->position->instansi,
             'position' => $app->position,
             'tanggal' => Carbon::parse($request->tanggal_sertifikat)->translatedFormat('d F Y'),
-            'qr_code' => route('certificate.verify', $tokenVerifikasi)
+            'qr_code' => route('certificate.verify', $tokenVerifikasi),
         ];
 
         // 4. Generate PDF
@@ -241,6 +242,6 @@ class CertificateController extends Controller
         $pdf->setPaper('a4', 'landscape');
 
         // Stream PDF ke browser (Preview)
-        return $pdf->stream('Sertifikat-' . Str::slug($app->user->name) . '.pdf');
+        return $pdf->stream('Sertifikat-'.Str::slug($app->user->name).'.pdf');
     }
 }

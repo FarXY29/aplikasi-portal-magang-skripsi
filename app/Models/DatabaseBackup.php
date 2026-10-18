@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseBackup extends Model
 {
@@ -39,19 +40,19 @@ class DatabaseBackup extends Model
         return $this->status === 'completed'
             && ! $this->isExpired()
             && ! empty($this->stored_path)
-            && \Illuminate\Support\Facades\Storage::disk('private')->exists($this->stored_path);
+            && Storage::disk('private')->exists($this->stored_path);
     }
 
     public function getFileSizeAttribute(): ?string
     {
-        if ($this->stored_path && \Illuminate\Support\Facades\Storage::disk('private')->exists($this->stored_path)) {
-            $bytes = \Illuminate\Support\Facades\Storage::disk('private')->size($this->stored_path);
+        if ($this->stored_path && Storage::disk('private')->exists($this->stored_path)) {
+            $bytes = Storage::disk('private')->size($this->stored_path);
             if ($bytes < 1024) {
-                return $bytes . ' B';
+                return $bytes.' B';
             } elseif ($bytes < 1048576) {
-                return round($bytes / 1024, 1) . ' KB';
+                return round($bytes / 1024, 1).' KB';
             } else {
-                return round($bytes / 1048576, 2) . ' MB';
+                return round($bytes / 1048576, 2).' MB';
             }
         }
 

@@ -10,7 +10,6 @@ use App\Services\Attendance\Rules\NetworkAnomalyRule;
 use App\Services\Attendance\Rules\RequestFrequencyRule;
 use App\Services\Attendance\Rules\SessionConsistencyRule;
 use App\Services\Attendance\Rules\TimestampRule;
-use Illuminate\Support\Collection;
 
 /**
  * Orkestrator fraud detection (§9) — controller hanya memanggil detect().
@@ -21,13 +20,12 @@ use Illuminate\Support\Collection;
 class AttendanceFraudDetector
 {
     /**
-     * @param AttendanceFraudRule[] $rules
+     * @param  AttendanceFraudRule[]  $rules
      */
     public function __construct(
         private readonly AttendanceRiskScorer $scorer,
         private readonly array $rules = [],
-    ) {
-    }
+    ) {}
 
     public static function make(self $resolver): self
     {

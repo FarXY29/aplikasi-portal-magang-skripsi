@@ -15,8 +15,6 @@ class DynamicQrService
     /**
      * Menghasilkan data token dinamis untuk instansi pada waktu tertentu.
      *
-     * @param Instansi $instansi
-     * @param int|null $timestamp
      * @return array{token: string, interval: int, step: int, remaining_seconds: int, expires_at: int, server_time: int}
      */
     public function generateTokenData(Instansi $instansi, ?int $timestamp = null): array
@@ -27,8 +25,8 @@ class DynamicQrService
         $signature = $this->computeSignature((int) $instansi->id, $step, $secret);
 
         $payload = [
-            'i'   => (int) $instansi->id,
-            's'   => $step,
+            'i' => (int) $instansi->id,
+            's' => $step,
             'sig' => $signature,
         ];
 
@@ -37,12 +35,12 @@ class DynamicQrService
         $expiresAt = ($step + 1) * self::ROTATION_INTERVAL;
 
         return [
-            'token'             => $token,
-            'interval'          => self::ROTATION_INTERVAL,
-            'step'              => $step,
+            'token' => $token,
+            'interval' => self::ROTATION_INTERVAL,
+            'step' => $step,
             'remaining_seconds' => $remaining,
-            'expires_at'        => $expiresAt,
-            'server_time'       => $time,
+            'expires_at' => $expiresAt,
+            'server_time' => $time,
         ];
     }
 
@@ -51,14 +49,11 @@ class DynamicQrService
      * Mendukung toleransi 1 interval mundur (step T dan T-1, total max 60 detik)
      * untuk mengantisipasi latensi transmisi jaringan seluler peserta.
      *
-     * @param Instansi $instansi
-     * @param string|null $token
-     * @param int|null $timestamp
      * @return array{valid: bool, reason: string|null, step?: int}
      */
     public function verifyToken(Instansi $instansi, ?string $token, ?int $timestamp = null): array
     {
-        if (empty($token) || !is_string($token)) {
+        if (empty($token) || ! is_string($token)) {
             return ['valid' => false, 'reason' => 'missing_token'];
         }
 
@@ -68,7 +63,7 @@ class DynamicQrService
         }
 
         $payload = json_decode($decodedRaw, true);
-        if (!is_array($payload) || !isset($payload['i'], $payload['s'], $payload['sig'])) {
+        if (! is_array($payload) || ! isset($payload['i'], $payload['s'], $payload['sig'])) {
             return ['valid' => false, 'reason' => 'malformed_token'];
         }
 
@@ -97,7 +92,7 @@ class DynamicQrService
         $secret = $this->getInstansiSecret($instansi);
         $expectedSig = $this->computeSignature((int) $instansi->id, $tokenStep, $secret);
 
-        if (!hash_equals($expectedSig, $tokenSig)) {
+        if (! hash_equals($expectedSig, $tokenSig)) {
             return ['valid' => false, 'reason' => 'invalid_signature'];
         }
 
@@ -158,4 +153,3 @@ class DynamicQrService
         return hash_hmac('sha256', "{$instansiId}|{$step}", $secret);
     }
 }
-

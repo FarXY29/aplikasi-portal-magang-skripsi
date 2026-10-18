@@ -17,7 +17,7 @@ class HtmlSanitizer
         'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'strike',
         'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'blockquote', 'pre', 'code', 'span', 'hr',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td', 'a'
+        'table', 'thead', 'tbody', 'tr', 'th', 'td', 'a',
     ];
 
     /**
@@ -48,9 +48,6 @@ class HtmlSanitizer
 
     /**
      * Clean and sanitize the given HTML string against XSS attacks.
-     *
-     * @param string|null $html
-     * @return string
      */
     public static function clean(?string $html): string
     {
@@ -59,26 +56,26 @@ class HtmlSanitizer
         }
 
         // Quick check: if there are no HTML tags, return safe escaped/raw text
-        if (!str_contains($html, '<')) {
+        if (! str_contains($html, '<')) {
             return $html;
         }
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        
+
         // Suppress libxml errors for malformed HTML fragments
         $previousLibxmlErrorHandling = libxml_use_internal_errors(true);
 
         // Wrap fragment in UTF-8 HTML boilerplate to ensure correct encoding
-        $wrapper = '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>' 
-                 . $html 
-                 . '</body></html>';
+        $wrapper = '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>'
+                 .$html
+                 .'</body></html>';
 
         $dom->loadHTML($wrapper, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
         libxml_use_internal_errors($previousLibxmlErrorHandling);
 
         $body = $dom->getElementsByTagName('body')->item(0);
-        if (!$body) {
+        if (! $body) {
             return '';
         }
 
@@ -95,8 +92,6 @@ class HtmlSanitizer
 
     /**
      * Recursively sanitize DOM nodes.
-     *
-     * @param DOMNode $node
      */
     protected static function sanitizeNode(DOMNode $node): void
     {
@@ -111,9 +106,10 @@ class HtmlSanitizer
                 $tagName = strtolower($child->tagName);
 
                 // If tag is not allowed, remove the node entirely if dangerous, or unwrap if text
-                if (!in_array($tagName, self::$allowedTags, true)) {
+                if (! in_array($tagName, self::$allowedTags, true)) {
                     if (in_array($tagName, ['script', 'style', 'iframe', 'object', 'embed', 'applet', 'svg', 'math', 'form', 'input', 'button', 'select', 'textarea'], true)) {
                         $node->removeChild($child);
+
                         continue;
                     } else {
                         // For non-dangerous disallowed tags (e.g. unknown wrappers), unwrap content
@@ -121,6 +117,7 @@ class HtmlSanitizer
                             $node->insertBefore($child->firstChild, $child);
                         }
                         $node->removeChild($child);
+
                         continue;
                     }
                 }
@@ -135,13 +132,15 @@ class HtmlSanitizer
                         // Disallow any on* event handlers (onclick, onerror, onload, etc.)
                         if (str_starts_with($attrName, 'on')) {
                             $attributesToRemove[] = $attr->name;
+
                             continue;
                         }
 
                         // Check attribute allowlist
                         $tagAllowedAttrs = self::$allowedAttributes[$tagName] ?? ['class'];
-                        if (!in_array($attrName, $tagAllowedAttrs, true)) {
+                        if (! in_array($attrName, $tagAllowedAttrs, true)) {
                             $attributesToRemove[] = $attr->name;
+
                             continue;
                         }
 
@@ -149,7 +148,7 @@ class HtmlSanitizer
                         if ($attrName === 'href') {
                             $trimmedValue = trim($attrValue);
                             // Only allow http://, https://, mailto:, or relative anchors (#)
-                            if (!preg_match('/^(https?:\/\/|mailto:|\/|#)/i', $trimmedValue) || preg_match('/^(javascript|vbscript|data):/i', $trimmedValue)) {
+                            if (! preg_match('/^(https?:\/\/|mailto:|\/|#)/i', $trimmedValue) || preg_match('/^(javascript|vbscript|data):/i', $trimmedValue)) {
                                 $attributesToRemove[] = $attr->name;
                             }
                         }
@@ -180,4 +179,3 @@ class HtmlSanitizer
         }
     }
 }
-

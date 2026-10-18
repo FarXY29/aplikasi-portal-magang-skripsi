@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Instansi;
 use App\Services\Attendance\DynamicQrService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class KioskPresensiController extends Controller
 {
     public function __construct(
         private readonly DynamicQrService $qrService,
-    ) {
-    }
+    ) {}
 
     /**
      * Tampilkan halaman Kiosk Standalone untuk Monitor/TV/Tablet kantor instansi.
@@ -41,12 +40,12 @@ class KioskPresensiController extends Controller
         $svg = $this->qrService->generateQrSvg($tokenData['token'], 320);
 
         return response()->json([
-            'success'           => true,
-            'svg'               => $svg,
+            'success' => true,
+            'svg' => $svg,
             'remaining_seconds' => $tokenData['remaining_seconds'],
-            'interval'          => $tokenData['interval'],
-            'expires_at'        => $tokenData['expires_at'],
-            'server_time'       => $tokenData['server_time'],
+            'interval' => $tokenData['interval'],
+            'expires_at' => $tokenData['expires_at'],
+            'server_time' => $tokenData['server_time'],
         ]);
     }
 
@@ -55,7 +54,7 @@ class KioskPresensiController extends Controller
      */
     private function resolveInstansi(Request $request, ?string $kiosk_token): Instansi
     {
-        if (!empty($kiosk_token)) {
+        if (! empty($kiosk_token)) {
             return Instansi::where('kiosk_token', $kiosk_token)->firstOrFail();
         }
 
@@ -67,4 +66,3 @@ class KioskPresensiController extends Controller
         abort(403, 'Akses Kiosk tidak diizinkan. Token kantor tidak ditemukan.');
     }
 }
-

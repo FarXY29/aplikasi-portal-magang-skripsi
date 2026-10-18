@@ -2,25 +2,28 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use App\Models\Application;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
-use App\Models\Application;
-use App\Models\Attendance;
 use App\Models\User;
-use App\Services\Attendance\DynamicQrService;
 use App\Services\Attendance\AttendanceChallengeService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\Attendance\DynamicQrService;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AttendanceDynamicQrTest extends TestCase
 {
     use RefreshDatabase;
 
     private User $peserta;
+
     private Instansi $instansi;
+
     private Application $application;
+
     private DynamicQrService $qrService;
+
     private AttendanceChallengeService $challengeService;
 
     protected function setUp(): void

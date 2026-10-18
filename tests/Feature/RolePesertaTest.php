@@ -2,9 +2,17 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use App\Models\Application;
+use App\Models\DailyLog;
+use App\Models\Instansi;
+use App\Models\InternshipPosition;
 use App\Models\User;
+use Carbon\Carbon;
+use Database\Seeders\RoleAndPermissionSeeder;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class RolePesertaTest extends TestCase
 {
@@ -50,7 +58,7 @@ class RolePesertaTest extends TestCase
             'asal_instansi' => 'Universitas Indonesia',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Pendidikan',
             'kode_unit_kerja' => 'DISDIK-01',
             'alamat' => 'Jakarta',
@@ -59,14 +67,14 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Frontend Developer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
@@ -100,7 +108,7 @@ class RolePesertaTest extends TestCase
             'asal_instansi' => 'Universitas Indonesia',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -109,21 +117,21 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->addDays(5)->toDateString(), // Future start
-            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+            'tanggal_mulai' => Carbon::now()->addDays(5)->toDateString(), // Future start
+            'tanggal_selesai' => Carbon::now()->addDays(95)->toDateString(),
         ]);
 
         $response = $this->actingAs($user)->post(route('peserta.absen.masuk'), [
@@ -142,7 +150,7 @@ class RolePesertaTest extends TestCase
             'asal_instansi' => 'Universitas Indonesia',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -151,21 +159,21 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(95)->toDateString(),
-            'tanggal_selesai' => \Carbon\Carbon::now()->subDays(5)->toDateString(), // Past end
+            'tanggal_mulai' => Carbon::now()->subDays(95)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->subDays(5)->toDateString(), // Past end
         ]);
 
         $response = $this->actingAs($user)->post(route('peserta.absen.masuk'), [
@@ -179,7 +187,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_cannot_submit_logbook_outside_internship_period()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $user = User::factory()->create([
             'role' => 'peserta',
@@ -188,7 +196,7 @@ class RolePesertaTest extends TestCase
         ]);
         $user->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -197,21 +205,21 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->addDays(5)->toDateString(), // Future start
-            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+            'tanggal_mulai' => Carbon::now()->addDays(5)->toDateString(), // Future start
+            'tanggal_selesai' => Carbon::now()->addDays(95)->toDateString(),
         ]);
 
         $response = $this->actingAs($user)->post(route('peserta.logbook.store'), [
@@ -231,7 +239,7 @@ class RolePesertaTest extends TestCase
             'asal_instansi' => 'Universitas Indonesia',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-02',
             'alamat' => 'Alamat Test',
@@ -240,21 +248,21 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Developer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'selesai',
-            'tanggal_mulai' => \Carbon\Carbon::now()->subMonths(3)->toDateString(),
-            'tanggal_selesai' => \Carbon\Carbon::now()->subDay()->toDateString(),
+            'tanggal_mulai' => Carbon::now()->subMonths(3)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->subDay()->toDateString(),
             'saran_peserta' => null, // Empty
         ]);
 
@@ -265,7 +273,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_can_update_pending_logbook()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $user = User::factory()->create([
             'role' => 'peserta',
@@ -274,7 +282,7 @@ class RolePesertaTest extends TestCase
         ]);
         $user->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -283,26 +291,26 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
-            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+            'tanggal_mulai' => Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->addDays(95)->toDateString(),
         ]);
 
-        $log = \App\Models\DailyLog::create([
+        $log = DailyLog::create([
             'application_id' => $app->id,
-            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'tanggal' => Carbon::now()->toDateString(),
             'kegiatan' => 'Kegiatan awal',
             'status_validasi' => 'pending',
         ]);
@@ -320,7 +328,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_can_delete_pending_logbook()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $user = User::factory()->create([
             'role' => 'peserta',
@@ -329,7 +337,7 @@ class RolePesertaTest extends TestCase
         ]);
         $user->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -338,26 +346,26 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
-            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+            'tanggal_mulai' => Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->addDays(95)->toDateString(),
         ]);
 
-        $log = \App\Models\DailyLog::create([
+        $log = DailyLog::create([
             'application_id' => $app->id,
-            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'tanggal' => Carbon::now()->toDateString(),
             'kegiatan' => 'Kegiatan awal',
             'status_validasi' => 'pending',
         ]);
@@ -372,7 +380,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_cannot_delete_approved_logbook()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $user = User::factory()->create([
             'role' => 'peserta',
@@ -381,7 +389,7 @@ class RolePesertaTest extends TestCase
         ]);
         $user->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Test',
             'kode_unit_kerja' => 'TEST-01',
             'alamat' => 'Alamat Test',
@@ -390,26 +398,26 @@ class RolePesertaTest extends TestCase
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'QA Engineer',
             'kuota' => 2,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $user->id,
             'internship_position_id' => $position->id,
             'cv_path' => '-',
             'surat_pengantar_path' => '-',
             'status' => 'diterima',
-            'tanggal_mulai' => \Carbon\Carbon::now()->subDays(5)->toDateString(),
-            'tanggal_selesai' => \Carbon\Carbon::now()->addDays(95)->toDateString(),
+            'tanggal_mulai' => Carbon::now()->subDays(5)->toDateString(),
+            'tanggal_selesai' => Carbon::now()->addDays(95)->toDateString(),
         ]);
 
-        $log = \App\Models\DailyLog::create([
+        $log = DailyLog::create([
             'application_id' => $app->id,
-            'tanggal' => \Carbon\Carbon::now()->toDateString(),
+            'tanggal' => Carbon::now()->toDateString(),
             'kegiatan' => 'Kegiatan awal',
             'status_validasi' => 'disetujui',
         ]);
@@ -424,7 +432,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_can_download_transkrip_nilai_pdf_with_signatures()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $pl = User::factory()->create([
             'role' => 'pembimbing_lapangan',
@@ -439,7 +447,7 @@ class RolePesertaTest extends TestCase
         ]);
         $peserta->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Kominfo Banjarmasin',
             'nama_pejabat' => 'Kadis Kominfo',
             'nip_pejabat' => '198001012005011001',
@@ -449,14 +457,14 @@ class RolePesertaTest extends TestCase
             'alamat' => 'Jl RE Martadinata',
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Web Developer Intern',
             'kuota' => 5,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $peserta->id,
             'internship_position_id' => $position->id,
             'pembimbing_lapangan_id' => $pl->id,
@@ -482,7 +490,7 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_can_download_sertifikat_pdf_with_signatures()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
         $pl = User::factory()->create([
             'role' => 'pembimbing_lapangan',
@@ -497,7 +505,7 @@ class RolePesertaTest extends TestCase
         ]);
         $peserta->assignRole('peserta');
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Pendidikan Banjarmasin',
             'nama_pejabat' => 'Kadis Pendidikan',
             'nip_pejabat' => '197501012000011002',
@@ -507,14 +515,14 @@ class RolePesertaTest extends TestCase
             'alamat' => 'Jl Kapten Pierre Tendean',
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Administrasi Pendidikan',
             'kuota' => 5,
             'status' => 'buka',
         ]);
 
-        $app = \App\Models\Application::create([
+        $app = Application::create([
             'user_id' => $peserta->id,
             'internship_position_id' => $position->id,
             'pembimbing_lapangan_id' => $pl->id,
@@ -536,23 +544,23 @@ class RolePesertaTest extends TestCase
 
     public function test_peserta_can_submit_automatic_application()
     {
-        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        $this->seed(RoleAndPermissionSeeder::class);
 
-        \Illuminate\Support\Facades\Storage::fake('private');
+        Storage::fake('private');
 
         $user = User::factory()->create([
             'role' => 'peserta',
             'major' => 'Teknik Informatika',
         ]);
 
-        $instansi = \App\Models\Instansi::create([
+        $instansi = Instansi::create([
             'nama_dinas' => 'Dinas Komunikasi dan Informatika',
-            'kode_unit_kerja' => 'DISKOMINFO-' . uniqid(),
+            'kode_unit_kerja' => 'DISKOMINFO-'.uniqid(),
             'alamat' => 'Jl. Pangeran Samudra',
             'max_total_quota' => 10,
         ]);
 
-        $position = \App\Models\InternshipPosition::create([
+        $position = InternshipPosition::create([
             'instansi_id' => $instansi->id,
             'judul_posisi' => 'Programmer',
             'required_major' => 'Teknik Informatika',
@@ -560,7 +568,7 @@ class RolePesertaTest extends TestCase
             'status' => 'buka',
         ]);
 
-        $file = \Illuminate\Http\UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf');
+        $file = UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf');
 
         $response = $this->actingAs($user)->post(route('peserta.apply_automatic.store'), [
             'surat' => $file,

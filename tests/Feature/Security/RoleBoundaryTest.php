@@ -16,8 +16,11 @@ class RoleBoundaryTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private User $adminInstansi;
+
     private User $pembimbing;
+
     private User $adminKota;
 
     protected function setUp(): void

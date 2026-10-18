@@ -11,7 +11,6 @@ use App\Models\MajorCategory;
 use App\Models\User;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class IdCardVerificationTest extends TestCase

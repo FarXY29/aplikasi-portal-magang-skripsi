@@ -27,14 +27,58 @@ class SecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
+        $isProduction = config('app.env') === 'production';
+
+        $scriptSrc = [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            'https://cdn.ckeditor.com',
+        ];
+
+        $styleSrc = [
+            "'self'",
+            "'unsafe-inline'",
+            'https://fonts.googleapis.com',
+        ];
+
+        $fontSrc = [
+            "'self'",
+            'https://fonts.gstatic.com',
+            'data:',
+        ];
+
+        $connectSrc = [
+            "'self'",
+            'https:',
+        ];
+
+        $imgSrc = [
+            "'self'",
+            'data:',
+            'blob:',
+            'https:',
+        ];
+
+        if (! $isProduction) {
+            $devOrigins = 'http://localhost:5173 http://127.0.0.1:5173';
+            $devWs = 'ws://localhost:5173 ws://127.0.0.1:5173';
+            $scriptSrc[] = $devOrigins;
+            $styleSrc[] = $devOrigins;
+            $fontSrc[] = $devOrigins;
+            $connectSrc[] = $devOrigins.' '.$devWs;
+            $imgSrc[] = 'http:';
+        }
+
         // Content Security Policy
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://cdn.tailwindcss.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data:",
-            "img-src 'self' data: blob: https: http:",
-            "connect-src 'self' ws: wss: https: http:",
+            'script-src '.implode(' ', $scriptSrc),
+            "worker-src 'self' blob:",
+            'style-src '.implode(' ', $styleSrc),
+            'font-src '.implode(' ', $fontSrc),
+            'img-src '.implode(' ', $imgSrc),
+            'connect-src '.implode(' ', $connectSrc),
             "frame-ancestors 'self'",
             "object-src 'none'",
             "base-uri 'self'",

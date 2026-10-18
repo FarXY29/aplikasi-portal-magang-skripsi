@@ -6,19 +6,17 @@ use App\Enums\ApplicationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Internship\AssignMentorRequest;
 use App\Http\Requests\Internship\ValidateDailyLogRequest;
-use App\Mail\InternshipCompleted;
 use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\DailyLog;
 use App\Models\User;
 use App\Services\ApplicationLifecycleService;
+use App\Services\ApplicationStateTransitionService;
 use App\Services\AuditLogService;
 use App\Services\PdfExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class ActiveInternController extends Controller
 {
@@ -99,7 +97,7 @@ class ActiveInternController extends Controller
         return back()->with('success', 'Peserta berhasil diluluskan! Sertifikat kini tersedia.');
     }
 
-    public function expelIntern($id, \App\Services\ApplicationStateTransitionService $transitionService)
+    public function expelIntern($id, ApplicationStateTransitionService $transitionService)
     {
         $app = Application::findOrFail($id);
         $this->authorize('manageActiveIntern', $app);
@@ -150,8 +148,10 @@ class ActiveInternController extends Controller
 
     public function showAbsensi(Request $request, $id)
     {
-        $app = Application::with(['user', 'position'])->findOrFail($id);
+        $app = Application::with(['user', 'position.instansi'])->findOrFail($id);
         $this->authorize('view', $app);
+
+        $jamMasuk = $app->position?->instansi?->jam_mulai_masuk ?: '08:00:00';
 
         $query = Attendance::where('application_id', $id)
             ->with(['attempts' => fn ($q) => $q->latest('id'), 'attempts.fraudEvents'])
@@ -178,11 +178,11 @@ class ActiveInternController extends Controller
         // Statistik dihitung via agregasi SQL, tanpa load seluruh riwayat absensi
         $statsRow = Attendance::where('application_id', $id)
             ->selectRaw("
-                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in <= '08:00:00') as tepat_waktu,
-                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in > '08:00:00') as terlambat,
+                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in <= ?) as tepat_waktu,
+                SUM(status = 'hadir' AND clock_in IS NOT NULL AND clock_in > ?) as terlambat,
                 SUM(status IN ('izin', 'sakit')) as izin,
                 SUM(status = 'alpa') as alpha
-            ")
+            ", [$jamMasuk, $jamMasuk])
             ->first();
 
         $stats = [

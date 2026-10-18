@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Application;
-use App\Models\DailyLog;
-use App\Models\Attendance;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Internship\ValidateDailyLogRequest;
 use App\Http\Requests\Internship\ValidateAttendanceRequest;
+use App\Http\Requests\Internship\ValidateDailyLogRequest;
+use App\Models\Application;
+use App\Models\Attendance;
+use App\Models\DailyLog;
+use App\Models\Setting;
+use App\Services\ApplicationLifecycleService;
 use App\Services\AuditLogService;
+use App\Services\PembimbingLogbookService;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PembimbingLapanganController extends Controller
 {
@@ -19,26 +23,26 @@ class PembimbingLapanganController extends Controller
 
         // 1. Ambil Data Mahasiswa Bimbingan
         $interns = Application::where('pembimbing_lapangan_id', $pembimbing_lapanganId)
-                    ->whereIn('status', ['diterima', 'selesai'])
-                    ->with(['user', 'position.instansi'])
-                    ->withCount(['logs as approved_logs_count' => function ($q) {
-                        $q->where('status_validasi', 'disetujui');
-                    }])
-                    ->get();
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->with(['user', 'position.instansi'])
+            ->withCount(['logs as approved_logs_count' => function ($q) {
+                $q->where('status_validasi', 'disetujui');
+            }])
+            ->get();
 
         // 2. HITUNG LOGBOOK PENDING (Untuk Badge Logbook - Opsional jika sudah ada)
-        $pendingLogbooks = DailyLog::whereHas('application', function($q) use ($pembimbing_lapanganId) {
+        $pendingLogbooks = DailyLog::whereHas('application', function ($q) use ($pembimbing_lapanganId) {
             $q->where('pembimbing_lapangan_id', $pembimbing_lapanganId);
         })->where('status_validasi', 'pending')->count();
 
         // 3. HITUNG ABSENSI PENDING (Untuk Badge Absensi - BARU)
         // Menghitung berapa izin/sakit yang belum disetujui
-        $pendingAttendance = Attendance::whereHas('application', function($q) use ($pembimbing_lapanganId) {
+        $pendingAttendance = Attendance::whereHas('application', function ($q) use ($pembimbing_lapanganId) {
             $q->where('pembimbing_lapangan_id', $pembimbing_lapanganId);
         })->whereIn('status', ['izin', 'sakit'])->where('validation_status', 'pending')->count();
 
         // 4. Pengumuman global (dipindahkan dari view agar template tidak menjalankan query)
-        $globalAnnouncement = \App\Models\Setting::where('key', 'announcement')->value('value');
+        $globalAnnouncement = Setting::where('key', 'announcement')->value('value');
 
         return view('pembimbing_lapangan.dashboard', compact('interns', 'pendingLogbooks', 'pendingAttendance', 'globalAnnouncement'));
     }
@@ -47,8 +51,8 @@ class PembimbingLapanganController extends Controller
     {
         $pembimbing_lapanganId = Auth::id();
         $firstApp = Application::where('pembimbing_lapangan_id', $pembimbing_lapanganId)
-                    ->whereIn('status', ['diterima', 'selesai'])
-                    ->first();
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->first();
 
         if ($firstApp) {
             return redirect()->route('pembimbing_lapangan.logbook', $firstApp->id);
@@ -62,7 +66,7 @@ class PembimbingLapanganController extends Controller
         $app = Application::findOrFail($applicationId);
         $this->authorize('view', $app);
 
-        $logbookData = app(\App\Services\PembimbingLogbookService::class)->logbookData($applicationId, $request);
+        $logbookData = app(PembimbingLogbookService::class)->logbookData($applicationId, $request);
 
         return view('pembimbing_lapangan.logbook', array_merge(compact('app'), $logbookData));
     }
@@ -74,7 +78,7 @@ class PembimbingLapanganController extends Controller
 
         $log->update([
             'status_validasi' => $request->validated('status'),
-            'komentar_pembimbing_lapangan' => $request->validated('komentar')
+            'komentar_pembimbing_lapangan' => $request->validated('komentar'),
         ]);
 
         $auditLogService->record('daily_log.validated', $log, ['status_validasi' => $request->validated('status')]);
@@ -89,7 +93,7 @@ class PembimbingLapanganController extends Controller
         $validated = $request->validate([
             'log_ids' => 'required|array',
             'status' => 'required|in:disetujui,revisi',
-            'komentar' => 'nullable|string|max:2000'
+            'komentar' => 'nullable|string|max:2000',
         ]);
 
         // Revisi massal wajib menyertakan catatan perbaikan agar peserta tahu apa yang harus diperbaiki.
@@ -104,7 +108,7 @@ class PembimbingLapanganController extends Controller
             $this->authorize('validateRecords', $log->application);
             $log->update([
                 'status_validasi' => $validated['status'],
-                'komentar_pembimbing_lapangan' => $validated['komentar'] ?? null
+                'komentar_pembimbing_lapangan' => $validated['komentar'] ?? null,
             ]);
             $validatedCount++;
         }
@@ -114,12 +118,12 @@ class PembimbingLapanganController extends Controller
             session(['last_id' => $logs->last()->id]);
         }
 
-        return back()->with('success', $validatedCount . ' Logbook berhasil divalidasi massal.');
+        return back()->with('success', $validatedCount.' Logbook berhasil divalidasi massal.');
     }
 
     // --- FITUR BARU: PENILAIAN AKHIR ---
 
-    public function simpanNilai(Request $request, $id, \App\Services\ApplicationLifecycleService $lifecycleService)
+    public function simpanNilai(Request $request, $id, ApplicationLifecycleService $lifecycleService)
     {
         $app = Application::findOrFail($id);
         $this->authorize('grade', $app);
@@ -169,9 +173,9 @@ class PembimbingLapanganController extends Controller
 
         // 1. Data Mahasiswa Bimbingan untuk Dropdown Filter
         $interns = Application::where('pembimbing_lapangan_id', $pembimbing_lapanganId)
-                    ->whereIn('status', ['diterima', 'selesai'])
-                    ->with('user')
-                    ->get();
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->with('user')
+            ->get();
 
         // 2. Tipe Filter Rentang Waktu: harian, mingguan, bulanan, semua
         $filterType = $request->input('filter_type', 'harian');
@@ -179,14 +183,14 @@ class PembimbingLapanganController extends Controller
         // 3. Tentukan Tanggal yang Dipilih (Default Hari Ini)
         $selectedDate = $request->input('date', date('Y-m-d'));
         try {
-            $carbonDate = \Carbon\Carbon::parse($selectedDate);
+            $carbonDate = Carbon::parse($selectedDate);
         } catch (\Exception $e) {
-            $carbonDate = \Carbon\Carbon::today();
+            $carbonDate = Carbon::today();
             $selectedDate = $carbonDate->format('Y-m-d');
         }
 
         // Query Utama: Absensi dari mahasiswa yang dibimbing
-        $query = Attendance::whereHas('application', function($q) use ($pembimbing_lapanganId) {
+        $query = Attendance::whereHas('application', function ($q) use ($pembimbing_lapanganId) {
             $q->where('pembimbing_lapangan_id', $pembimbing_lapanganId);
         })->with(['application.user', 'application.position']);
 
@@ -204,7 +208,7 @@ class PembimbingLapanganController extends Controller
             $query->whereBetween('date', [$startOfWeek, $endOfWeek]);
         } elseif ($filterType === 'bulanan') {
             $query->whereMonth('date', $carbonDate->month)
-                  ->whereYear('date', $carbonDate->year);
+                ->whereYear('date', $carbonDate->year);
         }
 
         // Filter berdasarkan Status Kehadiran
@@ -220,18 +224,18 @@ class PembimbingLapanganController extends Controller
         // Filter pencarian nama peserta atau deskripsi/catatan
         if ($request->filled('search')) {
             $search = trim($request->search);
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhereHas('application.user', function($uq) use ($search) {
-                      $uq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('application.user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
         // List 7 Hari Terakhir untuk Pilihan Cepat
         $dateList = collect([]);
         for ($i = 0; $i < 7; $i++) {
-            $dateList->push(\Carbon\Carbon::now()->subDays($i));
+            $dateList->push(Carbon::now()->subDays($i));
         }
 
         $attendances = $query->orderBy('date', 'desc')->orderBy('clock_in', 'asc')->get();
@@ -255,7 +259,7 @@ class PembimbingLapanganController extends Controller
 
         $attendance->update([
             'validation_status' => $request->validated('status_validasi'),
-            'pembimbing_lapangan_note' => $request->validated('pembimbing_lapangan_note')
+            'pembimbing_lapangan_note' => $request->validated('pembimbing_lapangan_note'),
         ]);
 
         $auditLogService->record('attendance.validated', $attendance, ['validation_status' => $request->validated('status_validasi')]);

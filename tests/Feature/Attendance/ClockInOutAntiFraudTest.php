@@ -4,11 +4,11 @@ namespace Tests\Feature\Attendance;
 
 use App\Models\Application;
 use App\Models\Attendance;
+use App\Models\AttendanceAttempt;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 /**
@@ -21,6 +21,7 @@ class ClockInOutAntiFraudTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private array $appSetup;
 
     protected function setUp(): void
@@ -87,7 +88,7 @@ class ClockInOutAntiFraudTest extends TestCase
             'accuracy' => 10,
             'client_timestamp' => now()->getTimestamp() * 1000,
             'nonce' => $this->validChallenge(),
-            'idempotency_key' => 'key-' . uniqid(),
+            'idempotency_key' => 'key-'.uniqid(),
         ], $overrides);
 
         return $this->actingAs($this->peserta)
@@ -234,7 +235,7 @@ class ClockInOutAntiFraudTest extends TestCase
     {
         $this->clockIn()->assertSessionHas('success');
 
-        $attempt = \App\Models\AttendanceAttempt::where('user_id', $this->peserta->id)
+        $attempt = AttendanceAttempt::where('user_id', $this->peserta->id)
             ->where('attendance_type', 'clock_in')
             ->latest('id')->first();
 
@@ -254,7 +255,7 @@ class ClockInOutAntiFraudTest extends TestCase
             'code' => 'CLIENT_TIME_DRIFT',
         ]);
 
-        $attempt = \App\Models\AttendanceAttempt::where('user_id', $this->peserta->id)
+        $attempt = AttendanceAttempt::where('user_id', $this->peserta->id)
             ->where('attendance_type', 'clock_in')->latest('id')->first();
         $this->assertSame(10, $attempt->risk_score);
     }
@@ -388,7 +389,7 @@ class ClockInOutAntiFraudTest extends TestCase
             'nonce' => $challenge,
         ]);
 
-        $attempt = \App\Models\AttendanceAttempt::where('user_id', $this->peserta->id)
+        $attempt = AttendanceAttempt::where('user_id', $this->peserta->id)
             ->where('attendance_type', 'clock_in')->latest('id')->first();
 
         $this->assertNotNull($attempt);

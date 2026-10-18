@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Peserta;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Peserta\StoreApplicationRequest;
 use App\Models\Application;
+use App\Models\ApplicationTimeline;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use Carbon\Carbon;
@@ -35,6 +36,7 @@ class ApplicationController extends Controller
         // 1. Validasi Kualifikasi Jurusan & Rumpun Keilmuan
         if (! $position->matchesUser($user)) {
             $expected = $position->requiredMajorCategory?->name ?? $position->required_major;
+
             return redirect()->route('home')->with('error', "Posisi ini khusus kualifikasi: {$expected}.");
         }
 
@@ -58,6 +60,7 @@ class ApplicationController extends Controller
         // 1. Validasi Kualifikasi Jurusan & Rumpun Keilmuan
         if (! $position->matchesUser($user)) {
             $expected = $position->requiredMajorCategory?->name ?? $position->required_major;
+
             return redirect()->route('home')->with('error', "Kualifikasi jurusan Anda tidak memenuhi kriteria lowongan ini (Khusus: {$expected}).");
         }
 
@@ -136,8 +139,8 @@ class ApplicationController extends Controller
                 ]);
 
                 $event = $status === 'menunggu'
-                    ? \App\Models\ApplicationTimeline::EVENT_WAITING_LIST
-                    : \App\Models\ApplicationTimeline::EVENT_SUBMITTED;
+                    ? ApplicationTimeline::EVENT_WAITING_LIST
+                    : ApplicationTimeline::EVENT_SUBMITTED;
                 $app->recordTimeline($event, null, $status, ['letter_number' => $request->letter_number ?? null], $user->id);
 
                 return $status;
@@ -259,7 +262,7 @@ class ApplicationController extends Controller
             ->where('kuota', '>', 0)
             ->get();
 
-        $eligiblePositions = $openPositions->filter(fn($position) => $position->matchesUser($user));
+        $eligiblePositions = $openPositions->filter(fn ($position) => $position->matchesUser($user));
 
         if ($eligiblePositions->isEmpty()) {
             return redirect()->back()->with('error', 'Maaf, saat ini tidak ada lowongan yang dibuka yang sesuai dengan jurusan Anda ('.($user->majorDetail?->name ?? $user->major ?? '-').').');
@@ -371,8 +374,8 @@ class ApplicationController extends Controller
                 ]);
 
                 $event = $status === 'menunggu'
-                    ? \App\Models\ApplicationTimeline::EVENT_WAITING_LIST
-                    : \App\Models\ApplicationTimeline::EVENT_SUBMITTED;
+                    ? ApplicationTimeline::EVENT_WAITING_LIST
+                    : ApplicationTimeline::EVENT_SUBMITTED;
                 $app->recordTimeline($event, null, $status, ['letter_number' => $request->letter_number ?? null, 'is_automatic' => true], $user->id);
 
                 return $status;

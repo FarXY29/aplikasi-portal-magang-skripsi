@@ -6,6 +6,7 @@ use App\Actions\GenerateCertificateNumberAction;
 use App\Enums\ApplicationStatus;
 use App\Exceptions\CancellationPolicyException;
 use App\Exceptions\InvalidApplicationStateTransitionException;
+use App\Http\Controllers\AdminInstansi\DashboardController;
 use App\Mail\ApplicationAcceptedMail;
 use App\Mail\ApplicationRejectedMail;
 use App\Mail\InternshipCompleted;
@@ -39,8 +40,7 @@ class ApplicationStateTransitionService
     public function __construct(
         private AuditLogService $auditLogService,
         private GenerateCertificateNumberAction $generateCertificateNumberAction,
-    ) {
-    }
+    ) {}
 
     /**
      * Check whether a transition from one status to another is valid.
@@ -77,7 +77,7 @@ class ApplicationStateTransitionService
         $fromStr = $this->normalizeStatus($from);
         $toStr = $this->normalizeStatus($to);
 
-        if (!$this->canTransition($fromStr, $toStr)) {
+        if (! $this->canTransition($fromStr, $toStr)) {
             throw new InvalidApplicationStateTransitionException($fromStr, $toStr, $applicationId);
         }
     }
@@ -97,7 +97,7 @@ class ApplicationStateTransitionService
 
         $actorId = $context['actor_id'] ?? auth()->id();
 
-        return DB::transaction(function () use ($application, $fromStatus, $toStatus, $actorId, $context) {
+        $result = DB::transaction(function () use ($application, $fromStatus, $toStatus, $actorId, $context) {
             // Lock application row for consistency
             $app = Application::where('id', $application->id)->lockForUpdate()->firstOrFail();
 
@@ -112,6 +112,10 @@ class ApplicationStateTransitionService
                 default => throw new InvalidApplicationStateTransitionException($fromStatus, $toStatus, $app->id),
             };
         });
+
+        $this->invalidateCaches($result);
+
+        return $result;
     }
 
     /**
@@ -190,7 +194,7 @@ class ApplicationStateTransitionService
             );
         }
 
-        if ($status === 'diterima' && $isParticipant && !empty($application->tanggal_mulai)) {
+        if ($status === 'diterima' && $isParticipant && ! empty($application->tanggal_mulai)) {
             $startDate = Carbon::parse($application->tanggal_mulai)->startOfDay();
             if (Carbon::now()->startOfDay()->gte($startDate)) {
                 throw new CancellationPolicyException(
@@ -208,7 +212,7 @@ class ApplicationStateTransitionService
     {
         return DB::transaction(function () use ($positionId) {
             $position = InternshipPosition::where('id', $positionId)->lockForUpdate()->first();
-            if (!$position) {
+            if (! $position) {
                 return 0;
             }
 
@@ -229,7 +233,7 @@ class ApplicationStateTransitionService
                     ->whereIn('status', ['diterima', 'pending'])
                     ->where(function ($q) use ($start, $end) {
                         $q->where('tanggal_mulai', '<=', $end)
-                          ->where('tanggal_selesai', '>=', $start);
+                            ->where('tanggal_selesai', '>=', $start);
                     })
                     ->count();
 
@@ -243,7 +247,7 @@ class ApplicationStateTransitionService
                         ->whereIn('status', ['diterima', 'pending'])
                         ->where(function ($q) use ($start, $end) {
                             $q->where('tanggal_mulai', '<=', $end)
-                              ->where('tanggal_selesai', '>=', $start);
+                                ->where('tanggal_selesai', '>=', $start);
                         })
                         ->count();
 
@@ -312,7 +316,7 @@ class ApplicationStateTransitionService
             ->firstOrFail();
 
         if ($position->status === 'tutup') {
-            throw new \Exception("Gagal menerima peserta: Posisi magang ini sudah ditutup.");
+            throw new \Exception('Gagal menerima peserta: Posisi magang ini sudah ditutup.');
         }
 
         $start = $app->tanggal_mulai;
@@ -324,7 +328,7 @@ class ApplicationStateTransitionService
             ->whereIn('status', ['diterima'])
             ->where(function ($q) use ($start, $end) {
                 $q->where('tanggal_mulai', '<=', $end)
-                  ->where('tanggal_selesai', '>=', $start);
+                    ->where('tanggal_selesai', '>=', $start);
             })
             ->count();
 
@@ -341,7 +345,7 @@ class ApplicationStateTransitionService
                 ->whereIn('status', ['diterima'])
                 ->where(function ($q) use ($start, $end) {
                     $q->where('tanggal_mulai', '<=', $end)
-                      ->where('tanggal_selesai', '>=', $start);
+                        ->where('tanggal_selesai', '>=', $start);
                 })
                 ->count();
 
@@ -591,6 +595,7 @@ class ApplicationStateTransitionService
     {
         if ($status instanceof Application) {
             $val = $status->status;
+
             return $val instanceof ApplicationStatus ? $val->value : (string) $val;
         }
 
@@ -741,6 +746,21 @@ class ApplicationStateTransitionService
                 'user_id' => $application->user_id,
                 'exception' => $e,
             ]);
+        }
+    }
+
+    private function invalidateCaches(Application $app): void
+    {
+        try {
+            $instansiId = $app->position?->instansi_id ?? $app->position()->value('instansi_id');
+            if ($instansiId) {
+                foreach (DashboardController::PERIODS as $period) {
+                    Cache::forget("admin_instansi_dashboard:{$instansiId}:{$period}");
+                }
+            }
+            Cache::forget('landing_page_stats_v3');
+        } catch (\Throwable $e) {
+            Log::warning('Failed to invalidate caches on application state transition: '.$e->getMessage());
         }
     }
 }

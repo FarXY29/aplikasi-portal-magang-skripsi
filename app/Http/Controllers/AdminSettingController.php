@@ -9,6 +9,7 @@ use App\Models\DatabaseBackup;
 use App\Models\Setting;
 use App\Services\AuditLogService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -69,6 +70,9 @@ class AdminSettingController extends Controller
             $path = $request->file('kop_logo')->store('settings', 'public');
             Setting::updateOrCreate(['key' => 'kop_logo'], ['value' => $path]);
         }
+
+        Cache::forget('landing_page_stats_v3');
+        Cache::forget('settings:kop_signature_meta');
 
         $auditLogService->record('system_settings.updated', null, [
             'updated_keys' => array_keys($validated),

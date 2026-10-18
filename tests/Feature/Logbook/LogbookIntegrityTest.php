@@ -18,7 +18,9 @@ class LogbookIntegrityTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private Application $application;
+
     private Instansi $instansi;
 
     protected function setUp(): void

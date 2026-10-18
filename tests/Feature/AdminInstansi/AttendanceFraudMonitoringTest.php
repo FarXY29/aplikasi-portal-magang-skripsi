@@ -22,12 +22,19 @@ class AttendanceFraudMonitoringTest extends TestCase
     use DatabaseTransactions;
 
     private User $adminA;
+
     private User $adminB;
+
     private Instansi $instansiA;
+
     private Instansi $instansiB;
+
     private User $pesertaA;
+
     private User $pesertaB;
+
     private AttendanceAttempt $flaggedAttempt;
+
     private AttendanceAttempt $cleanAttempt;
 
     protected function setUp(): void

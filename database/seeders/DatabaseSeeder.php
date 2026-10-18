@@ -2,16 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\Application;
+use App\Models\Certificate;
+use App\Models\DailyLog;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
-use App\Models\Application;
-use App\Models\DailyLog;
+use App\Models\Major;
+use App\Models\MajorCategory;
+use App\Models\School;
+use App\Models\University;
+use App\Models\User;
 use Faker\Factory as Faker;
-use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,9 +30,9 @@ class DatabaseSeeder extends Seeder
             MajorSeeder::class,
         ]);
 
-        $univList = \App\Models\University::all();
-        $schoolList = \App\Models\School::all();
-        $majorList = \App\Models\Major::all();
+        $univList = University::all();
+        $schoolList = School::all();
+        $majorList = Major::all();
 
         // 1. Buat Akun Super Admin (Admin Kota)
         User::updateOrCreate(
@@ -68,7 +73,7 @@ class DatabaseSeeder extends Seeder
         foreach ($dinasList as $index => $namaDinas) {
             // Buat INSTANSI
             $instansi = Instansi::updateOrCreate(
-                ['kode_unit_kerja' => 'INSTANSI-' . str_pad($index + 1, 3, '0', STR_PAD_LEFT)],
+                ['kode_unit_kerja' => 'INSTANSI-'.str_pad($index + 1, 3, '0', STR_PAD_LEFT)],
                 [
                     'nama_dinas' => $namaDinas,
                     'alamat' => $faker->address,
@@ -82,10 +87,10 @@ class DatabaseSeeder extends Seeder
 
             // Buat Admin INSTANSI
             User::updateOrCreate(
-                ['email' => 'admin.instansi' . ($index + 1) . '@banjarmasin.go.id'],
+                ['email' => 'admin.instansi'.($index + 1).'@banjarmasin.go.id'],
                 [
-                    'name' => 'Admin ' . explode(',', $namaDinas)[0],
-                    'username' => 'admin_instansi_' . ($index + 1),
+                    'name' => 'Admin '.explode(',', $namaDinas)[0],
+                    'username' => 'admin_instansi_'.($index + 1),
                     'password' => Hash::make('password'),
                     'role' => 'admin_instansi',
                     'instansi_id' => $instansi->id,
@@ -97,10 +102,10 @@ class DatabaseSeeder extends Seeder
             $numPembimbing = rand(2, 3);
             for ($i = 0; $i < $numPembimbing; $i++) {
                 $pembimbingLapangan = User::updateOrCreate(
-                    ['email' => 'pembimbing.lapangan.' . $instansi->id . '_' . $i . '@banjarmasin.go.id'],
+                    ['email' => 'pembimbing.lapangan.'.$instansi->id.'_'.$i.'@banjarmasin.go.id'],
                     [
-                        'name' => 'Pembimbing ' . $faker->name,
-                        'username' => 'pembimbing_lapangan_' . $instansi->id . '_' . $i,
+                        'name' => 'Pembimbing '.$faker->name,
+                        'username' => 'pembimbing_lapangan_'.$instansi->id.'_'.$i,
                         'password' => Hash::make('password'),
                         'role' => 'pembimbing_lapangan',
                         'instansi_id' => $instansi->id,
@@ -111,7 +116,7 @@ class DatabaseSeeder extends Seeder
             }
 
             // Buat 2-4 Posisi Magang per INSTANSI dengan kategori rumpun ilmu yang realistis
-            $catMap = \App\Models\MajorCategory::pluck('id', 'code')->toArray();
+            $catMap = MajorCategory::pluck('id', 'code')->toArray();
             $positionDefinitions = [
                 'Programmer / Web Developer' => [
                     'category_id' => $catMap['TIK'] ?? null,
@@ -173,13 +178,13 @@ class DatabaseSeeder extends Seeder
         for ($k = 1; $k <= 10; $k++) {
             $isUniv = $faker->boolean();
             $univ = $isUniv && $univList->isNotEmpty() ? $univList->random() : null;
-            $school = !$isUniv && $schoolList->isNotEmpty() ? $schoolList->random() : null;
+            $school = ! $isUniv && $schoolList->isNotEmpty() ? $schoolList->random() : null;
 
             $pembimbingSekolahList[] = User::updateOrCreate(
-                ['email' => 'pembimbing' . $k . '@kampus.ac.id'],
+                ['email' => 'pembimbing'.$k.'@kampus.ac.id'],
                 [
-                    'name' => 'Dosen/Guru ' . $faker->name,
-                    'username' => 'pembimbing_' . $k,
+                    'name' => 'Dosen/Guru '.$faker->name,
+                    'username' => 'pembimbing_'.$k,
                     'password' => Hash::make('password'),
                     'role' => 'pembimbing',
                     'university_id' => $univ?->id,
@@ -191,19 +196,19 @@ class DatabaseSeeder extends Seeder
 
         // 3. Buat Akun Peserta & Lamaran
         $institusiList = ['Universitas Lambung Mangkurat', 'Politeknik Negeri Banjarmasin', 'Universitas Islam Kalimantan', 'SMKN 1 Banjarmasin', 'SMKN 2 Banjarmasin'];
-        
+
         // Buat 60 Peserta
         for ($i = 1; $i <= 60; $i++) {
             $pembimbingSekolah = $faker->randomElement($pembimbingSekolahList);
             $univId = $pembimbingSekolah->university_id;
             $schoolId = $pembimbingSekolah->school_id;
             $asalName = $pembimbingSekolah->asal_instansi ?? $faker->randomElement($institusiList);
-            
+
             $peserta = User::updateOrCreate(
-                ['email' => 'peserta' . $i . '@gmail.com'],
+                ['email' => 'peserta'.$i.'@gmail.com'],
                 [
                     'name' => $faker->name,
-                    'username' => 'peserta_' . $i,
+                    'username' => 'peserta_'.$i,
                     'password' => Hash::make('password'),
                     'role' => 'peserta',
                     'university_id' => $univId,
@@ -219,13 +224,13 @@ class DatabaseSeeder extends Seeder
             // Peserta melamar 1-2 posisi
             $numLamar = rand(1, 2);
             $lamarPosisi = $faker->randomElements($positions, $numLamar);
-            
+
             $isAccepted = false;
 
             foreach ($lamarPosisi as $idx => $pos) {
                 // Tentukan status lamaran secara acak
                 $statusList = ['pending', 'ditolak', 'diterima', 'selesai', 'menunggu'];
-                
+
                 // Jika sudah ada yg diterima/selesai, lamaran lain otomatis ditolak atau pending
                 if ($isAccepted) {
                     $status = $faker->randomElement(['pending', 'ditolak']);
@@ -268,7 +273,7 @@ class DatabaseSeeder extends Seeder
                         DailyLog::updateOrCreate(
                             [
                                 'application_id' => $app->id,
-                                'tanggal' => (clone $tanggalMulai)->modify('+' . $j . ' days'),
+                                'tanggal' => (clone $tanggalMulai)->modify('+'.$j.' days'),
                             ],
                             [
                                 'kegiatan' => $faker->sentence(10),
@@ -284,9 +289,9 @@ class DatabaseSeeder extends Seeder
                     $teknis = rand(70, 95);
                     $disiplin = rand(75, 95);
                     $perilaku = rand(80, 98);
-                    $certNum = 'MG-' . date('Y') . '-' . str_pad($app->id, 5, '0', STR_PAD_LEFT);
+                    $certNum = 'MG-'.date('Y').'-'.str_pad($app->id, 5, '0', STR_PAD_LEFT);
                     $tokenVerif = Str::random(32);
-                    
+
                     $app->update([
                         'nilai_teknis' => $teknis,
                         'nilai_disiplin' => $disiplin,
@@ -296,14 +301,14 @@ class DatabaseSeeder extends Seeder
                         'token_verifikasi' => $tokenVerif,
                     ]);
 
-                    \App\Models\Certificate::updateOrCreate(
+                    Certificate::updateOrCreate(
                         ['application_id' => $app->id],
                         [
                             'nomor_sertifikat' => $certNum,
                             'token_verifikasi' => $tokenVerif,
                             'status' => 'active',
                             'signer_name' => $pos->instansi->nama_pejabat ?? 'Kepala Dinas',
-                            'signature_mock' => hash('sha256', $app->id . $tokenVerif),
+                            'signature_mock' => hash('sha256', $app->id.$tokenVerif),
                             'published_at' => now()->subDays(rand(1, 30)),
                         ]
                     );
@@ -316,7 +321,7 @@ class DatabaseSeeder extends Seeder
 
         // 5. Sinkronisasikan Role Spatie untuk Seluruh User
         User::all()->each(function ($user) {
-            if ($user->role && \Spatie\Permission\Models\Role::where('name', $user->role)->exists()) {
+            if ($user->role && Role::where('name', $user->role)->exists()) {
                 $user->assignRole($user->role);
             }
         });

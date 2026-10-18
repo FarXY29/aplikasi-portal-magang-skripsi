@@ -15,7 +15,6 @@ use App\Models\User;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -224,7 +223,7 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
             'longitude' => 114.590111,
             'keterangan' => 'Hadir tepat waktu',
             'nonce' => $this->attendanceChallenge($peserta),
-            'idempotency_key' => 'full-sys-clockin-' . uniqid(),
+            'idempotency_key' => 'full-sys-clockin-'.uniqid(),
         ]);
         $resAbsen->assertSessionHas('success');
 
@@ -233,7 +232,7 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
             'latitude' => -3.316694,
             'longitude' => 114.590111,
             'nonce' => $this->attendanceChallenge($peserta),
-            'idempotency_key' => 'full-sys-clockout-' . uniqid(),
+            'idempotency_key' => 'full-sys-clockout-'.uniqid(),
         ]);
         $resPulang->assertSessionHas('success');
 
@@ -599,7 +598,7 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
             'catatan_pembimbing_lapangan' => 'Sangat aktif dan teliti.',
         ])->assertRedirect(route('pembimbing_lapangan.dashboard'));
 
-        $this->assertEquals(90.0, (float)$app->fresh()->nilai_rata_rata);
+        $this->assertEquals(90.0, (float) $app->fresh()->nilai_rata_rata);
     }
 
     // ==========================================
@@ -760,7 +759,7 @@ class FullSystemRoleAndPageVerificationTest extends TestCase
 
         $this->actingAs($adminKota)->post(route('admin.master.majors.toggle', $major->id))
             ->assertRedirect();
-        $this->assertFalse((bool)$major->fresh()->is_active);
+        $this->assertFalse((bool) $major->fresh()->is_active);
 
         // Certificate Governance
         $posisi = InternshipPosition::create([

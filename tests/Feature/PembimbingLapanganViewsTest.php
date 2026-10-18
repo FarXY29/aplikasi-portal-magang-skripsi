@@ -10,7 +10,6 @@ use App\Models\InternshipPosition;
 use App\Models\User;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -303,7 +302,7 @@ class PembimbingLapanganViewsTest extends TestCase
         $resSave->assertSessionHas('success');
 
         $app = $setup['app1']->fresh();
-        $this->assertEquals(92.0, (float)$app->nilai_rata_rata);
+        $this->assertEquals(92.0, (float) $app->nilai_rata_rata);
         $this->assertEquals('A (Sangat Baik)', $app->predikat);
         $this->assertEquals('selesai', $app->status_value);
     }

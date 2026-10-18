@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\DailyLog;
-use App\Models\Application;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf; 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
 use App\Http\Requests\Logbook\StoreDailyLogRequest;
 use App\Http\Requests\Logbook\UpdateDailyLogRequest;
+use App\Models\Application;
+use App\Models\DailyLog;
 use App\Services\AuditLogService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class LogbookController extends Controller
 {
@@ -34,7 +33,7 @@ class LogbookController extends Controller
             ->where('status', 'diterima')
             ->first();
 
-        if (!$activeApp) {
+        if (! $activeApp) {
             $activeApp = Application::with('position.instansi')
                 ->where('user_id', Auth::id())
                 ->where('status', 'selesai')
@@ -42,21 +41,21 @@ class LogbookController extends Controller
                 ->first();
         }
 
-        if (!$activeApp) {
+        if (! $activeApp) {
             return redirect()->route('peserta.dashboard')->with('error', 'Anda tidak memiliki status magang aktif.');
         }
 
         $logsQuery = DailyLog::where('application_id', $activeApp->id);
 
-        if (!empty($filters['status']) && $filters['status'] !== 'semua') {
+        if (! empty($filters['status']) && $filters['status'] !== 'semua') {
             $logsQuery->where('status_validasi', $filters['status']);
         }
 
-        if (!empty($filters['date'])) {
+        if (! empty($filters['date'])) {
             $logsQuery->whereDate('tanggal', $filters['date']);
         }
 
-        if (!empty($filters['month'])) {
+        if (! empty($filters['month'])) {
             $month = Carbon::createFromFormat('Y-m', $filters['month']);
             $logsQuery->whereYear('tanggal', $month->year)
                 ->whereMonth('tanggal', $month->month);
@@ -66,32 +65,35 @@ class LogbookController extends Controller
             ->orderBy('tanggal', 'desc')
             ->paginate(15)
             ->withQueryString();
+
         return view('peserta.logbook.index', compact('logs', 'activeApp'));
     }
 
     public function store(StoreDailyLogRequest $request, AuditLogService $auditLogService)
     {
         $user = $request->user();
-        
+
         // Ambil Data Lamaran Aktif & Lokasi INSTANSI
         $app = Application::with('position.instansi')
             ->where('user_id', $user->id)
             ->where('status', 'diterima')
             ->latest('updated_at')
             ->first();
-        
-        if (!$app) return back()->with('error', 'Status magang Anda telah selesai atau tidak aktif. Anda tidak dapat membuat atau menyimpan jurnal baru.');
+
+        if (! $app) {
+            return back()->with('error', 'Status magang Anda telah selesai atau tidak aktif. Anda tidak dapat membuat atau menyimpan jurnal baru.');
+        }
 
         $today = Carbon::today();
         $startDate = Carbon::parse($app->tanggal_mulai)->startOfDay();
         $endDate = Carbon::parse($app->tanggal_selesai)->endOfDay();
 
         if ($today->lt($startDate)) {
-            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada ' . $startDate->translatedFormat('d F Y') . '.');
+            return back()->with('error', 'Masa magang Anda belum dimulai. Silakan kembali pada '.$startDate->translatedFormat('d F Y').'.');
         }
 
         if ($today->gt($endDate)) {
-            return back()->with('error', 'Masa magang Anda telah berakhir pada ' . $endDate->translatedFormat('d F Y') . '.');
+            return back()->with('error', 'Masa magang Anda telah berakhir pada '.$endDate->translatedFormat('d F Y').'.');
         }
 
         // 2. LOGIKA GEOTAGGING (Cek Jarak & Radius)
@@ -99,7 +101,7 @@ class LogbookController extends Controller
         $kantorLat = $instansi?->latitude;
         $kantorLng = $instansi?->longitude;
         $radiusAbsen = $instansi?->radius_absen ?? 100;
-        
+
         if ($kantorLat !== null && $kantorLng !== null) {
             $jarakKm = $this->calculateDistance(
                 $request->validated('latitude'),
@@ -108,9 +110,9 @@ class LogbookController extends Controller
                 (float) $kantorLng,
             );
             $jarakMeter = $jarakKm * 1000;
-            
+
             if ($jarakMeter > $radiusAbsen) {
-                return back()->with('error', 'Gagal Check-in! Posisi Anda terlalu jauh dari kantor dinas (' . number_format($jarakMeter, 0) . ' meter, batas maksimal ' . $radiusAbsen . ' meter).');
+                return back()->with('error', 'Gagal Check-in! Posisi Anda terlalu jauh dari kantor dinas ('.number_format($jarakMeter, 0).' meter, batas maksimal '.$radiusAbsen.' meter).');
             }
         }
 
@@ -138,7 +140,7 @@ class LogbookController extends Controller
                     'tanggal' => now(),
                     'kegiatan' => $request->validated('kegiatan'),
                     'bukti_foto_path' => $fotoPath,
-                    'status_validasi' => 'pending'
+                    'status_validasi' => 'pending',
                 ]);
 
                 $auditLogService->record('daily_log.created', $log, [
@@ -170,7 +172,7 @@ class LogbookController extends Controller
 
         $this->authorize('update', $log);
 
-        if (!in_array($log->status_validasi, ['pending', 'revisi'], true)) {
+        if (! in_array($log->status_validasi, ['pending', 'revisi'], true)) {
             return back()->with('error', 'Logbook ini tidak dalam status pending atau revisi.');
         }
 
@@ -237,10 +239,10 @@ class LogbookController extends Controller
     public function print($id = null)
     {
         $user = Auth::user();
-        
+
         $query = Application::with(['position.instansi', 'pembimbing_lapangan'])
-                ->where('user_id', $user->id)
-                ->whereIn('status', ['diterima', 'selesai']);
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['diterima', 'selesai']);
 
         if ($id) {
             $app = $query->where('id', $id)->firstOrFail();
@@ -250,17 +252,17 @@ class LogbookController extends Controller
 
         // Ambil seluruh logbook, urutkan dari tanggal awal
         $logs = DailyLog::where('application_id', $app->id)
-                ->orderBy('tanggal', 'asc')
-                ->get();
+            ->orderBy('tanggal', 'asc')
+            ->get();
 
         $pdf = Pdf::loadView('pdf.peserta.logbook_rekap', compact('app', 'logs', 'user'));
-        
+
         // Set ukuran kertas A4 Portrait
         $pdf->setPaper('a4', 'portrait');
 
         return response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Rekap-Kegiatan-' . (Str::slug($user->name) ?: 'peserta') . '.pdf"',
+            'Content-Disposition' => 'inline; filename="Rekap-Kegiatan-'.(Str::slug($user->name) ?: 'peserta').'.pdf"',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Pragma' => 'no-cache',
             'Expires' => '0',
@@ -275,11 +277,11 @@ class LogbookController extends Controller
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
-        $a = sin($dLat/2) * sin($dLat/2) +
+        $a = sin($dLat / 2) * sin($dLat / 2) +
              cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon/2) * sin($dLon/2);
+             sin($dLon / 2) * sin($dLon / 2);
 
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
 
         return $distance; // Hasil dalam Kilometer

@@ -19,13 +19,14 @@ class EmailVerificationPromptController extends Controller
         if ($request->user() && ! $request->user()->hasVerifiedEmail()) {
             $user = $request->user();
             if (in_array($user->role, ['peserta', 'pembimbing'])) {
-                $cacheKey = 'resend_verification_' . $user->id;
+                $cacheKey = 'resend_verification_'.$user->id;
                 if (! Cache::has($cacheKey)) {
                     $user->sendEmailVerificationNotification();
                     Cache::put($cacheKey, true, now()->addMinutes(2));
                     session()->flash('status', 'verification-link-sent');
                 }
             }
+
             return view('auth.verify-email');
         }
 

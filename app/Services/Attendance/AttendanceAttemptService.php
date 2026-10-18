@@ -2,15 +2,14 @@
 
 namespace App\Services\Attendance;
 
-use App\Enums\AttendanceFraudStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceAttempt;
 use App\Models\AttendanceFraudEvent;
 use App\Services\AuditLogService;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Persistensi bukti attempt + fraud events + integrasi audit log (§7, §8, §31).
@@ -22,8 +21,7 @@ class AttendanceAttemptService
 {
     public function __construct(
         private readonly AuditLogService $auditLog,
-    ) {
-    }
+    ) {}
 
     /**
      * Simpan attempt + fraud events.
@@ -42,7 +40,7 @@ class AttendanceAttemptService
                     'instance_id' => $context->instansi?->id,
                     'attendance_id' => $attendance?->id,
                     'attendance_type' => $context->attendanceType,
-                    'attempt_uuid' => (string) \Illuminate\Support\Str::uuid(),
+                    'attempt_uuid' => (string) Str::uuid(),
                     'idempotency_key' => null, // di-set terpisah bila ada
                     'latitude' => $context->latitude,
                     'longitude' => $context->longitude,

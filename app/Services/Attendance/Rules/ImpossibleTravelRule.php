@@ -26,8 +26,7 @@ class ImpossibleTravelRule extends AttendanceFraudRule
 {
     public function __construct(
         private readonly GeoDistanceService $geo,
-    ) {
-    }
+    ) {}
 
     public function code(): string
     {
@@ -43,7 +42,7 @@ class ImpossibleTravelRule extends AttendanceFraudRule
     {
         $previous = $this->resolvePreviousFix($context);
 
-        if ($previous === null || !$context->hasClientLocation()) {
+        if ($previous === null || ! $context->hasClientLocation()) {
             return null;
         }
 
@@ -111,7 +110,7 @@ class ImpossibleTravelRule extends AttendanceFraudRule
     {
         $previous = $context->previousAttendance;
 
-        if (!$previous instanceof Attendance) {
+        if (! $previous instanceof Attendance) {
             return null;
         }
 
@@ -132,7 +131,7 @@ class ImpossibleTravelRule extends AttendanceFraudRule
             ? $previous->date->format('Y-m-d')
             : (string) $previous->date;
 
-        $at = Carbon::parse($dateStr . ' ' . $timeStr);
+        $at = Carbon::parse($dateStr.' '.$timeStr);
 
         return [
             (float) $lat,

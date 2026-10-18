@@ -3,11 +3,11 @@
 namespace Tests\Feature\Attendance;
 
 use App\Models\Application;
+use App\Models\Attendance;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 /**
@@ -19,6 +19,7 @@ class AttendanceChallengeTest extends TestCase
     use DatabaseTransactions;
 
     private User $peserta;
+
     private array $appSetup;
 
     protected function setUp(): void
@@ -131,7 +132,7 @@ class AttendanceChallengeTest extends TestCase
         ])->assertSessionHas('success');
 
         // Hapus attendance agar bisa clock-in lagi (test reuse murni nonce).
-        \App\Models\Attendance::where('application_id', $this->appSetup['application']->id)->delete();
+        Attendance::where('application_id', $this->appSetup['application']->id)->delete();
 
         // Request kedua memakai nonce SAMA → replay → ditolak.
         $response = $this->actingAs($this->peserta)->post(route('peserta.absen.masuk'), [

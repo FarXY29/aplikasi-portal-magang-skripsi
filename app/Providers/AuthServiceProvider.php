@@ -3,22 +3,21 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\AttendanceAttempt;
+use App\Models\AttendanceDispute;
 use App\Models\DailyLog;
 use App\Models\Instansi;
 use App\Models\InternshipPosition;
 use App\Policies\ApplicationPolicy;
-use App\Policies\AttendancePolicy;
 use App\Policies\AttendanceAttemptPolicy;
+use App\Policies\AttendanceDisputePolicy;
+use App\Policies\AttendancePolicy;
 use App\Policies\DailyLogPolicy;
 use App\Policies\InstansiPolicy;
 use App\Policies\InternshipPositionPolicy;
-
-use App\Models\AttendanceDispute;
-use App\Policies\AttendanceDisputePolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {

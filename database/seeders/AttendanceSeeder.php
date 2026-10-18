@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Application;
 use App\Models\Attendance;
 use App\Models\Instansi;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class AttendanceSeeder extends Seeder
 {
@@ -40,6 +40,7 @@ class AttendanceSeeder extends Seeder
             if (isset($this->command)) {
                 $this->command->warn('⚠ Tidak ada aplikasi berstatus diterima/selesai. Jalankan DatabaseSeeder terlebih dahulu.');
             }
+
             return;
         }
 
@@ -48,13 +49,13 @@ class AttendanceSeeder extends Seeder
         $bar = $output ? $output->createProgressBar($applications->count()) : null;
 
         if ($bar) {
-            $bar->setFormat(" %current%/%max% [%bar%] %percent:3s%% — %message%");
+            $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% — %message%');
             $bar->setMessage('Memulai generate absensi...');
             $bar->start();
         }
 
         // Tentukan ~20% peserta sebagai "bermasalah" (sering telat/alpa)
-        $troublemakers = $applications->random(max(1, (int)($applications->count() * 0.2)))->pluck('id')->toArray();
+        $troublemakers = $applications->random(max(1, (int) ($applications->count() * 0.2)))->pluck('id')->toArray();
 
         foreach ($applications as $app) {
             $instansiId = $app->position->instansi_id ?? null;
@@ -63,13 +64,13 @@ class AttendanceSeeder extends Seeder
             $jamMasuk = $instansi->jam_mulai_masuk ?? '07:30:00';
             $jamPulang = $instansi->jam_mulai_pulang ?? '16:00:00';
 
-            $baseLat = (float)($instansi->latitude ?? -3.3194);
-            $baseLng = (float)($instansi->longitude ?? 114.5908);
+            $baseLat = (float) ($instansi->latitude ?? -3.3194);
+            $baseLng = (float) ($instansi->longitude ?? 114.5908);
 
             // Ambil tanggal absensi yang sudah tersimpan agar aman dari constraint duplikasi
             $existingDates = Attendance::where('application_id', $app->id)
                 ->pluck('date')
-                ->map(fn($d) => is_string($d) ? $d : $d->format('Y-m-d'))
+                ->map(fn ($d) => is_string($d) ? $d : $d->format('Y-m-d'))
                 ->toArray();
             $existingDatesSet = array_flip($existingDates);
 
@@ -88,6 +89,7 @@ class AttendanceSeeder extends Seeder
                 if ($bar) {
                     $bar->advance();
                 }
+
                 continue;
             }
 
@@ -168,7 +170,7 @@ class AttendanceSeeder extends Seeder
                     $latOut = round($baseLat + ($faker->numberBetween(-50, 50) / 1000000), 8);
                     $lngOut = round($baseLng + ($faker->numberBetween(-50, 50) / 1000000), 8);
 
-                    $ipAddress = '180.252.' . $faker->numberBetween(1, 254) . '.' . $faker->numberBetween(1, 254);
+                    $ipAddress = '180.252.'.$faker->numberBetween(1, 254).'.'.$faker->numberBetween(1, 254);
                     $deviceInfo = $faker->randomElement([
                         'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
                         'Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1',
@@ -274,7 +276,7 @@ class AttendanceSeeder extends Seeder
             }
 
             // Insert batch per aplikasi
-            if (!empty($attendanceBatch)) {
+            if (! empty($attendanceBatch)) {
                 foreach (array_chunk($attendanceBatch, 100) as $chunk) {
                     Attendance::insert($chunk);
                 }
@@ -298,4 +300,3 @@ class AttendanceSeeder extends Seeder
         }
     }
 }
-

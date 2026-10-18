@@ -20,15 +20,25 @@ class DailyLogAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Instansi $instansiA;
+
     private Instansi $instansiB;
+
     private User $pesertaOwner;
+
     private User $pesertaOther;
+
     private User $adminInstansiA;
+
     private User $adminInstansiB;
+
     private User $mentorA;
+
     private User $mentorB;
+
     private User $adminKota;
+
     private DailyLog $logPending;
+
     private DailyLog $logApproved;
 
     protected function setUp(): void
