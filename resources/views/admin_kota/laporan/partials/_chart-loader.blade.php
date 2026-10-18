@@ -7,19 +7,22 @@
      * yang adaptif terhadap light/dark mode.
      */
     window.ReportCharts = window.ReportCharts || (function () {
-        const CDN = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
         let loader = null;
 
         function load() {
             if (window.Chart) return Promise.resolve(window.Chart);
             if (!loader) {
-                loader = new Promise(function (resolve, reject) {
-                    const script = document.createElement('script');
-                    script.src = CDN;
-                    script.onload = function () { resolve(window.Chart); };
-                    script.onerror = function () { loader = null; reject(new Error('Gagal memuat Chart.js dari CDN.')); };
-                    document.head.appendChild(script);
-                });
+                if (window.SimagangVendor && window.SimagangVendor.chart) {
+                    loader = window.SimagangVendor.chart().then(function (ChartLib) {
+                        window.Chart = ChartLib;
+                        return ChartLib;
+                    }).catch(function (err) {
+                        loader = null;
+                        throw err;
+                    });
+                } else {
+                    return Promise.reject(new Error('Vendor loader Chart.js tidak tersedia.'));
+                }
             }
             return loader;
         }

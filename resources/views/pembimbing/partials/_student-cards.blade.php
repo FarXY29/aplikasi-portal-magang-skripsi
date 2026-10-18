@@ -35,7 +35,7 @@
             </div>
             <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-medium">
                 <i class="fas fa-briefcase text-gray-400 dark:text-gray-500 w-4"></i>
-                <span>{{ $app->position?->posisi ?? '-' }}</span>
+                <span>{{ $app->position?->judul_posisi ?? '-' }}</span>
             </div>
             <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 pt-1.5 border-t border-gray-200 dark:border-gray-700/60 font-bold">
                 <i class="far fa-calendar-alt text-gray-400 dark:text-gray-500 w-4"></i>

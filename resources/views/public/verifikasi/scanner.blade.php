@@ -211,10 +211,6 @@
     </div>
 
     @push('scripts')
-    <!-- Load PDF.js for client-side PDF decoding -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    
     <script>
         function playBeepSound() {
             try {
@@ -293,54 +289,28 @@
 
                 ensureHtml5Qrcode() {
                     if (typeof window.Html5Qrcode !== 'undefined') {
-                        return Promise.resolve();
+                        return Promise.resolve(window.Html5Qrcode);
                     }
-                    return new Promise((resolve, reject) => {
-                        const existing = document.querySelector('script[src*="html5-qrcode"]');
-                        if (existing && typeof window.Html5Qrcode !== 'undefined') {
-                            resolve();
-                            return;
-                        }
-                        const script = existing || document.createElement('script');
-                        if (!existing) {
-                            script.src = 'https://unpkg.com/html5-qrcode';
-                            script.type = 'text/javascript';
-                            document.head.appendChild(script);
-                        }
-                        script.onload = () => resolve();
-                        script.onerror = () => reject(new Error("Gagal memuat library pemindai QR."));
-                    });
+                    if (window.SimagangVendor && window.SimagangVendor.html5Qrcode) {
+                        return window.SimagangVendor.html5Qrcode().then(lib => {
+                            window.Html5Qrcode = lib;
+                            return lib;
+                        });
+                    }
+                    return Promise.reject(new Error("Gagal memuat library pemindai QR."));
                 },
 
                 ensurePdfJs() {
                     if (typeof window.pdfjsLib !== 'undefined') {
-                        if (window.pdfjsLib.GlobalWorkerOptions && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
-                            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-                        }
-                        return Promise.resolve();
+                        return Promise.resolve(window.pdfjsLib);
                     }
-                    return new Promise((resolve, reject) => {
-                        const existing = document.querySelector('script[src*="pdf.min.js"]');
-                        if (existing && typeof window.pdfjsLib !== 'undefined') {
-                            if (window.pdfjsLib.GlobalWorkerOptions && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
-                                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-                            }
-                            resolve();
-                            return;
-                        }
-                        const script = existing || document.createElement('script');
-                        if (!existing) {
-                            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
-                            document.head.appendChild(script);
-                        }
-                        script.onload = () => {
-                            if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
-                                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-                            }
-                            resolve();
-                        };
-                        script.onerror = () => reject(new Error("Gagal memuat library PDF.js."));
-                    });
+                    if (window.SimagangVendor && window.SimagangVendor.pdfjs) {
+                        return window.SimagangVendor.pdfjs().then(lib => {
+                            window.pdfjsLib = lib;
+                            return lib;
+                        });
+                    }
+                    return Promise.reject(new Error("Gagal memuat library PDF.js."));
                 },
 
                 setStatus(message, className) {

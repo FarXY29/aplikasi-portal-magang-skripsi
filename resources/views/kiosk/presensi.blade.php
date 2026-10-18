@@ -6,31 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dynamic QR Presensi Kantor - {{ $instansi->nama_dinas }}</title>
 
-    <!-- Tailwind CSS & FontAwesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            400: '#2dd4bf',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            700: '#0f766e',
-                            800: '#115e59',
-                            900: '#134e4a',
-                            950: '#042f2e',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
         body {

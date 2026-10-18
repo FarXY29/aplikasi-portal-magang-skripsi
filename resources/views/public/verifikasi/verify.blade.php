@@ -169,10 +169,10 @@
                             <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Predikat & Nilai Akhir</span>
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-slate-800 dark:text-gray-100 text-xs sm:text-sm">
-                                    {{ $app->nilai_angka >= 85 ? 'Sangat Baik (A)' : ($app->nilai_angka >= 70 ? 'Baik (B)' : 'Cukup (C)') }}
+                                    {{ $app->predikat ?: \App\Models\Application::predikatFor((float) $app->avg_nilai) }}
                                 </span>
                                 <span class="font-mono text-xs px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-extrabold">
-                                    {{ number_format((float) ($app->nilai_angka ?? 0), 1) }}
+                                    {{ number_format((float) $app->avg_nilai, 1) }}
                                 </span>
                             </div>
                         </div>

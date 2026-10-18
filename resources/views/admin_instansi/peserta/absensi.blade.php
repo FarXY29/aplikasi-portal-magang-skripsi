@@ -151,9 +151,9 @@
                                     @endif
                                 </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @if($log->status == 'hadir')
-                                        @if($log->clock_in > '08:00:00')
+                                        @if($log->clock_in > ($app->position?->instansi?->jam_mulai_masuk ?: '08:00:00'))
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 gap-1.5">
                                                 <i class="fas fa-exclamation-triangle text-[10px]"></i> Terlambat
                                             </span>

@@ -32,7 +32,7 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $app->position?->instansi?->nama_dinas ?? '-' }}</div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->position?->posisi ?? '-' }}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $app->position?->judul_posisi ?? '-' }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-xs font-bold text-gray-800 dark:text-gray-200">

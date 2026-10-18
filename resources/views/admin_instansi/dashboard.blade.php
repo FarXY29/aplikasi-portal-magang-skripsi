@@ -401,29 +401,23 @@
             let timerInterval = null;
             let refreshInFlight = false;
             let dashboardBootScheduled = false;
-            const chartJsUrl = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
-
             const isDark = () => document.documentElement.classList.contains('dark');
 
             function loadChartJs() {
                 if (typeof Chart !== 'undefined') {
-                    return Promise.resolve();
+                    return Promise.resolve(Chart);
                 }
 
                 if (window.dinasDashboardChartPromise) {
                     return window.dinasDashboardChartPromise;
                 }
 
-                window.dinasDashboardChartPromise = new Promise((resolve, reject) => {
-                    const script = document.createElement('script');
-                    script.src = chartJsUrl;
-                    script.async = true;
-                    script.onload = () => resolve();
-                    script.onerror = () => reject(new Error('Chart.js gagal dimuat.'));
-                    document.head.appendChild(script);
-                });
+                if (window.SimagangVendor && window.SimagangVendor.chart) {
+                    window.dinasDashboardChartPromise = window.SimagangVendor.chart();
+                    return window.dinasDashboardChartPromise;
+                }
 
-                return window.dinasDashboardChartPromise;
+                return Promise.reject(new Error('Vendor loader Chart.js tidak tersedia.'));
             }
 
             // 1. TREN PENDAFTARAN (LINE CHART)

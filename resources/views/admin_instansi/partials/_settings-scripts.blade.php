@@ -33,27 +33,26 @@
 </script>
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
     let adminMap = null;
     let adminMarker = null;
     let adminCircle = null;
 
-    function ensureLeaflet(callback, maxWaitMs = 5000) {
+    function ensureLeaflet(callback) {
         if (typeof L !== 'undefined') {
             callback();
             return;
         }
-        const startTime = Date.now();
-        const interval = setInterval(function() {
-            if (typeof L !== 'undefined') {
-                clearInterval(interval);
+        if (window.SimagangVendor && window.SimagangVendor.leaflet) {
+            window.SimagangVendor.leaflet().then(function(leafletLib) {
+                window.L = leafletLib;
                 callback();
-            } else if (Date.now() - startTime > maxWaitMs) {
-                clearInterval(interval);
-                console.warn('Leaflet JS gagal dimuat dalam waktu 5 detik.');
-            }
-        }, 50);
+            }).catch(function(err) {
+                console.warn('Leaflet JS gagal dimuat:', err);
+            });
+            return;
+        }
+        console.warn('Vendor loader Leaflet tidak tersedia.');
     }
 
     function initAdminMap() {

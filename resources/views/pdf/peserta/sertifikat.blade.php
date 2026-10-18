@@ -491,7 +491,7 @@
     $kampusSekolah = $user->university?->name ?? $user->school?->name ?? $user->asal_instansi ?? '-';
     $jurusanProdi = $user->majorDetail?->name ?? $user->major ?? '-';
     $nomorInduk = $user->nik ?? $user->nim ?? '-';
-    $posisiPenempatan = $app->position?->title ?? $app->position?->name ?? ($instansi?->nama_dinas ?? 'Bidang Terkait');
+    $posisiPenempatan = $app->position?->judul_posisi ?? ($instansi?->nama_dinas ?? 'Bidang Terkait');
 
     // SVG Ornamen Sasirangan Sudut Kiri (Embedded Base64)
     $svgLeft = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">

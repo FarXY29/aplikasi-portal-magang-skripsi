@@ -7,7 +7,6 @@
 --}}
 
 @push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <style>
     /* Ensure the map container has a defined height */
     #map { height: 250px !important; width: 100%; border-radius: 0.5rem; z-index: 1; }
@@ -16,23 +15,22 @@
 @endpush
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
-    function ensureLeaflet(callback, maxWaitMs = 5000) {
+    function ensureLeaflet(callback) {
         if (typeof L !== 'undefined') {
             callback();
             return;
         }
-        const startTime = Date.now();
-        const interval = setInterval(function() {
-            if (typeof L !== 'undefined') {
-                clearInterval(interval);
+        if (window.SimagangVendor && window.SimagangVendor.leaflet) {
+            window.SimagangVendor.leaflet().then(function(leafletLib) {
+                window.L = leafletLib;
                 callback();
-            } else if (Date.now() - startTime > maxWaitMs) {
-                clearInterval(interval);
-                console.warn('Leaflet JS gagal dimuat dalam waktu 5 detik.');
-            }
-        }, 50);
+            }).catch(function(err) {
+                console.warn('Leaflet JS gagal dimuat:', err);
+            });
+            return;
+        }
+        console.warn('Vendor loader Leaflet tidak tersedia.');
     }
 
     function initLeafletMap() {

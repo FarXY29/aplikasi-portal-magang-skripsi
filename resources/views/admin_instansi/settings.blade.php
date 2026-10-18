@@ -1,6 +1,5 @@
 <x-app-layout>
     @push('styles')
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
         <style>
             #map-instansi {
                 height: 320px;
