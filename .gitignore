@@ -1,42 +1,48 @@
 /.phpunit.cache
+# Laravel Standard Ignores
 /node_modules
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
+# Sensitive PII/private storage (CV, selfies, dispute docs, DB backups) - never commit
+/storage/app/private/
 /vendor
-.env
-.env.backup
-.env copy
-.env.production
+# Env files: ignore all, explicitly whitelist only templates (never real secrets)
+.env*
+!.env.example
+!.env.testing.example
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
 auth.json
 npm-debug.log
 yarn-error.log
+
+# IDE & OS Artifacts
 /.fleet
 /.idea
 /.vscode
 /storage/test_output
 /docs
+
+
+# Local AI Agent, Code Graph & Design Artifacts
+/.agent
+/.agents
+/.asw
+/.claude
+/.gemini
 /.kilo
 /storage/framework
 /storage/framework/views-codex
 /.codex
 /.reasonix
+/graphify-out
 /opendesign
-opendesign/
-storage\framework\views-v2
-graphify-out/cache/
-graphify-out/manifest.json
-graphify-out/cost.json
-
-# Local env files (Vite/Laravel local overrides)
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+AGENTS.md
+CLAUDE.md
+GEMINI.md
 
 # OS files
 .DS_Store
@@ -57,8 +63,6 @@ $RECYCLE.BIN/
 *.sw?
 *.sublime-project
 *.sublime-workspace
-.vscode/sftp.json
-.vscode/settings.json
 
 # Test coverage and reports
 /coverage/
@@ -68,6 +72,8 @@ junit.xml
 
 # Local database backups and dumps
 *.sql
-*.sqlite
+*.sql.gz
+*.sqlite*
+*.dump
 
 

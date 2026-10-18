@@ -139,9 +139,15 @@ class DynamicQrService
      */
     private function getInstansiSecret(Instansi $instansi): string
     {
-        $appKey = (string) config('app.key', 'default-magang-secret-key-2026');
+        $appKey = (string) config('app.key');
 
-        return hash('sha256', $appKey . '|instansi|' . $instansi->id . '|' . ($instansi->created_at?->timestamp ?? 'static'));
+        if ($appKey === '') {
+            throw new \RuntimeException(
+                'APP_KEY must be configured to derive per-instansi QR secrets. Refusing to fall back to a weak default.'
+            );
+        }
+
+        return hash('sha256', $appKey.'|instansi|'.$instansi->id.'|'.($instansi->created_at?->timestamp ?? 'static'));
     }
 
     /**
