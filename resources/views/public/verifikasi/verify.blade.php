@@ -1,295 +1,185 @@
-<x-guest-layout>
-    <div class="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 w-full max-w-2xl mx-auto" x-data="{ copied: false }">
-        
-        <!-- Navigation Back & Quick Actions -->
-        <div class="mb-6 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="group inline-flex items-center text-xs sm:text-sm font-bold text-slate-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                <div class="w-8 h-8 rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 flex items-center justify-center mr-2.5 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-2xs transition">
-                    <i class="fas fa-arrow-left text-xs text-slate-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
-                </div>
-                Kembali ke Beranda
-            </a>
+<x-guest-layout :public-navigation="true">
+    <div class="verification-shell" x-data="{ copied: false }">
+        <div class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+            <nav class="mb-8 flex flex-wrap items-center justify-between gap-4" aria-label="Navigasi verifikasi">
+                <a href="{{ route('home') }}" class="verification-back"><i class="fas fa-arrow-left" aria-hidden="true"></i>Kembali ke beranda</a>
+                <a href="{{ route('qr.scanner') }}" class="verification-back"><i class="fas fa-qrcode text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Verifikasi dokumen lain</a>
+            </nav>
 
-            <a href="{{ route('qr.scanner') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 hover:border-teal-400 text-xs font-bold shadow-2xs transition">
-                <i class="fas fa-qrcode text-teal-600 dark:text-teal-400 text-xs"></i>
-                <span>Pindai Ulang</span>
-            </a>
-        </div>
-
-        <!-- Master Certificate Verification Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl border border-slate-200/80 dark:border-gray-700 overflow-hidden relative">
-            
-            @if(!$isValid)
-                <!-- STATE 1: DATA TIDAK DITEMUKAN -->
-                <div class="bg-gradient-to-b from-rose-500/15 via-transparent to-transparent dark:from-rose-950/30 p-8 text-center border-b border-rose-100 dark:border-rose-900/40">
-                    <div class="w-20 h-20 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-4 shadow-inner">
-                        <i class="fas fa-circle-xmark text-4xl"></i>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-[10px] font-black uppercase tracking-widest mb-2">
-                        Verifikasi Gagal
-                    </span>
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-gray-100 font-display">
-                        Data Tidak Ditemukan
-                    </h1>
-                    <p class="text-xs sm:text-sm text-slate-500 dark:text-gray-400 mt-2 max-w-sm mx-auto leading-relaxed">
-                        Token verifikasi atau nomor sertifikat yang Anda cari tidak terdaftar pada pangkalan data Pemerintah Kota Banjarmasin.
-                    </p>
-                </div>
-
-                <div class="p-6 sm:p-8 space-y-6 text-center">
-                    @if(!empty($searchedToken))
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900 border border-slate-200/70 dark:border-gray-800 text-left">
-                            <span class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Kata Kunci / Token yang Dicari:</span>
-                            <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 break-all select-all">{{ $searchedToken }}</span>
-                        </div>
-                    @endif
-
-                    <div class="space-y-3">
-                        <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed max-w-md mx-auto">
-                            Pastikan Anda memindai QR Code asli yang tercantum pada sertifikat fisik/elektronik resmi yang diterbitkan oleh Portal Magang Pemerintah Kota Banjarmasin.
-                        </p>
-                        
-                        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-                            <a href="{{ route('qr.scanner') }}" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold px-6 py-3 rounded-2xl text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition flex items-center gap-2">
-                                <i class="fas fa-camera text-xs"></i>
-                                <span>Coba Pindai Ulang</span>
-                            </a>
-                            <a href="{{ route('home') }}" class="bg-slate-100 hover:bg-slate-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-slate-700 dark:text-gray-200 font-bold px-6 py-3 rounded-2xl text-xs uppercase tracking-wider transition">
-                                Beranda
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-            @elseif($app->certificate && $app->certificate->isRevoked())
-                <!-- STATE 2: SERTIFIKAT DICABUT / DIBATALKAN -->
-                <div class="bg-gradient-to-b from-rose-600/20 via-rose-500/10 to-transparent dark:from-rose-950/40 p-8 text-center border-b border-rose-200 dark:border-rose-900/50">
-                    <div class="w-20 h-20 rounded-3xl bg-rose-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-rose-600/30 animate-pulse">
-                        <i class="fas fa-ban text-3xl"></i>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest mb-2 shadow-xs">
-                        Tidak Berlaku
-                    </span>
-                    <h1 class="text-2xl sm:text-3xl font-black text-rose-700 dark:text-rose-400 font-display">
-                        Sertifikat Dibatalkan
-                    </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-gray-300 mt-2 max-w-sm mx-auto leading-relaxed font-semibold">
-                        Status keabsahan sertifikat ini telah <strong>DICABUT / DIBATALKAN</strong> secara resmi oleh Pemerintah Kota Banjarmasin.
-                    </p>
-                </div>
-
-                <div class="p-6 sm:p-8 space-y-6">
-                    <!-- Reason Box -->
-                    <div class="p-5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/80 space-y-2">
-                        <span class="text-xs font-black text-rose-800 dark:text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fas fa-triangle-exclamation"></i> Alasan Pembatalan Resmi:
-                        </span>
-                        <p class="text-sm font-semibold text-rose-900 dark:text-rose-200 leading-relaxed">
-                            {{ $app->certificate->revoked_reason ?? 'Pencabutan status legalitas dan pembatalan hak sertifikat oleh administrator.' }}
-                        </p>
-                        @if($app->certificate->revoked_at)
-                            <span class="block text-[11px] font-mono text-rose-600 dark:text-rose-400 pt-2 border-t border-rose-200/60 dark:border-rose-900/60">
-                                Waktu Pencabutan: {{ $app->certificate->revoked_at->translatedFormat('d F Y - H:i') }} WITA
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Participant Card Preview -->
-                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-gray-900/80 border border-slate-200/80 dark:border-gray-700/80 space-y-3">
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Identitas Tercantum:</span>
-                        <div>
-                            <h3 class="text-lg font-black text-slate-800 dark:text-gray-100">{{ $app->user->name }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-gray-400 font-medium">{{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}</p>
-                        </div>
-                        <div class="pt-3 border-t border-slate-200/60 dark:border-gray-800 flex justify-between items-center text-xs">
-                            <span class="text-slate-500 dark:text-gray-400">Nomor Sertifikat:</span>
-                            <span class="font-mono font-bold text-slate-700 dark:text-slate-300 line-through">{{ $app->nomor_sertifikat ?? '-' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-center text-xs text-amber-800 dark:text-amber-300">
-                        <i class="fas fa-circle-exclamation mr-1"></i>
-                        Peringatan: Dokumen ini tidak dapat digunakan untuk keperluan akademik, kedinasan, maupun administrasi lainnya.
-                    </div>
-                </div>
-
-            @elseif($app->status?->value === 'selesai')
-                <!-- STATE 3: SERTIFIKAT SAH & VALID (LULUS MAGANG) -->
-                
-                <!-- Official Certificate Badge Header -->
-                <div class="bg-gradient-to-b from-emerald-500/20 via-teal-500/10 to-transparent dark:from-emerald-950/40 p-8 text-center border-b border-emerald-100 dark:border-emerald-900/40 relative">
-                    
-                    <!-- Certificate Seal Stamp -->
-                    <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/30 border-2 border-emerald-300/40">
-                        <i class="fas fa-award text-3xl"></i>
-                    </div>
-
-                    <span class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest mb-2 shadow-xs">
-                        <i class="fas fa-shield-check text-xs"></i> Dokumen Resmi & Terverifikasi
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
-                        Sertifikat Sah & Valid
-                    </h1>
-                    <p class="text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 mt-1 font-bold">
-                        Program Magang Resmi Pemerintah Kota Banjarmasin
-                    </p>
-                </div>
-
-                <div class="p-6 sm:p-8 space-y-6">
-                    
-                    <!-- Identitas Peserta Block -->
-                    <div class="text-center pb-6 border-b border-slate-100 dark:border-gray-700/80 space-y-1.5">
-                        <span class="text-[10px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block">Diberikan Kepada:</span>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-gray-100 font-display">
-                            {{ $app->user->name }}
-                        </h2>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-gray-400">
-                            {{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}
-                        </p>
-                        @if(!empty($app->user->nik))
-                            <span class="inline-block font-mono text-[11px] bg-slate-100 dark:bg-gray-900 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-lg mt-1 font-bold">
-                                NIK / NIM: {{ $app->user->masked_nik }}
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Details Grid 2x2 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-                        <!-- Nomor Sertifikat -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Nomor Registrasi</span>
-                            <span class="font-mono font-black text-slate-800 dark:text-gray-200 text-xs sm:text-sm break-all">
-                                {{ $app->nomor_sertifikat ?? '-' }}
-                            </span>
-                        </div>
-
-                        <!-- Predikat Nilai -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Predikat & Nilai Akhir</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-800 dark:text-gray-100 text-xs sm:text-sm">
-                                    {{ $app->predikat ?: \App\Models\Application::predikatFor((float) $app->avg_nilai) }}
-                                </span>
-                                <span class="font-mono text-xs px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-extrabold">
-                                    {{ number_format((float) $app->avg_nilai, 1) }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Instansi Penempatan -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Instansi Penempatan</span>
-                            <span class="font-bold text-slate-800 dark:text-gray-200 block">
-                                {{ $app->position->instansi->nama_dinas }}
-                            </span>
-                            <span class="text-[11px] text-slate-500 dark:text-gray-400 block">
-                                Posisi: {{ $app->position->judul_posisi }}
-                            </span>
-                        </div>
-
-                        <!-- Periode Magang -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Periode Magang</span>
-                            <span class="font-bold text-slate-800 dark:text-gray-200 block">
-                                {{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} s/d {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Digital Legal Signature & QR Verification Info -->
-                    @if($app->certificate)
-                        <div class="p-4 sm:p-5 rounded-2xl bg-teal-50/60 dark:bg-teal-950/30 border border-teal-200/70 dark:border-teal-800/50 flex flex-col sm:flex-row items-start sm:items-center gap-4 text-xs">
-                            @if($app->certificate->qr_code_path)
-                                <div class="w-16 h-16 rounded-xl bg-white dark:bg-gray-900 p-1.5 border border-teal-200 dark:border-teal-800 shadow-2xs shrink-0 mx-auto sm:mx-0">
-                                    <img src="{{ Storage::url($app->certificate->qr_code_path) }}" alt="QR Validation" class="w-full h-full object-contain">
-                                </div>
-                            @endif
-                            <div class="space-y-1 flex-grow">
-                                <span class="text-[10px] font-extrabold text-teal-700 dark:text-teal-400 uppercase tracking-widest block">Penandatangan Resmi:</span>
-                                <p class="font-black text-slate-800 dark:text-gray-100 text-xs sm:text-sm">
-                                    {{ $app->certificate->signer_name ?? 'Pemerintah Kota Banjarmasin' }}
-                                </p>
-                                <span class="text-[10px] text-slate-500 dark:text-gray-400 font-mono block">
-                                    Signature Hash: <span class="text-teal-700 dark:text-teal-300 select-all break-all">{{ substr($app->certificate->signature_mock ?? $app->token_verifikasi, 0, 32) }}...</span>
-                                </span>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Action Bar -->
-                    <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
-                        <!-- Copy Share Link -->
-                        <button @click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2500)" 
-                                type="button" 
-                                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl border border-slate-200 dark:border-gray-700 font-bold text-xs transition"
-                                :class="copied ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-100 hover:bg-slate-200 dark:bg-gray-900 dark:hover:bg-gray-800 text-slate-700 dark:text-gray-300'">
-                            <i :class="copied ? 'fas fa-check text-emerald-600' : 'fas fa-link text-teal-600'"></i>
-                            <span x-text="copied ? 'Tautan Tersalin!' : 'Salin Tautan Bukti'">Salin Tautan Bukti</span>
-                        </button>
-
-                        <a href="{{ route('qr.scanner') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition">
-                            <i class="fas fa-qrcode text-xs"></i>
-                            <span>Pindai Sertifikat Lain</span>
-                        </a>
-                    </div>
-                </div>
-
-            @else
-                <!-- STATE 4: PESERTA SEDANG AKTIF MAGANG -->
-                <div class="bg-gradient-to-b from-teal-500/20 via-sky-500/10 to-transparent dark:from-teal-950/40 p-8 text-center border-b border-teal-100 dark:border-teal-900/40">
-                    <div class="w-20 h-20 rounded-3xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-teal-600/30">
-                        <i class="fas fa-user-clock text-3xl"></i>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-teal-600 text-white text-[10px] font-black uppercase tracking-widest mb-2 shadow-xs">
-                        Peserta Aktif
-                    </span>
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">
-                        Peserta Sedang Magang
-                    </h1>
-                    <p class="text-xs sm:text-sm text-teal-800 dark:text-teal-300 mt-1 font-semibold">
-                        Terdaftar Resmi dalam Periode Aktif Pemkot Banjarmasin
-                    </p>
-                </div>
-
-                <div class="p-6 sm:p-8 space-y-6">
-                    <div class="text-center pb-6 border-b border-slate-100 dark:border-gray-700/80 space-y-1.5">
-                        <span class="text-[10px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest block">Identitas Peserta:</span>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-gray-100 font-display">
-                            {{ $app->user->name }}
-                        </h2>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-gray-400">
-                            {{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Instansi Penempatan</span>
-                            <span class="font-bold text-slate-800 dark:text-gray-200 block">{{ $app->position->instansi->nama_dinas }}</span>
-                            <span class="text-[11px] text-slate-500 dark:text-gray-400 block">{{ $app->position->judul_posisi }}</span>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200/70 dark:border-gray-700/70 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Periode Magang</span>
-                            <span class="font-bold text-slate-800 dark:text-gray-200 block">
-                                {{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }} s/d {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-900/50 text-center text-xs text-sky-800 dark:text-sky-300">
-                        <i class="fas fa-circle-info mr-1"></i>
-                        Sertifikat elektronik akan diterbitkan secara otomatis setelah peserta menyelesaikan periode magang dan dinilai oleh pembimbing lapangan.
-                    </div>
-                </div>
-            @endif
-
-            <!-- Footer Card Note -->
-            <div class="px-6 sm:px-8 py-4 bg-slate-50 dark:bg-gray-900/60 border-t border-slate-100 dark:border-gray-700/80 text-center text-slate-400 dark:text-slate-500 text-[11px] font-medium flex items-center justify-center gap-2">
-                <i class="fas fa-lock text-teal-600 dark:text-teal-400 text-xs"></i>
-                <span>Verifikasi Dihasilkan Otomatis oleh Sistem Terpadu Pemerintah Kota Banjarmasin</span>
+            <div class="mb-8 flex items-center gap-4">
+                <span class="verification-kicker">Verifikasi digital</span>
+                <span class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></span>
+                <span class="hidden text-xs font-medium text-slate-500 dark:text-slate-400 sm:block">Pemerintah Kota Banjarmasin</span>
             </div>
+
+            <main class="verification-card overflow-hidden">
+                @if(!$isValid)
+                    <header class="verification-status verification-status-danger">
+                        <div class="verification-status-icon bg-rose-600 text-white"><i class="fas fa-file-circle-xmark" aria-hidden="true"></i></div>
+                        <div>
+                            <p class="verification-status-label text-rose-700 dark:text-rose-300">Verifikasi gagal</p>
+                            <h1 class="verification-title">Dokumen tidak ditemukan</h1>
+                            <p class="verification-description">Nomor sertifikat atau token verifikasi tidak terdaftar pada pangkalan data resmi Pemerintah Kota Banjarmasin.</p>
+                        </div>
+                    </header>
+                    <div class="verification-content mx-auto max-w-2xl text-center">
+                        @if(!empty($searchedToken))
+                            <div class="verification-token mb-6 text-left">
+                                <span class="verification-data-label mb-2 block">Kata kunci / token yang dicari</span>
+                                <code class="break-all text-sm font-semibold text-slate-700 dark:text-slate-200">{{ $searchedToken }}</code>
+                            </div>
+                        @endif
+                        <div class="mb-7 flex items-start gap-3 text-left sm:text-center">
+                            <i class="fas fa-circle-info mt-0.5 shrink-0 text-slate-400" aria-hidden="true"></i>
+                            <p class="text-sm leading-7 text-slate-600 dark:text-slate-300">Pastikan QR Code berasal dari sertifikat fisik atau elektronik resmi. Anda juga dapat memeriksa ulang ejaan nomor sertifikat melalui pencarian manual.</p>
+                        </div>
+                        <div class="flex flex-col justify-center gap-3 sm:flex-row">
+                            <a href="{{ route('qr.scanner') }}" class="verification-button"><i class="fas fa-camera" aria-hidden="true"></i>Coba verifikasi lagi</a>
+                            <a href="{{ route('home') }}" class="verification-button-secondary">Kembali ke beranda</a>
+                        </div>
+                    </div>
+
+                @elseif($app->certificate && $app->certificate->isRevoked())
+                    <header class="verification-status verification-status-danger">
+                        <div class="verification-status-icon bg-rose-600 text-white"><i class="fas fa-ban" aria-hidden="true"></i></div>
+                        <div>
+                            <p class="verification-status-label text-rose-700 dark:text-rose-300">Dokumen tidak berlaku</p>
+                            <h1 class="verification-title">Sertifikat telah dibatalkan</h1>
+                            <p class="verification-description">Keabsahan sertifikat ini telah dicabut secara resmi oleh Pemerintah Kota Banjarmasin.</p>
+                        </div>
+                    </header>
+                    <div class="verification-content space-y-5">
+                        <section class="rounded-2xl border border-rose-200 bg-rose-50 p-5 dark:border-rose-900 dark:bg-rose-950/30 sm:p-6" aria-labelledby="revocation-heading">
+                            <h2 id="revocation-heading" class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Alasan pembatalan resmi</h2>
+                            <p class="mt-3 text-sm font-medium leading-7 text-rose-950 dark:text-rose-100">{{ $app->certificate->revoked_reason ?? 'Pencabutan status legalitas dan pembatalan hak sertifikat oleh administrator.' }}</p>
+                            @if($app->certificate->revoked_at)
+                                <p class="mt-4 border-t border-rose-200 pt-3 text-xs text-rose-700 dark:border-rose-900 dark:text-rose-300">Dibatalkan pada {{ $app->certificate->revoked_at->translatedFormat('d F Y, H:i') }} WITA</p>
+                            @endif
+                        </section>
+                        <section class="verification-profile">
+                            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800"><i class="fas fa-user text-xl" aria-hidden="true"></i></div>
+                            <div class="min-w-0 flex-1">
+                                <p class="verification-data-label mb-1">Identitas pada dokumen</p>
+                                <h2 class="verification-profile-name">{{ $app->user->name }}</h2>
+                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}</p>
+                                <p class="mt-3 break-all font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">No. sertifikat &nbsp; <span class="line-through">{{ $app->nomor_sertifikat ?? '-' }}</span></p>
+                            </div>
+                        </section>
+                        <div class="verification-alert border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+                            <i class="fas fa-circle-exclamation mt-0.5 shrink-0" aria-hidden="true"></i>
+                            <p>Dokumen ini tidak dapat digunakan untuk keperluan akademik, kedinasan, maupun administrasi lainnya.</p>
+                        </div>
+                    </div>
+
+                @elseif($app->status?->value === 'selesai')
+                    <header class="verification-status verification-status-success">
+                        <div class="verification-status-icon bg-teal-700 text-white"><i class="fas fa-award" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="mb-2 flex flex-wrap items-center gap-2">
+                                <p class="verification-status-label text-teal-800 dark:text-teal-300">Sertifikat resmi</p>
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-teal-300 bg-white/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:border-teal-700 dark:bg-teal-950/40 dark:text-teal-300"><i class="fas fa-check" aria-hidden="true"></i>Sah & valid</span>
+                            </div>
+                            <h1 class="verification-title">Sertifikat berhasil diverifikasi</h1>
+                            <p class="verification-description">Dokumen terdaftar dan cocok dengan catatan resmi Program Magang Pemerintah Kota Banjarmasin.</p>
+                        </div>
+                    </header>
+
+                    <div class="verification-content space-y-6">
+                        <section class="border-b border-slate-100 pb-6 text-center dark:border-slate-800">
+                            <p class="verification-data-label mb-2">Diberikan kepada</p>
+                            <h2 class="font-display text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">{{ $app->user->name }}</h2>
+                            <p class="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">{{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}</p>
+                            @if(!empty($app->user->nik))<p class="mt-3 font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">NIK / NIM &nbsp; {{ $app->user->masked_nik }}</p>@endif
+                        </section>
+
+                        <section aria-labelledby="certificate-details-heading">
+                            <div class="mb-3 flex items-center justify-between">
+                                <h2 id="certificate-details-heading" class="text-sm font-bold text-slate-900 dark:text-white">Rincian sertifikat</h2>
+                                <span class="text-xs text-slate-400">Data kelulusan</span>
+                            </div>
+                            <dl class="grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 dark:border-slate-700 dark:bg-slate-700 sm:grid-cols-2">
+                                <div class="verification-detail">
+                                    <dt class="verification-data-label"><i class="fas fa-hashtag mr-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Nomor registrasi</dt>
+                                    <dd class="verification-data-value break-all font-mono">{{ $app->nomor_sertifikat ?? '-' }}</dd>
+                                </div>
+                                <div class="verification-detail">
+                                    <dt class="verification-data-label"><i class="fas fa-star mr-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Predikat & nilai akhir</dt>
+                                    <dd class="flex flex-wrap items-center gap-2"><strong class="verification-data-value">{{ $app->predikat ?: \App\Models\Application::predikatFor((float) $app->avg_nilai) }}</strong><span class="rounded-md bg-emerald-100 px-2 py-0.5 font-mono text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">{{ number_format((float) $app->avg_nilai, 1) }}</span></dd>
+                                </div>
+                                <div class="verification-detail">
+                                    <dt class="verification-data-label"><i class="fas fa-building mr-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Instansi penempatan</dt>
+                                    <dd class="verification-data-value">{{ $app->position->instansi->nama_dinas }}</dd>
+                                    <dd class="text-xs text-slate-500 dark:text-slate-400">{{ $app->position->judul_posisi }}</dd>
+                                </div>
+                                <div class="verification-detail">
+                                    <dt class="verification-data-label"><i class="far fa-calendar mr-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Periode magang</dt>
+                                    <dd class="verification-data-value">{{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }}</dd>
+                                    <dd class="text-xs text-slate-500 dark:text-slate-400">hingga {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}</dd>
+                                </div>
+                            </dl>
+                        </section>
+
+                        @if($app->certificate)
+                            <section class="flex flex-col gap-4 rounded-2xl border border-teal-200 bg-teal-50/70 p-5 dark:border-teal-900 dark:bg-teal-950/30 sm:flex-row sm:items-center" aria-labelledby="signature-heading">
+                                @if($app->certificate->qr_code_path)
+                                    <div class="mx-auto h-20 w-20 shrink-0 rounded-xl border border-teal-200 bg-white p-2 dark:border-teal-800 sm:mx-0"><img src="{{ Storage::url($app->certificate->qr_code_path) }}" alt="QR Code verifikasi sertifikat" class="h-full w-full object-contain"></div>
+                                @endif
+                                <div class="min-w-0 flex-1 text-center sm:text-left">
+                                    <h2 id="signature-heading" class="verification-data-label text-teal-800 dark:text-teal-300">Penandatangan resmi</h2>
+                                    <p class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ $app->certificate->signer_name ?? 'Pemerintah Kota Banjarmasin' }}</p>
+                                    <p class="mt-2 break-all font-mono text-[10px] leading-5 text-slate-500 dark:text-slate-400">Signature hash: <span class="select-all text-teal-800 dark:text-teal-300">{{ substr($app->certificate->signature_mock ?? $app->token_verifikasi, 0, 32) }}...</span></p>
+                                </div>
+                                <i class="fas fa-shield-halved hidden text-2xl text-teal-700/40 dark:text-teal-400/40 sm:block" aria-hidden="true"></i>
+                            </section>
+                        @endif
+
+                        <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+                            <button type="button" @click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2500)" class="verification-button-secondary" :class="copied ? '!border-emerald-300 !text-emerald-700 dark:!text-emerald-300' : ''">
+                                <i class="fas" :class="copied ? 'fa-check' : 'fa-link'" aria-hidden="true"></i><span x-text="copied ? 'Tautan berhasil disalin' : 'Salin tautan verifikasi'">Salin tautan verifikasi</span>
+                            </button>
+                            <a href="{{ route('qr.scanner') }}" class="verification-button"><i class="fas fa-qrcode" aria-hidden="true"></i>Periksa dokumen lain</a>
+                        </div>
+                    </div>
+
+                @else
+                    <header class="verification-status verification-status-info">
+                        <div class="verification-status-icon bg-sky-600 text-white"><i class="fas fa-user-clock" aria-hidden="true"></i></div>
+                        <div>
+                            <p class="verification-status-label text-sky-700 dark:text-sky-300">Peserta aktif</p>
+                            <h1 class="verification-title">Peserta sedang menjalani magang</h1>
+                            <p class="verification-description">Peserta terdaftar resmi dalam periode aktif. Sertifikat belum diterbitkan.</p>
+                        </div>
+                    </header>
+                    <div class="verification-content space-y-6">
+                        <section class="border-b border-slate-100 pb-6 text-center dark:border-slate-800">
+                            <p class="verification-data-label mb-2">Identitas peserta</p>
+                            <h2 class="font-display text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">{{ $app->user->name }}</h2>
+                            <p class="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">{{ $app->user->asal_instansi ?? 'Institusi Pendidikan' }}</p>
+                        </section>
+                        <dl class="grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 dark:border-slate-700 dark:bg-slate-700 sm:grid-cols-2">
+                            <div class="verification-detail">
+                                <dt class="verification-data-label"><i class="fas fa-building mr-1.5 text-sky-700 dark:text-sky-400" aria-hidden="true"></i>Instansi penempatan</dt>
+                                <dd class="verification-data-value">{{ $app->position->instansi->nama_dinas }}</dd>
+                                <dd class="text-xs text-slate-500 dark:text-slate-400">{{ $app->position->judul_posisi }}</dd>
+                            </div>
+                            <div class="verification-detail">
+                                <dt class="verification-data-label"><i class="far fa-calendar mr-1.5 text-sky-700 dark:text-sky-400" aria-hidden="true"></i>Periode magang</dt>
+                                <dd class="verification-data-value">{{ \Carbon\Carbon::parse($app->tanggal_mulai)->translatedFormat('d M Y') }}</dd>
+                                <dd class="text-xs text-slate-500 dark:text-slate-400">hingga {{ \Carbon\Carbon::parse($app->tanggal_selesai)->translatedFormat('d M Y') }}</dd>
+                            </div>
+                        </dl>
+                        <div class="verification-alert border-sky-200 bg-sky-50 text-sky-900 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-100">
+                            <i class="fas fa-circle-info mt-0.5 shrink-0" aria-hidden="true"></i>
+                            <p>Sertifikat elektronik diterbitkan setelah peserta menyelesaikan periode magang dan memperoleh penilaian dari pembimbing lapangan.</p>
+                        </div>
+                        <div class="flex justify-end border-t border-slate-100 pt-5 dark:border-slate-800"><a href="{{ route('qr.scanner') }}" class="verification-button-secondary"><i class="fas fa-qrcode" aria-hidden="true"></i>Periksa dokumen lain</a></div>
+                    </div>
+                @endif
+
+                <footer class="verification-footer"><i class="fas fa-lock text-teal-700 dark:text-teal-400" aria-hidden="true"></i><span>Hasil verifikasi diterbitkan otomatis oleh SiMagang · Pemerintah Kota Banjarmasin</span></footer>
+            </main>
+
+            <p class="mt-6 text-center text-xs leading-6 text-slate-500 dark:text-slate-400">Data ditampilkan sesuai catatan terakhir pada sistem. Jangan bagikan data pribadi kepada pihak yang tidak berkepentingan.</p>
         </div>
     </div>
 </x-guest-layout>

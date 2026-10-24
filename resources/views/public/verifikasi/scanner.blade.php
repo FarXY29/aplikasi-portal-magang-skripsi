@@ -1,212 +1,119 @@
-<x-guest-layout>
-    <div class="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 w-full max-w-4xl mx-auto" x-data="qrScannerManager()" x-init="init()">
-        
-        <!-- Navigation Back -->
-        <div class="mb-6 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="group inline-flex items-center text-xs sm:text-sm font-bold text-slate-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                <div class="w-8 h-8 rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 flex items-center justify-center mr-2.5 group-hover:border-teal-500 dark:group-hover:border-teal-400 shadow-2xs transition">
-                    <i class="fas fa-arrow-left text-xs text-slate-400 dark:text-gray-500 group-hover:text-teal-600 dark:group-hover:text-teal-400"></i>
+<x-guest-layout :public-navigation="true">
+    <div class="verification-shell" x-data="qrScannerManager()" x-init="init()">
+        <div class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+            <nav class="mb-8" aria-label="Navigasi verifikasi">
+                <a href="{{ route('home') }}" class="verification-back"><i class="fas fa-arrow-left" aria-hidden="true"></i>Kembali ke beranda</a>
+            </nav>
+
+            <header class="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                <div class="max-w-3xl">
+                    <p class="verification-kicker mb-4">Layanan verifikasi publik</p>
+                    <h1 class="font-display text-3xl font-bold leading-tight tracking-tight text-slate-950 dark:text-white sm:text-4xl lg:text-5xl">Pastikan dokumen Anda<br class="hidden sm:block"> asli dan terdaftar.</h1>
+                    <p class="mt-4 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">Verifikasi sertifikat dan ID Card magang melalui kamera, unggahan berkas, atau nomor dokumen.</p>
                 </div>
-                Kembali ke Beranda
-            </a>
-
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200/60 dark:border-teal-800/60 text-teal-700 dark:text-teal-300 text-[11px] font-extrabold uppercase tracking-wider">
-                <i class="fas fa-shield-halved text-xs"></i> Portal Verifikasi Resmi
-            </span>
-        </div>
-
-        <!-- Main Card Container -->
-        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl border border-slate-200/80 dark:border-gray-700 overflow-hidden">
-            
-            <!-- Card Header -->
-            <div class="p-6 sm:p-8 bg-gradient-to-b from-teal-50/50 via-transparent to-transparent dark:from-teal-950/20 text-center border-b border-slate-100 dark:border-gray-700/80">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-500/25">
-                    <i class="fas fa-qrcode text-2xl"></i>
+                <div class="hidden items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-xs font-semibold text-teal-800 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-300 lg:inline-flex">
+                    <i class="fas fa-shield-halved" aria-hidden="true"></i>Terhubung ke data resmi
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-gray-100 tracking-tight font-display">
-                    Verifikasi Keabsahan Sertifikat & ID Card
-                </h1>
-                <p class="mt-2 text-xs sm:text-sm text-slate-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed font-medium">
-                    Pindai kode QR pada ID Card peserta magang, sertifikat resmi, unggah berkas, atau cari berdasarkan nomor registrasi Pemerintah Kota Banjarmasin.
-                </p>
+            </header>
 
-                <!-- Dual-Tab Navigation Buttons -->
-                <div class="mt-6 inline-flex p-1.5 rounded-2xl bg-slate-100 dark:bg-gray-900/90 border border-slate-200 dark:border-gray-700/80 max-w-sm w-full">
-                    <button type="button" @click="switchTab('camera')" 
-                            class="flex-1 py-2.5 px-4 rounded-xl text-xs font-extrabold transition-all duration-200 flex items-center justify-center gap-2"
-                            :class="activeTab === 'camera' ? 'bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 shadow-md' : 'text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200'">
-                        <i class="fas fa-camera text-xs"></i>
-                        <span>Pemindai QR</span>
-                    </button>
-                    <button type="button" @click="switchTab('manual')" 
-                            class="flex-1 py-2.5 px-4 rounded-xl text-xs font-extrabold transition-all duration-200 flex items-center justify-center gap-2"
-                            :class="activeTab === 'manual' ? 'bg-white dark:bg-gray-800 text-teal-700 dark:text-teal-400 shadow-md' : 'text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200'">
-                        <i class="fas fa-magnifying-glass text-xs"></i>
-                        <span>Cari Nomor</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tab 1: Camera & File Scanner -->
-            <div x-show="activeTab === 'camera'" class="p-6 sm:p-8 space-y-6">
-                
-                <!-- Viewfinder Screen -->
-                <div class="relative mx-auto border-2 border-teal-500/40 dark:border-teal-500/30 rounded-3xl overflow-hidden shadow-xl bg-slate-950 aspect-square max-w-sm w-full">
-                    
-                    <!-- Camera Feed Target -->
-                    <div id="qr-reader" class="w-full h-full"></div>
-
-                    <!-- Scanning Overlay (Visible When Camera Active) -->
-                    <div id="scanner-overlay" x-show="isScanning" x-cloak class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <!-- Frame Corner Brackets -->
-                        <div class="w-56 h-56 relative flex items-center justify-center">
-                            <div class="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-teal-400 rounded-tl-lg shadow-[0_0_10px_#2dd4bf]"></div>
-                            <div class="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-teal-400 rounded-tr-lg shadow-[0_0_10px_#2dd4bf]"></div>
-                            <div class="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-teal-400 rounded-bl-lg shadow-[0_0_10px_#2dd4bf]"></div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-teal-400 rounded-br-lg shadow-[0_0_10px_#2dd4bf]"></div>
-                            
-                            <!-- Laser Line Animation -->
-                            <div class="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-teal-400 to-transparent left-0 laser-line shadow-[0_0_12px_#2dd4bf]"></div>
+            <main class="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.75fr)] lg:items-start">
+                <section aria-labelledby="camera-heading" class="verification-card p-4 sm:p-6">
+                    <div class="mb-5 flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300"><i class="fas fa-qrcode" aria-hidden="true"></i></span>
+                            <div>
+                                <h2 id="camera-heading" class="font-display text-xl font-bold text-slate-900 dark:text-white">Pindai QR Code</h2>
+                                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Gunakan kamera perangkat Anda</p>
+                            </div>
                         </div>
-                        <span class="text-[10px] text-teal-300 bg-slate-950/85 backdrop-blur-md px-3.5 py-1.5 rounded-full mt-4 font-black tracking-widest uppercase border border-teal-500/30">
-                            Memindai Kode QR...
+                        <span id="scanner-status" role="status" aria-live="polite" class="inline-flex min-h-8 shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 text-[11px] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                            <span class="h-1.5 w-1.5 rounded-full" :class="isScanning ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                            <span :class="statusClass" x-text="statusText">Siap</span>
                         </span>
                     </div>
 
-                    <!-- Placeholder Screen (Camera Inactive) -->
-                    <div id="scanner-placeholder" x-show="!isScanning" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 backdrop-blur-sm text-slate-300 p-6 text-center">
-                        <div class="w-16 h-16 rounded-2xl bg-teal-500/20 border border-teal-500/30 text-teal-400 flex items-center justify-center mb-3 shadow-inner">
-                            <i class="fas fa-camera text-2xl"></i>
+                    <div class="scanner-viewfinder relative mx-auto aspect-[4/3] w-full max-w-2xl overflow-hidden rounded-2xl bg-slate-950">
+                        <div id="qr-reader" class="h-full w-full"></div>
+                        <div id="scanner-overlay" x-show="isScanning" x-cloak class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                            <div class="scanner-frame relative h-52 w-52 sm:h-60 sm:w-60">
+                                <span class="absolute left-0 top-0 h-9 w-9 rounded-tl-lg border-l-[3px] border-t-[3px] border-teal-300"></span>
+                                <span class="absolute right-0 top-0 h-9 w-9 rounded-tr-lg border-r-[3px] border-t-[3px] border-teal-300"></span>
+                                <span class="absolute bottom-0 left-0 h-9 w-9 rounded-bl-lg border-b-[3px] border-l-[3px] border-teal-300"></span>
+                                <span class="absolute bottom-0 right-0 h-9 w-9 rounded-br-lg border-b-[3px] border-r-[3px] border-teal-300"></span>
+                                <span class="scanner-laser"></span>
+                            </div>
+                            <span class="mt-5 rounded-full bg-slate-950/80 px-4 py-2 text-xs font-semibold text-white backdrop-blur">Posisikan QR di dalam bingkai</span>
                         </div>
-                        <p class="font-bold text-white text-sm">Kamera Belum Aktif</p>
-                        <p class="text-xs text-slate-400 mt-1 max-w-[240px]">Klik tombol <strong>Buka Kamera</strong> di bawah atau unggah berkas sertifikat Anda.</p>
-                    </div>
-                </div>
-
-                <!-- Status & Action Buttons -->
-                <div class="flex flex-col items-center gap-4 max-w-sm mx-auto w-full">
-                    <div id="scanner-status" role="status" aria-live="polite" class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-900 px-4 py-1.5 rounded-full font-bold border border-slate-200 dark:border-gray-700">
-                        Status: <span :class="statusClass" x-text="statusText">Siap</span>
-                    </div>
-
-                    <div class="flex flex-wrap items-center justify-center gap-2.5 w-full">
-                        <button type="button" 
-                                id="btn-start-scan" 
-                                @click="startScanning()" 
-                                x-show="!isScanning" 
-                                :disabled="isStarting"
-                                class="flex-1 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white px-5 py-3.5 rounded-2xl text-xs uppercase tracking-wider font-extrabold transition shadow-md flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed">
-                            <i class="fas fa-camera text-sm" :class="{ 'fa-spin': isStarting }"></i>
-                            <span x-text="isStarting ? 'Menyiapkan...' : 'Buka Kamera'">Buka Kamera</span>
-                        </button>
-
-                        <button type="button" 
-                                id="btn-stop-scan" 
-                                @click="stopScanning()" 
-                                x-show="isScanning" 
-                                x-cloak 
-                                class="flex-1 bg-rose-600 hover:bg-rose-700 active:scale-98 text-white px-5 py-3.5 rounded-2xl text-xs uppercase tracking-wider font-extrabold transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fas fa-stop text-sm"></i>
-                            <span>Hentikan Kamera</span>
-                        </button>
-
-                        <button type="button" 
-                                id="btn-switch-cam" 
-                                @click="switchCamera()" 
-                                x-show="isScanning && availableCameras.length > 1" 
-                                x-cloak 
-                                class="bg-slate-100 hover:bg-slate-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-slate-700 dark:text-gray-200 px-3.5 py-3.5 rounded-2xl text-xs font-bold transition shadow-xs" 
-                                title="Ganti Kamera">
-                            <i class="fas fa-camera-rotate text-sm"></i>
-                        </button>
-
-                        <input type="file" 
-                               id="qr-file-input" 
-                               x-ref="fileInput" 
-                               @change="handleFileChange($event)" 
-                               accept="image/*,application/pdf" 
-                               class="hidden">
-
-                        <button type="button" 
-                                id="btn-upload-file" 
-                                @click="triggerUpload()" 
-                                class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-gray-900 dark:hover:bg-gray-800 text-slate-700 dark:text-gray-200 border border-slate-200 dark:border-gray-700 px-5 py-3.5 rounded-2xl text-xs uppercase tracking-wider font-extrabold transition flex items-center justify-center gap-2">
-                            <i class="fas fa-file-arrow-up text-sm text-teal-600 dark:text-teal-400"></i>
-                            <span>Unggah PDF / Gambar</span>
-                        </button>
-                    </div>
-
-                    <!-- Feedback Alert Message Container -->
-                    <div id="qr-reader-results" x-html="resultHtml" class="text-center font-bold text-xs sm:text-sm min-h-[1.5rem]"></div>
-                </div>
-
-                <!-- Troubleshooting & Camera Diagnostic Guide -->
-                <div id="debug-panel" x-show="debugVisible" x-cloak class="max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 rounded-2xl p-5 text-left text-xs">
-                    <h4 class="text-rose-800 dark:text-rose-300 font-bold flex items-center gap-2 mb-2">
-                        <i class="fas fa-triangle-exclamation text-rose-500"></i>
-                        <span>Kendala Akses Kamera Terdeteksi:</span>
-                    </h4>
-                    <p class="text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
-                        Pastikan izin kamera telah diberikan pada browser Anda dan situs diakses menggunakan protokol aman (HTTPS).
-                    </p>
-                    <div class="bg-white dark:bg-gray-900 p-3 rounded-xl border border-rose-100 dark:border-rose-900/40 text-[11px] font-mono text-rose-700 dark:text-rose-300 space-y-1">
-                        <div><strong>Protokol:</strong> <span id="debug-protocol" x-text="debugProtocol"></span></div>
-                        <div><strong>Secure Context:</strong> <span id="debug-secure" x-text="debugSecure"></span></div>
-                        <div id="debug-error-msg" x-text="debugErrorMsg" class="pt-1.5 border-t border-rose-100 dark:border-rose-900/40 text-rose-600 dark:text-rose-400 break-words"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 2: Manual Certificate Number Search -->
-            <div x-show="activeTab === 'manual'" x-cloak class="p-6 sm:p-10 max-w-md mx-auto space-y-6">
-                <div class="text-center space-y-2">
-                    <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60 flex items-center justify-center mx-auto shadow-2xs">
-                        <i class="fas fa-file-signature text-lg"></i>
-                    </div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-800 dark:text-gray-100">
-                        Cari Nomor Sertifikat / ID Card
-                    </h3>
-                    <p class="text-xs text-slate-500 dark:text-gray-400 leading-relaxed font-medium">
-                        Masukkan Nomor Sertifikat resmi atau Token Verifikasi ID Card untuk melihat data keabsahan.
-                    </p>
-                </div>
-
-                <form action="{{ route('certificate.search') }}" method="POST" class="space-y-4" x-data="{ manualInput: '' }">
-                    @csrf
-                    <div>
-                        <label for="nomor_sertifikat" class="block text-xs font-extrabold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-                            Nomor Sertifikat / Token ID Card
-                        </label>
-                        <div class="relative">
-                            <input type="text" id="nomor_sertifikat" name="nomor_sertifikat" x-model="manualInput" 
-                                   placeholder="Contoh: SERT/DISKOMINFO/2026/001 atau token..." 
-                                   required
-                                   class="w-full px-4 py-3.5 pr-10 border border-slate-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-bold bg-slate-50 dark:bg-gray-900 text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 shadow-2xs transition">
-                            <button type="button" x-show="manualInput.length > 0" @click="manualInput = ''" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">
-                                <i class="fas fa-times-circle text-sm"></i>
-                            </button>
+                        <div id="scanner-placeholder" x-show="!isScanning" class="scanner-placeholder absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                            <span class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-2xl text-teal-300"><i class="fas fa-camera" aria-hidden="true"></i></span>
+                            <p class="font-display text-lg font-semibold text-white">Kamera belum aktif</p>
+                            <p class="mt-2 max-w-xs text-xs leading-6 text-slate-400">Pilih “Buka kamera” atau unggah gambar dan PDF yang memuat QR Code.</p>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 active:scale-98 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                        <i class="fas fa-search text-xs"></i>
-                        <span>Verifikasi Sekarang</span>
-                    </button>
-                </form>
+                    <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+                        <button type="button" id="btn-start-scan" @click="startScanning()" x-show="!isScanning" :disabled="isStarting" class="verification-button flex-1 disabled:cursor-not-allowed disabled:opacity-60">
+                            <i class="fas fa-camera" :class="{ 'fa-spin': isStarting }" aria-hidden="true"></i>
+                            <span x-text="isStarting ? 'Menyiapkan kamera...' : 'Buka kamera'">Buka kamera</span>
+                        </button>
+                        <button type="button" id="btn-stop-scan" @click="stopScanning()" x-show="isScanning" x-cloak class="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-rose-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-rose-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:ring-offset-2">
+                            <i class="fas fa-stop" aria-hidden="true"></i>Hentikan kamera
+                        </button>
+                        <button type="button" id="btn-switch-cam" @click="switchCamera()" x-show="isScanning && availableCameras.length > 1" x-cloak class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-3.5 text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 dark:border-slate-600 dark:bg-slate-800 dark:text-white" title="Ganti kamera" aria-label="Ganti kamera">
+                            <i class="fas fa-camera-rotate" aria-hidden="true"></i>
+                        </button>
+                        <input type="file" id="qr-file-input" x-ref="fileInput" @change="handleFileChange($event)" accept="image/*,application/pdf" class="hidden">
+                        <button type="button" id="btn-upload-file" @click="triggerUpload()" class="verification-button-secondary flex-1">
+                            <i class="fas fa-file-arrow-up text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Unggah PDF / gambar
+                        </button>
+                    </div>
+                    <div id="qr-reader-results" role="status" aria-live="polite" x-html="resultHtml" class="mt-3 min-h-6 text-center text-sm font-semibold text-slate-700 dark:text-slate-200"></div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-gray-900 border border-slate-200/70 dark:border-gray-800 text-xs text-slate-500 dark:text-gray-400 space-y-1.5">
-                    <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">
-                        <i class="fas fa-circle-info text-teal-600 dark:text-teal-400 mr-1"></i> Informasi Tambahan:
-                    </span>
-                    <p class="text-[11px] leading-relaxed">Nomor sertifikat tercantum di bagian atas sertifikat fisik, atau di bawah QR code sertifikat elektronik.</p>
-                </div>
-            </div>
+                    <div id="debug-panel" x-show="debugVisible" x-cloak class="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-left text-sm dark:border-rose-900 dark:bg-rose-950/30">
+                        <h3 class="mb-2 flex items-center gap-2 font-bold text-rose-800 dark:text-rose-300"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Kamera tidak dapat diakses</h3>
+                        <p class="mb-3 leading-6 text-slate-600 dark:text-slate-300">Izinkan akses kamera pada browser dan pastikan situs menggunakan koneksi aman (HTTPS).</p>
+                        <div class="space-y-1 rounded-lg border border-rose-100 bg-white p-3 font-mono text-[11px] text-rose-700 dark:border-rose-900 dark:bg-slate-950 dark:text-rose-300">
+                            <div><strong>Protokol:</strong> <span id="debug-protocol" x-text="debugProtocol"></span></div>
+                            <div><strong>Koneksi aman:</strong> <span id="debug-secure" x-text="debugSecure"></span></div>
+                            <div id="debug-error-msg" x-text="debugErrorMsg" class="break-words border-t border-rose-100 pt-1.5 dark:border-rose-900"></div>
+                        </div>
+                    </div>
+                </section>
 
-            <!-- Footer Card Note -->
-            <div class="px-6 sm:px-8 py-4 bg-slate-50 dark:bg-gray-900/60 border-t border-slate-100 dark:border-gray-700/80 text-center text-slate-400 dark:text-slate-500 text-[11px] font-medium flex items-center justify-center gap-2">
-                <i class="fas fa-lock text-teal-600 dark:text-teal-400 text-xs"></i>
-                <span>Sistem Verifikasi Digital Terenkripsi Pemerintah Kota Banjarmasin</span>
-            </div>
+                <aside class="space-y-5">
+                    <section aria-labelledby="manual-heading" class="verification-card p-5 sm:p-6">
+                        <span class="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"><i class="fas fa-keyboard" aria-hidden="true"></i></span>
+                        <h2 id="manual-heading" class="font-display text-xl font-bold text-slate-900 dark:text-white">Cari tanpa kamera</h2>
+                        <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Masukkan nomor sertifikat atau token yang tertera pada ID Card.</p>
+                        <form action="{{ route('certificate.search') }}" method="POST" class="mt-6 space-y-4" x-data="{ manualInput: '' }">
+                            @csrf
+                            <div>
+                                <label for="nomor_sertifikat" class="mb-2 block text-xs font-bold text-slate-700 dark:text-slate-200">Nomor sertifikat / token ID Card</label>
+                                <div class="relative">
+                                    <input type="text" id="nomor_sertifikat" name="nomor_sertifikat" x-model="manualInput" placeholder="Masukkan nomor atau token" autocomplete="off" required class="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-11 text-sm text-slate-900 placeholder-slate-400 transition focus:border-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-700/10 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:focus:border-teal-400">
+                                    <button type="button" x-show="manualInput.length > 0" x-cloak @click="manualInput = ''" class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white" aria-label="Hapus isian"><i class="fas fa-times-circle" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="verification-button w-full"><i class="fas fa-search" aria-hidden="true"></i>Periksa dokumen</button>
+                        </form>
+                        <p class="mt-5 border-t border-slate-100 pt-4 text-xs leading-6 text-slate-500 dark:border-slate-800 dark:text-slate-400"><i class="fas fa-circle-info mr-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Nomor sertifikat berada di bagian atas dokumen atau di bawah QR Code.</p>
+                    </section>
+
+                    <section class="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-900/60" aria-labelledby="scan-guide-heading">
+                        <h2 id="scan-guide-heading" class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Hasil pemindaian yang baik</h2>
+                        <ul class="mt-4 space-y-3 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                            <li class="flex gap-3"><i class="fas fa-check mt-1 text-teal-700 dark:text-teal-400" aria-hidden="true"></i><span>Pastikan seluruh QR terlihat dan tidak terpotong.</span></li>
+                            <li class="flex gap-3"><i class="fas fa-check mt-1 text-teal-700 dark:text-teal-400" aria-hidden="true"></i><span>Gunakan pencahayaan cukup dan hindari pantulan.</span></li>
+                            <li class="flex gap-3"><i class="fas fa-check mt-1 text-teal-700 dark:text-teal-400" aria-hidden="true"></i><span>Berkas dapat berupa JPG, PNG, atau PDF.</span></li>
+                        </ul>
+                    </section>
+                </aside>
+            </main>
+
+            <footer class="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-5 text-xs leading-6 text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                <p class="flex items-start gap-2"><i class="fas fa-lock mt-1.5 text-teal-700 dark:text-teal-400" aria-hidden="true"></i>Pemindaian berkas diproses langsung pada perangkat Anda.</p>
+                <p>Kamera memerlukan izin browser dan koneksi HTTPS.</p>
+            </footer>
         </div>
     </div>
 
@@ -234,7 +141,6 @@
 
         function qrScannerManager() {
             return {
-                activeTab: 'camera',
                 isScanning: false,
                 isStarting: false,
                 availableCameras: [],
@@ -325,13 +231,6 @@
                     const errorMessage = error && error.message ? error.message : String(error || "Akses kamera ditolak.");
                     this.debugErrorMsg = errorName + ": " + errorMessage;
                     this.setStatus("Gagal", "text-rose-600 dark:text-rose-400 font-extrabold");
-                },
-
-                switchTab(tab) {
-                    this.activeTab = tab;
-                    if (tab === 'manual') {
-                        this.stopScanning();
-                    }
                 },
 
                 async startScanning() {
@@ -544,25 +443,27 @@
                     this.resultHtml = "<span class='text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1.5'><i class='fas fa-check-circle'></i> QR Berhasil Terdeteksi! Mengalihkan...</span>";
                     
                     this.stopScanning().then(() => {
+                        const visit = (url) => window.Turbo ? window.Turbo.visit(url) : window.location.assign(url);
+
                         if (decodedText.includes('/verify-id-card/')) {
-                            window.location.href = decodedText;
+                            visit(decodedText);
                         } else if (decodedText.includes('/verify-certificate/')) {
-                            window.location.href = decodedText;
+                            visit(decodedText);
                         } else {
                             const idCardMatch = decodedText.match(/verify-id-card\/([a-zA-Z0-9_\-]+)/);
                             if (idCardMatch) {
-                                window.location.href = "{{ url('/verify-id-card') }}/" + idCardMatch[1];
+                                visit("{{ url('/verify-id-card') }}/" + idCardMatch[1]);
                                 return;
                             }
 
                             const certMatch = decodedText.match(/verify-certificate\/([a-zA-Z0-9_\-]+)/);
                             if (certMatch) {
-                                window.location.href = "{{ url('/verify-certificate') }}/" + certMatch[1];
+                                visit("{{ url('/verify-certificate') }}/" + certMatch[1]);
                                 return;
                             }
 
                             // Default attempt ID Card verification
-                            window.location.href = "{{ url('/verify-id-card') }}/" + encodeURIComponent(decodedText);
+                            visit("{{ url('/verify-id-card') }}/" + encodeURIComponent(decodedText));
                         }
                     });
                 }
@@ -577,19 +478,11 @@
         };
     </script>
     <style>
-        @keyframes laser-scan {
-            0% { top: 0%; }
-            50% { top: 100%; }
-            100% { top: 0%; }
-        }
-        .laser-line {
-            animation: laser-scan 2.8s ease-in-out infinite;
-        }
         #qr-reader video {
             width: 100% !important;
             height: 100% !important;
             object-fit: cover !important;
-            border-radius: 1.5rem !important;
+            border-radius: 0.5rem !important;
         }
     </style>
     @endpush

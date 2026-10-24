@@ -43,40 +43,10 @@
 <body class="bg-slate-50 dark:bg-gray-900 text-slate-600 dark:text-slate-400 min-h-screen flex flex-col antialiased" 
       x-data="publicTrackingApp()" 
       x-init="initApp()">
-
-    <!-- Header Navigation -->
-    <header class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-gray-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 group focus:outline-none">
-                <div class="bg-teal-700 text-white rounded-xl p-2 shadow-2xs flex items-center justify-center">
-                    <x-ui.application-logo class="w-6 h-6 fill-current text-white" />
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-black text-slate-900 dark:text-white uppercase leading-none font-display">SiMagang</span>
-                    <span class="text-[9px] font-extrabold text-teal-600 dark:text-teal-400 uppercase tracking-widest mt-0.5">Kota Banjarmasin</span>
-                </div>
-            </a>
-
-            <div class="flex items-center gap-3">
-                <a href="{{ url('/') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition">
-                    <i class="fas fa-arrow-left text-[10px]"></i> Beranda
-                </a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5">
-                        <i class="fas fa-columns"></i> Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-xl shadow-2xs transition flex items-center gap-1.5">
-                        <i class="fas fa-sign-in-alt"></i> Masuk
-                    </a>
-                @endauth
-                <x-ui.theme-toggle class="p-2 text-slate-400 hover:text-teal-600 dark:text-gray-400 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200/50 dark:border-gray-700/50" />
-            </div>
-        </div>
-    </header>
+    @include('public.welcome._navbar')
 
     <!-- Hero & Search Section -->
-    <section class="bg-sasirangan-premium text-white py-12 sm:py-16 relative overflow-hidden">
+    <section class="bg-sasirangan-premium text-white pb-12 pt-28 sm:pb-16 sm:pt-32 relative overflow-hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-teal-500/20 text-teal-300 border border-teal-400/30 mb-4">
                 <i class="fas fa-radar text-xs"></i> Pelacakan Mandiri Publik
@@ -479,12 +449,6 @@
                         this.errorMsg = json.message || 'Gagal memuat status lamaran.';
                     }
                 } catch (err) {
-                    // Fallback to standard form submission if fetch/network fails
-                    const form = document.getElementById('tracking-search-form');
-                    if (form) {
-                        form.submit();
-                        return;
-                    }
                     this.errorMsg = 'Koneksi jaringan terputus. Silakan coba beberapa saat lagi.';
                 } finally {
                     this.loading = false;

@@ -1,3 +1,4 @@
+@props(['publicNavigation' => false])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -59,7 +60,17 @@
             }
         </script>
     </head>
-    <body class="auth-shell relative min-h-screen font-sans text-slate-900 dark:text-gray-100 antialiased transition-colors duration-300">
+    <body @class([
+        'min-h-screen font-sans antialiased transition-colors duration-300',
+        'bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100' => $publicNavigation,
+        'auth-shell relative text-slate-900 dark:text-gray-100' => ! $publicNavigation,
+    ])>
+        @if ($publicNavigation)
+            @include('public.welcome._navbar', ['solid' => true])
+            <main class="min-h-screen pt-20 sm:pt-24">
+                {{ $slot }}
+            </main>
+        @else
         {{-- Ambient background glowing Orbs --}}
         <div class="pointer-events-none fixed -top-24 -left-24 h-96 w-96 rounded-full bg-teal-600/10 blur-3xl dark:bg-teal-500/20"></div>
         <div class="pointer-events-none fixed -bottom-24 -right-24 h-96 w-96 rounded-full bg-emerald-600/10 blur-3xl dark:bg-emerald-500/20"></div>
@@ -82,6 +93,7 @@
                 {{ $slot }}
             </div>
         </div>
+        @endif
 
         @stack('scripts')
     </body>
