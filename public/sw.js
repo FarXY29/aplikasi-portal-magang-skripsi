@@ -1,13 +1,10 @@
 /**
  * Service Worker — Portal Magang Pemerintah Kota Banjarmasin
  *
- * Minimal, safe offline shell:
- *  - Navigation requests: network-first, falling back to the cached app shell.
- *  - Same-origin GET assets: stale-while-revalidate.
- *  - Cross-origin and non-GET requests are left untouched.
+ * Lightweight, safe offline shell with LRU cache bounds & sensitive path exclusion.
  */
-const CACHE = 'portal-magang-v1';
-const CORE = [
+const CACHE_NAME = 'portal-magang-v2';
+const CORE_ASSETS = [
   '/',
   '/manifest.json',
   '/images/icon-192.png',
@@ -15,10 +12,26 @@ const CORE = [
   '/favicon.ico'
 ];
 
+const MAX_RUNTIME_ENTRIES = 30;
+
+// Trim cache to prevent memory/storage bloat on client devices
+async function trimCache(cacheName, maxItems) {
+  try {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length > maxItems) {
+      await cache.delete(keys[0]);
+      trimCache(cacheName, maxItems);
+    }
+  } catch (e) {
+    // Graceful fallback if cache access is restricted
+  }
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE)
-      .then((cache) => cache.addAll(CORE))
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(CORE_ASSETS))
       .then(() => self.skipWaiting())
   );
 });
@@ -26,7 +39,9 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -38,13 +53,27 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Never cache sensitive documents, auth endpoints, or live scanning
+  if (
+    url.pathname.startsWith('/storage-access/') ||
+    url.pathname.startsWith('/scan-qr') ||
+    url.pathname === '/logout'
+  ) {
+    return;
+  }
+
   // Navigations: network-first, fall back to cached shell (offline).
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, copy);
+              trimCache(CACHE_NAME, MAX_RUNTIME_ENTRIES);
+            });
+          }
           return response;
         })
         .catch(() =>
@@ -61,7 +90,10 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           if (response && response.status === 200) {
             const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, copy);
+              trimCache(CACHE_NAME, MAX_RUNTIME_ENTRIES);
+            });
           }
           return response;
         })

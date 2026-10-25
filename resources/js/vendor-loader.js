@@ -6,7 +6,7 @@
 let chartPromise = null;
 export function loadChart() {
     if (!chartPromise) {
-        chartPromise = import('chart.js/auto').then(m => {
+        chartPromise = import('./chart-bundle').then(m => {
             const Chart = m.default || m.Chart || m;
             window.Chart = Chart;
             return Chart;

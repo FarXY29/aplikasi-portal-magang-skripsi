@@ -1,7 +1,14 @@
-<nav x-data="{ mobileMenuOpen: false, scrolled: false }" 
-     x-init="scrolled = ((window.scrollY || window.pageYOffset) > 20)"
+@props(['solid' => false])
+@php
+    $isScanQrActive = request()->routeIs('qr.scanner', 'certificate.verify', 'id_card.verify');
+    $isTrackingActive = request()->routeIs('tracking.*');
+@endphp
+<nav x-data="{ mobileMenuOpen: false, scrolled: {{ $solid ? 'true' : 'false' }} }" 
+     x-init="scrolled = {{ $solid ? 'true' : '((window.scrollY || window.pageYOffset) > 20)' }}"
+     @unless($solid)
      @scroll.window="scrolled = ((window.scrollY || window.pageYOffset) > 20)"
-     :class="scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-md border-b border-slate-200/50 dark:border-gray-800 py-3' : 'bg-transparent py-5 sm:py-6'"
+     @endunless
+     :class="scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-xs border-b border-slate-200/80 dark:border-gray-800 py-3' : 'bg-transparent py-5 sm:py-6'"
      class="fixed w-full top-0 z-50 transition-all duration-300 ease-in-out">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div class="flex justify-between h-14 sm:h-16 items-center w-full">
@@ -20,11 +27,11 @@
 
             <!-- Desktop Navigation Links -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="#lowongan" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Cari Lowongan</a>
-                <a href="#langkah" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Alur Magang</a>
-                <a href="{{ route('tracking.index') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Lacak Permohonan</a>
-                <a href="#faq" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">FAQ</a>
-                <a href="{{url('/scan-qr') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Scan QR</a>
+                <a href="{{ url('/#lowongan') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Cari Lowongan</a>
+                <a href="{{ url('/#langkah') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">Alur Magang</a>
+                <a href="{{ route('tracking.index') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? '{{ $isTrackingActive ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' }}' : '{{ $isTrackingActive ? 'text-teal-700 dark:text-teal-300' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white' }}'">Lacak Permohonan</a>
+                <a href="{{ url('/#faq') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white'">FAQ</a>
+                <a href="{{ route('qr.scanner') }}" class="text-sm font-bold tracking-wide transition-colors" :class="scrolled ? '{{ $isScanQrActive ? 'text-teal-700 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400' }}' : '{{ $isScanQrActive ? 'text-teal-700 dark:text-teal-300' : 'text-slate-700 dark:text-white/90 hover:text-teal-600 dark:hover:text-white' }}'">Scan QR</a>
 
                 <div class="h-5 w-[1px]" :class="scrolled ? 'bg-slate-200 dark:bg-gray-700' : 'bg-slate-300 dark:bg-white/20'"></div>
 
@@ -104,7 +111,7 @@
 
             <!-- Drawer Links -->
             <div class="px-5 py-6 space-y-2 flex-grow">
-                <a href="#lowongan" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                <a href="{{ url('/#lowongan') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center">
                             <i class="fas fa-briefcase text-xs"></i>
@@ -114,7 +121,7 @@
                     <i class="fas fa-chevron-right text-xs text-slate-400"></i>
                 </a>
 
-                <a href="#langkah" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                <a href="{{ url('/#langkah') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <i class="fas fa-route text-xs"></i>
@@ -134,7 +141,7 @@
                     <i class="fas fa-chevron-right text-xs text-slate-400"></i>
                 </a>
 
-                <a href="#faq" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                <a href="{{ url('/#faq') }}" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                             <i class="fas fa-circle-question text-xs"></i>
@@ -144,7 +151,7 @@
                     <i class="fas fa-chevron-right text-xs text-slate-400"></i>
                 </a>
 
-                <a href="{{ url('/scan-qr') }}" id="scan-qr-btn" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
+                <a href="{{ route('qr.scanner') }}" id="scan-qr-btn" @click="mobileMenuOpen = false" class="flex items-center justify-between px-4 py-3.5 text-sm font-extrabold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-gray-800/60 border border-slate-100 dark:border-gray-700/60 rounded-2xl hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition active:scale-[0.99]">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fas fa-qrcode text-xs"></i>

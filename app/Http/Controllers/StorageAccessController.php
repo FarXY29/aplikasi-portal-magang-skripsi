@@ -59,10 +59,24 @@ class StorageAccessController extends Controller
     /** @return array{string, Application} */
     private function applicationDocument(string $filename): array
     {
+        $candidates = [
+            'documents/surat/'.$filename,
+            'applications/surat/'.$filename,
+            'applications/'.$filename,
+            'surat/'.$filename,
+        ];
+
         $application = Application::query()
             ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
-            ->where('surat_pengantar_path', 'like', '%/'.$this->like($filename))
-            ->firstOrFail();
+            ->whereIn('surat_pengantar_path', $candidates)
+            ->first();
+
+        if (! $application) {
+            $application = Application::query()
+                ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
+                ->where('surat_pengantar_path', 'like', '%/'.$this->like($filename))
+                ->firstOrFail();
+        }
 
         return [$application->surat_pengantar_path, $application];
     }
@@ -70,10 +84,23 @@ class StorageAccessController extends Controller
     /** @return array{string, Application} */
     private function applicationCvDocument(string $filename): array
     {
+        $candidates = [
+            'documents/cv/'.$filename,
+            'applications/cv/'.$filename,
+            'cv/'.$filename,
+        ];
+
         $application = Application::query()
             ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
-            ->where('cv_path', 'like', '%/'.$this->like($filename))
-            ->firstOrFail();
+            ->whereIn('cv_path', $candidates)
+            ->first();
+
+        if (! $application) {
+            $application = Application::query()
+                ->with(['user', 'position.instansi', 'pembimbing_lapangan'])
+                ->where('cv_path', 'like', '%/'.$this->like($filename))
+                ->firstOrFail();
+        }
 
         return [$application->cv_path, $application];
     }
@@ -81,10 +108,22 @@ class StorageAccessController extends Controller
     /** @return array{string, DailyLog} */
     private function logbookDocument(string $filename): array
     {
+        $candidates = [
+            'documents/logbook/'.$filename,
+            'logbook/'.$filename,
+        ];
+
         $log = DailyLog::query()
             ->with('application.user')
-            ->where('bukti_foto_path', 'like', '%/'.$this->like($filename))
-            ->firstOrFail();
+            ->whereIn('bukti_foto_path', $candidates)
+            ->first();
+
+        if (! $log) {
+            $log = DailyLog::query()
+                ->with('application.user')
+                ->where('bukti_foto_path', 'like', '%/'.$this->like($filename))
+                ->firstOrFail();
+        }
 
         return [$log->bukti_foto_path, $log];
     }
@@ -92,10 +131,22 @@ class StorageAccessController extends Controller
     /** @return array{string, Attendance} */
     private function attendanceDocument(string $filename): array
     {
+        $candidates = [
+            'documents/attendance/'.$filename,
+            'attendance/'.$filename,
+        ];
+
         $attendance = Attendance::query()
             ->with('application.user')
-            ->where('proof_file', 'like', '%/'.$this->like($filename))
-            ->firstOrFail();
+            ->whereIn('proof_file', $candidates)
+            ->first();
+
+        if (! $attendance) {
+            $attendance = Attendance::query()
+                ->with('application.user')
+                ->where('proof_file', 'like', '%/'.$this->like($filename))
+                ->firstOrFail();
+        }
 
         return [$attendance->proof_file, $attendance];
     }
@@ -103,10 +154,22 @@ class StorageAccessController extends Controller
     /** @return array{string, AttendanceDispute} */
     private function disputeDocument(string $filename): array
     {
+        $candidates = [
+            'documents/disputes/'.$filename,
+            'disputes/'.$filename,
+        ];
+
         $dispute = AttendanceDispute::query()
             ->with(['attendance.application.position', 'user'])
-            ->where('evidence_file', 'like', '%/'.$this->like($filename))
-            ->firstOrFail();
+            ->whereIn('evidence_file', $candidates)
+            ->first();
+
+        if (! $dispute) {
+            $dispute = AttendanceDispute::query()
+                ->with(['attendance.application.position', 'user'])
+                ->where('evidence_file', 'like', '%/'.$this->like($filename))
+                ->firstOrFail();
+        }
 
         return [$dispute->evidence_file, $dispute];
     }
@@ -117,8 +180,16 @@ class StorageAccessController extends Controller
         $user = auth()->user();
         abort_unless($user, 401);
 
+        $candidates = [
+            'signatures/'.$filename,
+            'instansi/signatures/'.$filename,
+            'documents/signatures/'.$filename,
+        ];
+
         // 1. Check Instansi ttd_kepala
-        $instansi = Instansi::where('ttd_kepala', 'like', '%/'.$this->like($filename))->first();
+        $instansi = Instansi::whereIn('ttd_kepala', $candidates)->first()
+            ?? Instansi::where('ttd_kepala', 'like', '%/'.$this->like($filename))->first();
+
         if ($instansi) {
             abort_unless(
                 $user->hasPortalRole('admin_kota') ||
@@ -130,17 +201,17 @@ class StorageAccessController extends Controller
         }
 
         // 2. Check Setting ttd_image
-        $setting = Setting::where('key', 'ttd_image')
-            ->where('value', 'like', '%/'.$this->like($filename))
-            ->first();
-        if ($setting) {
+        $settingValue = Setting::getCached('ttd_image');
+        if ($settingValue && (in_array($settingValue, $candidates, true) || str_ends_with($settingValue, '/'.$filename))) {
             abort_unless($user->hasPortalRole('admin_kota'), 403);
 
-            return [$setting->value, $setting];
+            return [$settingValue, Setting::where('key', 'ttd_image')->first()];
         }
 
         // 3. Check User signature
-        $targetUser = User::where('signature', 'like', '%/'.$this->like($filename))->first();
+        $targetUser = User::whereIn('signature', $candidates)->first()
+            ?? User::where('signature', 'like', '%/'.$this->like($filename))->first();
+
         if ($targetUser) {
             abort_unless(
                 $user->hasPortalRole('admin_kota') ||

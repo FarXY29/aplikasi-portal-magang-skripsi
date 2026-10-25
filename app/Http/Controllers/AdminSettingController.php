@@ -18,7 +18,7 @@ class AdminSettingController extends Controller
 {
     public function index()
     {
-        $settings = Setting::all()->pluck('value', 'key');
+        $settings = Setting::allCached();
         $backups = DatabaseBackup::query()
             ->with('requester')
             ->latest()
@@ -73,6 +73,7 @@ class AdminSettingController extends Controller
 
         Cache::forget('landing_page_stats_v3');
         Cache::forget('settings:kop_signature_meta');
+        Setting::purgeCache();
 
         $auditLogService->record('system_settings.updated', null, [
             'updated_keys' => array_keys($validated),

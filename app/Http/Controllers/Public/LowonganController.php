@@ -31,16 +31,24 @@ class LowonganController extends Controller
             }
         }
 
-        // Hitung total posisi yang cocok dengan kualifikasi jurusan peserta
+        // Hitung total posisi yang cocok dengan kualifikasi jurusan peserta (menggunakan cache terproyeksi)
         $totalMatchingCount = 0;
         $matchingPositionIds = collect();
         if ($userHasMajor) {
-            $matchingPositionIds = InternshipPosition::where('status', 'buka')
-                ->where('kuota', '>', 0)
-                ->with(['requiredMajorCategory'])
-                ->get()
-                ->filter(fn ($p) => $p->matchesUser($user))
-                ->pluck('id');
+            $majorCacheKey = 'user_match_pos:'.($user->major_id ?? 'txt_'.md5((string) $user->major));
+            $matchingPositionIds = Cache::remember($majorCacheKey, 300, function () use ($user) {
+                $openPositions = Cache::remember('open_internship_positions_matching_v1', 300, function () {
+                    return InternshipPosition::where('status', 'buka')
+                        ->where('kuota', '>', 0)
+                        ->with(['requiredMajorCategory:id,name'])
+                        ->select(['id', 'required_major', 'required_major_category_id', 'status', 'kuota'])
+                        ->get();
+                });
+
+                return $openPositions
+                    ->filter(fn ($p) => $p->matchesUser($user))
+                    ->pluck('id');
+            });
             $totalMatchingCount = $matchingPositionIds->count();
         }
 

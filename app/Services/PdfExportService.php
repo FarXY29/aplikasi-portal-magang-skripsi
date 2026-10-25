@@ -32,11 +32,11 @@ class PdfExportService
     }
 
     /**
-     * Get settings memoized per request.
+     * Get settings memoized and cached from Redis/memory.
      */
     private function getSettings(): Collection
     {
-        return once(fn () => Setting::all()->pluck('value', 'key'));
+        return Setting::allCached();
     }
 
     /**

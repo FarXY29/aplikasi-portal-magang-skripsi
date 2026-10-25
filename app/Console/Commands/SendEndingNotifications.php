@@ -32,11 +32,11 @@ class SendEndingNotifications extends Command
     public function handle(): int
     {
         // Cari aplikasi magang yang statusnya diterima dan tanggal selesai tepat 7 hari dari sekarang
-        $targetDate = Carbon::now()->addDays(7)->startOfDay();
+        $targetDate = Carbon::now()->addDays(7)->toDateString();
 
         $applications = Application::with('user', 'position.instansi')
             ->where('status', 'diterima')
-            ->whereDate('tanggal_selesai', $targetDate)
+            ->where('tanggal_selesai', $targetDate)
             ->get();
 
         $count = 0;
@@ -74,8 +74,8 @@ class SendEndingNotifications extends Command
             }
         }
 
-        $this->info("Berhasil mendispatch $count email & notifikasi peringatan magang berakhir.");
+        $this->info("Berhasil mengirim {$count} notifikasi email ke antrean.");
 
-        return Command::SUCCESS;
+        return 0;
     }
 }

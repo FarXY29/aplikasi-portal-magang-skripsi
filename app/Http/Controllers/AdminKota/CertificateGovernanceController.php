@@ -175,7 +175,7 @@ class CertificateGovernanceController extends Controller
 
         $certificates = $query->orderBy('nomor_sertifikat', 'asc')->get();
 
-        $settings = Setting::all()->pluck('value', 'key');
+        $settings = Setting::allCached();
         $pejabat_nama = $settings['pejabat_name'] ?? 'H. Lukman Fadlun, SH';
         $pejabat_nip = $settings['pejabat_nip'] ?? '-';
         $pejabat_jabatan = $settings['pejabat_jabatan'] ?? 'Kepala Bakesbangpol Kota Banjarmasin';

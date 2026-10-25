@@ -59,7 +59,7 @@ class ReportController extends Controller
     public function laporanInstansi()
     {
         $instansis = Instansi::orderBy('nama_dinas', 'asc')->get();
-        $printSettings = Setting::all()->pluck('value', 'key');
+        $printSettings = Setting::allCached();
 
         return view('admin_kota.instansi.laporan_instansi', compact('instansis', 'printSettings'));
     }

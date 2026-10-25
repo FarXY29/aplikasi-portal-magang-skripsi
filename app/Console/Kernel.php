@@ -15,6 +15,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('internship:complete-expired')->daily();
         $schedule->command('app:send-ending-notifications')->dailyAt('08:00');
         $schedule->command('backups:prune')->hourly();
+
+        // Pembersihan berkala untuk menjaga ukuran database tetap ramping
+        $schedule->command('auth:clear-resets')->everyFifteenMinutes();
+        $schedule->command('queue:prune-failed --hours=168')->weekly();
+        $schedule->command('queue:prune-batches --hours=168')->weekly();
     }
 
     /**

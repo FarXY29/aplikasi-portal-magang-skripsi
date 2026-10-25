@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class InternshipPosition extends Model
 {
@@ -23,6 +24,16 @@ class InternshipPosition extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::saved(function () {
+            Cache::forget('landing_page_stats_v3');
+            Cache::forget('open_internship_positions_matching_v1');
+        });
+
+        static::deleted(function () {
+            Cache::forget('landing_page_stats_v3');
+            Cache::forget('open_internship_positions_matching_v1');
+        });
 
         static::deleting(function ($position) {
             $position->applications()->get()->each->delete();

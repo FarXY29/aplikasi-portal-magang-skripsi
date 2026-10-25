@@ -25,21 +25,25 @@ class CompleteExpiredInternships extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ApplicationLifecycleService $lifecycleService)
+    public function handle(ApplicationLifecycleService $lifecycleService): int
     {
-        $expiredApplications = Application::where('status', 'diterima')
-            ->where('tanggal_selesai', '<', now()->toDateString())
-            ->get();
+        $count = 0;
 
-        $count = $expiredApplications->count();
+        Application::where('status', 'diterima')
+            ->where('tanggal_selesai', '<', now()->toDateString())
+            ->chunkById(100, function ($expiredApplications) use ($lifecycleService, &$count) {
+                foreach ($expiredApplications as $application) {
+                    $lifecycleService->markAsFinished($application);
+                    $count++;
+                }
+            });
 
         if ($count > 0) {
-            foreach ($expiredApplications as $application) {
-                $lifecycleService->markAsFinished($application);
-            }
             $this->info("Successfully completed {$count} expired internship(s).");
         } else {
             $this->info('No expired internships found.');
         }
+
+        return 0;
     }
 }
