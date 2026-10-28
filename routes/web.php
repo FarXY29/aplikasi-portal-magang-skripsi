@@ -43,7 +43,9 @@ Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->gr
 use App\Http\Controllers\KioskPresensiController;
 
 Route::get('/kiosk/presensi/{kiosk_token}', [KioskPresensiController::class, 'showKiosk'])->name('kiosk.presensi.public');
-Route::get('/kiosk/live-qr/{kiosk_token}', [KioskPresensiController::class, 'fetchLiveQr'])->name('kiosk.live_qr');
+Route::get('/kiosk/live-qr/{kiosk_token}', [KioskPresensiController::class, 'fetchLiveQr'])
+    ->middleware(['signed', 'throttle:30,1'])
+    ->name('kiosk.live_qr');
 
 require __DIR__.'/public.php';
 require __DIR__.'/peserta.php';

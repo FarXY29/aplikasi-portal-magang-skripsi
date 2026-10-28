@@ -221,11 +221,20 @@ class ApplicationStateTransitionService
             $waitingCandidates = Application::where('internship_position_id', $positionId)
                 ->where('status', 'menunggu')
                 ->orderBy('created_at', 'asc')
+                ->lockForUpdate()
                 ->get();
 
             $promotedCount = 0;
 
             foreach ($waitingCandidates as $candidate) {
+                // Baca ulang di bawah lock: kandidat bisa saja sudah dipromosikan
+                // oleh request lain sejak query di atas dijalankan.
+                $candidate = Application::where('id', $candidate->id)->lockForUpdate()->first();
+
+                if (! $candidate || $candidate->status !== 'menunggu') {
+                    continue;
+                }
+
                 $start = $candidate->tanggal_mulai;
                 $end = $candidate->tanggal_selesai;
 
@@ -273,34 +282,34 @@ class ApplicationStateTransitionService
      */
     public function promoteNextWaitingCandidate(Application $completedApp): ?Application
     {
-        $nextWaiting = Application::where('internship_position_id', $completedApp->internship_position_id)
-            ->where('status', 'menunggu')
-            ->orderBy('created_at', 'asc')
-            ->first();
+        return DB::transaction(function () use ($completedApp) {
+            $nextWaiting = Application::where('internship_position_id', $completedApp->internship_position_id)
+                ->where('status', 'menunggu')
+                ->orderBy('created_at', 'asc')
+                ->lockForUpdate()
+                ->first();
 
-        if ($nextWaiting) {
-            $startDate = Carbon::parse($nextWaiting->tanggal_mulai);
-            $endDate = Carbon::parse($nextWaiting->tanggal_selesai);
-            $durationDays = $startDate->diffInDays($endDate);
+            if (! $nextWaiting) {
+                return null;
+            }
+
+            $durationDays = Carbon::parse($nextWaiting->tanggal_mulai)
+                ->diffInDays(Carbon::parse($nextWaiting->tanggal_selesai));
 
             $newStartDate = Carbon::parse($completedApp->tanggal_selesai)->addDay();
             if ($newStartDate->isPast()) {
                 $newStartDate = Carbon::tomorrow();
             }
-            $newEndDate = $newStartDate->copy()->addDays($durationDays);
 
-            $nextWaiting->update([
-                'tanggal_mulai' => $newStartDate->format('Y-m-d'),
-                'tanggal_selesai' => $newEndDate->format('Y-m-d'),
-            ]);
-
-            $this->transition($nextWaiting, ApplicationStatus::Diterima, [
+            // Tanggal baru dikirim lewat context agar ditulis oleh transaksi yang
+            // sama dengan perubahan status — bukan sebelumnya (lihat handleTransitionToDiterima).
+            return $this->transition($nextWaiting, ApplicationStatus::Diterima, [
                 'actor_id' => auth()->id(),
                 'reason' => 'Promosi langsung dari daftar tunggu setelah peserta sebelumnya lulus.',
+                'tanggal_mulai' => $newStartDate->format('Y-m-d'),
+                'tanggal_selesai' => $newStartDate->copy()->addDays($durationDays)->format('Y-m-d'),
             ]);
-        }
-
-        return $nextWaiting;
+        });
     }
 
     // --- Private Transition Handlers ---
@@ -319,8 +328,12 @@ class ApplicationStateTransitionService
             throw new \Exception('Gagal menerima peserta: Posisi magang ini sudah ditutup.');
         }
 
-        $start = $app->tanggal_mulai;
-        $end = $app->tanggal_selesai;
+        // Rentang tanggal boleh ditimpa pemanggil (promosi daftar tunggu) agar
+        // cek kapasitas dan penulisan tanggal memakai rentang yang sama.
+        $start = $context['tanggal_mulai'] ?? $app->tanggal_mulai;
+        $end = $context['tanggal_selesai'] ?? $app->tanggal_selesai;
+
+        $dateOverride = array_intersect_key($context, array_flip(['tanggal_mulai', 'tanggal_selesai']));
 
         // Verify position capacity
         $conflictingCount = Application::where('internship_position_id', $position->id)
@@ -357,7 +370,7 @@ class ApplicationStateTransitionService
         $app->update([
             'status' => 'diterima',
             'verified_by' => $actorId,
-        ]);
+        ] + $dateOverride);
 
         $app->recordTimeline(
             ApplicationTimeline::EVENT_ACCEPTED,

@@ -197,8 +197,8 @@
     <!-- Interactive Client Scripts -->
     <script>
         const KIOSK_TOKEN = "{{ $instansi->kiosk_token ?? '' }}";
-        const FETCH_URL = KIOSK_TOKEN 
-            ? "{{ route('kiosk.live_qr', ':token') }}".replace(':token', KIOSK_TOKEN)
+        const FETCH_URL = KIOSK_TOKEN
+            ? @js($liveQrSignedUrl)
             : "{{ route('dinas.kiosk.live_qr.auth', [], false) }}";
 
         let remainingSeconds = {{ $tokenData['remaining_seconds'] }};

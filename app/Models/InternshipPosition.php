@@ -10,6 +10,12 @@ class InternshipPosition extends Model
 {
     use HasFactory;
 
+    /** Prefix kunci cache per-peserta (lihat Public\LowonganController). */
+    public const MATCH_CACHE_PREFIX = 'user_match_pos:';
+
+    /** Kunci versi; disisipkan ke dalam prefix agar seluruh kunci lama otomatis basi. */
+    public const MATCH_CACHE_VERSION_KEY = 'user_match_pos_version';
+
     protected $fillable = [
         'instansi_id',
         'judul_posisi',
@@ -28,16 +34,30 @@ class InternshipPosition extends Model
         static::saved(function () {
             Cache::forget('landing_page_stats_v3');
             Cache::forget('open_internship_positions_matching_v1');
+            self::bumpMatchCacheVersion();
         });
 
         static::deleted(function () {
             Cache::forget('landing_page_stats_v3');
             Cache::forget('open_internship_positions_matching_v1');
+            self::bumpMatchCacheVersion();
         });
 
         static::deleting(function ($position) {
             $position->applications()->get()->each->delete();
         });
+    }
+
+    /**
+     * Naikkan versi cache pencocokan jurusan. Kunci per-peserta tidak bisa
+     * di-enumerasi, jadi versi ini yang membuatnya basi sekaligus.
+     */
+    public static function bumpMatchCacheVersion(): void
+    {
+        Cache::forever(
+            self::MATCH_CACHE_VERSION_KEY,
+            (int) Cache::get(self::MATCH_CACHE_VERSION_KEY, 0) + 1
+        );
     }
 
     public function instansi()

@@ -8,7 +8,9 @@ use App\Models\Certificate;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CertificateController extends Controller
 {
@@ -180,7 +182,11 @@ class CertificateController extends Controller
         ]);
 
         $request->validate([
-            'nomor_sertifikat' => 'required|string|max:100|unique:applications,nomor_sertifikat,'.$applicationId,
+            'nomor_sertifikat' => [
+                'required', 'string', 'max:100',
+                'unique:applications,nomor_sertifikat,'.$applicationId,
+                Rule::unique('certificates', 'nomor_sertifikat')->ignore($applicationId, 'application_id'),
+            ],
             'tanggal_sertifikat' => 'required|date',
         ]);
 
@@ -201,44 +207,49 @@ class CertificateController extends Controller
 
         $previousStatus = $app->status_value;
 
-        // 1. Simpan Data Legalitas Sertifikat di Application
-        $app->update([
-            'nomor_sertifikat' => $request->nomor_sertifikat,
-            'token_verifikasi' => $tokenVerifikasi,
-        ]);
-
-        // 2. Simpan atau sinkronkan ke Master Certificate
-        Certificate::updateOrCreate(
-            ['application_id' => $app->id],
-            [
+        // Penulisan legalitas sertifikat dan render PDF harus atomik: bila render
+        // gagal, data sertifikat tidak boleh tertinggal setengah jadi.
+        [$pdf, $app] = DB::transaction(function () use ($app, $request, $tokenVerifikasi, $previousStatus) {
+            // 1. Simpan Data Legalitas Sertifikat di Application
+            $app->update([
                 'nomor_sertifikat' => $request->nomor_sertifikat,
                 'token_verifikasi' => $tokenVerifikasi,
-                'signer_name' => $app->position?->instansi?->nama_pejabat ?? 'Kepala Instansi',
-                'status' => 'active',
-                'published_at' => Carbon::parse($request->tanggal_sertifikat),
-            ]
-        );
+            ]);
 
-        $app->recordTimeline(
-            ApplicationTimeline::EVENT_CERTIFICATE_ISSUED,
-            $previousStatus,
-            'selesai',
-            ['nomor_sertifikat' => $request->nomor_sertifikat],
-            auth()->id()
-        );
+            // 2. Simpan atau sinkronkan ke Master Certificate
+            Certificate::updateOrCreate(
+                ['application_id' => $app->id],
+                [
+                    'nomor_sertifikat' => $request->nomor_sertifikat,
+                    'token_verifikasi' => $tokenVerifikasi,
+                    'signer_name' => $app->position?->instansi?->nama_pejabat ?? 'Kepala Instansi',
+                    'status' => 'active',
+                    'published_at' => Carbon::parse($request->tanggal_sertifikat),
+                ]
+            );
 
-        // 3. Siapkan Data untuk View PDF
-        $data = [
-            'app' => $app,
-            'user' => $app->user,
-            'instansi' => $app->position->instansi,
-            'position' => $app->position,
-            'tanggal' => Carbon::parse($request->tanggal_sertifikat)->translatedFormat('d F Y'),
-            'qr_code' => route('certificate.verify', $tokenVerifikasi),
-        ];
+            $app->recordTimeline(
+                ApplicationTimeline::EVENT_CERTIFICATE_ISSUED,
+                $previousStatus,
+                'selesai',
+                ['nomor_sertifikat' => $request->nomor_sertifikat],
+                auth()->id()
+            );
 
-        // 4. Generate PDF
-        $pdf = Pdf::loadView('pdf.peserta.sertifikat', $data);
+            // 3. Siapkan Data untuk View PDF
+            $data = [
+                'app' => $app,
+                'user' => $app->user,
+                'instansi' => $app->position->instansi,
+                'position' => $app->position,
+                'tanggal' => Carbon::parse($request->tanggal_sertifikat)->translatedFormat('d F Y'),
+                'qr_code' => route('certificate.verify', $tokenVerifikasi),
+            ];
+
+            // 4. Render PDF (gagal di sini membatalkan transaksi di atas)
+            return [Pdf::loadView('pdf.peserta.sertifikat', $data), $app];
+        });
+
         $pdf->setPaper('a4', 'landscape');
 
         // Stream PDF ke browser (Preview)

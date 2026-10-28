@@ -35,7 +35,9 @@ class LowonganController extends Controller
         $totalMatchingCount = 0;
         $matchingPositionIds = collect();
         if ($userHasMajor) {
-            $majorCacheKey = 'user_match_pos:'.($user->major_id ?? 'txt_'.md5((string) $user->major));
+            $matchCacheVersion = (int) Cache::get(InternshipPosition::MATCH_CACHE_VERSION_KEY, 0);
+            $majorCacheKey = InternshipPosition::MATCH_CACHE_PREFIX.$matchCacheVersion.':'
+                .($user->major_id ?? 'txt_'.md5((string) $user->major));
             $matchingPositionIds = Cache::remember($majorCacheKey, 300, function () use ($user) {
                 $openPositions = Cache::remember('open_internship_positions_matching_v1', 300, function () {
                     return InternshipPosition::where('status', 'buka')

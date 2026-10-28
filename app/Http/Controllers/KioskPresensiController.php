@@ -6,6 +6,7 @@ use App\Models\Instansi;
 use App\Services\Attendance\DynamicQrService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
 class KioskPresensiController extends Controller
 {
@@ -20,13 +21,23 @@ class KioskPresensiController extends Controller
     {
         $instansi = $this->resolveInstansi($request, $kiosk_token);
 
-        // Pastikan kiosk token ada
-        $instansi->ensureKioskToken();
+        // GET publik tidak boleh menulis baris instansi pada setiap kunjungan;
+        // token hanya dibuat bila belum ada.
+        if (empty($instansi->kiosk_token)) {
+            $instansi->ensureKioskToken();
+        }
 
         $tokenData = $this->qrService->generateTokenData($instansi);
         $qrSvg = $this->qrService->generateQrSvg($tokenData['token'], 320);
 
-        return view('kiosk.presensi', compact('instansi', 'tokenData', 'qrSvg'));
+        // URL bertanda tangan untuk poller kiosk (layar publik tanpa sesi login).
+        $liveQrSignedUrl = URL::temporarySignedRoute(
+            'kiosk.live_qr',
+            now()->addHours(12),
+            ['kiosk_token' => $instansi->kiosk_token]
+        );
+
+        return view('kiosk.presensi', compact('instansi', 'tokenData', 'qrSvg', 'liveQrSignedUrl'));
     }
 
     /**
