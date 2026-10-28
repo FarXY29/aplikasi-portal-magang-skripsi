@@ -1,1 +1,0 @@
-<x-ui.application-logo {{ $attributes }}>{{ $slot ?? '' }}</x-ui.application-logo>
