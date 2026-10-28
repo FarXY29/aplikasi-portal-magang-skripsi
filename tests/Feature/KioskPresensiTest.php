@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Instansi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class KioskPresensiTest extends TestCase
@@ -62,7 +63,11 @@ class KioskPresensiTest extends TestCase
 
     public function test_fetch_live_qr_returns_json_payload(): void
     {
-        $response = $this->getJson(route('kiosk.live_qr', $this->instansi->kiosk_token));
+        $response = $this->getJson(URL::temporarySignedRoute(
+            'kiosk.live_qr',
+            now()->addHour(),
+            ['kiosk_token' => $this->instansi->kiosk_token]
+        ));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -75,5 +80,21 @@ class KioskPresensiTest extends TestCase
         ]);
         $this->assertTrue($response->json('success'));
         $this->assertStringContainsString('<svg', $response->json('svg'));
+    }
+
+    public function test_public_live_qr_rejects_unsigned_request(): void
+    {
+        $this->getJson(route('kiosk.live_qr', ['kiosk_token' => $this->instansi->kiosk_token]))
+            ->assertStatus(403);
+    }
+
+    public function test_public_kiosk_page_does_not_mint_token_on_every_request(): void
+    {
+        $before = $this->instansi->updated_at;
+
+        $this->travel(1)->minutes();
+        $this->get(route('kiosk.presensi.public', $this->instansi->kiosk_token))->assertOk();
+
+        $this->assertEquals($before->toDateTimeString(), $this->instansi->fresh()->updated_at->toDateTimeString());
     }
 }
